@@ -1,36 +1,11 @@
 package com.index
 
-import io.ktor.server.engine.*
-import io.ktor.server.routing.*
 import io.ktor.http.*
-import io.ktor.server.websocket.*
-import io.ktor.server.websocket.*
-import java.time.Duration
-import io.ktor.shared.serialization.kotlinx.kotlinx.json.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.callloging.*
-import org.slf4j.event.*
-import io.ktor.server.request.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.sessions.*
-import io.ktor.server.auth.*
-import io.ktor.util.*
-import io.ktor.server.locations.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.server.auth.jwt.*
-import com.auth0.jwt.JWT
-import com.auth0.jwt.JWTVerifier
-import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlin.test.*
 import io.ktor.server.testing.*
-import com.index.plugins.*
-import io.ktor.client.call.body
+import com.index.plugins.routing.configureRouting
 
 class ApplicationTest {
     @Test

@@ -1,11 +1,12 @@
-package com.index.plugins
+package com.index.plugins.routing
 
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.application.*
+import io.ktor.server.locations.*
 import io.ktor.server.response.*
-import io.ktor.server.request.*
+import io.ktor.server.routing.get
 import io.ktor.util.logging.*
 
 fun Application.configureRouting() {
