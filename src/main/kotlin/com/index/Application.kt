@@ -1,9 +1,9 @@
 package com.index
 
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import com.index.plugins.*
 import com.index.plugins.routing.configureRouting
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import io.ktor.util.logging.*
 import mu.KotlinLogging
 import kotlin.system.exitProcess
@@ -18,7 +18,7 @@ fun main() {
         exitProcess(404)
     }
 
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+    embeddedServer(Netty, port = Env.ktor_port, host = "0.0.0.0") {
         configureAdministration()
         configureRouting()
         configureSockets()

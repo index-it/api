@@ -1,16 +1,15 @@
 package com.index.plugins.routing
 
-import com.index.daos.UserDao
 import com.index.core.exceptions.AuthenticationException
 import com.index.core.exceptions.AuthorizationException
+import com.index.daos.UserDao
 import com.index.plugins.SessionId
-import io.ktor.server.routing.*
 import io.ktor.http.*
-import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.get
+import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.logging.*
 

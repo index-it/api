@@ -1,20 +1,35 @@
 package com.index.plugins
 
-import io.ktor.server.sessions.*
-import io.ktor.server.auth.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.http.*
-import com.index.daos.UserDao
+import com.index.Env
 import com.index.core.exceptions.AuthenticationException
 import com.index.daos.SessionDao
+import com.index.daos.UserDao
+import io.ktor.client.*
+import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+
+val oauthHttpClient = HttpClient(CIO) {
+    install(ContentNegotiation) {
+        json(Json {
+            prettyPrint = true
+            serializersModule = IdKotlinXSerializationModule
+        })
+    }
+}
 
 fun Application.configureSecurity() {
     install(Authentication) {
@@ -35,7 +50,7 @@ fun Application.configureSecurity() {
         }
 
         oauth("auth-oauth-google") {
-            urlProvider = { "http://localhost:8080/callback" }
+            urlProvider = { "http://localhost:${Env.ktor_port}/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",
@@ -47,7 +62,7 @@ fun Application.configureSecurity() {
                     defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile")
                 )
             }
-            client = HttpClient(Apache)
+            client = oauthHttpClient
         }
     }
 
@@ -71,7 +86,19 @@ fun Application.configureSecurity() {
                 throw AuthenticationException()
 
             call.sessions.set(SessionId(getTimeMillis().toString() +  generateSessionId()))
-            call.respond(HttpStatusCode.OK)
+            call.respondRedirect("/user")
+        }
+
+        authenticate("auth-oauth-google") {
+            get("google-oauth-login") {
+                // Redirects to 'authorizeUrl' automatically
+            }
+
+            get("/callback") {
+                val principal: OAuthAccessTokenResponse.OAuth2? = call.principal()
+                call.sessions.set(GoogleUserSession(principal?.accessToken.toString()))
+                call.respondRedirect("/user")
+            }
         }
     }
 }
@@ -80,6 +107,8 @@ fun Application.configureSecurity() {
 data class SessionId(
     val id: String
 ) : Principal
+
+private data class GoogleUserSession(val token: String)
 
 @Serializable
 private data class LoginData(
