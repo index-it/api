@@ -1,4 +1,4 @@
 package com.index.daos
 
-object GroupDao {
+object ProjectDao {
 }

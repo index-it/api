@@ -1,5 +1,6 @@
 package com.index.models
 
+import com.index.models.user.UserDto
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id

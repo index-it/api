@@ -2,29 +2,39 @@ package com.index.plugins
 
 import io.ktor.server.sessions.*
 import io.ktor.server.auth.*
-import io.ktor.util.*
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
-import io.ktor.server.locations.*
 import io.ktor.http.*
-import io.ktor.server.auth.jwt.*
-import com.auth0.jwt.JWT
-import com.auth0.jwt.JWTVerifier
-import com.auth0.jwt.algorithms.Algorithm
+import com.index.daos.UserDao
+import com.index.core.exceptions.AuthenticationException
+import com.index.daos.SessionDao
+import com.index.models.user.UserLoginDto
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.date.*
+import kotlinx.serialization.Serializable
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 fun Application.configureSecurity() {
-    data class MySession(val count: Int = 0)
-    install(Sessions) {
-        cookie<MySession>("MY_SESSION") {
-            cookie.extensions["SameSite"] = "lax"
-        }
-    }
-
     install(Authentication) {
+
+        session<SessionId>("auth-session") {
+            validate { sessionId ->
+                val session = SessionDao.get(sessionId.id)
+
+                // If there is no session or if it has expired (session expires after 7 days)
+                if (session == null || (getTimeMillis() - session.iat) >= 604800000)
+                    null
+                else
+                    session
+            }
+            challenge {
+                call.respond(HttpStatusCode.Unauthorized)
+            }
+        }
+
         oauth("auth-oauth-google") {
             urlProvider = { "http://localhost:8080/callback" }
             providerLookup = {
@@ -41,41 +51,39 @@ fun Application.configureSecurity() {
             client = HttpClient(Apache)
         }
     }
-    authentication {
-        jwt {
-            val jwtAudience = this@configureSecurity.environment.config.property("jwt.audience").getString()
-            realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
-            verifier(
-                JWT
-                    .require(Algorithm.HMAC256("secret"))
-                    .withAudience(jwtAudience)
-                    .withIssuer(this@configureSecurity.environment.config.property("jwt.domain").getString())
-                    .build()
-            )
-            validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
-            }
+
+    install(Sessions) {
+        cookie<SessionId>("user_session") {
+            cookie.path = "/"
+            cookie.maxAgeInSeconds = 604800 // 7 days
+            cookie.secure = true
+            cookie.httpOnly = true
         }
     }
 
     routing {
-        get("/session/increment") {
-            val session = call.sessions.get<MySession>() ?: MySession()
-            call.sessions.set(session.copy(count = session.count + 1))
-            call.respondText("Counter is ${session.count}. Refresh to increment.")
-        }
-        authenticate("auth-oauth-google") {
-            get("login") {
-                call.respondRedirect("/callback")
-            }
+        post("/login") {
+            val userLoginData = call.receive<LoginData>()
+            val userLogin = UserDao.getUser(userLoginData.id)
+                ?: throw AuthenticationException()
+            // @TODO: Resolve user id and email conflict
+            val encodedPassword = BCryptPasswordEncoder().encode(userLoginData.password)
+            if (userLogin.password_hash !== encodedPassword)
+                throw AuthenticationException()
 
-            get("/callback") {
-                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                call.sessions.set(UserSession(principal?.accessToken.toString()))
-                call.respondRedirect("/hello")
-            }
+            call.sessions.set(SessionId(getTimeMillis().toString() +  generateSessionId()))
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
 
-class UserSession(accessToken: String)
+@Serializable
+data class SessionId(
+    val id: String
+) : Principal
+
+@Serializable
+private data class LoginData(
+    val id: String,
+    val password: String
+)

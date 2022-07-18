@@ -1,20 +1,26 @@
 package com.index.plugins.routing
 
+import com.index.daos.UserDao
+import com.index.core.exceptions.AuthenticationException
+import com.index.core.exceptions.AuthorizationException
+import com.index.plugins.SessionId
+import com.index.plugins.UserSession
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.application.*
-import io.ktor.server.locations.*
+import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.get
+import io.ktor.server.sessions.*
 import io.ktor.util.logging.*
 
 fun Application.configureRouting() {
     install(StatusPages) {
-        exception<AuthenticationException> { call, cause ->
+        exception<AuthenticationException> { call, _ ->
             call.respond(HttpStatusCode.Unauthorized)
         }
-        exception<AuthorizationException> { call, cause ->
+        exception<AuthorizationException> { call, _ ->
             call.respond(HttpStatusCode.Forbidden)
         }
         exception<Exception> { call, cause ->
@@ -25,31 +31,79 @@ fun Application.configureRouting() {
 
     routing {
         get("/") {
-            call.respondText("Hello World!")
+            call.respondText("Hello World from Index!")
         }
-        get<MyLocation> {
-            call.respondText("Location: name=${it.name}, arg1=${it.arg1}, arg2=${it.arg2}")
-        }
-        // Register nested routes
-        get<Type.Edit> {
-            call.respondText("Inside $it")
-        }
-        get<Type.List> {
-            call.respondText("Inside $it")
+
+        authenticate("auth-session") {
+            get("/logout") {
+                call.sessions.clear<SessionId>()
+                call.respond(HttpStatusCode.OK)
+            }
+
+            route("/user") {
+                get {
+                    val userId = call.principal<SessionId>()?.id
+                        ?: throw AuthenticationException()
+
+                    val user = UserDao.getUser(userId)
+                        ?: throw Exception("User not found with id $userId")
+
+                    call.respond(user)
+                }
+
+                post {
+
+                }
+
+                delete {
+
+                }
+            }
+
+            route("/projects") {
+
+                get {
+
+                }
+
+                put {
+
+                }
+
+                route("/{id}") {
+                    get { }
+
+                    post {  }
+
+                    delete {  }
+
+                    route("/status") {
+                        put {
+
+                        }
+
+                        route("/{id}") {
+                            post {
+
+                            }
+
+                            delete {  }
+                        }
+                    }
+
+                    route("/todo") {
+                        put {  }
+
+                        route("/{id}") {
+                            get {  }
+
+                            post {  }
+
+                            delete {  }
+                        }
+                    }
+                }
+            }
         }
     }
-}
-
-class AuthenticationException : RuntimeException()
-class AuthorizationException : RuntimeException()
-
-@Location("/location/{name}")
-class MyLocation(val name: String, val arg1: Int = 42, val arg2: String = "default")
-@Location("/type/{name}")
-data class Type(val name: String) {
-    @Location("/edit")
-    data class Edit(val type: Type)
-
-    @Location("/list/{page}")
-    data class List(val type: Type, val page: Int)
 }
