@@ -8,7 +8,6 @@ import io.ktor.http.*
 import com.index.daos.UserDao
 import com.index.core.exceptions.AuthenticationException
 import com.index.daos.SessionDao
-import com.index.models.user.UserLoginDto
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

@@ -4,7 +4,6 @@ import com.index.daos.UserDao
 import com.index.core.exceptions.AuthenticationException
 import com.index.core.exceptions.AuthorizationException
 import com.index.plugins.SessionId
-import com.index.plugins.UserSession
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.plugins.statuspages.*
