@@ -8,10 +8,10 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
 }
 
-group = "com.index"
+group = "app.index_it"
 version = "0.0.1"
 application {
-    mainClass.set("com.index.ApplicationKt")
+    mainClass.set("app.index_it.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")

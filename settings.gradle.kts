@@ -1,1 +1,1 @@
-rootProject.name = "com.index.index-api"
+rootProject.name = "app.index_it.api"
