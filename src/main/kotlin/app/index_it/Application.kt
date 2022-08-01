@@ -4,6 +4,7 @@ import app.index_it.plugins.*
 import app.index_it.plugins.configureRouting
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
+import io.github.cdimascio.dotenv.DotenvException
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.logging.*
@@ -22,6 +23,8 @@ fun main() {
     } catch (e: NoSuchElementException) {
         log.error(e)
         exitProcess(404)
+    } catch (e: DotenvException) {
+        log.info(".env file not found, using System variables")
     }
 
     embeddedServer(Netty, port = Env.ktor_port, host = "0.0.0.0") {
