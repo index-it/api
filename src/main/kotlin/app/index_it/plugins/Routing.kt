@@ -13,6 +13,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.logging.*
+import java.net.URLDecoder
+import java.nio.charset.Charset
+import java.nio.charset.CharsetDecoder
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -34,12 +37,12 @@ fun Application.configureRouting() {
         }
 
         get("/notify/{email}") {
-            val email = call.parameters["email"]!!
+            val email = URLDecoder.decode(call.parameters["email"]!!, Charset.forName("UTF-8"))
             NotifyDBM.notify(email)
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.BadRequest)
         }
 
-        authenticate("auth-session") {
+        /*authenticate("auth-session") {
             get("/logout") {
                 call.sessions.clear<SessionId>()
                 call.respond(HttpStatusCode.OK)
@@ -109,6 +112,6 @@ fun Application.configureRouting() {
                     }
                 }
             }
-        }
+        }*/
     }
 }
