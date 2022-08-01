@@ -37,7 +37,7 @@ fun Application.configureRouting() {
         }
 
         get("/notify/{email}") {
-            val email = URLDecoder.decode(call.parameters["email"]!!, Charsets.UTF_8)
+            val email = URLDecoder.decode(call.parameters["email"]!!, "UTF-8")
             NotifyDBM.notify(email)
             call.respond(HttpStatusCode.BadRequest)
         }
