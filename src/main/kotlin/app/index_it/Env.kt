@@ -26,8 +26,13 @@ object Env {
         redis_port = getInt("redis.port")
     }
 
-    private fun getString(key: String) =
-        dotenv[key.uppercase().replace(".", "_")]
+    private fun getString(key: String) : String {
+        val formattedKey = key.uppercase().replace(".", "_")
+        return dotenv[formattedKey]
+            ?: System.getenv(formattedKey)
+            ?: throw NoSuchElementException("Couldn't find any $key key in .env file")
+    }
+
 
     private fun getInt(key: String) : Int = try {
         getString(key).toInt()
