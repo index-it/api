@@ -39,7 +39,7 @@ fun Application.configureRouting() {
         get("/notify/{email}") {
             val email = URLDecoder.decode(call.parameters["email"]!!, "UTF-8")
             NotifyDBM.notify(email)
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.OK)
         }
 
         /*authenticate("auth-session") {
