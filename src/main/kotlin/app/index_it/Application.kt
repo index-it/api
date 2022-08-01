@@ -23,8 +23,6 @@ fun main() {
     } catch (e: NoSuchElementException) {
         log.error(e)
         exitProcess(404)
-    } catch (e: DotenvException) {
-        log.info(".env file not found, using System variables")
     }
 
     embeddedServer(Netty, port = Env.ktor_port, host = "0.0.0.0") {

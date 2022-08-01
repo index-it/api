@@ -1,9 +1,22 @@
 package app.index_it
 
+import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
+import mu.KotlinLogging
+
+private val log = KotlinLogging.logger {  }
 
 object Env {
-    private val dotenv = dotenv()
+    private val dotenv: Dotenv? = try {
+        dotenv()
+    } catch (_: Exception) {
+        log.warn(".env file not found, using System variables")
+        null
+    }
+
+    init {
+
+    }
 
     var local_mode: Boolean = false
 
@@ -28,7 +41,7 @@ object Env {
 
     private fun getString(key: String) : String {
         val formattedKey = key.uppercase().replace(".", "_")
-        return dotenv[formattedKey]
+        return dotenv?.get(formattedKey)
             ?: System.getenv(formattedKey)
             ?: throw NoSuchElementException("Couldn't find any $key key in .env file")
     }
