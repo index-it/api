@@ -6,6 +6,7 @@ plugins {
     application
     kotlin("jvm") version "1.6.20"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "app.index_it"
@@ -15,10 +16,6 @@ application {
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
-
-tasks {
-    create("stage").dependsOn("installDist")
 }
 
 repositories {

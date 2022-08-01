@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  index:
+    build: .
+    container_name: "index-api"
+    depends_on:
+      - index-redis
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - index-network
+  index-redis:
+    image: redis:latest
+    container_name: "index-redis"
+    restart: always
+    command: redis-server
+    networks:
+      - index-network
+
+networks:
+  index-network:
+    name: index-network

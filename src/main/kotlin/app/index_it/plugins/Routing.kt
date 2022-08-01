@@ -33,7 +33,7 @@ fun Application.configureRouting() {
 
     routing {
         get("/") {
-            call.respondText("Hello World from Index!")
+            call.respondText("Hello from Index!")
         }
 
         get("/notify/{email}") {

@@ -14,10 +14,6 @@ object Env {
         null
     }
 
-    init {
-
-    }
-
     var local_mode: Boolean = false
 
     var port: Int = 8080
