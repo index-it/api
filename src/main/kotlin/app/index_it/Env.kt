@@ -20,7 +20,7 @@ object Env {
 
     var local_mode: Boolean = false
 
-    var ktor_port: Int = 8080
+    var port: Int = 8080
 
     lateinit var mongo_connection_string: String
     lateinit var mongo_db_name: String
@@ -32,7 +32,7 @@ object Env {
      */
     fun loadEnv() {
         local_mode = getBoolean("local.mode")
-        ktor_port = getInt("ktor.port")
+        port = getInt("port")
         mongo_connection_string = getString("mongo.connection.string")
         mongo_db_name = getString("mongo.db.name")
         redis_host = getString("redis.host")

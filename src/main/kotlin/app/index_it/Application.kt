@@ -4,7 +4,6 @@ import app.index_it.plugins.*
 import app.index_it.plugins.configureRouting
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
-import io.github.cdimascio.dotenv.DotenvException
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.logging.*
@@ -25,7 +24,7 @@ fun main() {
         exitProcess(404)
     }
 
-    embeddedServer(Netty, port = Env.ktor_port, host = "0.0.0.0") {
+    embeddedServer(Netty, port = Env.port, host = "0.0.0.0") {
         configureAdministration()
         configureRouting()
         configureSockets()
