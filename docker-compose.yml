@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   index:
-    image: ghcr.io/index-it/api:main
+    image: ghcr.io/index-it/api:latest
     container_name: "index-api"
     depends_on:
       - index-redis
