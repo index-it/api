@@ -24,7 +24,7 @@ fun main() {
         exitProcess(404)
     }
 
-    embeddedServer(Netty, port = Env.port, host = "0.0.0.0") {
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         configureAdministration()
         configureRouting()
         configureSockets()
