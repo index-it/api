@@ -1,25 +1,28 @@
 package app.index_it.core.cache
 
 import app.index_it.models.lists.ItemDto
+import app.index_it.models.lists.ListDto
+import app.index_it.models.user.UserDto
+import org.litote.kmongo.Id
 
 object ItemCM: DoubleHashedCM("items") {
-    private fun keyValue(userId: String, listId: String) = "${userId}_${listId}"
+    private fun keyValue(userId: Id<UserDto>, listId: Id<ListDto>) = "${userId}_${listId}"
 
-    fun getAll(userId: String, listId: String): List<ItemDto> = ItemCM.getAllValues(keyValue(userId, listId))
+    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> = ItemCM.getAllValues(keyValue(userId, listId))
 
-    fun createAll(userId: String, listId: String, itemsDto: List<ItemDto>) {
-        ItemCM.cacheAllValues(keyValue(userId, listId), itemsDto.associateBy { it.id })
+    fun createAll(userId: Id<UserDto>, listId: Id<ListDto>, itemsDto: List<ItemDto>) {
+        ItemCM.cacheAllValues(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
     }
 
-    fun create(userId: String, listId: String, itemDto: ItemDto) {
-        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id, itemDto)
+    fun create(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
+        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
     }
 
-    fun update(userId: String, listId: String, itemDto: ItemDto) {
-        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id, itemDto)
+    fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
+        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
     }
 
-    fun delete(userId: String, listId: String, itemId: String) {
-        ItemCM.uncacheValue(keyValue(userId, listId), itemId)
+    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>) {
+        ItemCM.uncacheValue(keyValue(userId, listId), itemId.toString())
     }
 }

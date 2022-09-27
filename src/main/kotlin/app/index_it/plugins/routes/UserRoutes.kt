@@ -5,10 +5,9 @@ import app.index_it.daos.ItemDao
 import app.index_it.daos.ListDao
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
-import app.index_it.models.lists.ClientCategoryDto
-import app.index_it.models.lists.ClientItemDto
-import app.index_it.models.lists.ClientListDto
+import app.index_it.models.lists.*
 import app.index_it.models.user.ClientUserDto
+import app.index_it.models.user.UserDto
 import app.index_it.models.user.UserSessionDto
 import app.index_it.plugins.UserSessionId
 import io.ktor.http.*
@@ -19,13 +18,15 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.*
+import org.litote.kmongo.Id
+import org.litote.kmongo.toId
 
-fun PipelineContext<Unit, ApplicationCall>.userId(): String? = call.principal<UserSessionDto>()?.userId
+fun PipelineContext<Unit, ApplicationCall>.userId(): Id<UserDto>? = call.principal<UserSessionDto>()?.userId
 
 fun Route.user() {
     authenticate("auth-session") {
         get("/logout") {
-            UserSessionDao.delete(userId()!!)
+            UserSessionDao.delete(call.sessions.get<UserSessionId>()!!.session_id)
             call.sessions.clear<UserSessionId>()
             call.respond(HttpStatusCode.OK)
         }
@@ -84,7 +85,7 @@ fun Route.user() {
                 put {
                     val clientDto = call.receive<ClientListDto>()
 
-                    val listId = call.parameters["list_id"]!!
+                    val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
 
                     val list = ListDao.update(userId()!!, listId, clientDto)
                     call.respond(list ?: HttpStatusCode.NotFound)
@@ -94,7 +95,7 @@ fun Route.user() {
                  * Deletes a list of the user
                  */
                 delete {
-                    val listId = call.parameters["list_id"]!!
+                    val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
 
                     ListDao.delete(userId()!!, listId)
                     call.respond(HttpStatusCode.OK)
@@ -106,7 +107,7 @@ fun Route.user() {
                      */
                     put {
                         val clientDto = call.receive<ClientCategoryDto>()
-                        val listId = call.parameters["list_id"]!!
+                        val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
 
                         val listDto = ListDao.CategoryDao.create(userId()!!, listId, clientDto)
                         call.respond(listDto ?: HttpStatusCode.NotFound)
@@ -118,16 +119,16 @@ fun Route.user() {
                          */
                         put {
                             val clientDto = call.receive<ClientCategoryDto>()
-                            val listId = call.parameters["list:id"]!!
-                            val categoryId = call.parameters["category_id"]!!
+                            val listId: Id<ListDto> = call.parameters["list:id"]!!.toId()
+                            val categoryId: Id<CategoryDto> = call.parameters["category_id"]!!.toId()
 
                             val listDto = ListDao.CategoryDao.update(userId()!!, listId, categoryId, clientDto)
                             call.respond(listDto ?: HttpStatusCode.NotFound)
                         }
 
                         delete {
-                            val listId = call.parameters["list_id"]!!
-                            val categoryId = call.parameters["category_id"]!!
+                            val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
+                            val categoryId: Id<CategoryDto> = call.parameters["category_id"]!!.toId()
 
                             val listDto = ListDao.CategoryDao.delete(userId()!!, listId, categoryId)
                             call.respond(listDto ?: HttpStatusCode.NotFound)
@@ -137,7 +138,7 @@ fun Route.user() {
 
                 route("/items") {
                     get {
-                        val listId = call.parameters["list_id"]!!
+                        val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
 
                         val items = ItemDao.getAll(userId()!!, listId)
                         call.respond(items)
@@ -145,7 +146,7 @@ fun Route.user() {
 
                     put {
                         val clientDto = call.receive<ClientItemDto>()
-                        val listId = call.parameters["list_id"]!!
+                        val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
 
                         val itemDto = ItemDao.create(userId()!!, listId, clientDto)
                         call.respond(itemDto)
@@ -154,16 +155,16 @@ fun Route.user() {
                     route("/{item_id}") {
                         put {
                             val clientDto = call.receive<ClientItemDto>()
-                            val listId = call.parameters["list_id"]!!
-                            val itemId = call.parameters["item_id"]!!
+                            val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
+                            val itemId: Id<ItemDto> = call.parameters["item_id"]!!.toId()
 
                             val itemDto = ItemDao.update(userId()!!, listId, itemId, clientDto)
                             call.respond(itemDto ?: HttpStatusCode.NotFound)
                         }
 
                         delete {
-                            val listId = call.parameters["list_id"]!!
-                            val itemId = call.parameters["item_id"]!!
+                            val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
+                            val itemId: Id<ItemDto> = call.parameters["item_id"]!!.toId()
 
                             ItemDao.delete(userId()!!, listId, itemId)
                             call.respond(HttpStatusCode.OK)

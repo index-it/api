@@ -1,4 +1,5 @@
 val ktor_version: String by project
+val kmongo_version: String = "4.7.1"
 
 plugins {
     application
@@ -23,7 +24,8 @@ repositories {
 dependencies {
     implementation("redis.clients:jedis:4.2.3")
 
-    implementation("org.litote.kmongo:kmongo:4.7.1")
+    implementation("org.litote.kmongo:kmongo:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongo_version")
 
     implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
 

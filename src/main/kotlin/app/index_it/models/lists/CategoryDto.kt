@@ -4,8 +4,11 @@ import app.index_it.models.Validatable
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId
+import org.litote.kmongo.Id
+import org.litote.kmongo.id.toId
 
 /**
  * Groups items in a list, for example, a list of movies to watch can have categories for the genre.
@@ -13,7 +16,7 @@ import org.bson.types.ObjectId
  */
 @Serializable
 data class CategoryDto(
-    val id: String = ObjectId().toHexString(),
+    @Contextual val id: Id<CategoryDto> = ObjectId().toId(),
     var name: String,
     var color: String
 )

@@ -4,9 +4,12 @@ import app.index_it.core.cache.ItemCM
 import app.index_it.core.db.ItemDBM
 import app.index_it.models.lists.ClientItemDto
 import app.index_it.models.lists.ItemDto
+import app.index_it.models.lists.ListDto
+import app.index_it.models.user.UserDto
+import org.litote.kmongo.Id
 
 object ItemDao {
-    fun getAll(userId: String, listId: String): List<ItemDto> {
+    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> {
         var items = ItemCM.getAll(userId, listId)
 
         if (items.isEmpty()) {
@@ -18,7 +21,7 @@ object ItemDao {
         return items
     }
 
-    fun create(userId: String, listId: String, clientItemDto: ClientItemDto): ItemDto {
+    fun create(userId: Id<UserDto>, listId: Id<ListDto>, clientItemDto: ClientItemDto): ItemDto {
         val itemDto = ItemDto(
             user_id = userId,
             list_id = listId,
@@ -32,7 +35,7 @@ object ItemDao {
         return itemDto
     }
 
-    fun update(userId: String, listId: String, itemId: String, clientItemDto: ClientItemDto): ItemDto? {
+    fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, clientItemDto: ClientItemDto): ItemDto? {
         return ItemDBM.update(userId, listId, itemId, clientItemDto)?.let {
             ItemCM.update(userId, listId, it)
             it
@@ -42,7 +45,7 @@ object ItemDao {
         }
     }
 
-    fun delete(userId: String, listId: String, itemId: String) {
+    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>) {
         ItemDBM.delete(userId, listId, itemId)
         ItemCM.delete(userId, listId, itemId)
     }

@@ -4,9 +4,10 @@ import app.index_it.core.cache.UserCM
 import app.index_it.core.db.UserDBM
 import app.index_it.models.user.ClientUserDto
 import app.index_it.models.user.UserDto
+import org.litote.kmongo.Id
 
 object UserDao {
-    fun get(id: String) : UserDto? {
+    fun get(id: Id<UserDto>) : UserDto? {
         var user = UserCM.get(id)
 
         if (user == null) {
@@ -24,7 +25,7 @@ object UserDao {
         return UserDBM.getFromEmail(email)
     }
 
-    fun update(id: String, clientUserDto: ClientUserDto): UserDto? {
+    fun update(id: Id<UserDto>, clientUserDto: ClientUserDto): UserDto? {
         return UserDBM.update(id, clientUserDto)?.let {
             UserCM.create(it)
             it
@@ -34,7 +35,7 @@ object UserDao {
         }
     }
 
-    fun delete(id: String) {
+    fun delete(id: Id<UserDto>) {
         UserCM.delete(id)
         UserDBM.delete(id)
     }

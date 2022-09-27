@@ -14,7 +14,7 @@ object UserDBM {
         col.ensureUniqueIndex(UserDto::email)
     }
 
-    fun get(id: String): UserDto? {
+    fun get(id: Id<UserDto>): UserDto? {
         return col.findOne(UserDto::id eq id)
     }
 
@@ -22,7 +22,7 @@ object UserDBM {
         return col.findOne(UserDto::email eq email)
     }
 
-    fun update(id: String, clientUserDto: ClientUserDto): UserDto? {
+    fun update(id: Id<UserDto>, clientUserDto: ClientUserDto): UserDto? {
         return col.findOneAndUpdate(
             UserDto::id eq id,
             setValue(UserDto::name, clientUserDto.name),
@@ -30,7 +30,7 @@ object UserDBM {
         )
     }
 
-    fun delete(id: String) {
+    fun delete(id: Id<UserDto>) {
         col.deleteOne(UserDto::id eq id)
     }
 }

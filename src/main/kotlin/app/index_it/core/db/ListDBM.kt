@@ -5,6 +5,7 @@ import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ClientCategoryDto
 import app.index_it.models.lists.ClientListDto
 import app.index_it.models.lists.ListDto
+import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
 import org.litote.kmongo.*
@@ -17,14 +18,14 @@ object ListDBM {
     }
 
     object CategoryDBM {
-        fun create(userId: String, listId: String, categoryDto: CategoryDto): ListDto? {
+        fun create(userId: Id<UserDto>, listId: Id<ListDto>, categoryDto: CategoryDto): ListDto? {
             return col.findOneAndUpdate(
                 and(ListDto::id eq listId, ListDto::user_id eq userId),
                 push(ListDto::categories, categoryDto)
             )
         }
 
-        fun update(userId: String, listId: String, categoryId: String, clientCategoryDto: ClientCategoryDto): ListDto? {
+        fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, clientCategoryDto: ClientCategoryDto): ListDto? {
             return col.findOneAndUpdate(
                 and(ListDto::id eq listId, ListDto::user_id eq userId, (ListDto::categories / CategoryDto::id) eq categoryId),
                 set(
@@ -35,7 +36,7 @@ object ListDBM {
             )
         }
 
-        fun delete(userId: String, listId: String, categoryId: String): ListDto? {
+        fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
             return col.findOneAndUpdate(
                 and(ListDto::id eq listId, ListDto::user_id eq userId),
                 pullByFilter((ListDto::categories / CategoryDto::id) eq categoryId)
@@ -43,7 +44,7 @@ object ListDBM {
         }
     }
 
-    fun getAll(userId: String): List<ListDto> {
+    fun getAll(userId: Id<UserDto>): List<ListDto> {
         return col.find(ListDto::user_id eq userId).toList()
     }
 
@@ -51,7 +52,7 @@ object ListDBM {
         col.save(listDto)
     }
 
-    fun update(userId: String, listId: String, clientListDto: ClientListDto): ListDto? {
+    fun update(userId: Id<UserDto>, listId: Id<ListDto>, clientListDto: ClientListDto): ListDto? {
         return col.findOneAndUpdate(
             and(ListDto::id eq listId, ListDto::user_id eq userId),
             set(
@@ -63,7 +64,7 @@ object ListDBM {
         )
     }
 
-    fun delete(userId: String, listId: String) {
+    fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
         col.deleteOne(ListDto::user_id eq userId, ListDto::id eq listId)
     }
 }

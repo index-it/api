@@ -14,15 +14,18 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.date.*
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import org.litote.kmongo.Id
+import org.litote.kmongo.toId
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
-// TODO: Needs serializable?
+@Serializable
 data class ApiKeyPrincipal(val key: String) : Principal
 
 @Serializable
 data class UserSessionId(
-    val session_id: String
+    @Contextual val session_id: Id<UserSessionId>
 ) : Principal
 
 @Serializable
@@ -79,7 +82,7 @@ fun Application.configureSecurity() {
             if (user.password_hash !== encodedPassword)
                 throw AuthenticationException()
 
-            val userSessionId = UserSessionId(getTimeMillis().toString() +  generateSessionId())
+            val userSessionId = UserSessionId((getTimeMillis().toString() +  generateSessionId()).toId())
 
             val userSessionDto = UserSessionDto(userSessionId.session_id, getTimeMillis(), user.id)
             UserSessionDao.create(userSessionDto)
