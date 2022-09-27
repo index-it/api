@@ -6,6 +6,7 @@ import mu.KotlinLogging
 
 private val log = KotlinLogging.logger {  }
 
+// TODO: Use a config store in production
 object Env {
     private val dotenv: Dotenv? = try {
         dotenv()
@@ -16,6 +17,9 @@ object Env {
 
     var local_mode: Boolean = false
 
+    lateinit var full_access_api_key: String
+    lateinit var website_access_api_key: String
+
     lateinit var mongo_connection_string: String
     lateinit var mongo_db_name: String
     lateinit var redis_host: String
@@ -25,6 +29,8 @@ object Env {
      * @throws NoSuchElementException if a key isn't found in the .env file
      */
     fun loadEnv() {
+        full_access_api_key = getString("full.access.api.key")
+        website_access_api_key = getString("website.access.api.key")
         local_mode = getBoolean("local.mode")
         mongo_connection_string = getString("mongo.connection.string")
         mongo_db_name = getString("mongo.db.name")

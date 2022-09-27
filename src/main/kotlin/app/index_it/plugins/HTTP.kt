@@ -11,7 +11,7 @@ fun Application.configureHTTP() {
 
         if (Env.local_mode)
             anyHost()
-        else
+        else // TODO: Check with mobile app
             allowHost("index-it.app", schemes = listOf("https"))
     }
 }

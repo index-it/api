@@ -1,7 +1,6 @@
 package app.index_it
 
 import app.index_it.plugins.*
-import app.index_it.plugins.configureRouting
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import io.ktor.server.engine.*
@@ -11,7 +10,7 @@ import mu.KotlinLogging
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
-private val log = KotlinLogging.logger {  }
+private val log = KotlinLogging.logger { }
 
 fun main() {
     val loggerContext: LoggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
@@ -25,12 +24,12 @@ fun main() {
     }
 
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        configureAdministration()
-        configureRouting()
-        configureSockets()
-        configureSerialization()
-        configureMonitoring()
         configureHTTP()
         configureSecurity()
+        configureMonitoring()
+        configureSerialization()
+        configureValidator()
+        configureStatusPages()
+        configureRouting()
     }.start(wait = true)
 }
