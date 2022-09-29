@@ -28,12 +28,6 @@ data class UserSessionId(
     @Contextual val session_id: Id<UserSessionId>
 ) : Principal
 
-@Serializable
-private data class LoginData(
-    val email: String,
-    val password: String
-)
-
 fun Application.configureSecurity() {
 
     install(Sessions) {
@@ -69,26 +63,6 @@ fun Application.configureSecurity() {
             challenge {
                 call.respond(HttpStatusCode.Unauthorized)
             }
-        }
-    }
-
-    routing {
-        post("/login") {
-            val userLoginData = call.receive<LoginData>()
-            val user = UserDao.getFromEmail(userLoginData.email)
-                ?: throw AuthenticationException()
-
-            val encodedPassword = BCryptPasswordEncoder().encode(userLoginData.password)
-            if (user.password_hash !== encodedPassword)
-                throw AuthenticationException()
-
-            val userSessionId = UserSessionId((getTimeMillis().toString() +  generateSessionId()).toId())
-
-            val userSessionDto = UserSessionDto(userSessionId.session_id, getTimeMillis(), user.id)
-            UserSessionDao.create(userSessionDto)
-
-            call.sessions.set(userSessionId)
-            call.respond(HttpStatusCode.OK)
         }
     }
 }

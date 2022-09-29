@@ -39,14 +39,14 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
-    implementation("io.ktor:ktor-server-core-jvm:2.1.1")
-    implementation("io.ktor:ktor-server-sessions-jvm:2.1.1")
-    implementation("io.ktor:ktor-server-netty-jvm:2.1.1")
+    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
 
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-client-apache-jvm:2.1.1")
-    implementation("io.ktor:ktor-client-core-jvm:2.1.1")
-    implementation("io.ktor:ktor-client-cio-jvm:2.1.1")
+    implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
+    implementation("io.ktor:ktor-client-jetty:$ktor_version")
+    implementation("io.ktor:ktor-client-logging:$ktor_version")
 
     implementation("org.springframework.security:spring-security-crypto:5.7.3")
 
