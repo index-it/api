@@ -7,6 +7,13 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object UserDao {
+    fun exists(email: String): Boolean = UserDBM.exists(email)
+
+    fun create(userDto: UserDto) {
+        UserDBM.create(userDto)
+        UserCM.create(userDto)
+    }
+
     fun get(id: Id<UserDto>) : UserDto? {
         var user = UserCM.get(id)
 

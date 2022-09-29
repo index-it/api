@@ -15,8 +15,10 @@ import org.litote.kmongo.id.toId
 data class UserDto(
     @Contextual @SerialName("_id") val id: Id<UserDto> = ObjectId().toId(),
     val email: String,
-    val name: String,
-    val password_hash: String
+    val password_hash: String,
+    val email_verified: Boolean = false,
+    val creation_timestamp: Long,
+    val name: String? = null
 )
 
 @Serializable

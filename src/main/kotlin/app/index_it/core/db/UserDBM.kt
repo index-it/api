@@ -14,6 +14,14 @@ object UserDBM {
         col.ensureUniqueIndex(UserDto::email)
     }
 
+    fun exists(email: String): Boolean {
+        return col.find(UserDto::email eq email).limit(1).toList().isNotEmpty()
+    }
+
+    fun create(userDto: UserDto) {
+        col.save(userDto)
+    }
+
     fun get(id: Id<UserDto>): UserDto? {
         return col.findOne(UserDto::id eq id)
     }

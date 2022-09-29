@@ -8,6 +8,7 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 object ObjectMapper {
     val json = Json {
         serializersModule = IdKotlinXSerializationModule
+        prettyPrint = true
     }
 
     fun encode(data: Any): String {

@@ -30,6 +30,7 @@ fun main() {
         configureSerialization()
         configureValidator()
         configureStatusPages()
+        // TODO: Rate limits
         configureRouting()
     }.start(wait = true)
 }
