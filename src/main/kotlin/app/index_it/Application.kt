@@ -13,6 +13,7 @@ import kotlin.system.exitProcess
 private val log = KotlinLogging.logger { }
 
 fun main() {
+    // Disable warning logs from mongodb java driver (unnecessary)
     val loggerContext: LoggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
     loggerContext.getLogger("org.mongodb.driver").level = Level.WARN
 
