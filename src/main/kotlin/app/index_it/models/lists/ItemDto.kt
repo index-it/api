@@ -29,7 +29,7 @@ data class ClientItemDto(
     val category_id: String,
     val name: String
 ): Validatable<ClientItemDto> {
-    override fun validate() = Validation<ClientItemDto> {
+    override fun validate() = Validation {
         ClientItemDto::name {
             minLength(1)
             maxLength(30)
