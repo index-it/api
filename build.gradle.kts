@@ -12,9 +12,6 @@ group = "app.index_it"
 version = "0.0.1"
 application {
     mainClass.set("app.index_it.ApplicationKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 repositories {
