@@ -5,6 +5,6 @@ RUN gradle shadowJar --no-daemon
 
 FROM openjdk:18
 EXPOSE 8080:8080
-RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/index-api.jar
-ENTRYPOINT ["java","-jar","/app/index-api.jar"]
+WORKDIR /api
+COPY --from=build /home/gradle/src/build/libs/*.jar ./index-api.jar
+ENTRYPOINT ["java","-jar","./index-api.jar"]
