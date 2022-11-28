@@ -1,6 +1,5 @@
 package app.index_it.plugins.routes
 
-import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.daos.*
 import app.index_it.models.Validatable
@@ -100,7 +99,7 @@ fun Route.user() {
             expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
         )
         EmailVerificationDao.save(emailVerificationDto)
-        SendinblueClient.sendEmailVerificationEmail(user.email, emailVerificationDto.code)
+        // SendinblueClient.sendEmailVerificationEmail(user.email, emailVerificationDto.code)
 
         call.respond(HttpStatusCode.OK)
     }
@@ -124,11 +123,13 @@ fun Route.user() {
             expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
         )
         EmailVerificationDao.save(emailVerificationDto)
-        val sent = SendinblueClient.sendEmailVerificationEmail(email, emailVerificationDto.code)
-        if (sent)
-            call.respond(HttpStatusCode.OK)
-        else
-            call.respond(HttpStatusCode.InternalServerError)
+//        val sent = SendinblueClient.sendEmailVerificationEmail(email, emailVerificationDto.code)
+//        if (sent)
+//            call.respond(HttpStatusCode.OK)
+//        else
+//            call.respond(HttpStatusCode.InternalServerError)
+
+
     }
 
     get("/verify-email") {
