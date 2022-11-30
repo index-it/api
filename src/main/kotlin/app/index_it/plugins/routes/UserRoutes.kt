@@ -1,5 +1,6 @@
 package app.index_it.plugins.routes
 
+import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.daos.*
 import app.index_it.models.Validatable
@@ -8,6 +9,7 @@ import app.index_it.models.user.ClientUserDto
 import app.index_it.models.email.EmailVerificationDto
 import app.index_it.models.user.UserDto
 import app.index_it.models.user.UserSessionDto
+import app.index_it.models.user.WelcomeAction
 import app.index_it.plugins.UserSessionId
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
@@ -37,7 +39,7 @@ private open class LoginData(
     open val password: String
 ): Validatable<LoginData> {
     override fun validate(): ValidationResult<LoginData> =
-        Validation<LoginData> {
+        Validation {
             LoginData::email {
                 pattern("\\w+@\\w+\\.\\w+") hint "Please provide a valid email address"
             }
@@ -52,6 +54,137 @@ private open class LoginData(
 fun PipelineContext<Unit, ApplicationCall>.userId(): Id<UserDto>? = call.principal<UserSessionDto>()?.userId
 
 fun Route.user() {
+    /**
+     * The auth flow starts by determining the welcome action.
+     * Depending on the email, a user can either register if there is no account associated with that email
+     * or log in if there is.
+     * To log in the user must have a verified email address.
+     */
+    get ("/welcome-action") {
+        val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+        val userDto = UserDao.getFromEmail(email)
+
+        if (userDto == null)
+            call.respond(WelcomeAction.REGISTER)
+        else {
+            if (userDto.email_verified)
+                call.respond(WelcomeAction.LOGIN)
+            else
+                call.respond(WelcomeAction.VERIFY_EMAIL)
+        }
+    }
+
+
+    /**
+     * When a user registers, he needs to set an email and password,
+     * and he will be able to log in into his account only once he has verified the email
+     */
+    post("/register") {
+        val signupData = call.receive<LoginData>()
+        if (UserDao.exists(signupData.email)) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@post
+        }
+
+        val hashedPassword = BCryptPasswordEncoder().encode(signupData.password)
+        val user = UserDto(
+            email = signupData.email,
+            password_hash = hashedPassword,
+            creation_timestamp = getTimeMillis()
+        )
+
+        UserDao.create(user)
+
+        val emailVerificationDto = EmailVerificationDto(
+            user_email = user.email,
+            expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
+        )
+        EmailVerificationDao.save(emailVerificationDto)
+        SendinblueClient.sendEmailVerificationEmail(user.email, emailVerificationDto.code)
+
+        // User will need to verify its email
+        call.respond(HttpStatusCode.OK)
+    }
+
+    /**
+     * Sends an email to verify a user account
+     */
+    get("/send-verification-email") {
+        val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+        val user = UserDao.getFromEmail(email)
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+        if (user.email_verified)
+            call.respond(HttpStatusCode.OK)
+
+        // Maximum 3 every 60 minutes
+        if (EmailVerificationDao.isRateLimited(email))
+            return@get call.respond(HttpStatusCode.TooManyRequests)
+
+        val emailVerificationDto = EmailVerificationDto(
+            user_email = email,
+            expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
+        )
+
+        EmailVerificationDao.save(emailVerificationDto)
+
+        val sent = SendinblueClient.sendEmailVerificationEmail(email, emailVerificationDto.code)
+        if (sent)
+            call.respond(HttpStatusCode.OK)
+        else
+            call.respond(HttpStatusCode.InternalServerError)
+    }
+
+
+    /**
+     * Verifies an email with a code
+     */
+    get("/verify-email") {
+        val code = call.request.queryParameters["code"]
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+        val userDto = UserDao.getFromEmail(email)
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+        // Check if user is already verified
+        if (userDto.email_verified)
+            return@get call.respond(HttpStatusCode.OK)
+
+        val emailVerificationDto = EmailVerificationDao.get(code)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        if (code === emailVerificationDto.code) {
+            EmailVerificationDao.delete(code)
+            return@get call.respondRedirect("https://index-it.app/email-verified")
+        } else
+            return@get call.respond(HttpStatusCode.NotFound)
+    }
+
+    /**
+     * Checks whether a user email has been verified
+     */
+    get("/is-email-verified") {
+        val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+        val userDto = UserDao.getFromEmail(email)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        if (userDto.email_verified)
+            call.respond(HttpStatusCode.OK)
+        else
+            call.respond(HttpStatusCode.NotFound)
+    }
+
+    /**
+     * Logs in a user using email and password
+     */
     post("/login") {
         val loginData = call.receive<LoginData>()
         val user = UserDao.getFromEmail(loginData.email)
@@ -73,89 +206,6 @@ fun Route.user() {
         call.sessions.set(userSessionId)
         call.respond(HttpStatusCode.OK)
     }
-
-    /**
-     * When a user signs up, he needs to send an email and password,
-     * and he will be able to log in into his account only once he has verified the email
-     */
-    post("/signup") {
-        val signupData = call.receive<LoginData>()
-        if (UserDao.exists(signupData.email)) {
-            call.respond(HttpStatusCode.Forbidden)
-            return@post
-        }
-
-        val hashedPassword = BCryptPasswordEncoder().encode(signupData.password)
-        val user = UserDto(
-            email = signupData.email,
-            password_hash = hashedPassword,
-            creation_timestamp = getTimeMillis()
-        )
-
-        UserDao.create(user)
-
-        val emailVerificationDto = EmailVerificationDto(
-            user_email = user.email,
-            expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
-        )
-        EmailVerificationDao.save(emailVerificationDto)
-        // SendinblueClient.sendEmailVerificationEmail(user.email, emailVerificationDto.code)
-
-        call.respond(HttpStatusCode.OK)
-    }
-
-    get("/send-verification-email") {
-        val email = call.request.queryParameters["email"]
-            ?: return@get call.respond(HttpStatusCode.BadRequest)
-
-        val user = UserDao.getFromEmail(email)
-            ?: return@get call.respond(HttpStatusCode.BadRequest)
-
-        if (user.email_verified)
-            call.respond(HttpStatusCode.OK)
-
-        // Maximum 3 every 60 minutes
-        if (EmailVerificationDao.isRateLimited(email))
-            return@get call.respond(HttpStatusCode.TooManyRequests)
-
-        val emailVerificationDto = EmailVerificationDto(
-            user_email = email,
-            expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
-        )
-        EmailVerificationDao.save(emailVerificationDto)
-//        val sent = SendinblueClient.sendEmailVerificationEmail(email, emailVerificationDto.code)
-//        if (sent)
-//            call.respond(HttpStatusCode.OK)
-//        else
-//            call.respond(HttpStatusCode.InternalServerError)
-
-
-    }
-
-    get("/verify-email") {
-        val code = call.request.queryParameters["code"]
-            ?: return@get call.respond(HttpStatusCode.BadRequest)
-        val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
-            ?: return@get call.respond(HttpStatusCode.BadRequest)
-
-        val userDto = UserDao.getFromEmail(email)
-            ?: return@get call.respond(HttpStatusCode.BadRequest)
-
-        // Check if user is already verified
-        if (userDto.email_verified)
-            return@get call.respond(HttpStatusCode.OK)
-
-        val emailVerificationDto = EmailVerificationDao.get(code)
-            ?: return@get call.respond(HttpStatusCode.NotFound)
-
-        if (code === emailVerificationDto.code) {
-            EmailVerificationDao.delete(code)
-            return@get call.respond(HttpStatusCode.NotFound)
-        } else {
-            return@get call.respond(HttpStatusCode.NotFound)
-        }
-    }
-
     // TODO: Password reset
 
     authenticate("auth-session") {

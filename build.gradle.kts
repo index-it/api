@@ -41,9 +41,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:2.1.3")
 
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache-jvm:2.1.3")
-    implementation("io.ktor:ktor-client-core-jvm:2.1.3")
-    implementation("io.ktor:ktor-client-cio-jvm:2.1.3")
+    implementation("io.ktor:ktor-client-logging:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-jetty:$ktorVersion")
 
     implementation("org.springframework.security:spring-security-crypto:5.7.3")
 

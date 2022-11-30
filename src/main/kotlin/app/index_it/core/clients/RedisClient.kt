@@ -4,5 +4,5 @@ import app.index_it.Env
 import redis.clients.jedis.JedisPool
 
 object RedisClient {
-    val jedisPool = JedisPool(Env.redis_host, Env.redis_port)
+    val jedisPool = JedisPool(Env.redis_connection_string)
 }

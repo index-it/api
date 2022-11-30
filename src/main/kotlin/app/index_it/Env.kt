@@ -24,8 +24,7 @@ object Env {
 
     lateinit var mongo_connection_string: String
     lateinit var mongo_db_name: String
-    lateinit var redis_host: String
-    var redis_port: Int = 6739
+    lateinit var redis_connection_string: String
 
     /**
      * @throws NoSuchElementException if a key isn't found in the .env file
@@ -37,8 +36,7 @@ object Env {
         local_mode = getBoolean("local.mode")
         mongo_connection_string = getString("mongo.connection.string")
         mongo_db_name = getString("mongo.db.name")
-        redis_host = getString("redis.host")
-        redis_port = getInt("redis.port")
+        redis_connection_string = getString("redis.connection.string")
     }
 
     private fun getString(key: String) : String {
