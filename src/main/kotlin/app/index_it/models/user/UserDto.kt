@@ -14,8 +14,10 @@ import org.litote.kmongo.id.toId
 @Serializable
 data class UserDto(
     @Contextual @SerialName("_id") val id: Id<UserDto> = ObjectId().toId(),
+    val google_id: String? = null,
+    // TODO: appleId
     val email: String,
-    val password_hash: String,
+    val password_hash: String? = null, // Null when the account gets created with an oauth provider (google, apple...)
     val email_verified: Boolean = false,
     val creation_timestamp: Long,
     val name: String? = null
@@ -26,7 +28,7 @@ data class ClientUserDto(
     val name: String
 ): Validatable<ClientUserDto> {
     override fun validate() = Validation<ClientUserDto> {
-        Validation<ClientUserDto> {
+        Validation {
             ClientUserDto::name {
                 minLength(1)
                 maxLength(50)
