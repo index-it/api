@@ -1,24 +1,24 @@
 version: "3.8"
 services:
-  index:
+  index-test:
     image: ghcr.io/index-it/api-test:latest
     container_name: "index-api-test"
     depends_on:
-      - index-redis
+      - index-redis-test
     env_file:
       - .env
     ports:
       - "${PORT}:8080"
     networks:
-      - index-network
-  index-redis:
+      - index-network-test
+  index-redis-test:
     image: redis:latest
-    container_name: "index-redis"
+    container_name: "index-redis-test"
     restart: always
     command: redis-server
     networks:
-      - index-network
+      - index-network-test
 
 networks:
-  index-network:
-    name: index-network
+  index-network-test:
+    name: index-network-test

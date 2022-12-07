@@ -6,6 +6,7 @@ on:
     workflows: [ "Build and push test Docker image" ]
     types:
       - completed
+    branches: [ test ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,5 +38,5 @@ jobs:
           port: 22
           script: |
             cd /root/index/test-api
-            docker compose -f docker-compose-test.yml down --rmi all --remove-orphans
+            docker compose -f docker-compose-test.yml down --rmi all
             docker compose -f docker-compose-test.yml up -d
