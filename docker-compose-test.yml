@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  index:
+  index-test:
     image: ghcr.io/index-it/api-test:latest
     container_name: "index-api-test"
     depends_on:
