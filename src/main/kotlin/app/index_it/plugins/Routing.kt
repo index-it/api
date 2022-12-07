@@ -21,6 +21,10 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
+        get("/") {
+            call.respond("Hello ^^")
+        }
+
         user()
         admin()
     }
