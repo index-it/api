@@ -22,7 +22,7 @@ fun Application.configureRouting() {
         }
 
         get("/") {
-            call.respond("Hello ^^")
+            call.respond(HttpStatusCode.OK)
         }
 
         user()
