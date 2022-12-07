@@ -21,6 +21,7 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
+        // TODO: remove
         get("/") {
             call.respond(HttpStatusCode.OK)
         }
