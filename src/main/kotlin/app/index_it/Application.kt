@@ -24,6 +24,7 @@ fun main() {
         exitProcess(404)
     }
 
+    // dude
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         configureHTTP()
         configureSecurity()
