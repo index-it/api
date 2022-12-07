@@ -37,5 +37,5 @@ jobs:
           port: 22
           script: |
             cd /root/index/test-api
-            docker compose -f docker-compose-test.yml down --rmi local
+            docker compose -f docker-compose-test.yml down --rmi all --remove-orphans
             docker compose up -f docker-compose-test.yml -d
