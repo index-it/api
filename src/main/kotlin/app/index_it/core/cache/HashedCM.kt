@@ -15,7 +15,7 @@ abstract class HashedCM(
         }
     }
 
-    fun cacheValue(field: String, value: Any) {
+    inline fun <reified T> cacheValue(field: String, value: T) {
         RedisClient.jedisPool.resource.use {
             val json = ObjectMapper.encode(value)
             it.hset(keyName, field, json)

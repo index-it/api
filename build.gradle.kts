@@ -46,6 +46,8 @@ dependencies {
     implementation("io.ktor:ktor-client-jetty:$ktorVersion")
 
     implementation("org.springframework.security:spring-security-crypto:5.7.3")
+    // Needed for bcrypt to work
+    implementation("commons-logging:commons-logging:1.2")
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
     implementation("ch.qos.logback:logback-classic:1.4.5")

@@ -11,7 +11,7 @@ object ObjectMapper {
         prettyPrint = true
     }
 
-    fun encode(data: Any): String {
+    inline fun <reified T> encode(data: T): String {
         return json.encodeToString(data)
     }
 

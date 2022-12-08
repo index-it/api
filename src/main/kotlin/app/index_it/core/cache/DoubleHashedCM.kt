@@ -21,14 +21,14 @@ abstract class DoubleHashedCM(
         }
     }
 
-    fun cacheAllValues(keyValue: String, fieldValueMap: Map<String, Any>) {
+    inline fun <reified T> cacheAllValues(keyValue: String, fieldValueMap: Map<String, T>) {
         RedisClient.jedisPool.resource.use {
             val jsonMap = fieldValueMap.mapValues { mapItem -> ObjectMapper.encode(mapItem.value) }
             it.hset(keyName(keyValue), jsonMap)
         }
     }
 
-    fun cacheValue(keyValue: String, field: String, value: Any) {
+    inline fun <reified T> cacheValue(keyValue: String, field: String, value: T) {
         RedisClient.jedisPool.resource.use {
             val json = ObjectMapper.encode(value)
             it.hset(keyName(keyValue), field, json)
