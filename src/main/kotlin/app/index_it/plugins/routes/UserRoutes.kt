@@ -66,12 +66,12 @@ fun Route.user() {
         val userDto = UserDao.getFromEmail(email)
 
         if (userDto == null)
-            call.respond(WelcomeAction.REGISTER)
+            call.respondText(WelcomeAction.REGISTER.name, ContentType.Text.Plain, HttpStatusCode.OK)
         else {
             if (userDto.email_verified)
-                call.respond(WelcomeAction.LOGIN)
+                call.respondText(WelcomeAction.LOGIN.name, ContentType.Text.Plain, HttpStatusCode.OK)
             else
-                call.respond(WelcomeAction.VERIFY_EMAIL)
+                call.respondText(WelcomeAction.VERIFY_EMAIL.name, ContentType.Text.Plain, HttpStatusCode.OK)
         }
     }
 
