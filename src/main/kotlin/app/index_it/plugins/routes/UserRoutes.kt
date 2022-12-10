@@ -2,6 +2,7 @@ package app.index_it.plugins.routes
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.exceptions.AuthenticationException
+import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.*
 import app.index_it.models.Validatable
 import app.index_it.models.lists.*
@@ -28,7 +29,6 @@ import io.ktor.util.pipeline.*
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
 import org.litote.kmongo.toId
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.net.URLDecoder
 import java.util.*
 
@@ -87,7 +87,7 @@ fun Route.user() {
             return@post
         }
 
-        val hashedPassword = BCryptPasswordEncoder().encode(signupData.password)
+        val hashedPassword = PasswordEncoder.encode(signupData.password)
         val user = UserDto(
             email = signupData.email,
             password_hash = hashedPassword,
@@ -150,8 +150,6 @@ fun Route.user() {
         val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
-        println(code)
-
         val userDto = UserDao.getFromEmail(email)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
@@ -159,15 +157,12 @@ fun Route.user() {
         if (userDto.email_verified)
             return@get call.respondRedirect("https://index-it.app/email-verified")
 
-        println("here")
-
         val emailVerificationDto = EmailVerificationDao.get(code)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
-        println(emailVerificationDto)
-
         if (code == emailVerificationDto.code) {
             EmailVerificationDao.delete(code)
+            UserDao.emailVerified(userDto.id)
             return@get call.respondRedirect("https://index-it.app/email-verified")
         } else
             return@get call.respond(HttpStatusCode.NotFound) // TODO: Handle with proper link
@@ -197,8 +192,10 @@ fun Route.user() {
         val user = UserDao.getFromEmail(loginData.email)
             ?: throw AuthenticationException()
 
-        val hashedPassword = BCryptPasswordEncoder().encode(loginData.password)
-        if (user.password_hash !== hashedPassword)
+        if (user.password_hash == null)
+            throw AuthenticationException()
+
+        if (!PasswordEncoder.matches(loginData.password, user.password_hash))
             throw AuthenticationException()
 
         // User must be verified

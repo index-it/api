@@ -16,6 +16,7 @@ object Env {
     }
 
     var local_mode: Boolean = false
+    var cookie_secure: Boolean = true
 
     lateinit var full_access_api_key: String
     lateinit var website_access_api_key: String
@@ -34,6 +35,7 @@ object Env {
         website_access_api_key = getString("website.access.api.key")
         sendinblue_api_key = getString("sendinblue.api.key")
         local_mode = getBoolean("local.mode")
+        cookie_secure = getBoolean("cookie_secure")
         mongo_connection_string = getString("mongo.connection.string")
         mongo_db_name = getString("mongo.db.name")
         redis_connection_string = getString("redis.connection.string")

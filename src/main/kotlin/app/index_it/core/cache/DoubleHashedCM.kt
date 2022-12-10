@@ -1,6 +1,6 @@
 package app.index_it.core.cache
 
-import app.index_it.core.clients.ObjectMapper
+import app.index_it.core.logic.ObjectMapper
 import app.index_it.core.clients.RedisClient
 
 abstract class DoubleHashedCM(

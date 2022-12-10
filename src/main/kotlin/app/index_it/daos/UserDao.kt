@@ -33,9 +33,17 @@ object UserDao {
     }
 
     fun update(id: Id<UserDto>, clientUserDto: ClientUserDto): UserDto? {
-        return UserDBM.update(id, clientUserDto)?.let {
+        return UserDBM.update(id, clientUserDto)?.also {
             UserCM.create(it)
-            it
+        } ?: run {
+            UserCM.delete(id)
+            null
+        }
+    }
+
+    fun emailVerified(id: Id<UserDto>): UserDto? {
+        return UserDBM.emailVerified(id)?.also {
+            UserCM.create(it)
         } ?: run {
             UserCM.delete(id)
             null

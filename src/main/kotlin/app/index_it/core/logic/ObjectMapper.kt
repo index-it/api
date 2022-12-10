@@ -1,4 +1,4 @@
-package app.index_it.core.clients
+package app.index_it.core.logic
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
