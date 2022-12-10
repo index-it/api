@@ -1,5 +1,5 @@
 val ktorVersion: String = "2.1.3"
-val kmongoVersion: String = "4.7.2"
+val kmongoVersion: String = "4.8.0"
 
 plugins {
     application
@@ -43,7 +43,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-jetty:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
 
     implementation("org.springframework.security:spring-security-crypto:5.7.3")
     // Needed for bcrypt to work

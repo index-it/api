@@ -65,14 +65,14 @@ fun Route.user() {
 
         val userDto = UserDao.getFromEmail(email)
 
-        if (userDto == null)
-            call.respondText(WelcomeAction.REGISTER.name, ContentType.Text.Plain, HttpStatusCode.OK)
-        else {
-            if (userDto.email_verified)
-                call.respondText(WelcomeAction.LOGIN.name, ContentType.Text.Plain, HttpStatusCode.OK)
-            else
-                call.respondText(WelcomeAction.VERIFY_EMAIL.name, ContentType.Text.Plain, HttpStatusCode.OK)
-        }
+        val action = if (userDto == null)
+            WelcomeAction.REGISTER
+        else if (userDto.email_verified)
+            WelcomeAction.LOGIN
+        else
+            WelcomeAction.VERIFY_EMAIL
+
+        call.respondText(action.name, ContentType.Text.Plain, HttpStatusCode.OK)
     }
 
 
@@ -101,12 +101,14 @@ fun Route.user() {
             expire_at = Date(getTimeMillis() + 3600000) // After 60 minutes the verification code will expire
         )
         EmailVerificationDao.save(emailVerificationDto)
-        SendinblueClient.sendEmailVerificationEmail(user.email, emailVerificationDto.code)
+        val emailSent = SendinblueClient.sendEmailVerificationEmail(user.email, emailVerificationDto.code)
 
-        // User will need to verify its email
-        call.respond(HttpStatusCode.OK)
+        if (emailSent)
+            // User will need to verify its email
+            call.respond(HttpStatusCode.OK)
+        else
+            call.respond(HttpStatusCode.Created)
     }
-
     /**
      * Sends an email to verify a user account
      */
@@ -148,21 +150,27 @@ fun Route.user() {
         val email = call.request.queryParameters["email"]?.let { URLDecoder.decode(it, "utf-8") }
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
+        println(code)
+
         val userDto = UserDao.getFromEmail(email)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
         if (userDto.email_verified)
-            return@get call.respond(HttpStatusCode.OK)
+            return@get call.respondRedirect("https://index-it.app/email-verified")
+
+        println("here")
 
         val emailVerificationDto = EmailVerificationDao.get(code)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
-        if (code === emailVerificationDto.code) {
+        println(emailVerificationDto)
+
+        if (code == emailVerificationDto.code) {
             EmailVerificationDao.delete(code)
             return@get call.respondRedirect("https://index-it.app/email-verified")
         } else
-            return@get call.respond(HttpStatusCode.NotFound)
+            return@get call.respond(HttpStatusCode.NotFound) // TODO: Handle with proper link
     }
 
     /**

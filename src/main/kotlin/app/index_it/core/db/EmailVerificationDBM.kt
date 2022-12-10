@@ -7,7 +7,7 @@ import org.litote.kmongo.*
 import java.util.concurrent.TimeUnit
 
 object EmailVerificationDBM {
-    private val col = MongoClient.database.getCollection<EmailVerificationDto>("notify")
+    private val col = MongoClient.database.getCollection<EmailVerificationDto>("email-verification")
 
     init {
         col.ensureUniqueIndex(EmailVerificationDto::code)

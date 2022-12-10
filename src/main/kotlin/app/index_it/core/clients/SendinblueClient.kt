@@ -6,7 +6,7 @@ import app.index_it.models.email.Params
 import app.index_it.models.email.SendinblueEmailVerificationRequestBody
 import app.index_it.models.email.To
 import io.ktor.client.*
-import io.ktor.client.engine.jetty.*
+import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -19,7 +19,7 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import java.net.URLEncoder
 
 object SendinblueClient {
-    private val client = HttpClient(Jetty) {
+    private val client = HttpClient(Apache) {
         install(Logging)
         install(ContentNegotiation) {
             json(Json {
