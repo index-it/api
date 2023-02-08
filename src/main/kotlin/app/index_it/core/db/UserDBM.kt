@@ -38,6 +38,14 @@ object UserDBM {
         )
     }
 
+    fun verifyEmail(id: Id<UserDto>): UserDto? {
+        return col.findOneAndUpdate(
+            UserDto::id eq id,
+            setValue(UserDto::email_verified, true),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        )
+    }
+
     fun delete(id: Id<UserDto>) {
         col.deleteOne(UserDto::id eq id)
     }

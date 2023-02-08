@@ -159,6 +159,7 @@ fun Route.user() {
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         if (code === emailVerificationDto.code) {
+            UserDao.verifyEmail(userDto.id)
             EmailVerificationDao.delete(code)
             return@get call.respondRedirect("https://index-it.app/email-verified")
         } else
