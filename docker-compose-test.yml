@@ -16,6 +16,8 @@ services:
     container_name: "index-redis-test"
     restart: always
     command: redis-server
+    volumes:
+      - redis:/data
     networks:
       - index-network-test
 
