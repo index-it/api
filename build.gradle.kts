@@ -5,7 +5,7 @@ plugins {
     application
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.serialization") version "1.7.21"
-    id("io.ktor.plugin") version "2.2.3"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "app.index_it"
@@ -54,22 +54,8 @@ dependencies {
     implementation("io.ktor:ktor-server-forwarded-header-jvm:2.1.3")
 }
 
-ktor {
-    fatJar {
+tasks {
+    shadowJar {
         archiveFileName.set("index-api.jar")
-    }
-
-    docker {
-        jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
-        localImageName.set("index-api")
-
-        externalRegistry.set(
-            io.ktor.plugin.features.DockerImageRegistry.googleContainerRegistry(
-                projectName = providers.environmentVariable("GCR_PROJECT_NAME"),
-                appName = providers.environmentVariable("GCR_APP_NAME"),
-                username = providers.environmentVariable("GCR_USERNAME"),
-                password = providers.environmentVariable("GCR_PASSWORD")
-            )
-        )
     }
 }

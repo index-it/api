@@ -3,10 +3,42 @@
 version: 2.1
 
 orbs:
-  gradle: circleci/gradle@3.0.0
+  gcp-gcr: circleci/gcp-gcr@0.15.1
+
+jobs:
+  build-and-push:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: index-api
+          registry-url: eu.gcr.io
+      - gcp-gcr/push-image:
+          image: index-api
+          registry-url: eu.gcr.io
+  build-and-push-test:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: index-api-test
+          registry-url: eu.gcr.io
+      - gcp-gcr/push-image:
+          image: index-api-test
+          registry-url: eu.gcr.io
 
 workflows:
-  publish-docker-image:
+  commit:
     jobs:
-      - gradle/run:
-          command: publishImage
+      - build-and-push:
+        filters:
+          branches:
+            only:
+              - main
+      - build-and-push-test:
+        filters:
+          branches:
+            only:
+              - test
