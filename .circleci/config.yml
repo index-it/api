@@ -9,9 +9,4 @@ workflows:
   publish-docker-image:
     jobs:
       - gradle/run:
-          environment:
-            GCR_APP_NAME: $GCR_APP_NAME
-            GCR_PASSWORD: $GCR_PASSWORD
-            GCR_PROJECT_NAME: $GCR_PROJECT_NAME
-            GCR_USERNAME: $GCR_USERNAME
           command: publishImage
