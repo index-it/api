@@ -19,6 +19,8 @@ jobs:
           image: index-api-<< pipeline.git.branch >>
           registry-url: eu.gcr.io
   cloud-run:
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - checkout
       - gcp-cloud-run/init
