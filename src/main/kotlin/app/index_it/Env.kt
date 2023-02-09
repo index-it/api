@@ -15,11 +15,10 @@ object Env {
         null
     }
 
-    var local_mode: Boolean = false
-    var cookie_secure: Boolean = true
+    lateinit var cors_host: String
+    var secure_cookies: Boolean = true
 
     lateinit var full_access_api_key: String
-    lateinit var website_access_api_key: String
 
     lateinit var sendinblue_api_key: String
 
@@ -27,21 +26,18 @@ object Env {
     lateinit var mongo_db_name: String
     lateinit var redis_connection_string: String
 
-    /**
-     * @throws NoSuchElementException if a key isn't found in the .env file
-     */
+
     fun loadEnv() {
-        full_access_api_key = getString("full.access.api.key")
-        website_access_api_key = getString("website.access.api.key")
-        sendinblue_api_key = getString("sendinblue.api.key")
-        local_mode = getBoolean("local.mode")
-        cookie_secure = getBoolean("cookie_secure")
-        mongo_connection_string = getString("mongo.connection.string")
-        mongo_db_name = getString("mongo.db.name")
-        redis_connection_string = getString("redis.connection.string")
+        cors_host = getStringFromEnv("cors.host")
+        secure_cookies = getBooleanFromEnv("cookie_secure")
+        full_access_api_key = getStringFromEnv("full.access.api.key")
+        sendinblue_api_key = getStringFromEnv("sendinblue.api.key")
+        mongo_connection_string = getStringFromEnv("mongo.connection.string")
+        mongo_db_name = getStringFromEnv("mongo.db.name")
+        redis_connection_string = getStringFromEnv("redis.connection.string")
     }
 
-    private fun getString(key: String) : String {
+    private fun getStringFromEnv(key: String) : String {
         val formattedKey = key.uppercase().replace(".", "_")
         return dotenv?.get(formattedKey)
             ?: System.getenv(formattedKey)
@@ -49,11 +45,11 @@ object Env {
     }
 
 
-    private fun getInt(key: String) : Int = try {
-        getString(key).toInt()
+    private fun getIntFromEnv(key: String) : Int = try {
+        getStringFromEnv(key).toInt()
     } catch (e: NumberFormatException) {
         throw NoSuchElementException("Couldn't find any $key INTEGER key in .env file")
     }
 
-    private fun getBoolean(key: String) = getString(key).toBoolean()
+    private fun getBooleanFromEnv(key: String) = getStringFromEnv(key).toBoolean()
 }

@@ -6,7 +6,6 @@ import app.index_it.plugins.custom.apiKey
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.date.*
@@ -28,7 +27,7 @@ fun Application.configureSecurity() {
         cookie<UserSessionId>("user_session_id") {
             cookie.path = "/"
             cookie.maxAgeInSeconds = 604800 // 7 days
-            cookie.secure = Env.cookie_secure
+            cookie.secure = Env.secure_cookies
             cookie.httpOnly = true
         }
     }

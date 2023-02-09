@@ -4,15 +4,14 @@ import app.index_it.Env
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.forwardedheaders.*
 
 fun Application.configureHTTP() {
     install(CORS) {
         allowMethod(HttpMethod.Get)
 
-        if (Env.local_mode)
+        if (Env.cors_host == "any")
             anyHost()
         else // TODO: Check with mobile app
-            allowHost("index-it.app", schemes = listOf("https"))
+            allowHost(Env.cors_host, schemes = listOf("https"))
     }
 }
