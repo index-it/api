@@ -2,7 +2,6 @@ package app.index_it.daos
 
 import app.index_it.core.db.EmailVerificationDBM
 import app.index_it.models.email.EmailVerificationDto
-import io.ktor.util.date.*
 
 object EmailVerificationDao {
     fun get(code: String): EmailVerificationDto? = EmailVerificationDBM.get(code)

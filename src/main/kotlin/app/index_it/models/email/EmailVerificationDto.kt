@@ -1,7 +1,6 @@
 package app.index_it.models.email
 
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 data class EmailVerificationDto(
     val code: String = UUID.randomUUID().toString(),

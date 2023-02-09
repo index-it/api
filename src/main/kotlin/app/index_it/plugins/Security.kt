@@ -8,10 +8,13 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
+import io.ktor.server.sessions.serialization.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.litote.kmongo.Id
+import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 @Serializable
 data class ApiKeyPrincipal(val key: String) : Principal
@@ -29,6 +32,11 @@ fun Application.configureSecurity() {
             cookie.maxAgeInSeconds = 604800 // 7 days
             cookie.secure = Env.use_secure_cookies
             cookie.httpOnly = true
+
+            serializer = KotlinxSessionSerializer(Json {
+                prettyPrint = true
+                serializersModule = IdKotlinXSerializationModule
+            })
         }
     }
 

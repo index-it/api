@@ -1,4 +1,4 @@
-val ktorVersion: String = "2.1.3"
+val ktorVersion: String = "2.2.3"
 val kmongoVersion: String = "4.8.0"
 
 plugins {

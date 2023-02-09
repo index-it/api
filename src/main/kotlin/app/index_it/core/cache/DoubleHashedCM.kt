@@ -1,7 +1,7 @@
 package app.index_it.core.cache
 
-import app.index_it.core.logic.ObjectMapper
 import app.index_it.core.clients.RedisClient
+import app.index_it.core.logic.ObjectMapper
 
 abstract class DoubleHashedCM(
     val keyBase: String
