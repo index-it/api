@@ -155,7 +155,7 @@ fun Route.user() {
 
         // Check if user is already verified
         if (userDto.email_verified)
-            return@get call.respondRedirect("https://index-it.app/email-verified")
+            return@get call.respondRedirect("https://index-it.app/email-verified") // TODO: Implement in frontend
 
         val emailVerificationDto = EmailVerificationDao.get(code)
             ?: return@get call.respond(HttpStatusCode.NotFound)
