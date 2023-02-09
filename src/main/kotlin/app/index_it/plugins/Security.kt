@@ -1,24 +1,18 @@
 package app.index_it.plugins
 
 import app.index_it.Env
-import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
-import app.index_it.models.user.UserSessionDto
 import app.index_it.plugins.custom.apiKey
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.request.*
+import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
-import org.litote.kmongo.toId
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Serializable
 data class ApiKeyPrincipal(val key: String) : Principal

@@ -21,6 +21,9 @@ services:
     networks:
       - index-network
 
+volumes:
+  redis:
+
 networks:
   index-network:
     name: index-network

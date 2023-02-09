@@ -21,6 +21,9 @@ services:
     networks:
       - index-network-test
 
+volumes:
+  redis:
+
 networks:
   index-network-test:
     name: index-network-test

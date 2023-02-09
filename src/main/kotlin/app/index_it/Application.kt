@@ -1,5 +1,6 @@
 package app.index_it
 
+import io.ktor.server.application.Application
 import app.index_it.plugins.*
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
@@ -25,14 +26,16 @@ fun main() {
     }
 
     // dude
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        configureHTTP()
-        configureSecurity()
-        configureMonitoring()
-        configureSerialization()
-        configureValidator()
-        configureStatusPages()
-        // TODO: Rate limits
-        configureRouting()
-    }.start(wait = true)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::indexApplicationModule).start(wait = true)
+}
+
+fun Application.indexApplicationModule() {
+    configureHTTP()
+    configureSecurity()
+    configureMonitoring()
+    configureSerialization()
+    configureValidator()
+    configureStatusPages()
+    // TODO: Rate limits
+    configureRouting()
 }

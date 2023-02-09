@@ -30,6 +30,7 @@ dependencies {
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
+    implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
@@ -51,6 +52,7 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
     implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("io.ktor:ktor-server-forwarded-header-jvm:2.1.3")
 }
 
 tasks {
