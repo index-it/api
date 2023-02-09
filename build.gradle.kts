@@ -68,7 +68,7 @@ ktor {
                 projectName = providers.environmentVariable("GCR_PROJECT_NAME"),
                 appName = providers.environmentVariable("GCR_APP_NAME"),
                 username = providers.environmentVariable("GCR_USERNAME"),
-                password = providers.environmentVariable("GCR_USERNAME")
+                password = providers.environmentVariable("GCR_PASSWORD")
             )
         )
     }
