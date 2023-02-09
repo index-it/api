@@ -19,7 +19,6 @@ jobs:
           image: index-api-<< pipeline.git.branch >>
           registry-url: eu.gcr.io
   cloud-run:
-    executor: gcp-cli/default
     steps:
       - checkout
       - gcp-cloud-run/init
