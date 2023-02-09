@@ -15,7 +15,4 @@ fun Application.configureHTTP() {
         else // TODO: Check with mobile app
             allowHost("index-it.app", schemes = listOf("https"))
     }
-
-    install(ForwardedHeaders) // WARNING: for security, do not include this if not behind a reverse proxy
-    install(XForwardedHeaders) // WARNING: for security, do not include this if not behind a reverse proxy
 }
