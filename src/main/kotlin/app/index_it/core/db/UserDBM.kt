@@ -38,7 +38,7 @@ object UserDBM {
         )
     }
 
-    fun emailVerified(id: Id<UserDto>): UserDto? {
+    fun verifyEmail(id: Id<UserDto>): UserDto? {
         return col.findOneAndUpdate(
             UserDto::id eq id,
             setValue(UserDto::email_verified, true),
