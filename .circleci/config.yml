@@ -3,29 +3,19 @@
 version: 2.1
 
 orbs:
-  gcp-gcr: circleci/gcp-gcr@0.15.1
   gcp-cloud-run: circleci/gcp-cloud-run@1.0.2
 
 jobs:
-  build-and-push-image:
-    executor: gcp-gcr/default
-    steps:
-      - checkout
-      - gcp-gcr/gcr-auth
-      - gcp-gcr/build-image:
-          image: index-api-<< pipeline.git.branch >>
-          registry-url: eu.gcr.io
-      - gcp-gcr/push-image:
-          image: index-api-<< pipeline.git.branch >>
-          registry-url: eu.gcr.io
-  cloud-run:
+  build-and-push-image-and-run:
     docker:
       - image: 'cimg/base:stable'
     steps:
       - checkout
       - gcp-cloud-run/init
+      - gcp-cloud-run/build:
+          tag: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
       - gcp-cloud-run/deploy:
-          image: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>:latest'
+          image: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
           platform: managed
           region: europe-west1
           service-name: index-api-<< pipeline.git.branch >>
@@ -34,17 +24,9 @@ jobs:
 workflows:
   commit:
     jobs:
-      - build-and-push-image:
+      - build-and-push-image-and-run:
         filters:
           branches:
             only:
               - main
               - test
-      - cloud-run:
-          requires:
-            - build-and-push-image
-          filters:
-            branches:
-              only:
-                - main
-                - test
