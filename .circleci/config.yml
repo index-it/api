@@ -12,23 +12,11 @@ jobs:
       - checkout
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
-          image: index-api
+          image: index-api-<< pipeline.git.branch >>
           registry-url: eu.gcr.io
       - gcp-gcr/push-image:
-          image: index-api
+          image: index-api-<< pipeline.git.branch >>
           registry-url: eu.gcr.io
-  build-and-push-test:
-    executor: gcp-gcr/default
-    steps:
-      - checkout
-      - gcp-gcr/gcr-auth
-      - gcp-gcr/build-image:
-          image: index-api-test
-          registry-url: eu.gcr.io
-      - gcp-gcr/push-image:
-          image: index-api-test
-          registry-url: eu.gcr.io
-
 workflows:
   commit:
     jobs:
@@ -37,8 +25,4 @@ workflows:
           branches:
             only:
               - main
-      - build-and-push-test:
-        filters:
-          branches:
-            only:
               - test
