@@ -15,6 +15,7 @@ object Env {
         null
     }
 
+    var port: Int = 8080
     lateinit var cors_host: String
     var secure_cookies: Boolean = true
 
@@ -28,6 +29,7 @@ object Env {
 
 
     fun loadEnv() {
+        port = getIntFromEnv("port")
         cors_host = getStringFromEnv("cors.host")
         secure_cookies = getBooleanFromEnv("cookie_secure")
         full_access_api_key = getStringFromEnv("full.access.api.key")

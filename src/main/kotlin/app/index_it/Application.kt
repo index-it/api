@@ -25,8 +25,7 @@ fun main() {
         exitProcess(404)
     }
 
-    // dude
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::indexApplicationModule).start(wait = true)
+    embeddedServer(Netty, port = Env.port, host = "0.0.0.0", module = Application::indexApplicationModule).start(wait = true)
 }
 
 fun Application.indexApplicationModule() {
