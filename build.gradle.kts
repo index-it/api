@@ -5,7 +5,7 @@ plugins {
     application
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.serialization") version "1.7.21"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.ktor.plugin") version "2.2.3"
 }
 
 group = "app.index_it"
@@ -54,8 +54,8 @@ dependencies {
     implementation("io.ktor:ktor-server-forwarded-header-jvm:2.1.3")
 }
 
-tasks {
-    shadowJar {
+ktor {
+    fatJar {
         archiveFileName.set("index-api.jar")
     }
 }
