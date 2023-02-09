@@ -27,7 +27,7 @@ fun Application.configureSecurity() {
         cookie<UserSessionId>("user_session_id") {
             cookie.path = "/"
             cookie.maxAgeInSeconds = 604800 // 7 days
-            cookie.secure = Env.secure_cookies
+            cookie.secure = Env.use_secure_cookies
             cookie.httpOnly = true
         }
     }
