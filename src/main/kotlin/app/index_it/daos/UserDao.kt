@@ -41,15 +41,6 @@ object UserDao {
         }
     }
 
-    fun emailVerified(id: Id<UserDto>): UserDto? {
-        return UserDBM.emailVerified(id)?.also {
-            UserCM.create(it)
-        } ?: run {
-            UserCM.delete(id)
-            null
-        }
-    }
-
     fun verifyEmail(id: Id<UserDto>): UserDto? {
         return UserDBM.verifyEmail(id)?.let {
             UserCM.create(it)
