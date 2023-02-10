@@ -202,7 +202,7 @@ fun Route.user() {
         if (!user.email_verified)
             return@post call.respond(HttpStatusCode.MethodNotAllowed)
 
-        val userSessionId = UserSessionId((getTimeMillis().toString() +  generateSessionId()).toId())
+        val userSessionId = UserSessionId(getTimeMillis().toString() +  generateSessionId())
 
         val userSessionDto = UserSessionDto(userSessionId.session_id, getTimeMillis(), user.id)
         UserSessionDao.create(userSessionDto)

@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation("redis.clients:jedis:4.3.1")
 
-    implementation("org.litote.kmongo:kmongo:$kmongoVersion")
+    implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
     implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")

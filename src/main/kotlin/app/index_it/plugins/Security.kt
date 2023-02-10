@@ -21,7 +21,7 @@ data class ApiKeyPrincipal(val key: String) : Principal
 
 @Serializable
 data class UserSessionId(
-    @Contextual val session_id: Id<UserSessionId>
+    @Contextual val session_id: String
 ) : Principal
 
 fun Application.configureSecurity() {
