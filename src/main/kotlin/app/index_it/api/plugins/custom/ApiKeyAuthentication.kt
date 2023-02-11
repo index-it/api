@@ -1,4 +1,4 @@
-package app.index_it.plugins.custom
+package app.index_it.api.plugins.custom
 
 import io.ktor.http.*
 import io.ktor.server.application.*

@@ -8,12 +8,10 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import org.litote.kmongo.serialization.registerModule
 
 object MongoClient {
-    private val client: MongoClient
-    val database: MongoDatabase
+    private val client: MongoClient = KMongo.createClient(Env.mongo_connection_string)
+    val database: MongoDatabase = client.getDatabase(Env.mongo_db_name)
 
-    init {
-        registerModule(IdKotlinXSerializationModule)
-        client = KMongo.createClient(Env.mongo_connection_string)
-        database = client.getDatabase(Env.mongo_db_name)
+    fun close() {
+        client.close()
     }
 }

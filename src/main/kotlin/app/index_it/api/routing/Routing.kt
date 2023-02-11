@@ -1,8 +1,8 @@
-package app.index_it.plugins
+package app.index_it.api.routing
 
+import app.index_it.api.routing.routes.admin
+import app.index_it.api.routing.routes.user
 import app.index_it.core.db.NotifyDBM
-import app.index_it.plugins.routes.admin
-import app.index_it.plugins.routes.user
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*

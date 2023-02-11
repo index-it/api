@@ -1,10 +1,9 @@
-package app.index_it.plugins
+package app.index_it.api.plugins
 
 import app.index_it.Env
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.forwardedheaders.*
 
 fun Application.configureHTTP() {

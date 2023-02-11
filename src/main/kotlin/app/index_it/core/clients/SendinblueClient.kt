@@ -60,4 +60,8 @@ object SendinblueClient {
 
         return response.status.isSuccess()
     }
+
+    fun close() {
+        client.close()
+    }
 }

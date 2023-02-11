@@ -1,4 +1,4 @@
-package app.index_it.plugins.routes
+package app.index_it.api.routing.routes
 
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*

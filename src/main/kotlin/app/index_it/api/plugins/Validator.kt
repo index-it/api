@@ -1,4 +1,4 @@
-package app.index_it.plugins
+package app.index_it.api.plugins
 
 import app.index_it.models.Validatable
 import app.index_it.models.lists.ClientCategoryDto

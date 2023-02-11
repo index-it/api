@@ -66,9 +66,6 @@ object ListDBM {
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
-        println("UserID $userId")
-        println("ListID $listId")
-        val count = col.deleteOne(ListDto::id eq listId).deletedCount
-        println("Deleted:$count")
+        col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::user_id eq userId))
     }
 }

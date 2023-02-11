@@ -1,4 +1,4 @@
-package app.index_it.plugins
+package app.index_it.api.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*

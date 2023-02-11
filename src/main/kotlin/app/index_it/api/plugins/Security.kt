@@ -1,8 +1,8 @@
-package app.index_it.plugins
+package app.index_it.api.plugins
 
 import app.index_it.Env
+import app.index_it.api.plugins.custom.apiKey
 import app.index_it.daos.UserSessionDao
-import app.index_it.plugins.custom.apiKey
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -13,7 +13,6 @@ import io.ktor.util.date.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.litote.kmongo.Id
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 @Serializable
