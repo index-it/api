@@ -8,6 +8,7 @@ import io.konform.validation.jsonschema.minLength
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
@@ -31,7 +32,7 @@ data class ClientListDto(
     var icon: String,
     var color: String
 ): Validatable<ClientListDto> {
-    override fun validate() = Validation<ClientListDto> {
+    override fun validate() = Validation {
         ClientListDto::name {
             minLength(1)
             maxLength(50)

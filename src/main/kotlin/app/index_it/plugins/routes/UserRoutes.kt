@@ -297,6 +297,7 @@ fun Route.user() {
                     val listId: Id<ListDto> = call.parameters["list_id"]!!.toId()
 
                     val list = ListDao.update(userId()!!, listId, clientDto)
+
                     call.respond(list ?: HttpStatusCode.NotFound)
                 }
 
