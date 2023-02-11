@@ -25,8 +25,8 @@ workflows:
   commit:
     jobs:
       - build-and-push-image-and-run:
-        filters:
-          branches:
-            only:
-              - main
-              - test
+          filters:
+            branches:
+              only:
+                - main
+                - test
