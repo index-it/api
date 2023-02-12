@@ -7,6 +7,8 @@ import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.clients.MongoClient
 import app.index_it.core.clients.RedisClient
 import app.index_it.core.clients.SendinblueClient
+import app.index_it.core.clients.oauth.AppleOAuthClient
+import app.index_it.core.clients.oauth.FacebookOAuthClient
 import ch.qos.logback.classic.Level
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -43,6 +45,8 @@ fun main() {
         Thread {
             SendinblueClient.close()
             GoogleOAuthClient.close()
+            AppleOAuthClient.close()
+            FacebookOAuthClient.close()
             RedisClient.close()
             MongoClient.close()
         }

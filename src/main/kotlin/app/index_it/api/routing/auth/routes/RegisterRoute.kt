@@ -5,7 +5,6 @@ import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.EmailVerificationDao
 import app.index_it.daos.UserDao
 import app.index_it.models.auth.RegistrationCredentials
-import app.index_it.models.user.CreationSource
 import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -32,7 +31,7 @@ fun Route.registerRoute() {
             email = signupData.email,
             password_hash = hashedPassword,
             creation_timestamp = getTimeMillis(),
-            creation_source = CreationSource.NONE
+            creation_source = UserDto.CreationSource.NONE
         )
 
         UserDao.create(user)

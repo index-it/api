@@ -2,12 +2,9 @@ package app.index_it.api.plugins
 
 import app.index_it.Env
 import app.index_it.api.plugins.custom.apiKey
-import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
-import app.index_it.models.auth.UserSessionDto
-import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -18,7 +15,6 @@ import io.ktor.server.sessions.serialization.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.litote.kmongo.Id
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 @Serializable

@@ -38,6 +38,10 @@ object Env {
     lateinit var apple_client_secret: String
     lateinit var apple_redirect_uri: String
 
+    lateinit var facebook_client_id: String
+    lateinit var facebook_client_secret: String
+    lateinit var facebook_redirect_uri: String
+
 
     fun loadEnv() {
         log_level = try {
@@ -64,6 +68,10 @@ object Env {
         apple_client_id = getStringFromEnv("apple.client.id")
         apple_client_secret = getStringFromEnv("apple.client.secret")
         apple_redirect_uri = getStringFromEnv("apple.redirect.uri")
+
+        facebook_client_id = getStringFromEnv("facebook.client.id")
+        facebook_client_secret = getStringFromEnv("facebook.client.secret")
+        facebook_redirect_uri = getStringFromEnv("facebook.redirect.uri")
     }
 
     private fun getStringFromEnv(key: String) : String {

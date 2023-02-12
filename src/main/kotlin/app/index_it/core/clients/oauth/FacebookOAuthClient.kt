@@ -1,8 +1,8 @@
 package app.index_it.core.clients.oauth
 
 import app.index_it.Env
-import app.index_it.models.oauth.apple.AppleIdTokenDto
-import app.index_it.models.oauth.apple.AppleOAuthTokenResponseDto
+import app.index_it.models.oauth.facebook.FacebookOAuthTokenResponseDto
+import app.index_it.models.oauth.facebook.FacebookUserInfoDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
@@ -10,7 +10,6 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -34,27 +33,46 @@ object FacebookOAuthClient {
         }
     }
 
-    suspend fun exchangeCodeAndGetUserInfo(code: String): AppleIdTokenDto? {
+    suspend fun exchangeCodeForToken(code: String): String? {
         return try {
-            val response = client.submitForm(
-                url = "https://appleid.apple.com/auth/token",
-                formParameters = Parameters.build {
-                    append("client_id", Env.apple_client_id)
-                    append("client_secret", Env.apple_client_secret)
-                    append("redirect_uri", Env.apple_redirect_uri)
-                    append("grant_type", "authorization_code")
-                    append("code", code)
+            val response = client.get("https://graph.facebook.com/v16.0/oauth/access_token") {
+                url {
+                    parameters.append("client_id", Env.facebook_client_id)
+                    parameters.append("client_secret", Env.facebook_client_secret)
+                    parameters.append("redirect_uri", Env.facebook_redirect_uri)
+                    parameters.append("code", code)
                 }
-            )
+            }
 
             if (response.status.isSuccess()) {
-                response.body<AppleOAuthTokenResponseDto>().idToken
+                response.body<FacebookOAuthTokenResponseDto>().accessToken
             } else {
-                log.error("Failed exchanging apple oauth code for token\nResponse: $response")
+                log.error("Failed exchanging facebook oauth code for token\nResponse: $response")
                 null
             }
         } catch (e: Exception) {
-            log.error("Failed exchanging apple oauth code for token", e)
+            log.error("Failed exchanging facebook oauth code for token", e)
+            null
+        }
+    }
+
+    suspend fun getUserInfo(token: String): FacebookUserInfoDto? {
+        return try {
+            val response = client.get("https://graph.facebook.com/me") {
+                url {
+                    parameters.append("access_token", token)
+                    parameters.append("fields", "email")
+                }
+            }
+
+            if (response.status.isSuccess())
+                response.body<FacebookUserInfoDto>()
+            else {
+                log.error("Failed fetching facebook user email with token\nResponse: $response")
+                null
+            }
+        } catch (e: Exception) {
+            log.error("Failed fetching facebook user email with token", e)
             null
         }
     }
