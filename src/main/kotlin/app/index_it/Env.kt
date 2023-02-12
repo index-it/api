@@ -3,10 +3,10 @@ package app.index_it
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
 import mu.KotlinLogging
+import org.slf4j.event.Level
 
 private val log = KotlinLogging.logger {  }
 
-// TODO: Use a config store in production
 object Env {
     private val dotenv: Dotenv? = try {
         dotenv()
@@ -15,24 +15,35 @@ object Env {
         null
     }
 
-    var port: Int = 8080
-    lateinit var cors_host: String
-    var use_secure_cookies: Boolean = true
+    var log_level: Level = Level.INFO
 
-    lateinit var full_access_api_key: String
+    var port: Int = 8080
+    var cookie_secure: Boolean = true
+    var session_max_age_in_seconds: Long = 604800 // 7 days by default
+
+    lateinit var admin_api_key: String
 
     lateinit var sendinblue_api_key: String
 
     lateinit var mongo_connection_string: String
     lateinit var mongo_db_name: String
+
     lateinit var redis_connection_string: String
 
 
     fun loadEnv() {
+        log_level = try {
+            Level.valueOf(
+                getStringFromEnv("log.level").uppercase()
+            )
+        } catch (_: IllegalArgumentException) {
+            throw NoSuchElementException("Invalid LOG_LEVEL in environment")
+        }
+
         port = getIntFromEnv("port")
-        cors_host = getStringFromEnv("cors.host")
-        use_secure_cookies = getBooleanFromEnv("use.secure.cookies")
-        full_access_api_key = getStringFromEnv("full.access.api.key")
+        cookie_secure = getBooleanFromEnv("cookie.secure")
+        session_max_age_in_seconds = getLongFromEnv("session.max.age.in.seconds")
+        admin_api_key = getStringFromEnv("full.access.api.key")
         sendinblue_api_key = getStringFromEnv("sendinblue.api.key")
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
@@ -43,14 +54,20 @@ object Env {
         val formattedKey = key.uppercase().replace(".", "_")
         return dotenv?.get(formattedKey)
             ?: System.getenv(formattedKey)
-            ?: throw NoSuchElementException("Couldn't find any $key key in .env file")
+            ?: throw NoSuchElementException("Couldn't find any $key key in environment")
     }
 
 
     private fun getIntFromEnv(key: String) : Int = try {
         getStringFromEnv(key).toInt()
     } catch (e: NumberFormatException) {
-        throw NoSuchElementException("Couldn't find any $key INTEGER key in .env file")
+        throw NoSuchElementException("Couldn't find any $key INTEGER key in environment")
+    }
+
+    private fun getLongFromEnv(key: String) : Long = try {
+        getStringFromEnv(key).toLong()
+    } catch (e: NumberFormatException) {
+        throw NoSuchElementException("Couldn't find any $key LONG key in environment")
     }
 
     private fun getBooleanFromEnv(key: String) = getStringFromEnv(key).toBoolean()

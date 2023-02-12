@@ -19,33 +19,33 @@ repositories {
 }
 
 dependencies {
-    implementation("redis.clients:jedis:4.3.1")
-
-
-    implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
-    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
-
     implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
 
     implementation("io.konform:konform-jvm:0.4.0")
 
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("redis.clients:jedis:4.3.1")
 
-    implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
-    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
+    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
+
+    implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
     implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
-    implementation("io.ktor:ktor-server-core-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-resources:$ktorVersion")
     implementation("io.ktor:ktor-server-sessions-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.3")
 
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
+
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("org.springframework.security:spring-security-crypto:5.7.3")
     // Needed for bcrypt to work
@@ -53,7 +53,6 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
     implementation("ch.qos.logback:logback-classic:1.4.5")
-    implementation("io.ktor:ktor-server-forwarded-header-jvm:2.1.3")
 }
 
 ktor {
