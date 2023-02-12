@@ -6,15 +6,19 @@ import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
+import app.index_it.models.auth.UserSessionDto
+import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.sessions.serialization.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.litote.kmongo.Id
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 @Serializable
@@ -25,6 +29,7 @@ data class UserSessionId(
     @Suppress("PropertyName")
     val session_id: String
 ) : Principal
+
 
 fun Application.configureSecurity() {
 

@@ -5,7 +5,7 @@ import app.index_it.core.extentions.toDtoId
 import app.index_it.daos.*
 import app.index_it.models.lists.*
 import app.index_it.models.user.UserDto
-import app.index_it.models.user.UserSessionDto
+import app.index_it.models.auth.UserSessionDto
 import app.index_it.api.plugins.UserSessionId
 import io.ktor.http.*
 import io.ktor.server.application.*

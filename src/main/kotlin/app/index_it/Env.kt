@@ -30,6 +30,10 @@ object Env {
 
     lateinit var redis_connection_string: String
 
+    lateinit var google_client_id: String
+    lateinit var google_client_secret: String
+    lateinit var google_redirect_uri: String
+
 
     fun loadEnv() {
         log_level = try {
@@ -48,6 +52,9 @@ object Env {
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
         redis_connection_string = getStringFromEnv("redis.connection.string")
+        google_client_id = getStringFromEnv("google.client.id")
+        google_client_secret = getStringFromEnv("google.client.secret")
+        google_redirect_uri = getStringFromEnv("google.redirect.uri")
     }
 
     private fun getStringFromEnv(key: String) : String {

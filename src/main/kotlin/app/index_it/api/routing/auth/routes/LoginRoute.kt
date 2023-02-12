@@ -6,8 +6,8 @@ import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
-import app.index_it.models.user.LoginCredentials
-import app.index_it.models.user.UserSessionDto
+import app.index_it.models.auth.LoginCredentials
+import app.index_it.models.auth.UserSessionDto
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -36,10 +36,7 @@ fun Route.loginRoute() {
         if (!user.email_verified)
             return@post call.respond(HttpStatusCode.MethodNotAllowed)
 
-        val userSessionId = UserSessionId(getTimeMillis().toString() +  generateSessionId())
-
-        val userSessionDto = UserSessionDto(userSessionId.session_id, getTimeMillis(), user.id)
-        UserSessionDao.create(userSessionDto)
+        val userSessionId = UserSessionDao.create(user.id)
 
         call.sessions.set(userSessionId)
         call.respond(HttpStatusCode.OK)

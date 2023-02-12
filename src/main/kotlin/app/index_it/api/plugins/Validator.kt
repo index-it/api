@@ -1,7 +1,7 @@
 package app.index_it.api.plugins
 
 import app.index_it.models.Validatable
-import app.index_it.models.user.RegistrationCredentials
+import app.index_it.models.auth.RegistrationCredentials
 import io.konform.validation.Valid
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*

@@ -15,17 +15,13 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import java.net.URLEncoder
 
 object SendinblueClient {
     private val client = HttpClient(Apache) {
         install(Logging)
         install(ContentNegotiation) {
-            json(Json {
-                serializersModule = IdKotlinXSerializationModule
-                prettyPrint = true
-            })
+            json(Json)
         }
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 3)

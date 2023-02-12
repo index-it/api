@@ -4,7 +4,7 @@ import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.EmailVerificationDao
 import app.index_it.daos.UserDao
-import app.index_it.models.user.RegistrationCredentials
+import app.index_it.models.auth.RegistrationCredentials
 import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*

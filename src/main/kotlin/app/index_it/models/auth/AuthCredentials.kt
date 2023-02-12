@@ -1,4 +1,4 @@
-package app.index_it.models.user
+package app.index_it.models.auth
 
 import app.index_it.models.Validatable
 import io.konform.validation.Validation
