@@ -43,7 +43,7 @@ object Env {
         port = getIntFromEnv("port")
         cookie_secure = getBooleanFromEnv("cookie.secure")
         session_max_age_in_seconds = getLongFromEnv("session.max.age.in.seconds")
-        admin_api_key = getStringFromEnv("full.access.api.key")
+        admin_api_key = getStringFromEnv("admin.api.key")
         sendinblue_api_key = getStringFromEnv("sendinblue.api.key")
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
