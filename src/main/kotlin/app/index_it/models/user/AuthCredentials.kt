@@ -9,19 +9,25 @@ import io.konform.validation.jsonschema.pattern
 import kotlinx.serialization.Serializable
 
 @Serializable
-class AuthCredentials(
+class LoginCredentials(
     val email: String,
     val password: String
-): Validatable<AuthCredentials> {
-    override fun validate(): ValidationResult<AuthCredentials> =
+)
+
+@Serializable
+class RegistrationCredentials(
+    val email: String,
+    val password: String
+): Validatable<RegistrationCredentials> {
+    override fun validate(): ValidationResult<RegistrationCredentials> =
         Validation {
-            AuthCredentials::email {
+            RegistrationCredentials::email {
                 pattern("\\w+@\\w+\\.\\w+") hint "Please provide a valid email address"
             }
-            AuthCredentials::password {
-                minLength(8)
-                maxLength(100)
-                pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])") hint "Password needs at least an uppercase character, a lowercase one and a number"
+            RegistrationCredentials::password {
+                minLength(8) hint "Password min length is 8 characters"
+                maxLength(100) hint "Password max length is 100 characters"
+                // TODO: pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])") hint "Password needs at least an uppercase character, a lowercase one and a number"
             }
         }.invoke(this)
 }

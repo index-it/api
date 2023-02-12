@@ -26,8 +26,11 @@ object EmailVerificationDao {
 
     fun delete(code: String) = EmailVerificationDBM.delete(code)
 
+    /*
+    This might be needed in the future when at scale
     fun isRateLimited(email: String): Boolean {
         val sent = EmailVerificationDBM.countSaved(email)
         return sent >= 3
     }
+    */
 }

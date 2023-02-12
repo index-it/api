@@ -1,14 +1,14 @@
 package app.index_it.api.plugins
 
 import app.index_it.models.Validatable
-import app.index_it.models.user.AuthCredentials
+import app.index_it.models.user.RegistrationCredentials
 import io.konform.validation.Valid
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 
 fun Application.configureValidator() {
     install(RequestValidation) {
-        validateValidatable<AuthCredentials>()
+        validateValidatable<RegistrationCredentials>()
     }
 }
 

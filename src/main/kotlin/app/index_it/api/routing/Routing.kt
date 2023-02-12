@@ -1,8 +1,6 @@
 package app.index_it.api.routing
 
 import app.index_it.api.routing.auth.auth
-import app.index_it.api.routing.routes.admin
-import app.index_it.api.routing.routes.user
 import app.index_it.core.db.NotifyDBM
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -32,7 +30,6 @@ fun Application.configureRouting() {
 
         auth()
 
-        user()
-        admin()
+        // user()
     }
 }
