@@ -14,4 +14,9 @@ data class UserDto(
     val password_hash: String? = null, // Null when the account gets created with an oauth provider (google, apple...)
     val email_verified: Boolean = false, // Always true when user created with oauth, otherwise needs to be verified
     val creation_timestamp: Long,
-)
+    val creation_source: CreationSource
+) {
+    enum class CreationSource {
+        GOOGLE, APPLE, FACEBOOK, NONE
+    }
+}

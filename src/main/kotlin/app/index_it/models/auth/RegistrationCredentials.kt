@@ -9,13 +9,7 @@ import io.konform.validation.jsonschema.pattern
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LoginCredentials(
-    val email: String,
-    val password: String
-)
-
-@Serializable
-class RegistrationCredentials(
+data class RegistrationCredentials(
     val email: String,
     val password: String
 ): Validatable<RegistrationCredentials> {

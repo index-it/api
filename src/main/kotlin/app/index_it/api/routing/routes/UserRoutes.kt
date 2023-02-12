@@ -20,26 +20,6 @@ import org.litote.kmongo.Id
 fun PipelineContext<Unit, ApplicationCall>.userId(): Id<UserDto>? = call.principal<UserSessionDto>()?.userId
 
 fun Route.user() {
-    /**
-     * OAuth's ways to register for a user
-     */
-    get("/login-with-google") {
-        // val code = call.request.queryParameters["code"]
-        // Exchange the code for the token
-
-        // Get the email and id with the token
-
-        // If
-        // the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)
-        // Update email verification field if set to false
-        // Create session
-
-        // Else
-        // Extract the sub from the id
-        // Create the user in the db with a random id, the email gotten from Google, email verified to true, the google_id gotten
-        // Respond with an ok status code (DO NOT REQUIRE EMAIL VERIFICATION)
-        // Create session
-    }
 
     authenticate("auth-session") {
         get("/logout") {

@@ -36,6 +36,12 @@ class LoginRoute
 @Resource("/login-with-google")
 class LoginWithGoogle(val code: String)
 
+@Resource("/login-with-apple")
+class LoginWithApple(val code: String)
+
+@Resource("/login-with-facebook")
+class LoginWithFacebook(val code: String)
+
 
 fun Route.auth() {
     welcomeActionRoute()

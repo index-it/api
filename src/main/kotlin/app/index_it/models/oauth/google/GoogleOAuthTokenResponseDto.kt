@@ -1,4 +1,4 @@
-package app.index_it.models.auth
+package app.index_it.models.oauth.google
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

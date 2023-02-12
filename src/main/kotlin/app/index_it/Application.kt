@@ -3,7 +3,7 @@ package app.index_it
 import io.ktor.server.application.Application
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
-import app.index_it.core.clients.GoogleOAuthClient
+import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.clients.MongoClient
 import app.index_it.core.clients.RedisClient
 import app.index_it.core.clients.SendinblueClient
