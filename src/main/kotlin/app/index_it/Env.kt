@@ -74,6 +74,7 @@ object Env {
         facebook_redirect_uri = getStringFromEnv("facebook.redirect.uri")
     }
 
+    @Suppress("SameParameterValue")
     private fun getStringFromEnv(key: String) : String {
         val formattedKey = key.uppercase().replace(".", "_")
         return dotenv?.get(formattedKey)
@@ -82,17 +83,20 @@ object Env {
     }
 
 
+    @Suppress("SameParameterValue")
     private fun getIntFromEnv(key: String) : Int = try {
         getStringFromEnv(key).toInt()
     } catch (e: NumberFormatException) {
         throw NoSuchElementException("Couldn't find any $key INTEGER key in environment")
     }
 
+    @Suppress("SameParameterValue")
     private fun getLongFromEnv(key: String) : Long = try {
         getStringFromEnv(key).toLong()
     } catch (e: NumberFormatException) {
         throw NoSuchElementException("Couldn't find any $key LONG key in environment")
     }
 
+    @Suppress("SameParameterValue")
     private fun getBooleanFromEnv(key: String) = getStringFromEnv(key).toBoolean()
 }
