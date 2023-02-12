@@ -10,7 +10,7 @@ import io.ktor.server.response.*
  * Represents an API Key authentication provider.
  */
 class ApiKeyAuthenticationProvider internal constructor(
-    configuration: ApiKeyAuthenticationProvider.Configuration
+    configuration: Configuration
 ) : AuthenticationProvider(configuration) {
 
     private val headerName: String = configuration.headerName

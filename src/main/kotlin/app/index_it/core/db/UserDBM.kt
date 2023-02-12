@@ -1,7 +1,6 @@
 package app.index_it.core.db
 
 import app.index_it.core.clients.MongoClient
-import app.index_it.models.user.ClientUserDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
@@ -28,14 +27,6 @@ object UserDBM {
 
     fun getFromEmail(email: String): UserDto? {
         return col.findOne(UserDto::email eq email)
-    }
-
-    fun update(id: Id<UserDto>, clientUserDto: ClientUserDto): UserDto? {
-        return col.findOneAndUpdate(
-            UserDto::id eq id,
-            setValue(UserDto::name, clientUserDto.name),
-            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-        )
     }
 
     fun verifyEmail(id: Id<UserDto>): UserDto? {
