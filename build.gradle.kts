@@ -1,5 +1,6 @@
 val ktorVersion: String = "2.2.3"
 val kmongoVersion: String = "4.8.0"
+val tcnativeVersion = "2.0.54.Final"
 
 plugins {
     application
@@ -16,6 +17,14 @@ application {
 
 repositories {
     mavenCentral()
+}
+
+val osName = System.getProperty("os.name").toLowerCase()
+val tcnative_classifier = when {
+    osName.contains("win") -> "windows-x86_64"
+    osName.contains("linux") -> "linux-x86_64"
+    osName.contains("mac") -> "osx-x86_64"
+    else -> null
 }
 
 dependencies {
@@ -39,6 +48,11 @@ dependencies {
     implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:2.1.3")
     implementation("io.ktor:ktor-server-core-jvm:2.1.3")
+    if (tcnative_classifier != null) {
+        implementation("io.netty:netty-tcnative-boringssl-static:$tcnativeVersion:$tcnative_classifier")
+    } else {
+        implementation("io.netty:netty-tcnative-boringssl-static:$tcnativeVersion")
+    }
 
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
