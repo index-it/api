@@ -1,9 +1,6 @@
 package app.index_it.api.routing.auth
 
-import app.index_it.api.routing.auth.routes.emailVerificationRoutes
-import app.index_it.api.routing.auth.routes.loginRoute
-import app.index_it.api.routing.auth.routes.registerRoute
-import app.index_it.api.routing.auth.routes.welcomeActionRoute
+import app.index_it.api.routing.auth.routes.*
 import app.index_it.models.user.*
 import io.ktor.http.*
 import io.ktor.resources.*
@@ -36,10 +33,20 @@ class IsEmailVerifiedRoute(val email: String)
 @Resource("/login")
 class LoginRoute
 
+@Resource("/login-with-google")
+class LoginWithGoogle(val code: String)
+
+@Resource("/login-with-apple")
+class LoginWithApple(val code: String)
+
+@Resource("/login-with-facebook")
+class LoginWithFacebook(val code: String)
+
 
 fun Route.auth() {
     welcomeActionRoute()
     registerRoute()
     emailVerificationRoutes()
     loginRoute()
+    oauthLoginRoutes()
 }

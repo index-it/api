@@ -1,5 +1,6 @@
-package app.index_it.models.user
+package app.index_it.models.auth
 
+import app.index_it.models.user.UserDto
 import io.ktor.server.auth.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

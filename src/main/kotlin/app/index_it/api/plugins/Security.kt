@@ -2,7 +2,6 @@ package app.index_it.api.plugins
 
 import app.index_it.Env
 import app.index_it.api.plugins.custom.apiKey
-import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
@@ -10,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.sessions.serialization.*
 import io.ktor.util.date.*
@@ -25,6 +25,7 @@ data class UserSessionId(
     @Suppress("PropertyName")
     val session_id: String
 ) : Principal
+
 
 fun Application.configureSecurity() {
 
