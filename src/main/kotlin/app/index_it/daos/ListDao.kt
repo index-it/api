@@ -73,6 +73,7 @@ object ListDao {
 
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, clientListDto: ClientListDto): ListDto? {
         return ListDBM.update(userId, listId, clientListDto)?.let {
+            println(it)
             ListCM.update(userId, it)
             it
         } ?: run {

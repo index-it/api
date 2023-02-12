@@ -1,4 +1,4 @@
-package app.index_it.plugins
+package app.index_it.api.plugins
 
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.exceptions.AuthorizationException

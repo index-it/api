@@ -6,6 +6,7 @@ import app.index_it.models.lists.ClientCategoryDto
 import app.index_it.models.lists.ClientListDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
 import org.litote.kmongo.*
@@ -14,7 +15,7 @@ object ListDBM {
     private val col = MongoClient.database.getCollection<ListDto>("lists")
 
     init {
-        col.ensureUniqueIndex(ListDto::user_id)
+        col.ensureIndex(ListDto::user_id)
     }
 
     object CategoryDBM {
@@ -65,6 +66,6 @@ object ListDBM {
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
-        col.deleteOne(ListDto::user_id eq userId, ListDto::id eq listId)
+        col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::user_id eq userId))
     }
 }

@@ -1,11 +1,13 @@
 package app.index_it.models.email
 
-import java.util.Date
-import java.util.UUID
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import java.util.*
 
+@Serializable
 data class EmailVerificationDto(
     val code: String = UUID.randomUUID().toString(),
     val user_email: String,
-    val expire_at: Date,
-    val creation_date: Date = Date()
+    @Contextual val expire_at: Date,
+    @Contextual val creation_date: Date = Date()
 )

@@ -1,4 +1,4 @@
-package app.index_it.plugins.custom
+package app.index_it.api.plugins.custom
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -10,7 +10,7 @@ import io.ktor.server.response.*
  * Represents an API Key authentication provider.
  */
 class ApiKeyAuthenticationProvider internal constructor(
-    configuration: ApiKeyAuthenticationProvider.Configuration
+    configuration: Configuration
 ) : AuthenticationProvider(configuration) {
 
     private val headerName: String = configuration.headerName

@@ -2,7 +2,6 @@ package app.index_it.daos
 
 import app.index_it.core.cache.UserCM
 import app.index_it.core.db.UserDBM
-import app.index_it.models.user.ClientUserDto
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
@@ -19,7 +18,7 @@ object UserDao {
 
         if (user == null) {
             user = UserDBM.get(id) ?: return null
-            UserCM
+            UserCM.create(user)
         }
 
         return user
@@ -30,15 +29,6 @@ object UserDao {
      */
     fun getFromEmail(email: String) : UserDto? {
         return UserDBM.getFromEmail(email)
-    }
-
-    fun update(id: Id<UserDto>, clientUserDto: ClientUserDto): UserDto? {
-        return UserDBM.update(id, clientUserDto)?.also {
-            UserCM.create(it)
-        } ?: run {
-            UserCM.delete(id)
-            null
-        }
     }
 
     fun verifyEmail(id: Id<UserDto>): UserDto? {
