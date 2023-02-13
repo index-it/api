@@ -43,7 +43,7 @@ class LoginWithApple(val code: String)
 class LoginWithFacebook(val code: String)
 
 
-fun Route.auth() {
+fun Route.authRoutes() {
     welcomeActionRoute()
     registerRoute()
     emailVerificationRoutes()
