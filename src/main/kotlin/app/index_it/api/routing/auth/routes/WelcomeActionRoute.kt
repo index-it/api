@@ -33,6 +33,6 @@ fun Route.welcomeActionRoute() {
         else
             WelcomeAction.LOGIN
 
-        call.respondText(action.name, ContentType.Text.Plain, HttpStatusCode.OK)
+        call.respond(action.name)
     }
 }

@@ -20,12 +20,5 @@ fun Application.configureHTTP() {
                 it.request.origin.remoteHost
             }
         }
-        register(RateLimitName("email-verification-rate-limiter")) {
-            rateLimiter(limit = 5, refillPeriod = 60.minutes)
-            requestKey { applicationCall ->
-                applicationCall.principal<UserIdPrincipal>()?.name
-                    ?: throw IllegalStateException("Tried to apply a rate limit to a route that is not secured by the form auth 'email-verification-auth'")
-            }
-        }
     }
 }
