@@ -28,10 +28,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
-    //implementation("io.ktor:ktor-server-swagger:$ktorVersion")
-    //implementation("io.ktor:ktor-server-openapi:$ktorVersion")
-    //implementation("io.swagger.codegen.v3:swagger-codegen-generators:1.0.37")
-
+    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
     implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
     implementation("io.ktor:ktor-server-resources:$ktorVersion")

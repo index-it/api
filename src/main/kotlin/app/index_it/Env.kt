@@ -30,6 +30,8 @@ object Env {
 
     lateinit var redis_connection_string: String
 
+    lateinit var email_verification_success_url: String
+    lateinit var email_verification_error_url: String
 
     fun loadEnv() {
         log_level = try {
@@ -48,6 +50,8 @@ object Env {
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
         redis_connection_string = getStringFromEnv("redis.connection.string")
+        email_verification_success_url = getStringFromEnv("email.verification.success.url")
+        email_verification_error_url = getStringFromEnv("email.verification.error.url")
     }
 
     private fun getStringFromEnv(key: String) : String {

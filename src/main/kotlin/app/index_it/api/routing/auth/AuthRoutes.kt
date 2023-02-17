@@ -25,13 +25,13 @@ class WelcomeActionRoute(val email: String)
 class RegisterRoute
 
 @Resource("/send-verification-email")
-class SendVerificationEmailRoute(val email: String)
+class SendVerificationEmailRoute
 
 @Resource("/verify-email")
 class VerifyEmailRoute(val code: String, val email: String)
 
 @Resource("/is-email-verified")
-class IsEmailVerifiedRoute(val email: String)
+class IsEmailVerifiedRoute
 
 @Resource("/login")
 class LoginRoute
