@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: Index - OpenAPI 3.0
+  description: This is the REST api for [Index](https://index-it.app)
+  termsOfService: https://index-it.app/terms/
+  contact:
+    email: support@index-it.app
+  version: 1.0.0
+externalDocs:
+  description: Learn more about Index
+  url: https://docs.index-it.app/api
+servers:
+  - url: https://api.index-it.app
+paths:
+  /welcome-action:
+    get:
+      summary: Retrieve the required first step for a user auth flow
+      description: >-
+        This is used mainly in official index applications, that need to
+        initialize a user auth flow.
+      operationId: 'get-welcome-action'
+      parameters:
+        - name: email
+          in: query
+          description: The email of the user
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - REGISTER
+                  - LOGIN
+                  - VERIFY_EMAIL
+                example: REGISTER
