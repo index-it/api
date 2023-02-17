@@ -1,6 +1,8 @@
 package app.index_it.api.routing
 
+import app.index_it.api.routing.admin.admin
 import app.index_it.api.routing.auth.auth
+import app.index_it.api.routing.swagger.swagger
 import app.index_it.core.db.NotifyDBM
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -28,8 +30,9 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
+        admin()
+        swagger()
         auth()
-
         // user()
     }
 }
