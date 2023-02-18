@@ -30,6 +30,9 @@ object Env {
 
     lateinit var redis_connection_string: String
 
+    lateinit var email_verification_success_url: String
+    lateinit var email_verification_error_url: String
+
     lateinit var google_client_id: String
     lateinit var google_client_secret: String
     lateinit var google_redirect_uri: String
@@ -41,7 +44,6 @@ object Env {
     lateinit var facebook_client_id: String
     lateinit var facebook_client_secret: String
     lateinit var facebook_redirect_uri: String
-
 
     fun loadEnv() {
         log_level = try {
@@ -60,6 +62,9 @@ object Env {
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
         redis_connection_string = getStringFromEnv("redis.connection.string")
+
+        email_verification_success_url = getStringFromEnv("email.verification.success.url")
+        email_verification_error_url = getStringFromEnv("email.verification.error.url")
 
         google_client_id = getStringFromEnv("google.client.id")
         google_client_secret = getStringFromEnv("google.client.secret")

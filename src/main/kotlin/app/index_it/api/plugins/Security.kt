@@ -1,10 +1,10 @@
 package app.index_it.api.plugins
 
 import app.index_it.Env
-import app.index_it.api.plugins.custom.apiKey
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
+import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -15,10 +15,8 @@ import io.ktor.server.sessions.serialization.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.litote.kmongo.Id
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
-
-@Serializable
-data class ApiKeyPrincipal(val key: String) : Principal
 
 @Serializable
 data class UserSessionId(
@@ -26,6 +24,7 @@ data class UserSessionId(
     val session_id: String
 ) : Principal
 
+data class UserIdPrincipalForEmailVerificationAuth(val id: Id<UserDto>) : Principal
 
 fun Application.configureSecurity() {
 
@@ -45,13 +44,15 @@ fun Application.configureSecurity() {
 
     install(Authentication) {
         // Used only for email verification operation
-        form("email-verification-auth") {
+        form("auth-email-verification") {
             userParamName = "email"
             passwordParamName = "password"
             validate {  credentials ->
-                UserDao.getFromEmail(credentials.name)?.password_hash?.let {
-                    if (PasswordEncoder.matches(credentials.password, it))
-                        UserIdPrincipal(credentials.name)
+                UserDao.getFromEmail(credentials.name)?.let {
+                    if (it.password_hash == null)
+                        null
+                    else if (PasswordEncoder.matches(credentials.password, it.password_hash))
+                        UserIdPrincipalForEmailVerificationAuth(it.id)
                     else
                         null
                 }
@@ -76,14 +77,15 @@ fun Application.configureSecurity() {
             }
         }
 
-        // Uses `X-Api-Key` header
-        apiKey("api-key") {
-            validate { apiKey ->
-                apiKey
-                    .takeIf { it == Env.admin_api_key }
-                    ?.let { ApiKeyPrincipal(it) }
+        bearer("auth-bearer-admin") {
+            realm = "Access to the '/admin' path"
+            authenticate { tokenCredential ->
+                if (tokenCredential.token == Env.admin_api_key) {
+                    UserIdPrincipal("admin")
+                } else {
+                    null
+                }
             }
-            // Challenge already handled by default
         }
     }
 }

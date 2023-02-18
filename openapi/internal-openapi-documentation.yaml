@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: Index - OpenAPI 3.0
+  description: This is the REST api for [Index](https://index-it.app)
+  termsOfService: https://index-it.app/terms/
+  contact:
+    email: support@index-it.app
+  version: 1.0.0
+externalDocs:
+  description: Learn more about Index
+  url: https://docs.index-it.app/api
+servers:
+  - url: https://api.index-it.app
+  - url: https://api-test.index-it.app
+paths:
+  /welcome-action:
+    get:
+      summary: Retrieve the required first step for a user auth flow
+      description: >-
+        This is used to initialize a user auth flow.
+      operationId: 'get-welcome-action'
+      parameters:
+        - name: email
+          in: query
+          description: The email of the user
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - REGISTER
+                  - LOGIN
+                  - VERIFY_EMAIL
+  /register:
+    post:
+      summary: Register a user
+      description: >-
+        Register a user with an email and password
+      operationId: 'register'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: registered and sent verification email
+        '201':
+          description: >-
+            registered but did not send verification email for some internal issues. It should be requested with the related endpoint
+        '400':
+          description: Email or password format not satisfied (see response message)
+        '403':
+          description: The email cannot be used to register
+  /send-verification-email:
+    post:
+      summary: Sends an email to register an account
+      description: >-
+        Sends an email to verify a register account
+      operationId: 'send-verification-email'
+      requestBody:
+        $ref: '#/components/requestBodies/EmailVerificationAuth'
+      responses:
+        '200':
+          description: email already verified
+        '201':
+          description: verification email sent
+        '403':
+          description: Not authenticated
+  /verify-email:
+    get:
+      summary: Verifies an email via the code sent to the email
+      operationId: 'verify-email'
+      parameters:
+        - name: code
+          in: query
+          description: The verification code
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: The email to verify with the code
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '302':
+          description: Redirects to either a success page or error page
+  /is-email-verified:
+    post:
+      summary: Check if an email is verified
+      operationId: 'is-email-verified'
+      requestBody:
+        $ref: '#/components/requestBodies/EmailVerificationAuth'
+      responses:
+        '200':
+          description: Email is verified
+        '404':
+          description: Email is not verified
+        '403':
+          description: Not authenticated
+  /login:
+    post:
+      summary: Login and get a session
+      description: >-
+        Login and create a session for your account
+      operationId: 'login'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: Logged in, session cookie created
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+        '403':
+          description: Unauthorized
+        '405':
+          description: The email of the user is not verified
+components:
+  schemas:
+    Credentials:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+  requestBodies:
+    EmailVerificationAuth:
+      required: true
+      description: >-
+        authentication needed for the routes related to email verification
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+              password:
+                type: string
+                format: password
+            required:
+              - email
+              - password
