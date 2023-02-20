@@ -10,8 +10,8 @@ import app.index_it.daos.UserDao
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.resources.*
 import io.ktor.server.resources.post
-import io.ktor.server.resources.get
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
@@ -61,21 +61,17 @@ fun Route.emailVerificationRoutes() {
      * Uses the code sent in the email inbox of the user to verify its email
      */
     get<VerifyEmailRoute> { request ->
-        val email = withContext(Dispatchers.IO) {
-            URLDecoder.decode(request.email, "utf-8")
-        }
+        val emailVerificationDto = EmailVerificationDao.get(request.code)
+            ?: return@get call.respondRedirect(Env.email_verification_error_url)
 
-        val userDto = UserDao.getFromEmail(email)
+        val userDto = UserDao.getFromEmail(emailVerificationDto.user_email)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
         if (userDto.email_verified)
             return@get call.respondRedirect(Env.email_verification_success_url)
 
-        val emailVerificationDto = EmailVerificationDao.get(request.code)
-            ?: return@get call.respondRedirect(Env.email_verification_error_url)
-
-        if (request.code == emailVerificationDto.code && email == emailVerificationDto.user_email) {
+        if (request.code == emailVerificationDto.code) {
             UserDao.verifyEmail(userDto.id)
             EmailVerificationDao.delete(request.code)
             return@get call.respondRedirect(Env.email_verification_success_url)

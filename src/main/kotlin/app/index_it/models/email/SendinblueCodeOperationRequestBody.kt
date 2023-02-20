@@ -3,8 +3,7 @@ package app.index_it.models.email
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SendinblueEmailVerificationRequestBody(
-    val sender: From,
+data class SendinblueCodeOperationRequestBody(
     val to: List<To>,
     val templateId: Long,
     val params: Params
@@ -16,12 +15,6 @@ data class SendinblueEmailVerificationRequestBody(
 
     @Serializable
     data class To (
-        val email: String
-    )
-
-    @Serializable
-    data class From (
-        val name: String,
         val email: String
     )
 }

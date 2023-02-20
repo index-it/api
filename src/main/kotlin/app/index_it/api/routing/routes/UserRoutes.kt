@@ -1,5 +1,5 @@
 package app.index_it.api.routing.routes
-
+/*
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.extentions.toDtoId
 import app.index_it.daos.*
@@ -7,6 +7,7 @@ import app.index_it.models.lists.*
 import app.index_it.models.user.UserDto
 import app.index_it.models.auth.UserSessionDto
 import app.index_it.api.plugins.UserSessionId
+import app.index_it.api.routing.user.userIdFromSession
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -16,8 +17,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.*
 import org.litote.kmongo.Id
-
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): Id<UserDto>? = call.principal<UserSessionDto>()?.userId
 
 fun Route.user() {
 
@@ -167,3 +166,4 @@ fun Route.user() {
         route("/tasks") {}
     }
 }
+*/

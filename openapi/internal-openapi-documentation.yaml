@@ -86,13 +86,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: email
-          in: query
-          description: The email to verify with the code
-          required: true
-          schema:
-            type: string
-            format: email
       responses:
         '302':
           description: Redirects to either a success page or error page

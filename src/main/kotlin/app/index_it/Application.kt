@@ -1,22 +1,22 @@
 package app.index_it
 
-import io.ktor.server.application.Application
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
-import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.clients.MongoClient
 import app.index_it.core.clients.RedisClient
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
+import app.index_it.core.clients.oauth.GoogleOAuthClient
 import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.logging.*
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
-import ch.qos.logback.classic.Logger
 
 private val log = KotlinLogging.logger { }
 

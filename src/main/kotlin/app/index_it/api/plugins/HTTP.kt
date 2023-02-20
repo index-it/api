@@ -1,11 +1,9 @@
 package app.index_it.api.plugins
 
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.plugins.ratelimit.*
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureHTTP() {
