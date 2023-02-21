@@ -27,6 +27,7 @@ paths:
           schema:
             type: string
             format: email
+      security: []
       responses:
         '200':
           description: successful operation
@@ -50,6 +51,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Credentials'
+      security: []
       responses:
         '200':
           description: registered and sent verification email
@@ -68,6 +70,7 @@ paths:
       operationId: 'send-verification-email'
       requestBody:
         $ref: '#/components/requestBodies/EmailVerificationAuth'
+      security: []
       responses:
         '200':
           description: email already verified
@@ -86,6 +89,7 @@ paths:
           required: true
           schema:
             type: string
+      security: []
       responses:
         '302':
           description: Redirects to either a success page or error page
@@ -95,6 +99,7 @@ paths:
       operationId: 'is-email-verified'
       requestBody:
         $ref: '#/components/requestBodies/EmailVerificationAuth'
+      security: []
       responses:
         '200':
           description: Email is verified
@@ -114,6 +119,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Credentials'
+      security: []
       responses:
         '200':
           description: Logged in, session cookie created
@@ -125,6 +131,70 @@ paths:
           description: Unauthorized
         '405':
           description: The email of the user is not verified
+  /logout:
+    get:
+      summary: Log out and deletes the auth session
+      operationId: 'logout'
+      responses:
+        '200':
+          description: Logged out
+  /password-forgotten:
+    get:
+      parameters:
+        - name: email
+          in: query
+          description: The email of the user
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Sent an email with instructions on how to reset the password
+        '404':
+          description: User not found
+        '429':
+          description: Too many password forgotten requests
+  /reset-password:
+    post:
+      parameters:
+        - name: token
+          in: query
+          description: The token to authenticate the password reset request
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  format: password
+                  description: The new password
+      responses:
+        '200':
+          description: Password resetted, user sessions deleted and operation notification email sent
+        '400':
+          description: Password security policies not matched
+        '404':
+          description: Token not valid
+  /me:
+    get:
+      responses:
+        '200':
+          description: Password resetted, user sessions deleted and operation notification email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/User'
+    delete:
+      responses:
+        '200':
+          description: User data delete completely
 components:
   schemas:
     Credentials:
@@ -136,6 +206,17 @@ components:
         password:
           type: string
           format: password
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: user_session_id
   requestBodies:
     EmailVerificationAuth:
       required: true
@@ -155,3 +236,5 @@ components:
             required:
               - email
               - password
+security:
+  - sessionCookie: []

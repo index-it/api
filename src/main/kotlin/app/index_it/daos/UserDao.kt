@@ -42,8 +42,8 @@ object UserDao {
         }
     }
 
-    fun resetPassword(id: Id<UserDto>, newPasswordHashed: String): UserDto? {
-        return UserDBM.resetPassword(id, newPasswordHashed)?.let {
+    fun resetPassword(id: Id<UserDto>, newPasswordHashed: String, verifyEmail: Boolean): UserDto? {
+        return UserDBM.resetPassword(id, newPasswordHashed, verifyEmail)?.let {
             UserCM.create(it)
             it
         } ?: run {

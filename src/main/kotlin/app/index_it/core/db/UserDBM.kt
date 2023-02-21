@@ -41,8 +41,15 @@ object UserDBM {
         )
     }
 
-    fun resetPassword(id: Id<UserDto>, newPasswordHashed: String): UserDto? {
-        return col.findOneAndUpdate(
+    fun resetPassword(id: Id<UserDto>, newPasswordHashed: String, verifyEmail: Boolean): UserDto? {
+        return if (verifyEmail) col.findOneAndUpdate(
+            UserDto::id eq id,
+            set(
+                UserDto::password_hash setTo newPasswordHashed,
+                UserDto::email_verified setTo true
+            ),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        ) else col.findOneAndUpdate(
             UserDto::id eq id,
             setValue(UserDto::password_hash, newPasswordHashed),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)

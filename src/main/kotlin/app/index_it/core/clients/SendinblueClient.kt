@@ -2,6 +2,7 @@ package app.index_it.core.clients
 
 import app.index_it.Env
 import app.index_it.models.email.SendinblueCodeOperationRequestBody
+import app.index_it.models.email.SendinblueGenericRequestBody
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
@@ -36,7 +37,7 @@ object SendinblueClient {
         val response: HttpResponse = client.post("smtp/email") {
             setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
-                    SendinblueCodeOperationRequestBody.To(
+                    SendinblueGenericRequestBody.To(
                         email = email
                     )
                 ),
@@ -59,7 +60,7 @@ object SendinblueClient {
         val response: HttpResponse = client.post("smtp/email") {
             setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
-                    SendinblueCodeOperationRequestBody.To(
+                    SendinblueGenericRequestBody.To(
                         email = email
                     )
                 ),
@@ -67,6 +68,21 @@ object SendinblueClient {
                 params = SendinblueCodeOperationRequestBody.Params(
                     url = "${Env.reset_password_url}?token=${token}"
                 )
+            ))
+        }
+
+        return response.status.isSuccess()
+    }
+
+    suspend fun sendPasswordNotificationEmail(email: String): Boolean {
+        val response: HttpResponse = client.post("smtp/email") {
+            setBody(SendinblueGenericRequestBody(
+                to = listOf(
+                    SendinblueGenericRequestBody.To(
+                        email = email
+                    )
+                ),
+                templateId = 3
             ))
         }
 

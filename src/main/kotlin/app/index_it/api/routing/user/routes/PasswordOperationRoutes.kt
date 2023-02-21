@@ -2,6 +2,7 @@ package app.index_it.api.routing.user.routes
 
 import app.index_it.api.routing.user.PasswordForgottenRoute
 import app.index_it.api.routing.user.ResetPasswordRoute
+import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.PasswordResetDao
 import app.index_it.daos.UserDao
@@ -35,17 +36,21 @@ fun Route.passwordOperationRoutes() {
         val passwordResetDto = PasswordResetDao.get(request.token)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        if (!UserDao.exists(passwordResetDto.user_id))
-            return@post call.respond(HttpStatusCode.NotFound)
+        val user = UserDao.get(passwordResetDto.user_id)
+            ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val newPassword = call.receive<PasswordResetRequestBody>().password
         val newPasswordHashed = PasswordEncoder.encode(newPassword)
 
-        UserDao.resetPassword(passwordResetDto.user_id, newPasswordHashed)
+        // If the user email wasn't verified before, now it can be considered verified
+        UserDao.resetPassword(passwordResetDto.user_id, newPasswordHashed, !user.email_verified)
 
         // Invalidate all other user active sessions
         UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.user_id)
 
+        // Send notification email
+        SendinblueClient.sendPasswordNotificationEmail(user.email)
+        
         call.respond(HttpStatusCode.OK)
     }
 }

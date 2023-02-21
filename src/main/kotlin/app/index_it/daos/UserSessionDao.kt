@@ -1,6 +1,6 @@
 package app.index_it.daos
 
-import app.index_it.api.plugins.UserSessionId
+import app.index_it.api.plugins.UserSessionCookie
 import app.index_it.core.cache.UserSessionCM
 import app.index_it.models.auth.UserSessionDto
 import app.index_it.models.user.UserDto
@@ -12,19 +12,19 @@ import org.litote.kmongo.Id
 object UserSessionDao {
     fun get(userId: Id<UserDto>, sessionId: String) = UserSessionCM.get(userId, sessionId)
 
-    fun create(id: Id<UserDto>): UserSessionId {
-        val userSessionId = UserSessionId(getTimeMillis().toString() +  generateSessionId(), id.toString())
+    fun create(id: Id<UserDto>): UserSessionCookie {
+        val userSessionCookie = UserSessionCookie(getTimeMillis().toString() +  generateSessionId(), id.toString())
 
         save(
             id,
             UserSessionDto(
-                userSessionId.session_id,
+                userSessionCookie.session_id,
                 getTimeMillis(),
                 id
             )
         )
 
-        return userSessionId
+        return userSessionCookie
     }
 
     private fun save(userId: Id<UserDto>, userSessionDto: UserSessionDto) = UserSessionCM.create(userId, userSessionDto)

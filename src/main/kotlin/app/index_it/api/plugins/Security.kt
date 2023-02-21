@@ -26,7 +26,7 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
  */
 @Serializable
 @Suppress("PropertyName")
-data class UserSessionId(
+data class UserSessionCookie(
     val session_id: String,
     val user_id: String
 ) : Principal
@@ -44,7 +44,7 @@ fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): Id<UserDto>? = c
 fun Application.configureSecurity() {
 
     install(Sessions) {
-        cookie<UserSessionId>("user_session_id") {
+        cookie<UserSessionCookie>("user_session_id") {
             cookie.path = "/"
             cookie.maxAgeInSeconds = Env.session_max_age_in_seconds
             cookie.secure = Env.cookie_secure
@@ -77,7 +77,7 @@ fun Application.configureSecurity() {
             }
         }
 
-        session<UserSessionId>("auth-user-session") {
+        session<UserSessionCookie>("auth-user-session") {
             validate { userSessionId ->
                 val session = UserSessionDao.get(userSessionId.user_id.toDtoId(), userSessionId.session_id)
 

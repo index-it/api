@@ -20,7 +20,7 @@ class LogoutRoute
 class PasswordForgottenRoute(val email: String)
 
 @Resource("/reset-password")
-class ResetPasswordRoute(val newPassword: String, val token: String)
+class ResetPasswordRoute(val token: String)
 
 @Resource("/me")
 class MeRoute
