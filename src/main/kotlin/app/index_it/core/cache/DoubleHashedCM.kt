@@ -40,4 +40,10 @@ abstract class DoubleHashedCM(
             it.hdel(keyName(keyValue), field)
         }
     }
+
+    fun uncacheAllValues(keyValue: String) {
+        RedisClient.jedisPool.resource.use {
+            it.del(keyName(keyValue))
+        }
+    }
 }

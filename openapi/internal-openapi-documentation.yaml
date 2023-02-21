@@ -80,7 +80,7 @@ paths:
       summary: Verifies an email via the code sent to the email
       operationId: 'verify-email'
       parameters:
-        - name: code
+        - name: token
           in: query
           description: The verification code
           required: true

@@ -19,16 +19,17 @@ class LogoutRoute
 @Resource("/password-forgotten")
 class PasswordForgottenRoute(val email: String)
 
-@Resource("/request-password-change")
-class RequestPasswordChangeRoute(val newPassword: String, val code: String)
+@Resource("/reset-password")
+class ResetPasswordRoute(val newPassword: String, val token: String)
 
 @Resource("/me")
 class MeRoute
 
 fun Route.user() {
+    passwordOperationRoutes()
+
     authenticate("auth-user-session") {
         logoutRoute()
-        passwordOperationRoutes()
         meRoutes()
     }
 }

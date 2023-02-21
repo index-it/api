@@ -25,7 +25,7 @@ class RegisterRoute
 class SendVerificationEmailRoute
 
 @Resource("/verify-email")
-class VerifyEmailRoute(val code: String)
+class VerifyEmailRoute(val token: String)
 
 @Resource("/is-email-verified")
 class IsEmailVerifiedRoute

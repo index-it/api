@@ -2,32 +2,44 @@ package app.index_it.daos
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.db.EmailVerificationDBM
+import app.index_it.core.logic.TokenGenerator
 import app.index_it.models.email.EmailVerificationDto
+import app.index_it.models.user.UserDto
 import io.ktor.util.date.*
+import org.litote.kmongo.Id
 import java.util.*
 
 object EmailVerificationDao {
-    fun get(code: String): EmailVerificationDto? = EmailVerificationDBM.get(code)
+    private fun save(emailVerificationDto: EmailVerificationDto) = EmailVerificationDBM.save(emailVerificationDto)
+
+    fun get(token: String): EmailVerificationDto? {
+        return EmailVerificationDBM.get(TokenGenerator.hashToken(token))
+    }
 
     /**
      * Sends a verification email to the provided email
      * and returns true if the email was sent successfully, false otherwise
      */
-    suspend fun createAndSend(email: String): Boolean {
+    suspend fun createAndSend(user: UserDto): Boolean {
+        val (token, hashedToken) = TokenGenerator.generate()
+
         val emailVerificationDto = EmailVerificationDto(
-            user_email = email,
+            token = hashedToken,
+            user_id = user.id,
             expire_at = Date(getTimeMillis() + 3600000)
         )
+
         save(emailVerificationDto)
-        return SendinblueClient.sendEmailVerificationEmail(email, emailVerificationDto.code)
+        return SendinblueClient.sendEmailVerificationEmail(user.email, token)
     }
 
-    fun save(emailVerificationDto: EmailVerificationDto) = EmailVerificationDBM.save(emailVerificationDto)
+    /**
+     * Deletes all email verification tokens of a specific email.
+     */
+    fun deleteAll(id: Id<UserDto>) = EmailVerificationDBM.deleteAll(id)
 
-    fun delete(code: String) = EmailVerificationDBM.delete(code)
-
-    fun isRateLimited(email: String): Boolean {
-        val sent = EmailVerificationDBM.countSaved(email)
+    fun isRateLimited(id: Id<UserDto>): Boolean {
+        val sent = EmailVerificationDBM.countSaved(id)
         return sent >= 5
     }
 }

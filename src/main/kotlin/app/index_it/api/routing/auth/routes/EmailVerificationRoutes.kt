@@ -14,9 +14,6 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URLDecoder
 
 fun Route.emailVerificationRoutes() {
     authenticate("auth-email-verification") {
@@ -32,12 +29,12 @@ fun Route.emailVerificationRoutes() {
             if (userDto.email_verified)
                 return@post call.respond(HttpStatusCode.OK)
 
-            if (EmailVerificationDao.isRateLimited(userDto.email))
+            if (EmailVerificationDao.isRateLimited(userDto.id))
                 return@post call.respond(HttpStatusCode.TooManyRequests)
 
-            val emailSent = EmailVerificationDao.createAndSend(userDto.email)
+            val emailSent = EmailVerificationDao.createAndSend(userDto)
             if (emailSent)
-                call.respond(HttpStatusCode.Created)
+                call.respond(HttpStatusCode.OK)
             else
                 call.respond(HttpStatusCode.InternalServerError)
         }
@@ -61,21 +58,18 @@ fun Route.emailVerificationRoutes() {
      * Uses the code sent in the email inbox of the user to verify its email
      */
     get<VerifyEmailRoute> { request ->
-        val emailVerificationDto = EmailVerificationDao.get(request.code)
+        val emailVerificationDto = EmailVerificationDao.get(request.token)
             ?: return@get call.respondRedirect(Env.email_verification_error_url)
 
-        val userDto = UserDao.getFromEmail(emailVerificationDto.user_email)
+        val userDto = UserDao.get(emailVerificationDto.user_id)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
         if (userDto.email_verified)
             return@get call.respondRedirect(Env.email_verification_success_url)
 
-        if (request.code == emailVerificationDto.code) {
-            UserDao.verifyEmail(userDto.id)
-            EmailVerificationDao.delete(request.code)
-            return@get call.respondRedirect(Env.email_verification_success_url)
-        } else
-            return@get call.respondRedirect(Env.email_verification_error_url)
+        UserDao.verifyEmail(userDto.id)
+        EmailVerificationDao.deleteAll(userDto.id)
+        return@get call.respondRedirect(Env.email_verification_success_url)
     }
 }

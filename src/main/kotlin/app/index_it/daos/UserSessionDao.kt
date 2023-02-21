@@ -8,22 +8,28 @@ import io.ktor.server.sessions.*
 import io.ktor.util.date.*
 import org.litote.kmongo.Id
 
+// TODO: Auto delete from redis after expire time
 object UserSessionDao {
-    fun get(id: String) = UserSessionCM.get(id)
+    fun get(userId: Id<UserDto>, sessionId: String) = UserSessionCM.get(userId, sessionId)
 
     fun create(id: Id<UserDto>): UserSessionId {
-        val userSessionId = UserSessionId(getTimeMillis().toString() +  generateSessionId())
+        val userSessionId = UserSessionId(getTimeMillis().toString() +  generateSessionId(), id.toString())
 
-        save(UserSessionDto(
-            userSessionId.session_id,
-            getTimeMillis(),
-            id
-        ))
+        save(
+            id,
+            UserSessionDto(
+                userSessionId.session_id,
+                getTimeMillis(),
+                id
+            )
+        )
 
         return userSessionId
     }
 
-    private fun save(userSessionDto: UserSessionDto) = UserSessionCM.create(userSessionDto)
+    private fun save(userId: Id<UserDto>, userSessionDto: UserSessionDto) = UserSessionCM.create(userId, userSessionDto)
 
-    fun delete(id: String) = UserSessionCM.delete(id)
+    fun delete(userId: Id<UserDto>, sessionId: String) = UserSessionCM.delete(userId, sessionId)
+
+    fun deleteAllSessionsOfUser(userId: Id<UserDto>) = UserSessionCM.deleteAll(userId)
 }

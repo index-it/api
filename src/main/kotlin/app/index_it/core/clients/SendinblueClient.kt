@@ -40,9 +40,9 @@ object SendinblueClient {
                         email = email
                     )
                 ),
-                templateId = 1,
+                templateId = 2,
                 params = SendinblueCodeOperationRequestBody.Params(
-                    url = "https://api.index-it.app/verify-email?email=${
+                    url = "${Env.verify_email_url}?email=${
                         URLEncoder.encode(
                             email,
                             "utf-8"
@@ -55,7 +55,7 @@ object SendinblueClient {
         return response.status.isSuccess()
     }
 
-    suspend fun sendPasswordResetEmail(email: String, code: String): Boolean {
+    suspend fun sendPasswordResetEmail(email: String, token: String): Boolean {
         val response: HttpResponse = client.post("smtp/email") {
             setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
@@ -63,9 +63,9 @@ object SendinblueClient {
                         email = email
                     )
                 ),
-                templateId = 2,
+                templateId = 1,
                 params = SendinblueCodeOperationRequestBody.Params(
-                    url = "https://index-it.app/change-password?code=${code}"
+                    url = "${Env.reset_password_url}?token=${token}"
                 )
             ))
         }

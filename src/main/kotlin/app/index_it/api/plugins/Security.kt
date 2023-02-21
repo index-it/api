@@ -1,6 +1,7 @@
 package app.index_it.api.plugins
 
 import app.index_it.Env
+import app.index_it.core.extentions.toDtoId
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
@@ -24,9 +25,10 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
  * This is the content of the auth-user-session cookie
  */
 @Serializable
+@Suppress("PropertyName")
 data class UserSessionId(
-    @Suppress("PropertyName")
-    val session_id: String
+    val session_id: String,
+    val user_id: String
 ) : Principal
 
 /**
@@ -77,7 +79,7 @@ fun Application.configureSecurity() {
 
         session<UserSessionId>("auth-user-session") {
             validate { userSessionId ->
-                val session = UserSessionDao.get(userSessionId.session_id)
+                val session = UserSessionDao.get(userSessionId.user_id.toDtoId(), userSessionId.session_id)
 
                 // If there is no session or if it has expired (session expires after 7 days)
                 if (session == null || (getTimeMillis() - session.iat) >= (Env.session_max_age_in_seconds*1000))
