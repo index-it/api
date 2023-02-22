@@ -45,11 +45,14 @@ fun Route.oauthLoginRoutes() {
             userG = UserDto(
                 email = userInfo.email,
                 password_hash = null,
+                email_verified = true,
                 creation_timestamp = getTimeMillis(),
                 creation_source = UserDto.CreationSource.GOOGLE
             )
 
             UserDao.create(userG)
+        } else if (!userG.email_verified) {
+            UserDao.verifyEmail(userG.id)
         }
 
         // Create session
@@ -75,11 +78,14 @@ fun Route.oauthLoginRoutes() {
             userA = UserDto(
                 email = userInfo.email,
                 password_hash = null,
+                email_verified = true,
                 creation_timestamp = getTimeMillis(),
                 creation_source = UserDto.CreationSource.APPLE
             )
 
             UserDao.create(userA)
+        } else if (!userA.email_verified) {
+            UserDao.verifyEmail(userA.id)
         }
 
         // Create session
@@ -106,11 +112,14 @@ fun Route.oauthLoginRoutes() {
             userF = UserDto(
                 email = userInfo.email,
                 password_hash = null,
+                email_verified = true,
                 creation_timestamp = getTimeMillis(),
                 creation_source = UserDto.CreationSource.FACEBOOK
             )
 
             UserDao.create(userF)
+        } else if (!userF.email_verified) {
+            UserDao.verifyEmail(userF.id)
         }
 
         // Create session
