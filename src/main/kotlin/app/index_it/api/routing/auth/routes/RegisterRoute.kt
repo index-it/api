@@ -13,6 +13,7 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.date.*
+import kotlin.time.Duration.Companion.days
 
 fun Route.registerRoute() {
     /**
@@ -21,15 +22,23 @@ fun Route.registerRoute() {
      */
     post<RegisterRoute> {
         val signupData = call.receive<RegistrationCredentials>()
-        if (UserDao.existsWithEmail(signupData.email)) {
-            call.respond(HttpStatusCode.Forbidden)
-            return@post
+
+        val existingUser = UserDao.getFromEmail(signupData.email)
+
+        if (existingUser != null) {
+            if (!existingUser.email_verified && (getTimeMillis() - existingUser.creation_timestamp) > 7.days.inWholeMilliseconds) {
+                UserDao.delete(existingUser.id)
+            } else {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
         }
 
         val hashedPassword = PasswordEncoder.encode(signupData.password)
         val user = UserDto(
             email = signupData.email,
             password_hash = hashedPassword,
+            email_verified = false,
             creation_timestamp = getTimeMillis(),
             creation_source = UserDto.CreationSource.NONE
         )
