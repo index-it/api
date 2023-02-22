@@ -12,6 +12,8 @@ import app.index_it.daos.UserSessionDao
 import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
+import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -51,7 +53,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userG.id)
+        val sessionId = UserSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
@@ -81,7 +83,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userA.id)
+        val sessionId = UserSessionDao.create(userA.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
@@ -112,7 +114,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userF.id)
+        val sessionId = UserSessionDao.create(userF.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)

@@ -8,6 +8,7 @@ import app.index_it.daos.UserSessionDao
 import app.index_it.models.auth.LoginCredentials
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
@@ -33,7 +34,7 @@ fun Route.loginRoute() {
         if (!user.email_verified)
             return@post call.respond(HttpStatusCode.MethodNotAllowed)
 
-        val userSessionId = UserSessionDao.create(user.id)
+        val userSessionId = UserSessionDao.create(user.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(userSessionId)
         call.respond(HttpStatusCode.OK)

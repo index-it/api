@@ -3,6 +3,7 @@
 version: 2.1
 
 orbs:
+  gradle: circleci/gradle@3.0.0
   gcp-cloud-run: circleci/gcp-cloud-run@1.0.2
 
 jobs:
@@ -22,8 +23,9 @@ jobs:
           unauthenticated: true
 
 workflows:
-  commit:
+  test-build-deploy:
     jobs:
+      - gradle/test
       - build-and-push-image-and-run:
           filters:
             branches:

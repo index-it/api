@@ -1,7 +1,8 @@
 package app.index_it.core.clients
 
 import app.index_it.Env
-import app.index_it.models.email.SendinblueEmailVerificationRequestBody
+import app.index_it.models.email.SendinblueCodeOperationRequestBody
+import app.index_it.models.email.SendinblueGenericRequestBody
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
@@ -34,25 +35,54 @@ object SendinblueClient {
 
     suspend fun sendEmailVerificationEmail(email: String, code: String): Boolean {
         val response: HttpResponse = client.post("smtp/email") {
-            setBody(SendinblueEmailVerificationRequestBody(
-                sender = SendinblueEmailVerificationRequestBody.From(
-                    name = "Index Email Verification",
-                    email = "verification@index-it.app"
-                ),
+            setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
-                    SendinblueEmailVerificationRequestBody.To(
+                    SendinblueGenericRequestBody.To(
                         email = email
                     )
                 ),
-                templateId = 1,
-                params = SendinblueEmailVerificationRequestBody.Params(
-                    url = "https://api.index-it.app/verify-email?email=${
+                templateId = 2,
+                params = SendinblueCodeOperationRequestBody.Params(
+                    url = "${Env.email_verification_url}?email=${
                         URLEncoder.encode(
                             email,
                             "utf-8"
                         )
                     }&code=${code}"
                 )
+            ))
+        }
+
+        return response.status.isSuccess()
+    }
+
+    suspend fun sendPasswordResetEmail(email: String, token: String): Boolean {
+        val response: HttpResponse = client.post("smtp/email") {
+            setBody(SendinblueCodeOperationRequestBody(
+                to = listOf(
+                    SendinblueGenericRequestBody.To(
+                        email = email
+                    )
+                ),
+                templateId = 1,
+                params = SendinblueCodeOperationRequestBody.Params(
+                    url = "${Env.reset_password_url}?token=${token}"
+                )
+            ))
+        }
+
+        return response.status.isSuccess()
+    }
+
+    suspend fun sendPasswordNotificationEmail(email: String): Boolean {
+        val response: HttpResponse = client.post("smtp/email") {
+            setBody(SendinblueGenericRequestBody(
+                to = listOf(
+                    SendinblueGenericRequestBody.To(
+                        email = email
+                    )
+                ),
+                templateId = 3
             ))
         }
 

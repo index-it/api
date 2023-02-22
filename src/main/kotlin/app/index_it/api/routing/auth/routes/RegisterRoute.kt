@@ -21,7 +21,7 @@ fun Route.registerRoute() {
      */
     post<RegisterRoute> {
         val signupData = call.receive<RegistrationCredentials>()
-        if (UserDao.exists(signupData.email)) {
+        if (UserDao.existsWithEmail(signupData.email)) {
             call.respond(HttpStatusCode.Forbidden)
             return@post
         }
@@ -36,7 +36,7 @@ fun Route.registerRoute() {
 
         UserDao.create(user)
 
-        val emailSent = EmailVerificationDao.createAndSend(user.email)
+        val emailSent = EmailVerificationDao.createAndSend(user)
 
         if (emailSent)
         // User will need to verify its email

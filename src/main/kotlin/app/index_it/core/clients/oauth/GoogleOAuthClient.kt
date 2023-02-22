@@ -1,7 +1,6 @@
 package app.index_it.core.clients.oauth
 
 import app.index_it.Env
-import app.index_it.models.oauth.apple.AppleOAuthTokenResponseDto
 import app.index_it.models.oauth.google.GoogleOAuthTokenResponseDto
 import app.index_it.models.oauth.google.GoogleUserInfoDto
 import io.ktor.client.*

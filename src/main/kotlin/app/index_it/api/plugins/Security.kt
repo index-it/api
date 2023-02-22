@@ -1,9 +1,11 @@
 package app.index_it.api.plugins
 
 import app.index_it.Env
+import app.index_it.core.extentions.toDtoId
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.daos.UserDao
 import app.index_it.daos.UserSessionDao
+import app.index_it.models.auth.UserSessionDto
 import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -13,23 +15,36 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.sessions.serialization.*
 import io.ktor.util.date.*
+import io.ktor.util.pipeline.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
+/**
+ * This is the content of the auth-user-session cookie
+ */
 @Serializable
-data class UserSessionId(
-    @Suppress("PropertyName")
-    val session_id: String
+@Suppress("PropertyName")
+data class UserSessionCookie(
+    val session_id: String,
+    val user_id: String
 ) : Principal
 
+/**
+ * This is used to store the Id in the email verification routes (that cannot use proper session authentication)
+ */
 data class UserIdPrincipalForEmailVerificationAuth(val id: Id<UserDto>) : Principal
+
+/**
+ * Gets the Id of a UserDto from the auth-user-session UserSessionDto
+ */
+fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): Id<UserDto>? = call.principal<UserSessionDto>()?.userId
 
 fun Application.configureSecurity() {
 
     install(Sessions) {
-        cookie<UserSessionId>("user_session_id") {
+        cookie<UserSessionCookie>("user_session_id") {
             cookie.path = "/"
             cookie.maxAgeInSeconds = Env.session_max_age_in_seconds
             cookie.secure = Env.cookie_secure
@@ -62,9 +77,9 @@ fun Application.configureSecurity() {
             }
         }
 
-        session<UserSessionId>("auth-session") {
-            validate { userSessionId ->
-                val session = UserSessionDao.get(userSessionId.session_id)
+        session<UserSessionCookie>("auth-user-session") {
+            validate { userSessionCookie ->
+                val session = UserSessionDao.get(userSessionCookie.user_id.toDtoId(), userSessionCookie.session_id)
 
                 // If there is no session or if it has expired (session expires after 7 days)
                 if (session == null || (getTimeMillis() - session.iat) >= (Env.session_max_age_in_seconds*1000))

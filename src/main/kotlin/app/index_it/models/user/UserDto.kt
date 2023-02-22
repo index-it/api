@@ -19,4 +19,14 @@ data class UserDto(
     enum class CreationSource {
         GOOGLE, APPLE, FACEBOOK, NONE
     }
+
+    fun getResponseDto() = UserResponseDto(id, email, creation_timestamp, creation_source)
+
+    @Serializable
+    data class UserResponseDto(
+        @Contextual @SerialName("_id") val id: Id<UserDto> = ObjectId().toId(),
+        val email: String,
+        val creation_timestamp: Long,
+        val creation_source: CreationSource
+    )
 }

@@ -25,7 +25,7 @@ class RegisterRoute
 class SendVerificationEmailRoute
 
 @Resource("/verify-email")
-class VerifyEmailRoute(val code: String, val email: String)
+class VerifyEmailRoute(val token: String)
 
 @Resource("/is-email-verified")
 class IsEmailVerifiedRoute
@@ -43,7 +43,7 @@ class LoginWithApple(val code: String)
 class LoginWithFacebook(val code: String)
 
 
-fun Route.auth() {
+fun Route.authRoutes() {
     welcomeActionRoute()
     registerRoute()
     emailVerificationRoutes()
