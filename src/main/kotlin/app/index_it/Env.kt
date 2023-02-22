@@ -32,7 +32,7 @@ object Env {
 
     lateinit var email_verification_success_url: String
     lateinit var email_verification_error_url: String
-    lateinit var verify_email_url: String
+    lateinit var email_verification_url: String
     lateinit var reset_password_url: String
 
     lateinit var google_client_id: String
@@ -67,7 +67,7 @@ object Env {
 
         email_verification_success_url = getStringFromEnv("email.verification.success.url")
         email_verification_error_url = getStringFromEnv("email.verification.error.url")
-        verify_email_url = getStringFromEnv("verify.email.url")
+        email_verification_url = getStringFromEnv("email.verification.url")
         reset_password_url = getStringFromEnv("reset.password.url")
 
         google_client_id = getStringFromEnv("google.client.id")

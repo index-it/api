@@ -54,10 +54,9 @@ paths:
       security: []
       responses:
         '200':
-          description: registered and sent verification email
+          description: Registered and sent verification email
         '201':
-          description: >-
-            registered but did not send verification email for some internal issues. It should be requested with the related endpoint
+          description: Registered but did not send verification email for some internal issues. It should be requested with the related endpoint
         '400':
           description: Email or password format not satisfied (see response message)
         '403':
@@ -186,15 +185,15 @@ paths:
     get:
       responses:
         '200':
-          description: Password resetted, user sessions deleted and operation notification email sent
+          description: get the informations of the logged in account
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/User'
+                $ref: '#/components/schemas/User'
     delete:
       responses:
         '200':
-          description: User data delete completely
+          description: User data deleted completely
 components:
   schemas:
     Credentials:
@@ -212,6 +211,16 @@ components:
         email:
           type: string
           format: email
+        creation_timestamp:
+          type: number
+          format: timestamp
+        creation_source:
+          type: string
+          enum:
+            - GOOGLE
+            - APPLE
+            - FACEBOOK
+            - NONE
   securitySchemes:
     sessionCookie:
       type: apiKey

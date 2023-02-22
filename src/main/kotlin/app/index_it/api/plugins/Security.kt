@@ -78,8 +78,8 @@ fun Application.configureSecurity() {
         }
 
         session<UserSessionCookie>("auth-user-session") {
-            validate { userSessionId ->
-                val session = UserSessionDao.get(userSessionId.user_id.toDtoId(), userSessionId.session_id)
+            validate { userSessionCookie ->
+                val session = UserSessionDao.get(userSessionCookie.user_id.toDtoId(), userSessionCookie.session_id)
 
                 // If there is no session or if it has expired (session expires after 7 days)
                 if (session == null || (getTimeMillis() - session.iat) >= (Env.session_max_age_in_seconds*1000))

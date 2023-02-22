@@ -6,7 +6,7 @@ import app.index_it.core.logic.ObjectMapper
 abstract class DoubleHashedCM(
     val keyBase: String
 ) {
-    fun keyName(hashValue: String) = "${keyBase}_$hashValue"
+    fun keyName(hashValue: String) = "${keyBase}:$hashValue"
 
     inline fun <reified T> getAllValues(keyValue: String): List<T> {
         RedisClient.jedisPool.resource.use {

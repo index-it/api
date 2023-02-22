@@ -16,8 +16,7 @@ fun Route.meRoutes() {
         val user = UserDao.get(userIdFromSession()!!)
             ?: throw AuthenticationException()
 
-        // TODO: Do not send full user
-        call.respond(user)
+        call.respond(user.getResponseDto())
     }
 
     delete<MeRoute> {

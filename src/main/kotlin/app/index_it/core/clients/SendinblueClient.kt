@@ -43,7 +43,7 @@ object SendinblueClient {
                 ),
                 templateId = 2,
                 params = SendinblueCodeOperationRequestBody.Params(
-                    url = "${Env.verify_email_url}?email=${
+                    url = "${Env.email_verification_url}?email=${
                         URLEncoder.encode(
                             email,
                             "utf-8"

@@ -12,22 +12,23 @@ import org.litote.kmongo.Id
 object UserSessionDao {
     fun get(userId: Id<UserDto>, sessionId: String) = UserSessionCM.get(userId, sessionId)
 
-    fun create(id: Id<UserDto>): UserSessionCookie {
-        val userSessionCookie = UserSessionCookie(getTimeMillis().toString() +  generateSessionId(), id.toString())
+    fun create(userId: Id<UserDto>, device: String?, ip: String): UserSessionCookie {
+        val userSessionCookie = UserSessionCookie(getTimeMillis().toString() +  generateSessionId(), userId.toString())
 
         save(
-            id,
             UserSessionDto(
-                userSessionCookie.session_id,
-                getTimeMillis(),
-                id
+                id = userSessionCookie.session_id,
+                userId = userId,
+                iat = getTimeMillis(),
+                deviceName = device,
+                ip = ip
             )
         )
 
         return userSessionCookie
     }
 
-    private fun save(userId: Id<UserDto>, userSessionDto: UserSessionDto) = UserSessionCM.create(userId, userSessionDto)
+    private fun save(userSessionDto: UserSessionDto) = UserSessionCM.create(userSessionDto)
 
     fun delete(userId: Id<UserDto>, sessionId: String) = UserSessionCM.delete(userId, sessionId)
 

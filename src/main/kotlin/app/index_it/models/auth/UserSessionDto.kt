@@ -9,6 +9,8 @@ import org.litote.kmongo.Id
 @Serializable
 data class UserSessionDto(
     @Contextual val id: String,
+    @Contextual val userId: Id<UserDto>,
     val iat: Long,
-    @Contextual val userId: Id<UserDto>
+    val deviceName: String?,
+    val ip: String
 ) : Principal
