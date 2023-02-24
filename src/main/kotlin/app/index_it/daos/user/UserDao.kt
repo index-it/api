@@ -1,4 +1,4 @@
-package app.index_it.daos
+package app.index_it.daos.user
 
 import app.index_it.core.cache.UserCM
 import app.index_it.core.db.UserDBM

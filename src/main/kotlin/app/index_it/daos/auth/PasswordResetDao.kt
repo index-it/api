@@ -1,4 +1,4 @@
-package app.index_it.daos
+package app.index_it.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.db.PasswordResetDBM
@@ -32,8 +32,6 @@ object PasswordResetDao {
         save(passwordResetDto)
         return SendinblueClient.sendPasswordResetEmail(user.email, token)
     }
-
-    fun deleteAll(id: Id<UserDto>) = PasswordResetDBM.deleteAll(id)
 
     /**
      * Up to 7 password resets in an hour

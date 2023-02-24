@@ -1,4 +1,4 @@
-package app.index_it.daos
+package app.index_it.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.db.EmailVerificationDBM

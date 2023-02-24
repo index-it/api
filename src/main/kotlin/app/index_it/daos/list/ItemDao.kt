@@ -1,4 +1,4 @@
-package app.index_it.daos
+package app.index_it.daos.list
 
 import app.index_it.core.cache.ItemCM
 import app.index_it.core.db.ItemDBM

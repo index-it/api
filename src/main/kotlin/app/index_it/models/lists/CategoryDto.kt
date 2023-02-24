@@ -19,17 +19,30 @@ data class CategoryDto(
     @Contextual val id: Id<CategoryDto> = ObjectId().toId(),
     var name: String,
     var color: String
-)
+) {
+    @Serializable
+    data class CategoryCreateRequestDto(
+        val name: String,
+        val color: String
+    ): Validatable<CategoryCreateRequestDto> {
+        override fun validate() = Validation {
+            CategoryCreateRequestDto::name {
+                minLength(1)
+                maxLength(30)
+            }
+        }.invoke(this)
+    }
 
-@Serializable
-data class ClientCategoryDto(
-    val name: String,
-    val color: String
-): Validatable<ClientCategoryDto> {
-    override fun validate() = Validation<ClientCategoryDto> {
-        ClientCategoryDto::name {
-            minLength(1)
-            maxLength(30)
-        }
-    }.invoke(this)
+    @Serializable
+    data class CategoryUpdateRequestDto(
+        val name: String?,
+        val color: String?
+    ): Validatable<CategoryUpdateRequestDto> {
+        override fun validate() = Validation {
+            CategoryUpdateRequestDto::name ifPresent {
+                minLength(1)
+                maxLength(30)
+            }
+        }.invoke(this)
+    }
 }

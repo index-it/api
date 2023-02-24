@@ -1,4 +1,4 @@
-package app.index_it.daos
+package app.index_it.daos.auth
 
 import app.index_it.api.plugins.UserSessionCookie
 import app.index_it.core.cache.UserSessionCM
@@ -13,7 +13,7 @@ object UserSessionDao {
     fun get(userId: Id<UserDto>, sessionId: String) = UserSessionCM.get(userId, sessionId)
 
     fun create(userId: Id<UserDto>, device: String?, ip: String): UserSessionCookie {
-        val userSessionCookie = UserSessionCookie(getTimeMillis().toString() +  generateSessionId(), userId.toString())
+        val userSessionCookie = UserSessionCookie(getTimeMillis().toString() + generateSessionId(), userId.toString())
 
         save(
             UserSessionDto(

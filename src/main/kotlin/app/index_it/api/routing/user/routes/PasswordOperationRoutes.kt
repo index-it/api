@@ -4,9 +4,9 @@ import app.index_it.api.routing.user.PasswordForgottenRoute
 import app.index_it.api.routing.user.ResetPasswordRoute
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.daos.PasswordResetDao
-import app.index_it.daos.UserDao
-import app.index_it.daos.UserSessionDao
+import app.index_it.daos.auth.PasswordResetDao
+import app.index_it.daos.user.UserDao
+import app.index_it.daos.auth.UserSessionDao
 import app.index_it.models.auth.PasswordResetRequestBody
 import io.ktor.http.*
 import io.ktor.server.application.*

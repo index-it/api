@@ -16,6 +16,7 @@ import org.litote.kmongo.id.toId
  * Represents a single list, which can contain categories to organize list items in it
  */
 @Serializable
+@Suppress("PropertyName")
 data class ListDto(
     @Contextual @SerialName("_id") val id: Id<ListDto> = ObjectId().toId(),
     @Contextual var user_id: Id<UserDto>,
@@ -23,18 +24,34 @@ data class ListDto(
     val categories: MutableList<CategoryDto> = mutableListOf(),
     var icon: String,
     var color: String
-)
+) {
+    @Serializable
+    data class ListCreateRequestDto(
+        var name: String,
+        var icon: String,
+        var color: String
+    ): Validatable<ListCreateRequestDto> {
+        override fun validate() = Validation {
+            ListCreateRequestDto::name {
+                minLength(1)
+                maxLength(50)
+            }
+            // TODO: Decide the format of the other properties
+        }.invoke(this)
+    }
 
-@Serializable
-data class ClientListDto(
-    var name: String,
-    var icon: String,
-    var color: String
-): Validatable<ClientListDto> {
-    override fun validate() = Validation {
-        ClientListDto::name {
-            minLength(1)
-            maxLength(50)
-        }
-    }.invoke(this)
+    @Serializable
+    data class ListUpdateRequestDto(
+        var name: String?,
+        var icon: String?,
+        var color: String?
+    ): Validatable<ListUpdateRequestDto> {
+        override fun validate() = Validation {
+            ListUpdateRequestDto::name ifPresent {
+                minLength(1)
+                maxLength(50)
+            }
+            // TODO: Decide the format of the other properties
+        }.invoke(this)
+    }
 }
