@@ -28,7 +28,11 @@ object ItemCM: DoubleHashedCM("items") {
         uncacheValue(keyValue(userId, listId), itemId.toString())
     }
 
-    fun deleteAll(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: Id<UserDto>) {
         uncacheAllValues("${userId}_*")
+    }
+
+    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+        uncacheAllValues(keyValue(userId, listId))
     }
 }

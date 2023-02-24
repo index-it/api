@@ -49,7 +49,11 @@ object ItemDBM {
         col.deleteOne(ItemDto::id eq itemId, ItemDto::user_id eq userId, ItemDto::list_id eq listId)
     }
 
-    fun deleteAll(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: Id<UserDto>) {
         col.deleteMany(ItemDto::user_id eq userId)
+    }
+
+    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+        col.deleteMany(ItemDto::list_id eq listId, ItemDto::user_id eq userId)
     }
 }

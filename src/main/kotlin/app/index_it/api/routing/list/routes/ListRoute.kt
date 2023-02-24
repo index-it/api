@@ -3,6 +3,7 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toDtoId
+import app.index_it.daos.list.ItemDao
 import app.index_it.daos.list.ListDao
 import app.index_it.models.lists.ListDto
 import io.ktor.http.*
@@ -31,6 +32,7 @@ fun Route.listRoute() {
 
     delete<ListsRoute.ListRoute> {
         ListDao.delete(userIdFromSession()!!, it.list_id.toDtoId())
+        ItemDao.deleteAllOfList(userIdFromSession()!!, it.list_id.toDtoId())
         call.respond(HttpStatusCode.OK)
     }
 }

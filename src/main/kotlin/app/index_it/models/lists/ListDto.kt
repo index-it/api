@@ -1,10 +1,12 @@
 package app.index_it.models.lists
 
+import app.index_it.core.logic.RegexPatterns
 import app.index_it.models.Validatable
 import app.index_it.models.user.UserDto
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
+import io.konform.validation.jsonschema.pattern
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -37,8 +39,7 @@ data class ListDto(
                 maxLength(50)
             }
             ListCreateRequestDto::color {
-                minLength(10)
-                maxLength(10)
+                pattern(RegexPatterns.colorPattern)
             }
         }.invoke(this)
     }
@@ -55,8 +56,7 @@ data class ListDto(
                 maxLength(50)
             }
             ListUpdateRequestDto::color ifPresent {
-                minLength(10)
-                maxLength(10)
+                pattern(RegexPatterns.colorPattern)
             }
         }.invoke(this)
     }

@@ -33,6 +33,7 @@ fun Route.categoryRoute() {
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         CategoryDao.delete(userIdFromSession()!!, it.parent.parent.list_id.toDtoId(), it.category_id.toDtoId())
+        // TODO: Delete all items of category too
         call.respond(HttpStatusCode.OK)
     }
 }

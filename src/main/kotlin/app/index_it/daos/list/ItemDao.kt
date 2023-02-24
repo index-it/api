@@ -2,6 +2,7 @@ package app.index_it.daos.list
 
 import app.index_it.core.cache.ItemCM
 import app.index_it.core.db.ItemDBM
+import app.index_it.core.extentions.toDtoId
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
@@ -37,7 +38,7 @@ object ItemDao {
         val itemDto = ItemDto(
             user_id = userId,
             list_id = listId,
-            category_id = itemCreateRequestDto.category_id,
+            category_id = itemCreateRequestDto.category_id.toDtoId(),
             name = itemCreateRequestDto.name
         )
 
@@ -63,8 +64,13 @@ object ItemDao {
         ItemCM.delete(userId, listId, itemId)
     }
 
-    fun deleteAll(userId: Id<UserDto>) {
-        ItemDBM.deleteAll(userId)
-        ItemCM.deleteAll(userId)
+    fun deleteAllOfUser(userId: Id<UserDto>) {
+        ItemDBM.deleteAllOfUser(userId)
+        ItemCM.deleteAllOfUser(userId)
+    }
+
+    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+        ItemDBM.deleteAllOfList(userId, listId)
+        ItemCM.deleteAllOfList(userId, listId)
     }
 }

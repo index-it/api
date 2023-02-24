@@ -28,7 +28,7 @@ fun Route.meRoutes() {
         UserSessionDao.deleteAllSessionsOfUser(userId)
 
         ListDao.deleteAll(userId)
-        ItemDao.deleteAll(userId)
+        ItemDao.deleteAllOfUser(userId)
         // TODO: Delete planner data
         call.respond(HttpStatusCode.OK)
     }

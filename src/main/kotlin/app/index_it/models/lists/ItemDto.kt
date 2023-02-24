@@ -21,7 +21,7 @@ data class ItemDto(
     @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
     @Contextual val user_id: Id<UserDto>,
     @Contextual val list_id: Id<ListDto>,
-    val category_id: String,
+    val category_id: Id<CategoryDto>,
     val name: String,
     // TODO: Add more property as you fin the need for them
 ) {
