@@ -7,6 +7,8 @@ import org.litote.kmongo.Id
 object ListCM: DoubleHashedCM("lists") {
     fun getAll(userId: Id<UserDto>): List<ListDto> = getAllValues(userId.toString())
 
+    fun get(userId: Id<UserDto>, listId: Id<ListDto>): ListDto? = getValue(userId.toString(), listId.toString())
+
     fun createAll(userId: Id<UserDto>, listsDto: List<ListDto>) {
         cacheAllValues(userId.toString(), listsDto.associateBy { it.id.toString() })
     }
@@ -21,5 +23,9 @@ object ListCM: DoubleHashedCM("lists") {
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
         uncacheValue(userId.toString(), listId.toString())
+    }
+
+    fun deleteAll(userId: Id<UserDto>) {
+        uncacheAllValues(userId.toString())
     }
 }

@@ -5,8 +5,8 @@ import app.index_it.api.plugins.UserIdPrincipalForEmailVerificationAuth
 import app.index_it.api.routing.auth.IsEmailVerifiedRoute
 import app.index_it.api.routing.auth.SendVerificationEmailRoute
 import app.index_it.api.routing.auth.VerifyEmailRoute
-import app.index_it.daos.EmailVerificationDao
-import app.index_it.daos.UserDao
+import app.index_it.daos.auth.EmailVerificationDao
+import app.index_it.daos.user.UserDao
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

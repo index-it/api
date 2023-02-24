@@ -1,7 +1,7 @@
 package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.WelcomeActionRoute
-import app.index_it.daos.UserDao
+import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.WelcomeAction
 import io.ktor.server.application.*
 import io.ktor.server.resources.*

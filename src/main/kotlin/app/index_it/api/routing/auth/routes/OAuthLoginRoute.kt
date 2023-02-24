@@ -7,8 +7,8 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.daos.UserDao
-import app.index_it.daos.UserSessionDao
+import app.index_it.daos.user.UserDao
+import app.index_it.daos.auth.UserSessionDao
 import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*

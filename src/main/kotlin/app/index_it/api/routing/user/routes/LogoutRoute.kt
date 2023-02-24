@@ -3,7 +3,7 @@ package app.index_it.api.routing.user.routes
 import app.index_it.api.plugins.UserSessionCookie
 import app.index_it.api.routing.user.LogoutRoute
 import app.index_it.core.extentions.toDtoId
-import app.index_it.daos.UserSessionDao
+import app.index_it.daos.auth.UserSessionDao
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.resources.*

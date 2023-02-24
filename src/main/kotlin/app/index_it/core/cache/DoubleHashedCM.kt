@@ -41,6 +41,12 @@ abstract class DoubleHashedCM(
         }
     }
 
+    fun uncacheMultipleValues(keyValue: String, vararg fields: String) {
+        RedisClient.jedisPool.resource.use {
+            it.hdel(keyName(keyValue), *fields)
+        }
+    }
+
     fun uncacheAllValues(keyValue: String) {
         RedisClient.jedisPool.resource.use {
             it.del(keyName(keyValue))

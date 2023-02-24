@@ -21,7 +21,7 @@ data class RegistrationCredentials(
             RegistrationCredentials::password {
                 minLength(8) hint "Password min length is 8 characters"
                 maxLength(100) hint "Password max length is 100 characters"
-                // TODO: pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])") hint "Password needs at least an uppercase character, a lowercase one and a number"
+                pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])") hint "Password needs at least an uppercase character, a lowercase one and a number"
             }
         }.invoke(this)
 }

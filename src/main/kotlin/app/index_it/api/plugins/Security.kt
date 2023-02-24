@@ -3,8 +3,8 @@ package app.index_it.api.plugins
 import app.index_it.Env
 import app.index_it.core.extentions.toDtoId
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.daos.UserDao
-import app.index_it.daos.UserSessionDao
+import app.index_it.daos.user.UserDao
+import app.index_it.daos.auth.UserSessionDao
 import app.index_it.models.auth.UserSessionDto
 import app.index_it.models.user.UserDto
 import io.ktor.http.*

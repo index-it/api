@@ -15,6 +15,8 @@ servers:
 paths:
   /welcome-action:
     get:
+      tags:
+        - auth
       summary: Retrieve the required first step for a user auth flow
       description: >-
         This is used to initialize a user auth flow.
@@ -41,6 +43,8 @@ paths:
                   - VERIFY_EMAIL
   /register:
     post:
+      tags:
+        - auth
       summary: Register a user
       description: >-
         Register a user with an email and password
@@ -63,6 +67,8 @@ paths:
           description: The email cannot be used to register
   /send-verification-email:
     post:
+      tags:
+        - email-verification
       summary: Sends an email to register an account
       description: >-
         Sends an email to verify a register account
@@ -79,6 +85,8 @@ paths:
           description: Not authenticated
   /verify-email:
     get:
+      tags:
+        - email-verification
       summary: Verifies an email via the code sent to the email
       operationId: 'verify-email'
       parameters:
@@ -94,6 +102,8 @@ paths:
           description: Redirects to either a success page or error page
   /is-email-verified:
     post:
+      tags:
+        - email-verification
       summary: Check if an email is verified
       operationId: 'is-email-verified'
       requestBody:
@@ -108,6 +118,8 @@ paths:
           description: Not authenticated
   /login:
     post:
+      tags:
+        - auth
       summary: Login and get a session
       description: >-
         Login and create a session for your account
@@ -132,6 +144,8 @@ paths:
           description: The email of the user is not verified
   /logout:
     get:
+      tags:
+        - auth
       summary: Log out and deletes the auth session
       operationId: 'logout'
       responses:
@@ -139,6 +153,9 @@ paths:
           description: Logged out
   /password-forgotten:
     get:
+      tags:
+        - password-operations
+      operationId: 'password-forgotten'
       parameters:
         - name: email
           in: query
@@ -156,6 +173,9 @@ paths:
           description: Too many password forgotten requests
   /reset-password:
     post:
+      tags:
+        - password-operations
+      operationId: 'reset-password'
       parameters:
         - name: token
           in: query
@@ -183,6 +203,9 @@ paths:
           description: Token not valid
   /me:
     get:
+      tags:
+        - user
+      operationId: 'get-user'
       responses:
         '200':
           description: get the informations of the logged in account
@@ -191,9 +214,264 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
     delete:
+      tags:
+        - user
+      operationId: 'delete-user'
       responses:
         '200':
           description: User data deleted completely
+  /lists:
+    get:
+      tags:
+        - lists
+      operationId: 'get-lists'
+      responses:
+        '200':
+          description: Array with all the lists of the logged in user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/List"
+    post:
+      tags:
+        - lists
+      operationId: 'create-list'
+      requestBody:
+        $ref: "#/components/requestBodies/ListCreateBody"
+      responses:
+        '200':
+          description: Creates a new List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+        '400':
+          description: Invalid request body (see response message)
+  /lists/{list_id}:
+    parameters:
+      - name: list_id
+        in: path
+        description: The id of the List
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - lists
+      operationId: 'get-list'
+      responses:
+        '200':
+          description: A single List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+        '404':
+          description: List with id list_id not found
+    put:
+      tags:
+        - lists
+      operationId: 'update-list'
+      requestBody:
+        $ref: "#/components/requestBodies/ListUpdateBody"
+      responses:
+        '200':
+          description: Updated list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+        '400':
+          description: Invalid request body (see response message)
+        '404':
+          description: List with id list_id not found
+    delete:
+      tags:
+        - lists
+      operationId: 'delete-list'
+      responses:
+        '200':
+          description: List deleted and all items of the list deleted
+  /lists/{list_id}/categories:
+    parameters:
+      - name: list_id
+        in: path
+        description: The id of the List
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - list-categories
+      operationId: 'get-list-categories'
+      responses:
+        '200':
+          description: Array with all the categories of a List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+        '404':
+          description: List not found
+    post:
+      tags:
+        - list-categories
+      operationId: 'create-list-category'
+      requestBody:
+        $ref: "#/components/requestBodies/CategoryCreateBody"
+      responses:
+        '200':
+          description: Creates a new Category for a List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        '400':
+          description: Invalid request body (see response message)
+        '404':
+          description: List not found
+  /lists/{list_id}/categories/{category_id}:
+    parameters:
+      - name: list_id
+        in: path
+        description: The id of the List
+        required: true
+        schema:
+          type: string
+      - name: category_id
+        in: path
+        description: The id of the Category
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - list-categories
+      operationId: 'get-list-category'
+      responses:
+        '200':
+          description: The Category of the List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        '404':
+          description: List not found
+    put:
+      tags:
+        - list-categories
+      operationId: 'update-list-category'
+      requestBody:
+        $ref: "#/components/requestBodies/CategoryUpdateBody"
+      responses:
+        '200':
+          description: Category updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        '400':
+          description: Invalid request body (see response message)
+        '404':
+          description: List not found
+    delete:
+      tags:
+        - list-categories
+      operationId: 'delete-list-category'
+      responses:
+        '200':
+          description: Category deleted and items of that category deleted
+  /lists/{list_id}/items:
+    parameters:
+      - name: list_id
+        in: path
+        description: The id of the List
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - list-items
+      operationId: 'get-list-items'
+      responses:
+        '200':
+          description: All the Items of a List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+    post:
+      tags:
+        - list-items
+      operationId: 'create-list-item'
+      requestBody:
+        $ref: "#/components/requestBodies/ItemCreateBody"
+      responses:
+        '200':
+          description: New Item created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        '400':
+          description: Invalid request body (see response message)
+  /lists/{list_id}/items/{item_id}:
+    parameters:
+      - name: list_id
+        in: path
+        description: The id of the Iist
+        required: true
+        schema:
+          type: string
+      - name: item_id
+        in: path
+        description: The id of the Item
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - list-items
+      operationId: 'get-list-item'
+      responses:
+        '200':
+          description: Get an Item of a List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        '404':
+          description: List not found
+    put:
+      tags:
+        - list-items
+      operationId: 'update-list-item'
+      requestBody:
+        $ref: "#/components/requestBodies/ItemUpdateBody"
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        '400':
+          description: Invalid request body (see response message)
+        '404':
+          description: List not found
+    delete:
+      tags:
+        - list-items
+      operationId: 'delete-list-item'
+      responses:
+        '200':
+          description: Item deleted
 components:
   schemas:
     Credentials:
@@ -221,6 +499,47 @@ components:
             - APPLE
             - FACEBOOK
             - NONE
+    List:
+      type: object
+      properties:
+        _id:
+          type: string
+        user_id:
+          type: string
+        name:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        icon:
+          type: string
+        color:
+          type: string
+          format: 0xAARRGGBB
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+          format: 0xAARRGGBB
+    Item:
+      type: object
+      properties:
+        _id:
+          type: string
+        user_id:
+          type: string
+        list_id:
+          type: string
+        category_id:
+          type: string
+        name:
+          type: string
   securitySchemes:
     sessionCookie:
       type: apiKey
@@ -229,7 +548,7 @@ components:
   requestBodies:
     EmailVerificationAuth:
       required: true
-      description: >-
+      description: >
         authentication needed for the routes related to email verification
       content:
         application/x-www-form-urlencoded:
@@ -245,5 +564,98 @@ components:
             required:
               - email
               - password
+    ListCreateBody:
+      required: true
+      description: >
+        Creates a new list with the passed properties
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                required: true
+                type: string
+              icon:
+                required: true
+                type: string
+              color:
+                required: true
+                type: string
+                format: 0xAARRGGBB
+    ListUpdateBody:
+      required: true
+      description: >
+        Non null values of this object will update the respective property of a list (null values are ignored)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              icon:
+                type: string
+              color:
+                type: string
+                format: 0xAARRGGBB
+    ItemCreateBody:
+      required: true
+      description: >
+        Creates a new item with the passed properties
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                required: true
+                type: string
+              category_id:
+                required: true
+                type: string
+    ItemUpdateBody:
+      required: true
+      description: >
+        Non null values of this object will update the respective property of an item (null values are ignored)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              category_id:
+                type: string
+    CategoryCreateBody:
+      required: true
+      description: >
+        Creates a new category with the passed properties
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                required: true
+                type: string
+              color:
+                required: true
+                type: string
+                format: 0xAARRGGBB
+    CategoryUpdateBody:
+      required: true
+      description: >
+        Non null values of this object will update the respective property of a category (null values are ignored)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              color:
+                type: string
+                format: 0xAARRGGBB
 security:
   - sessionCookie: []

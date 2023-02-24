@@ -16,23 +16,38 @@ import org.litote.kmongo.id.toId
  * Represents an item in a list
  */
 @Serializable
+@Suppress("PropertyName")
 data class ItemDto(
     @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
     @Contextual val user_id: Id<UserDto>,
     @Contextual val list_id: Id<ListDto>,
-    val category_id: String,
+    val category_id: Id<CategoryDto>,
     val name: String,
-)
+    // TODO: Add more property as you fin the need for them
+) {
+    @Serializable
+    data class ItemCreateRequestDto(
+        val category_id: String,
+        val name: String
+    ): Validatable<ItemCreateRequestDto> {
+        override fun validate() = Validation {
+            ItemCreateRequestDto::name {
+                minLength(1)
+                maxLength(30)
+            }
+        }.invoke(this)
+    }
 
-@Serializable
-data class ClientItemDto(
-    val category_id: String,
-    val name: String
-): Validatable<ClientItemDto> {
-    override fun validate() = Validation {
-        ClientItemDto::name {
-            minLength(1)
-            maxLength(30)
-        }
-    }.invoke(this)
+    @Serializable
+    data class ItemUpdateRequestDto(
+        val category_id: String,
+        val name: String?
+    ): Validatable<ItemUpdateRequestDto> {
+        override fun validate() = Validation {
+            ItemUpdateRequestDto::name ifPresent {
+                minLength(1)
+                maxLength(30)
+            }
+        }.invoke(this)
+    }
 }
