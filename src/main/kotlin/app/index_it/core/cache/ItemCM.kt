@@ -10,6 +10,8 @@ object ItemCM: DoubleHashedCM("items") {
 
     fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> = ItemCM.getAllValues(keyValue(userId, listId))
 
+    fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? = ItemCM.getValue(keyValue(userId, listId), itemId.toString())
+
     fun createAll(userId: Id<UserDto>, listId: Id<ListDto>, itemsDto: List<ItemDto>) {
         ItemCM.cacheAllValues(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
     }

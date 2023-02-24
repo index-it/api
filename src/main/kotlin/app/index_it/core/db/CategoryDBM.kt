@@ -37,7 +37,7 @@ object CategoryDBM {
             properties.add(CategoryDto::color setTo categoryUpdateRequestDto.color)
 
         if (properties.isEmpty())
-            throw BadRequestException("No values to update found in categoryDto (id $listId, userId $userId)")
+            throw BadRequestException("No values to update found in categoryDto (id $categoryId, listId $listId, userId $userId)")
 
         return col.findOneAndUpdate(
             and(ListDto::id eq listId, ListDto::user_id eq userId, (ListDto::categories / CategoryDto::id) eq categoryId),
