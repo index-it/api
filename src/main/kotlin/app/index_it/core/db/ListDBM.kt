@@ -51,4 +51,8 @@ object ListDBM {
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
         col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::user_id eq userId))
     }
+
+    fun deleteAll(userId: Id<UserDto>) {
+        col.deleteMany(ListDto::user_id eq userId)
+    }
 }

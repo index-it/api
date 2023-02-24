@@ -62,4 +62,9 @@ object ItemDao {
         ItemDBM.delete(userId, listId, itemId)
         ItemCM.delete(userId, listId, itemId)
     }
+
+    fun deleteAll(userId: Id<UserDto>) {
+        ItemDBM.deleteAll(userId)
+        ItemCM.deleteAll(userId)
+    }
 }

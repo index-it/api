@@ -13,18 +13,22 @@ object ItemCM: DoubleHashedCM("items") {
     fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? = ItemCM.getValue(keyValue(userId, listId), itemId.toString())
 
     fun createAll(userId: Id<UserDto>, listId: Id<ListDto>, itemsDto: List<ItemDto>) {
-        ItemCM.cacheAllValues(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
+        cacheAllValues(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
     }
 
     fun create(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
-        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
+        cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
     }
 
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
-        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
+        cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>) {
-        ItemCM.uncacheValue(keyValue(userId, listId), itemId.toString())
+        uncacheValue(keyValue(userId, listId), itemId.toString())
+    }
+
+    fun deleteAll(userId: Id<UserDto>) {
+        uncacheAllValues("${userId}_*")
     }
 }

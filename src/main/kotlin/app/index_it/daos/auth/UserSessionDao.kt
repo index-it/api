@@ -8,7 +8,6 @@ import io.ktor.server.sessions.*
 import io.ktor.util.date.*
 import org.litote.kmongo.Id
 
-// TODO: Auto delete from redis after expire time
 object UserSessionDao {
     fun get(userId: Id<UserDto>, sessionId: String) = UserSessionCM.get(userId, sessionId)
 
