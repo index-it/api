@@ -24,9 +24,9 @@ fun Route.categoriesRoute() {
     post<ListsRoute.ListRoute.CategoriesRoute> {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val cateogory = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toDtoId(), newCategory)
+        val category = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toDtoId(), newCategory)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        call.respond(cateogory)
+        call.respond(category)
     }
 }
