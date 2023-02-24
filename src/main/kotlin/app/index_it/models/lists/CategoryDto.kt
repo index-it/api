@@ -18,7 +18,7 @@ import org.litote.kmongo.id.toId
 data class CategoryDto(
     @Contextual val id: Id<CategoryDto> = ObjectId().toId(),
     var name: String,
-    var color: String
+    var color: String // Represented as 0xFF010101 Includes opacity and hex color
 ) {
     @Serializable
     data class CategoryCreateRequestDto(
@@ -29,6 +29,10 @@ data class CategoryDto(
             CategoryCreateRequestDto::name {
                 minLength(1)
                 maxLength(30)
+            }
+            CategoryCreateRequestDto::color {
+                minLength(10)
+                maxLength(10)
             }
         }.invoke(this)
     }
@@ -42,6 +46,10 @@ data class CategoryDto(
             CategoryUpdateRequestDto::name ifPresent {
                 minLength(1)
                 maxLength(30)
+            }
+            CategoryUpdateRequestDto::color ifPresent {
+                minLength(10)
+                maxLength(10)
             }
         }.invoke(this)
     }

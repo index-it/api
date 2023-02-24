@@ -22,8 +22,8 @@ data class ListDto(
     @Contextual var user_id: Id<UserDto>,
     var name: String,
     val categories: MutableList<CategoryDto> = mutableListOf(),
-    var icon: String,
-    var color: String
+    var icon: String, // TODO: Define representation
+    var color: String // Represented as 0xFF010101 Includes opacity and hex color
 ) {
     @Serializable
     data class ListCreateRequestDto(
@@ -36,7 +36,10 @@ data class ListDto(
                 minLength(1)
                 maxLength(50)
             }
-            // TODO: Decide the format of the other properties
+            ListCreateRequestDto::color {
+                minLength(10)
+                maxLength(10)
+            }
         }.invoke(this)
     }
 
@@ -51,7 +54,10 @@ data class ListDto(
                 minLength(1)
                 maxLength(50)
             }
-            // TODO: Decide the format of the other properties
+            ListUpdateRequestDto::color ifPresent {
+                minLength(10)
+                maxLength(10)
+            }
         }.invoke(this)
     }
 }

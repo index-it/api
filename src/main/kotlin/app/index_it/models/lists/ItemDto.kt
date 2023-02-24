@@ -16,12 +16,14 @@ import org.litote.kmongo.id.toId
  * Represents an item in a list
  */
 @Serializable
+@Suppress("PropertyName")
 data class ItemDto(
     @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
     @Contextual val user_id: Id<UserDto>,
     @Contextual val list_id: Id<ListDto>,
     val category_id: String,
     val name: String,
+    // TODO: Add more property as you fin the need for them
 ) {
     @Serializable
     data class ItemCreateRequestDto(
