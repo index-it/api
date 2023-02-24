@@ -28,6 +28,10 @@ object ItemCM: DoubleHashedCM("items") {
         uncacheValue(keyValue(userId, listId), itemId.toString())
     }
 
+    fun deleteMultiple(userId: Id<UserDto>, listId: Id<ListDto>, itemIds: List<Id<ItemDto>>) {
+        uncacheMultipleValues(keyValue(userId, listId), *itemIds.map { it.toString() }.toTypedArray())
+    }
+
     fun deleteAllOfUser(userId: Id<UserDto>) {
         uncacheAllValues("${userId}_*")
     }

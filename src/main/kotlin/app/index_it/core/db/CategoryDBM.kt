@@ -31,10 +31,11 @@ object CategoryDBM {
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): ListDto? {
         val properties: MutableList<SetTo<*>> = mutableListOf()
 
+        // TODO: Test this ^^
         if (categoryUpdateRequestDto.name != null)
-            properties.add(CategoryDto::name setTo categoryUpdateRequestDto.name)
+            properties.add((ListDto::categories.allPosOp / CategoryDto::name) setTo categoryUpdateRequestDto.name)
         if (categoryUpdateRequestDto.color != null)
-            properties.add(CategoryDto::color setTo categoryUpdateRequestDto.color)
+            properties.add((ListDto::categories.allPosOp / CategoryDto::color) setTo categoryUpdateRequestDto.color)
 
         if (properties.isEmpty())
             throw BadRequestException("No values to update found in categoryDto (id $categoryId, listId $listId, userId $userId)")

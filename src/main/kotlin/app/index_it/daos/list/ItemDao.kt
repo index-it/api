@@ -3,6 +3,7 @@ package app.index_it.daos.list
 import app.index_it.core.cache.ItemCM
 import app.index_it.core.db.ItemDBM
 import app.index_it.core.extentions.toDtoId
+import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
@@ -32,6 +33,19 @@ object ItemDao {
         }
 
         return item
+    }
+
+    fun getAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): List<ItemDto> {
+        // TODO: Query db instead?
+        var items = ItemCM.getAll(userId, listId).filter { it.category_id == categoryId }
+
+        if (items.isEmpty()) {
+            items = ItemDBM.getAllOfCategory(userId, listId, categoryId)
+            if (items.isNotEmpty())
+                ItemCM.deleteAllOfList(userId, listId)
+        }
+
+        return items
     }
 
     fun create(userId: Id<UserDto>, listId: Id<ListDto>, itemCreateRequestDto: ItemDto.ItemCreateRequestDto): ItemDto {
@@ -72,5 +86,11 @@ object ItemDao {
     fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
         ItemDBM.deleteAllOfList(userId, listId)
         ItemCM.deleteAllOfList(userId, listId)
+    }
+
+    fun deleteAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
+        val itemsOfCategory = getAllOfCategory(userId, listId, categoryId)
+        ItemDBM.deleteAllOfCategory(userId, listId, categoryId)
+        ItemCM.deleteMultiple(userId, listId, itemsOfCategory.map { it.id })
     }
 }

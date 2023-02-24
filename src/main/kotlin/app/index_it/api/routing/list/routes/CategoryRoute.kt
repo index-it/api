@@ -4,6 +4,7 @@ import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toDtoId
 import app.index_it.daos.list.CategoryDao
+import app.index_it.daos.list.ItemDao
 import app.index_it.models.lists.CategoryDto
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -33,7 +34,7 @@ fun Route.categoryRoute() {
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         CategoryDao.delete(userIdFromSession()!!, it.parent.parent.list_id.toDtoId(), it.category_id.toDtoId())
-        // TODO: Delete all items of category too
+        ItemDao.deleteAllOfCategory(userIdFromSession()!!, it.parent.parent.list_id.toDtoId(), it.category_id.toDtoId())
         call.respond(HttpStatusCode.OK)
     }
 }

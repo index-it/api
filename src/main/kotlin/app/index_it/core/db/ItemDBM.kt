@@ -1,6 +1,7 @@
 package app.index_it.core.db
 
 import app.index_it.core.clients.MongoClient
+import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
@@ -23,6 +24,10 @@ object ItemDBM {
 
     fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? {
         return col.findOne(ItemDto::user_id eq userId, ItemDto::list_id eq listId, ItemDto::id eq itemId)
+    }
+
+    fun getAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): List<ItemDto> {
+        return col.find(ItemDto::user_id eq userId, ItemDto::list_id eq listId, ItemDto::category_id eq categoryId).toList()
     }
 
     fun create(itemDto: ItemDto) {
@@ -55,5 +60,9 @@ object ItemDBM {
 
     fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
         col.deleteMany(ItemDto::list_id eq listId, ItemDto::user_id eq userId)
+    }
+
+    fun deleteAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
+        col.deleteMany(ItemDto::list_id eq listId, ItemDto::user_id eq userId, ItemDto::category_id eq categoryId)
     }
 }
