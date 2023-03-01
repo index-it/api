@@ -25,7 +25,7 @@ class ResetPasswordRoute(val token: String)
 @Resource("/me")
 class MeRoute
 
-fun Route.user() {
+fun Route.userRoutes() {
     passwordOperationRoutes()
 
     authenticate("auth-user-session") {

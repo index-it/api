@@ -28,7 +28,7 @@ class ListsRoute {
     }
 }
 
-fun Route.list() {
+fun Route.listRoutes() {
     authenticate("auth-user-session") {
         listsRoute()
         listRoute()
