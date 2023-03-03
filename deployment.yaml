@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: index-api-deployment
+  labels:
+    app: index-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: index-api
+  template:
+    metadata:
+      labels:
+        app: index-api
+    spec:
+      containers:
+        - name: index-api
+          image: gcr.io/index-352608/index-api-latest
