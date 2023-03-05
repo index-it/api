@@ -3,6 +3,7 @@ package app.index_it
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
 import app.index_it.core.clients.MongoClient
+import app.index_it.core.clients.RabbitMqClient
 import app.index_it.core.clients.RedisClient
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
@@ -47,6 +48,7 @@ fun main() {
             GoogleOAuthClient.close()
             AppleOAuthClient.close()
             FacebookOAuthClient.close()
+            RabbitMqClient.close()
             RedisClient.close()
             MongoClient.close()
         }

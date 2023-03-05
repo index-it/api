@@ -30,6 +30,11 @@ object Env {
 
     lateinit var redis_connection_string: String
 
+    lateinit var rabbitmq_connection_string: String
+    lateinit var rabbitmq_exchange_name: String
+    lateinit var rabbitmq_queue_name: String
+    lateinit var rabbitmq_routing_key: String
+
     lateinit var email_verification_success_url: String
     lateinit var email_verification_error_url: String
     lateinit var email_verification_url: String
@@ -64,6 +69,11 @@ object Env {
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
         redis_connection_string = getStringFromEnv("redis.connection.string")
+
+        rabbitmq_connection_string = getStringFromEnv("rabbitmq.connection.string")
+        rabbitmq_exchange_name = getStringFromEnv("rabbitmq.exchange.name")
+        rabbitmq_queue_name = getStringFromEnv("rabbitmq.queue.name")
+        rabbitmq_routing_key = getStringFromEnv("rabbitmq.routing.key")
 
         email_verification_success_url = getStringFromEnv("email.verification.success.url")
         email_verification_error_url = getStringFromEnv("email.verification.error.url")

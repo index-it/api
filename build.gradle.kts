@@ -25,7 +25,7 @@ dependencies {
     implementation("io.konform:konform-jvm:0.4.0")
 
     implementation("redis.clients:jedis:4.3.1")
-    // TODO: Add rabbitmq client dep (choose which client)
+    implementation("com.rabbitmq:amqp-client:5.16.0")
 
     implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
