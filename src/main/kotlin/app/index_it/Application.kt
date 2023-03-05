@@ -65,5 +65,6 @@ private fun Application.indexApplicationModule() {
     configureSecurity()
     configureStatusPages()
     configureValidator()
+    configureWebsockets()
     configureRouting()
 }

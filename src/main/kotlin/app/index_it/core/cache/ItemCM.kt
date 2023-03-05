@@ -6,7 +6,7 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object ItemCM: DoubleHashedCM("items") {
-    private fun keyValue(userId: Id<UserDto>, listId: Id<ListDto>) = "${userId}_${listId}"
+    private fun keyValue(userId: Id<UserDto>, listId: Id<ListDto>) = "${userId}:${listId}"
 
     fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> = ItemCM.getAllValues(keyValue(userId, listId))
 

@@ -5,6 +5,7 @@ import app.index_it.api.routing.auth.authRoutes
 import app.index_it.api.routing.list.listRoutes
 import app.index_it.api.routing.swagger.swaggerRoutes
 import app.index_it.api.routing.user.userRoutes
+import app.index_it.api.routing.websocket.websocketRoutes
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
@@ -22,5 +23,6 @@ fun Application.configureRouting() {
         authRoutes()
         userRoutes()
         listRoutes()
+        websocketRoutes()
     }
 }

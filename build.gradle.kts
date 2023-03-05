@@ -25,12 +25,15 @@ dependencies {
     implementation("io.konform:konform-jvm:0.4.0")
 
     implementation("redis.clients:jedis:4.3.1")
+    // TODO: Add rabbitmq client dep (choose which client)
 
     implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("io.ktor:ktor-server-websockets:$ktorVersion")
     implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
     implementation("io.ktor:ktor-server-resources:$ktorVersion")
     implementation("io.ktor:ktor-server-sessions-jvm:2.1.3")
@@ -55,6 +58,7 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
     implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("io.ktor:ktor-server-websockets-jvm:2.2.4")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
