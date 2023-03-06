@@ -9,6 +9,7 @@ import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
+import app.index_it.core.logic.WebsocketsManager
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import io.ktor.server.application.*
@@ -48,6 +49,7 @@ fun main() {
             GoogleOAuthClient.close()
             AppleOAuthClient.close()
             FacebookOAuthClient.close()
+            WebsocketsManager.close()
             RabbitMqClient.close()
             RedisClient.close()
             MongoClient.close()
