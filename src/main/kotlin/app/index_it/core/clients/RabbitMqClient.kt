@@ -15,8 +15,6 @@ object RabbitMqClient {
 
         connection = factory.newConnection()
     }
-    // Listen to queue
-    // Provide a way to subscribe to messages from other parts of the code
 
     fun close() {
         connection.close()
