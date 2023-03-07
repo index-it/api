@@ -1,10 +1,12 @@
 package app.index_it.api.routing.list.routes
 
+import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toDtoId
 import app.index_it.daos.list.CategoryDao
 import app.index_it.models.lists.CategoryDto
+import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -24,9 +26,11 @@ fun Route.categoriesRoute() {
     post<ListsRoute.ListRoute.CategoriesRoute> {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val category = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toDtoId(), newCategory)
+        val list = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toDtoId(), newCategory)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        call.respond(category)
+        call.respond(list)
+
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_CREATED, list)
     }
 }

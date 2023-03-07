@@ -1,11 +1,11 @@
 val ktorVersion: String = "2.2.4"
 val kmongoVersion: String = "4.8.0"
-val kotlinVersion: String = "1.8.0"
+val kotlinVersion: String = "1.8.10"
 
 plugins {
     application
-    kotlin("jvm") version "1.8.0"
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.10"
     id("io.ktor.plugin") version "2.2.3"
 }
 
@@ -26,21 +26,27 @@ dependencies {
 
     implementation("redis.clients:jedis:4.3.1")
 
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
+
+    // Rabbitmq client
+    implementation("com.rabbitmq:amqp-client:5.16.0")
+
     implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
+    implementation("io.ktor:ktor-server-websockets:$ktorVersion")
     implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
     implementation("io.ktor:ktor-server-resources:$ktorVersion")
-    implementation("io.ktor:ktor-server-sessions-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty-jvm:2.1.3")
-    implementation("io.ktor:ktor-server-core-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
 
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
@@ -55,6 +61,8 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
     implementation("ch.qos.logback:logback-classic:1.4.5")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")

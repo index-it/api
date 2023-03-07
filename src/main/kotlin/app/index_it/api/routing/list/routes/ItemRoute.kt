@@ -1,10 +1,12 @@
 package app.index_it.api.routing.list.routes
 
+import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toDtoId
 import app.index_it.daos.list.ItemDao
 import app.index_it.models.lists.ItemDto
+import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -29,10 +31,14 @@ fun Route.itemRoute() {
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
+
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_UPDATED, item)
     }
 
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         ItemDao.delete(userIdFromSession()!!, it.parent.parent.list_id.toDtoId(), it.item_id.toDtoId())
         call.respond(HttpStatusCode.OK)
+
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.list_id}:${it.item_id}")
     }
 }

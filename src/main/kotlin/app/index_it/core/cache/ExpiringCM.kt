@@ -4,7 +4,7 @@ import app.index_it.core.clients.RedisClient
 import app.index_it.core.logic.ObjectMapper
 
 abstract class ExpiringCM(
-    val keyBase: String,
+    private val keyBase: String,
     val expirationInSeconds: Long
 ) {
     fun keyName(hashValue: String) = "${keyBase}:$hashValue"

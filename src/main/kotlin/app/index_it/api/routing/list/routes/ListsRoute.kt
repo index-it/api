@@ -1,10 +1,11 @@
 package app.index_it.api.routing.list.routes
 
+import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.daos.list.ListDao
 import app.index_it.models.lists.ListDto
-import io.ktor.http.*
+import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.get
@@ -23,5 +24,7 @@ fun Route.listsRoute() {
         val created = ListDao.create(userIdFromSession()!!, newList)
 
         call.respond(created)
+
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_CREATED, created)
     }
 }
