@@ -40,6 +40,7 @@ data class UserIdPrincipalForEmailVerificationAuth(val id: Id<UserDto>) : Princi
  * Gets the Id of a UserDto from the auth-user-session UserSessionDto
  */
 fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): Id<UserDto>? = call.principal<UserSessionDto>()?.userId
+fun PipelineContext<Unit, ApplicationCall>.sessionIdFromSession(): String? = call.principal<UserSessionDto>()?.id
 
 fun Application.configureSecurity() {
 

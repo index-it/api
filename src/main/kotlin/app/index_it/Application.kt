@@ -9,13 +9,15 @@ import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
-import app.index_it.core.logic.WebsocketsManager
+import app.index_it.core.logic.websocket.WebsocketConnectionsManager
+import app.index_it.core.logic.websocket.WebsocketsQueueManager
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.logging.*
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
@@ -45,11 +47,15 @@ fun main() {
      */
     Runtime.getRuntime().addShutdownHook(
         Thread {
+            // TODO: Shutdown api server
             SendinblueClient.close()
             GoogleOAuthClient.close()
             AppleOAuthClient.close()
             FacebookOAuthClient.close()
-            WebsocketsManager.close()
+            WebsocketsQueueManager.close()
+            runBlocking {
+                WebsocketConnectionsManager.close()
+            }
             RabbitMqClient.close()
             RedisClient.close()
             MongoClient.close()

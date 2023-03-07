@@ -1,11 +1,13 @@
 package app.index_it.api.routing.list.routes
 
+import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toDtoId
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.list.ListDao
 import app.index_it.models.lists.ListDto
+import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -28,11 +30,16 @@ fun Route.listRoute() {
         val list = ListDao.update(userIdFromSession()!!, it.list_id.toDtoId(), updatedList)
             ?: return@put call.respond(HttpStatusCode.NotFound)
         call.respond(list)
+
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_UPDATED, it.list_id)
     }
 
     delete<ListsRoute.ListRoute> {
         ListDao.delete(userIdFromSession()!!, it.list_id.toDtoId())
         ItemDao.deleteAllOfList(userIdFromSession()!!, it.list_id.toDtoId())
         call.respond(HttpStatusCode.OK)
+
+        // TODO: Decide whether to wrap delete operations in classes (global class maybe? DeleteOperationEvent(id: String) that can be extended too)
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_DELETED, it.list_id)
     }
 }
