@@ -30,4 +30,4 @@ workflows:
           filters:
             branches:
               only:
-                - test
+                - none # Change this when deploying is needed
