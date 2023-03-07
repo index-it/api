@@ -472,6 +472,14 @@ paths:
       responses:
         '200':
           description: Item deleted
+  /ws:
+    get:
+      tags:
+        - websocket
+      operationId: 'websocket-connect'
+      responses:
+        '201':
+          description: Connected to websocket
 components:
   schemas:
     Credentials:
