@@ -6,12 +6,14 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object UserDao {
+    /*
     fun exists(id: Id<UserDto>): Boolean = UserDBM.exists(id)
     fun existsWithEmail(email: String): Boolean = UserDBM.existsWithEmail(email)
+     */
 
     fun create(userDto: UserDto) {
         UserDBM.create(userDto)
-        UserCM.create(userDto)
+        UserCM.cache(userDto)
     }
 
     fun get(id: Id<UserDto>) : UserDto? {
@@ -19,7 +21,7 @@ object UserDao {
 
         if (user == null) {
             user = UserDBM.get(id) ?: return null
-            UserCM.create(user)
+            UserCM.cache(user)
         }
 
         return user
@@ -34,7 +36,7 @@ object UserDao {
 
     fun verifyEmail(id: Id<UserDto>): UserDto? {
         return UserDBM.verifyEmail(id)?.let {
-            UserCM.create(it)
+            UserCM.cache(it)
             it
         } ?: run {
             UserCM.delete(id)
@@ -44,7 +46,7 @@ object UserDao {
 
     fun resetPassword(id: Id<UserDto>, newPasswordHashed: String, verifyEmail: Boolean): UserDto? {
         return UserDBM.resetPassword(id, newPasswordHashed, verifyEmail)?.let {
-            UserCM.create(it)
+            UserCM.cache(it)
             it
         } ?: run {
             UserCM.delete(id)

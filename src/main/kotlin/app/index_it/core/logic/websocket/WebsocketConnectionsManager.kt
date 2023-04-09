@@ -1,32 +1,35 @@
 package app.index_it.core.logic.websocket
 
+import app.index_it.models.auth.UserAuthSessionDto
 import app.index_it.models.user.UserDto
 import app.index_it.models.websocket.WebsocketConnection
-import io.ktor.network.sockets.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.isActive
+import mu.KotlinLogging
 import org.litote.kmongo.Id
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
+private val log = KotlinLogging.logger {  }
 object WebsocketConnectionsManager {
     private val connections = Collections.synchronizedSet<WebsocketConnection>(LinkedHashSet())
 
     fun handleConnection(websocketConnection: WebsocketConnection) {
         connections += websocketConnection
+        log.debug { "Handling new websocket connection: $websocketConnection" }
     }
 
-    fun getConnectionsOfUserExcludingSession(userId: Id<UserDto>, excludedSessionId: String): List<WebsocketConnection> {
+    fun getConnectionsOfUserExcludingSession(userId: Id<UserDto>, excludedSessionId: Id<UserAuthSessionDto>): List<WebsocketConnection> {
         return connections.filter { it.userId == userId && it.sessionId != excludedSessionId }
     }
 
     fun removeConnection(websocketConnection: WebsocketConnection) {
         connections.remove(websocketConnection)
+        log.debug { "Not handling the following websocket connection anymore: $websocketConnection" }
     }
 
-    suspend fun closeConnection(sessionId: String) {
+    suspend fun closeConnection(sessionId: Id<UserAuthSessionDto>) {
         connections.find { it.sessionId == sessionId }?.also {
             it.websocketSession.close(CloseReason(CloseReason.Codes.NORMAL, "Session closed"))
+            log.debug { "Closed websocket session: $it" }
             connections.remove(it)
         }
     }
@@ -40,6 +43,8 @@ object WebsocketConnectionsManager {
             .also {
                 if (it.isNotEmpty())
                     connections.removeAll(it.toSet())
+
+                log.debug { "Closed all websocket sessions of user with id $userId" }
             }
     }
 
@@ -49,5 +54,6 @@ object WebsocketConnectionsManager {
     suspend fun close() {
         connections.onEach { it.websocketSession.close(CloseReason(CloseReason.Codes.SERVICE_RESTART, "Server shutdown")) }
         connections.clear()
+        log.debug { "Closed all websocket sessions" }
     }
 }

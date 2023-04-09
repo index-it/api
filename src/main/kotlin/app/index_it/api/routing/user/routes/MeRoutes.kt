@@ -4,10 +4,10 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.user.MeRoute
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.daos.user.UserDao
 import app.index_it.daos.auth.UserSessionDao
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.list.ListDao
+import app.index_it.daos.user.UserDao
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*
 import io.ktor.server.application.*

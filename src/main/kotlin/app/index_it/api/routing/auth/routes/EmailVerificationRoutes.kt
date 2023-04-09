@@ -1,14 +1,13 @@
 package app.index_it.api.routing.auth.routes
 
 import app.index_it.Env
+import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.api.plugins.UserIdPrincipalForEmailVerificationAuth
-import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.routing.auth.IsEmailVerifiedRoute
 import app.index_it.api.routing.auth.SendVerificationEmailRoute
 import app.index_it.api.routing.auth.VerifyEmailRoute
 import app.index_it.daos.auth.EmailVerificationDao
 import app.index_it.daos.user.UserDao
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -18,7 +17,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.emailVerificationRoutes() {
-    authenticate("auth-email-verification") {
+    authenticate(AuthenticationMethods.emailVerificationFormAuth) {
 
         /**
          * Sends an email to verify the user email
@@ -73,7 +72,5 @@ fun Route.emailVerificationRoutes() {
         UserDao.verifyEmail(userDto.id)
         EmailVerificationDao.deleteAll(userDto.id)
         call.respondRedirect(Env.email_verification_success_url)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.EMAIL_VERIFIED, null)
     }
 }

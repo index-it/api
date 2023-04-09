@@ -1,20 +1,30 @@
 package app.index_it
 
+import app.index_it.Env.loadEnv
 import io.github.cdimascio.dotenv.Dotenv
+import io.github.cdimascio.dotenv.DotenvException
 import io.github.cdimascio.dotenv.dotenv
 import mu.KotlinLogging
 import org.slf4j.event.Level
 
 private val log = KotlinLogging.logger {  }
 
+/**
+ * Fetches all the required environment variables from a .env file or system properties.
+ *
+ * **Call [loadEnv] to load the variables before using them!**
+ */
 object Env {
     private val dotenv: Dotenv? = try {
         dotenv()
-    } catch (_: Exception) {
-        log.warn(".env file not found, using System variables")
+    } catch (_: DotenvException) {
+        log.warn(".env file not found, using System environment variables")
         null
     }
 
+    /**
+     * Global log level of the application
+     */
     var log_level: Level = Level.INFO
 
     var port: Int = 8080
@@ -52,6 +62,11 @@ object Env {
     lateinit var facebook_client_secret: String
     lateinit var facebook_redirect_uri: String
 
+    /**
+     * Loads all the env variables from the .env file or system properties
+     *
+     * @throws NoSuchElementException
+     */
     fun loadEnv() {
         log_level = try {
             Level.valueOf(
@@ -91,8 +106,15 @@ object Env {
         facebook_client_id = getStringFromEnv("facebook.client.id")
         facebook_client_secret = getStringFromEnv("facebook.client.secret")
         facebook_redirect_uri = getStringFromEnv("facebook.redirect.uri")
+
+        log.debug { "Environment variables loaded" }
     }
 
+    /**
+     * Fetches a String from the environment
+     *
+     * @throws NoSuchElementException
+     */
     @Suppress("SameParameterValue")
     private fun getStringFromEnv(key: String) : String {
         val formattedKey = key.uppercase().replace(".", "_")
@@ -102,6 +124,11 @@ object Env {
     }
 
 
+    /**
+     * Fetches an Integer from the environment
+     *
+     * @throws NoSuchElementException
+     */
     @Suppress("SameParameterValue")
     private fun getIntFromEnv(key: String) : Int = try {
         getStringFromEnv(key).toInt()
@@ -109,6 +136,11 @@ object Env {
         throw NoSuchElementException("Couldn't find any $key INTEGER key in environment")
     }
 
+    /**
+     * Fetches a Long from the environment
+     *
+     * @throws NoSuchElementException
+     */
     @Suppress("SameParameterValue")
     private fun getLongFromEnv(key: String) : Long = try {
         getStringFromEnv(key).toLong()
@@ -116,6 +148,11 @@ object Env {
         throw NoSuchElementException("Couldn't find any $key LONG key in environment")
     }
 
+    /**
+     * Fetches a Boolean from the environment (not strict)
+     *
+     * @throws NoSuchElementException
+     */
     @Suppress("SameParameterValue")
     private fun getBooleanFromEnv(key: String) = getStringFromEnv(key).toBoolean()
 }

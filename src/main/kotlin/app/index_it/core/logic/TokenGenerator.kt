@@ -1,8 +1,11 @@
 package app.index_it.core.logic
 
+import mu.KotlinLogging
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.*
+
+private val log = KotlinLogging.logger {  }
 
 object TokenGenerator {
     private val secureRandom: SecureRandom = SecureRandom() //threadsafe
@@ -23,6 +26,8 @@ object TokenGenerator {
         // MessageDigest is not thread safe and getInstance doesn't refer to a singleton
         val messageDigest = MessageDigest.getInstance("SHA-256")
         val hashed = messageDigest.digest(plainBytes)
+
+        log.debug { "Generated token of $bytes bytes" }
 
         return Pair(base64Encoder.encodeToString(plainBytes), base64Encoder.encodeToString(hashed))
     }

@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 object PasswordEncoder {
     private val bcryptPasswordEncoder = BCryptPasswordEncoder()
 
-    fun encode(password: String) =
+    fun encode(password: String): String =
         bcryptPasswordEncoder.encode(password)
 
     fun matches(rawPassword: String, encodedPassword: String) =

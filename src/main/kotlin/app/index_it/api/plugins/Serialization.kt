@@ -9,7 +9,6 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json(Json {
-            prettyPrint = true
             serializersModule = IdKotlinXSerializationModule
         })
     }

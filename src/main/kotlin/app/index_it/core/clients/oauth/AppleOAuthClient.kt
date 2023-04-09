@@ -48,7 +48,10 @@ object AppleOAuthClient {
             )
 
             if (response.status.isSuccess()) {
-                response.body<AppleOAuthTokenResponseDto>().idToken
+                response.body<AppleOAuthTokenResponseDto>().let {
+                    log.debug { "Exchanged code for id token with Apple OAuth\nData: $it" }
+                    it.idToken
+                }
             } else {
                 log.error("Failed exchanging apple oauth code for token\nResponse: $response")
                 null

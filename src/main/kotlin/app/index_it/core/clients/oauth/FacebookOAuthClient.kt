@@ -45,7 +45,10 @@ object FacebookOAuthClient {
             }
 
             if (response.status.isSuccess()) {
-                response.body<FacebookOAuthTokenResponseDto>().accessToken
+                response.body<FacebookOAuthTokenResponseDto>().let {
+                    log.debug { "Exchanged code for Facebook OAuth token\nData: $it" }
+                    it.accessToken
+                }
             } else {
                 log.error("Failed exchanging facebook oauth code for token\nResponse: $response")
                 null
@@ -66,7 +69,9 @@ object FacebookOAuthClient {
             }
 
             if (response.status.isSuccess())
-                response.body<FacebookUserInfoDto>()
+                response.body<FacebookUserInfoDto>().also {
+                    log.debug { "Fetched Facebook user info\nData: $it" }
+                }
             else {
                 log.error("Failed fetching facebook user email with token\nResponse: $response")
                 null

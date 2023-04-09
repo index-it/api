@@ -2,7 +2,7 @@ package app.index_it.daos.list
 
 import app.index_it.core.cache.ItemCM
 import app.index_it.core.db.ItemDBM
-import app.index_it.core.extentions.toDtoId
+import app.index_it.core.extentions.toObjectId
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
@@ -17,7 +17,7 @@ object ItemDao {
         if (items.isEmpty()) {
             items = ItemDBM.getAll(userId, listId)
             if (items.isNotEmpty())
-                ItemCM.createAll(userId, listId, items)
+                ItemCM.cacheAll(userId, listId, items)
         }
 
         return items
@@ -29,7 +29,7 @@ object ItemDao {
         if (item == null) {
             item = ItemDBM.get(userId, listId, itemId)
                 ?: return null
-            ItemCM.create(userId, listId, item)
+            ItemCM.cache(userId, listId, item)
         }
 
         return item
@@ -52,12 +52,12 @@ object ItemDao {
         val itemDto = ItemDto(
             user_id = userId,
             list_id = listId,
-            category_id = itemCreateRequestDto.category_id.toDtoId(),
+            category_id = itemCreateRequestDto.category_id.toObjectId(),
             name = itemCreateRequestDto.name
         )
 
         ItemDBM.create(itemDto)
-        ItemCM.create(userId, listId, itemDto)
+        ItemCM.cache(userId, listId, itemDto)
 
         return itemDto
     }
@@ -66,7 +66,7 @@ object ItemDao {
         val item = ItemDBM.update(userId, listId, itemId, itemUpdateRequestDto)
 
         if (item != null)
-            ItemCM.update(userId, listId, item)
+            ItemCM.cache(userId, listId, item)
         else
             ItemCM.delete(userId, listId, itemId)
 

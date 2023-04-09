@@ -13,8 +13,10 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import mu.KotlinLogging
 import java.net.URLEncoder
 
+private val log = KotlinLogging.logger { }
 object SendinblueClient {
     private val client = HttpClient(Apache) {
         install(Logging)
@@ -53,6 +55,12 @@ object SendinblueClient {
             ))
         }
 
+        if (response.status.isSuccess()) {
+            log.debug { "Sent email verification to $email" }
+        } else {
+            log.error("Failed to send email verification code\nResponse: $response")
+        }
+
         return response.status.isSuccess()
     }
 
@@ -71,10 +79,16 @@ object SendinblueClient {
             ))
         }
 
+        if (response.status.isSuccess()) {
+            log.debug { "Sent password reset email to $email" }
+        } else {
+            log.error("Failed to send password reset email\nResponse: $response")
+        }
+
         return response.status.isSuccess()
     }
 
-    suspend fun sendPasswordNotificationEmail(email: String): Boolean {
+    suspend fun sendPasswordResetSuccessEmail(email: String): Boolean {
         val response: HttpResponse = client.post("smtp/email") {
             setBody(SendinblueGenericRequestBody(
                 to = listOf(
@@ -84,6 +98,12 @@ object SendinblueClient {
                 ),
                 templateId = 3
             ))
+        }
+
+        if (response.status.isSuccess()) {
+            log.debug { "Sent password reset success email to $email" }
+        } else {
+            log.error("Failed to send password reset success email\nResponse: $response")
         }
 
         return response.status.isSuccess()

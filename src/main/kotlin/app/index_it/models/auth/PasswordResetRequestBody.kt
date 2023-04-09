@@ -8,7 +8,6 @@ import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
 import io.konform.validation.jsonschema.pattern
 import kotlinx.serialization.Serializable
-import java.util.regex.Pattern
 
 @Serializable
 data class PasswordResetRequestBody(
