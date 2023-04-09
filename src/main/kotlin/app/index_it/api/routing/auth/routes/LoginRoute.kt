@@ -3,8 +3,8 @@ package app.index_it.api.routing.auth.routes
 import app.index_it.api.routing.auth.LoginRoute
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.daos.user.UserDao
 import app.index_it.daos.auth.UserSessionDao
+import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.LoginCredentials
 import io.ktor.http.*
 import io.ktor.server.application.*

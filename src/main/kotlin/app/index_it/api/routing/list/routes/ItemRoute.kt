@@ -10,9 +10,8 @@ import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.resources.get
+import io.ktor.server.resources.*
 import io.ktor.server.resources.put
-import io.ktor.server.resources.delete
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 

@@ -1,13 +1,8 @@
 package app.index_it.api.routing.list
 
 import app.index_it.api.routing.list.routes.*
-import app.index_it.models.lists.*
-import io.ktor.http.*
 import io.ktor.resources.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Resource("/lists")

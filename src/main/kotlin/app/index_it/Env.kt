@@ -1,5 +1,6 @@
 package app.index_it
 
+import app.index_it.Env.loadEnv
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.DotenvException
 import io.github.cdimascio.dotenv.dotenv

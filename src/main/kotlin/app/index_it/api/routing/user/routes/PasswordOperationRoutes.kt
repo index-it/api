@@ -7,8 +7,8 @@ import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.daos.auth.PasswordResetDao
-import app.index_it.daos.user.UserDao
 import app.index_it.daos.auth.UserSessionDao
+import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.PasswordResetRequestBody
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.http.*

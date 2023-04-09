@@ -7,7 +7,6 @@ import io.ktor.websocket.*
 import mu.KotlinLogging
 import org.litote.kmongo.Id
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
 private val log = KotlinLogging.logger {  }
 object WebsocketConnectionsManager {
