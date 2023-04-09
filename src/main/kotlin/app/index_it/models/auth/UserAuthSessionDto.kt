@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
 
 @Serializable
-data class UserSessionDto(
-    @Contextual val id: String,
+data class UserAuthSessionDto(
+    @Contextual val id: Id<UserAuthSessionDto>,
     @Contextual val userId: Id<UserDto>,
     val iat: Long,
     val deviceName: String?,

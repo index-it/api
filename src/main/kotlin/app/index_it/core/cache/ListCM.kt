@@ -5,27 +5,27 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object ListCM: DoubleHashedCM("lists") {
-    fun getAll(userId: Id<UserDto>): List<ListDto> = getAllValues(userId.toString())
+    fun getAll(userId: Id<UserDto>): List<ListDto> = getAll(userId.toString())
 
-    fun get(userId: Id<UserDto>, listId: Id<ListDto>): ListDto? = getValue(userId.toString(), listId.toString())
+    fun get(userId: Id<UserDto>, listId: Id<ListDto>): ListDto? = get(userId.toString(), listId.toString())
 
-    fun createAll(userId: Id<UserDto>, listsDto: List<ListDto>) {
-        cacheAllValues(userId.toString(), listsDto.associateBy { it.id.toString() })
+    fun cacheAll(userId: Id<UserDto>, listsDto: List<ListDto>) {
+        cacheAll(userId.toString(), listsDto.associateBy { it.id.toString() })
     }
 
-    fun create(userId: Id<UserDto>, listDto: ListDto) {
-        cacheValue(userId.toString(), listDto.id.toString(), listDto)
+    fun cache(userId: Id<UserDto>, listDto: ListDto) {
+        cache(userId.toString(), listDto.id.toString(), listDto)
     }
 
     fun update(userId: Id<UserDto>, listDto: ListDto) {
-        cacheValue(userId.toString(), listDto.id.toString(), listDto)
+        cache(userId.toString(), listDto.id.toString(), listDto)
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
-        uncacheValue(userId.toString(), listId.toString())
+        delete(userId.toString(), listId.toString())
     }
 
     fun deleteAll(userId: Id<UserDto>) {
-        uncacheAllValues(userId.toString())
+        deleteAll(userId.toString())
     }
 }

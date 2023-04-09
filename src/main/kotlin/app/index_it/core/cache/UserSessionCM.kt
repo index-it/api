@@ -1,19 +1,20 @@
 package app.index_it.core.cache
 
 import app.index_it.Env
-import app.index_it.models.auth.UserSessionDto
+import app.index_it.models.auth.UserAuthSessionDto
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 
 object UserSessionCM : ExpiringCM("sessions", (Env.session_max_age_in_seconds + 10)) {
-    private fun keyValue(userId: Id<UserDto>, sessionId: String) = "${userId}:$sessionId"
+    private fun keyValue(userId: Id<UserDto>, sessionId: Id<UserAuthSessionDto>) = "${userId}:$sessionId"
 
-    fun get(userId: Id<UserDto>, sessionId: String) : UserSessionDto? = getValue(keyValue(userId, sessionId))
+    fun get(userId: Id<UserDto>, sessionId: Id<UserAuthSessionDto>) : UserAuthSessionDto? = get(keyValue(userId, sessionId))
 
-    fun create(userSessionDto: UserSessionDto) = cacheValue(keyValue(userSessionDto.userId, userSessionDto.id), userSessionDto)
+    fun cache(userAuthSessionDto: UserAuthSessionDto) =
+        cache(keyValue(userAuthSessionDto.userId, userAuthSessionDto.id), userAuthSessionDto)
 
-    fun delete(userId: Id<UserDto>, sessionId: String) = uncacheValue(keyValue(userId, sessionId))
+    fun delete(userId: Id<UserDto>, sessionId: Id<UserAuthSessionDto>) = delete(keyValue(userId, sessionId))
 
-    fun deleteAll(userId: Id<UserDto>) = uncacheValue("${userId}:*")
+    fun deleteAll(userId: Id<UserDto>) = delete("${userId}:*")
 }

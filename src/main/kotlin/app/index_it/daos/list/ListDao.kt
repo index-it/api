@@ -15,7 +15,7 @@ object ListDao {
             color = listCreateRequestDto.color
         )
         ListDBM.create(listDto)
-        ListCM.create(listDto.user_id, listDto)
+        ListCM.cache(listDto.user_id, listDto)
 
         return listDto
     }
@@ -27,7 +27,7 @@ object ListDao {
         if (lists.isEmpty()) {
             lists = ListDBM.getAll(userId)
             if (lists.isNotEmpty())
-                ListCM.createAll(userId, lists)
+                ListCM.cacheAll(userId, lists)
         }
 
         return lists
@@ -39,7 +39,7 @@ object ListDao {
         if (list == null) {
             list = ListDBM.get(listId)
                 ?: return null
-            ListCM.create(userId, list)
+            ListCM.cache(userId, list)
         }
 
         return list

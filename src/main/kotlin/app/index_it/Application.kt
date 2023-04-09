@@ -27,14 +27,7 @@ private val log = KotlinLogging.logger { }
 
 fun main() {
     /**
-     * CONFIGURE LOGGING
-     */
-    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.convertAnSLF4JLevel(Env.log_level)
-
-    KotlinLogging
-
-    /**
-     * CONFIGURE ENVIRONMENT
+     * Load environment.
      */
     try {
         Env.loadEnv()
@@ -44,10 +37,16 @@ fun main() {
     }
 
     /**
-     * READY TO LAUNCH? LAUNCH!
+     * Configure logging
+     */
+    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.convertAnSLF4JLevel(Env.log_level)
+
+    /**
+     * Launch api server
      */
     val apiServer = embeddedServer(Netty, port = Env.port, host = "0.0.0.0", module = Application::indexApplicationModule)
 
+    // Add shutdown hook to api server
     apiServer.addShutdownHook {
         log.info("[1/10] Closing all websocket connections")
         runBlocking {
@@ -57,7 +56,7 @@ fun main() {
     }
 
     /**
-     * CONFIGURE SHUTDOWN HOOK
+     * Configure application shutdown hook
      */
     Runtime.getRuntime().addShutdownHook(
         Thread {

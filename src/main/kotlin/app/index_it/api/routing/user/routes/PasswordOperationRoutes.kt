@@ -56,7 +56,7 @@ fun Route.passwordOperationRoutes() {
         UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.user_id)
 
         // Send notification email
-        SendinblueClient.sendPasswordNotificationEmail(user.email)
+        SendinblueClient.sendPasswordResetSuccessEmail(user.email)
         
         call.respond(HttpStatusCode.OK)
     }

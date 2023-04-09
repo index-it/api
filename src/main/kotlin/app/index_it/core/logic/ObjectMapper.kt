@@ -1,13 +1,9 @@
 package app.index_it.core.logic
 
-import io.netty.handler.codec.protobuf.ProtobufEncoder
-import kotlinx.serialization.BinaryFormat
-import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
-import kotlin.reflect.jvm.internal.impl.metadata.ProtoBuf
 
 object ObjectMapper {
     val json = Json {

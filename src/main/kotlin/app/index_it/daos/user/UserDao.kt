@@ -11,7 +11,7 @@ object UserDao {
 
     fun create(userDto: UserDto) {
         UserDBM.create(userDto)
-        UserCM.create(userDto)
+        UserCM.cache(userDto)
     }
 
     fun get(id: Id<UserDto>) : UserDto? {
@@ -19,7 +19,7 @@ object UserDao {
 
         if (user == null) {
             user = UserDBM.get(id) ?: return null
-            UserCM.create(user)
+            UserCM.cache(user)
         }
 
         return user
@@ -34,7 +34,7 @@ object UserDao {
 
     fun verifyEmail(id: Id<UserDto>): UserDto? {
         return UserDBM.verifyEmail(id)?.let {
-            UserCM.create(it)
+            UserCM.cache(it)
             it
         } ?: run {
             UserCM.delete(id)
@@ -44,7 +44,7 @@ object UserDao {
 
     fun resetPassword(id: Id<UserDto>, newPasswordHashed: String, verifyEmail: Boolean): UserDto? {
         return UserDBM.resetPassword(id, newPasswordHashed, verifyEmail)?.let {
-            UserCM.create(it)
+            UserCM.cache(it)
             it
         } ?: run {
             UserCM.delete(id)

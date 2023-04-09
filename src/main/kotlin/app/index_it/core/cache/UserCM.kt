@@ -4,9 +4,9 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object UserCM : HashedCM("users") {
-    fun create(userDto: UserDto) = cacheValue(userDto.id.toString(), userDto)
+    fun cache(userDto: UserDto) = cache(userDto.id.toString(), userDto)
 
-    fun get(id: Id<UserDto>) : UserDto? = getValue(id.toString())
+    fun get(id: Id<UserDto>) : UserDto? = get(id.toString())
 
-    fun delete(id: Id<UserDto>) = uncacheValue(id.toString())
+    fun delete(id: Id<UserDto>) = delete(id.toString())
 }

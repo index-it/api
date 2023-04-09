@@ -3,7 +3,7 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toDtoId
+import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.CategoryDao
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
@@ -17,7 +17,7 @@ import io.ktor.server.routing.*
 
 fun Route.categoriesRoute() {
     get<ListsRoute.ListRoute.CategoriesRoute> {
-        val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.list_id.toDtoId())
+        val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.list_id.toObjectId())
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(categories)
@@ -26,7 +26,7 @@ fun Route.categoriesRoute() {
     post<ListsRoute.ListRoute.CategoriesRoute> {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val list = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toDtoId(), newCategory)
+        val list = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toObjectId(), newCategory)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)

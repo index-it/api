@@ -3,7 +3,7 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toDtoId
+import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.ItemDao
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
@@ -16,13 +16,13 @@ import io.ktor.server.routing.*
 
 fun Route.itemsRoute() {
     get<ListsRoute.ListRoute.ItemsRoute> {
-        call.respond(ItemDao.getAll(userIdFromSession()!!, it.parent.list_id.toDtoId()))
+        call.respond(ItemDao.getAll(userIdFromSession()!!, it.parent.list_id.toObjectId()))
     }
 
     post<ListsRoute.ListRoute.ItemsRoute> {
         val newItem = call.receive<ItemDto.ItemCreateRequestDto>()
 
-        val item = ItemDao.create(userIdFromSession()!!, it.parent.list_id.toDtoId(), newItem)
+        val item = ItemDao.create(userIdFromSession()!!, it.parent.list_id.toObjectId(), newItem)
 
         call.respond(item)
 

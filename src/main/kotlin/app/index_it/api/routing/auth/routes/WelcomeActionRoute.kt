@@ -3,6 +3,7 @@ package app.index_it.api.routing.auth.routes
 import app.index_it.api.routing.auth.WelcomeActionRoute
 import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.WelcomeAction
+import app.index_it.models.auth.WelcomeActionResponse
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -32,6 +33,6 @@ fun Route.welcomeActionRoute() {
         else
             WelcomeAction.LOGIN
 
-        call.respond(action.name)
+        call.respond(WelcomeActionResponse(action))
     }
 }

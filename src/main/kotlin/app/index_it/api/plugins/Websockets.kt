@@ -35,7 +35,7 @@ fun Application.configureWebsockets() {
             }
         )
 
-        // If frames get too bit compression should get implemented!
+        // If frames get too big compression should get implemented!
         /*
         extensions {
             install(WebSocketDeflateExtension) {

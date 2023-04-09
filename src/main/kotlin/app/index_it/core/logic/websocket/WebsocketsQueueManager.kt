@@ -9,15 +9,9 @@ import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import java.io.IOException
 
-private val logger = KotlinLogging.logger { }
+private val log = KotlinLogging.logger { }
 
 object WebsocketsQueueManager {
-    /*
-     * We use Caffeine for thread safety only
-     *
-     * The data structure is user id to session id mapping
-     */
-
     private var websocketEventsChannel: Channel = RabbitMqClient.connection.createChannel(34)
 
     init {
@@ -38,7 +32,7 @@ object WebsocketsQueueManager {
                         WebsocketEventManager.consume(ObjectMapper.decodeFromByteArray(body))
                     }
                 } else {
-                    logger.error("Missing rabbitmq message body in websocket queue")
+                    log.error("Missing rabbitmq message body in websocket queue")
                 }
             }
         }
@@ -51,6 +45,8 @@ object WebsocketsQueueManager {
     }
 
     fun enqueue(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
+        log.debug { "Publishing RabbitMQ websocket event: $rabbitMqWebsocketEventDto" }
+
         websocketEventsChannel.basicPublish(
             Env.rabbitmq_exchange_name,
             Env.rabbitmq_websockets_routing_key,

@@ -42,7 +42,8 @@ object GoogleOAuthClient {
                 formParameters = Parameters.build {
                     append("client_id", Env.google_client_id)
                     append("client_secret", Env.google_client_secret)
-                    // See https://security.stackexchange.com/questions/44214/what-is-the-purpose-of-oauth-2-0-redirect-uri-checking for why this is needed
+                    // See https://security.stackexchange.com/questions/44214/what-is-the-purpose-of-oauth-2-0-redirect-uri-checking
+                    // for why this is needed
                     append("redirect_uri", Env.google_redirect_uri)
                     append("code", code)
                     append("grant_type", "authorization_code")
@@ -50,7 +51,10 @@ object GoogleOAuthClient {
             )
 
             if (response.status.isSuccess()) {
-                response.body<GoogleOAuthTokenResponseDto>().accessToken
+                response.body<GoogleOAuthTokenResponseDto>().let {
+                    log.debug { "Exchanged code for Google OAuth token\nData: $it" }
+                    it.accessToken
+                }
             } else {
                 log.error("Failed exchanging google oauth code for token\nResponse: $response")
                 null
@@ -68,7 +72,9 @@ object GoogleOAuthClient {
             }
 
             if (response.status.isSuccess())
-                response.body<GoogleUserInfoDto>()
+                response.body<GoogleUserInfoDto>().also {
+                    log.debug { "Fetched Google user info\nData: $it" }
+                }
             else {
                 log.error("Failed fetching google user email with token\nResponse: $response")
                 null
