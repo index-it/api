@@ -25,8 +25,8 @@ object EmailVerificationDao {
 
         val emailVerificationDto = EmailVerificationDto(
             token = hashedToken,
-            user_id = user.id,
-            expire_at = Date(getTimeMillis() + 3600000)
+            userId = user.id,
+            expireAt = Date(getTimeMillis() + 3600000)
         )
 
         save(emailVerificationDto)

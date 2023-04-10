@@ -44,14 +44,14 @@ fun Route.oauthLoginRoutes() {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
             userG = UserDto(
                 email = userInfo.email,
-                password_hash = null,
-                email_verified = true,
-                creation_timestamp = getTimeMillis(),
-                creation_source = UserDto.CreationSource.GOOGLE
+                passwordHash = null,
+                emailVerified = true,
+                creationTimestamp = getTimeMillis(),
+                creationSource = UserDto.CreationSource.GOOGLE
             )
 
             UserDao.create(userG)
-        } else if (!userG.email_verified) {
+        } else if (!userG.emailVerified) {
             UserDao.verifyEmail(userG.id)
         }
 
@@ -77,14 +77,14 @@ fun Route.oauthLoginRoutes() {
             // Create the user in the db with a random id, the email gotten from Apple, email verified to true
             userA = UserDto(
                 email = userInfo.email,
-                password_hash = null,
-                email_verified = true,
-                creation_timestamp = getTimeMillis(),
-                creation_source = UserDto.CreationSource.APPLE
+                passwordHash = null,
+                emailVerified = true,
+                creationTimestamp = getTimeMillis(),
+                creationSource = UserDto.CreationSource.APPLE
             )
 
             UserDao.create(userA)
-        } else if (!userA.email_verified) {
+        } else if (!userA.emailVerified) {
             UserDao.verifyEmail(userA.id)
         }
 
@@ -111,14 +111,14 @@ fun Route.oauthLoginRoutes() {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
             userF = UserDto(
                 email = userInfo.email,
-                password_hash = null,
-                email_verified = true,
-                creation_timestamp = getTimeMillis(),
-                creation_source = UserDto.CreationSource.FACEBOOK
+                passwordHash = null,
+                emailVerified = true,
+                creationTimestamp = getTimeMillis(),
+                creationSource = UserDto.CreationSource.FACEBOOK
             )
 
             UserDao.create(userF)
-        } else if (!userF.email_verified) {
+        } else if (!userF.emailVerified) {
             UserDao.verifyEmail(userF.id)
         }
 

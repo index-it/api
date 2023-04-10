@@ -39,21 +39,21 @@ fun Route.passwordOperationRoutes() {
         val passwordResetDto = PasswordResetDao.get(request.token)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        val user = UserDao.get(passwordResetDto.user_id)
+        val user = UserDao.get(passwordResetDto.userId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val newPassword = call.receive<PasswordResetRequestBody>().password
         val newPasswordHashed = PasswordEncoder.encode(newPassword)
 
         // If the user email wasn't verified before, now it can be considered verified
-        UserDao.resetPassword(passwordResetDto.user_id, newPasswordHashed, !user.email_verified)
+        UserDao.resetPassword(passwordResetDto.userId, newPasswordHashed, !user.emailVerified)
 
         // Invalidate all other user websocket connections
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
-        WebsocketConnectionsManager.closeAllSessionsOfUser(passwordResetDto.user_id)
+        WebsocketConnectionsManager.closeAllSessionsOfUser(passwordResetDto.userId)
 
         // Invalidate all other user active sessions
-        UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.user_id)
+        UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
 
         // Send notification email
         SendinblueClient.sendPasswordResetSuccessEmail(user.email)

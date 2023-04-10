@@ -13,11 +13,11 @@ object ListDBM {
     private val col = MongoClient.database.getCollection<ListDto>("lists")
 
     init {
-        col.ensureIndex(ListDto::user_id)
+        col.ensureIndex(ListDto::userId)
     }
 
     fun getAll(userId: Id<UserDto>): List<ListDto> {
-        return col.find(ListDto::user_id eq userId).toList()
+        return col.find(ListDto::userId eq userId).toList()
     }
 
     fun get(listId: Id<ListDto>): ListDto? {
@@ -42,17 +42,17 @@ object ListDBM {
             throw BadRequestException("No values to update found in listDto (id $listId, userId $userId)")
 
         return col.findOneAndUpdate(
-            and(ListDto::id eq listId, ListDto::user_id eq userId),
+            and(ListDto::id eq listId, ListDto::userId eq userId),
             set(*properties.toTypedArray()),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
-        col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::user_id eq userId))
+        col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::userId eq userId))
     }
 
     fun deleteAll(userId: Id<UserDto>) {
-        col.deleteMany(ListDto::user_id eq userId)
+        col.deleteMany(ListDto::userId eq userId)
     }
 }

@@ -13,13 +13,17 @@ object UserDBM {
         col.ensureUniqueIndex(UserDto::email)
     }
 
+    /*
     fun exists(id: Id<UserDto>): Boolean {
         return col.findOne(UserDto::id eq id) != null
     }
+     */
 
+    /*
     fun existsWithEmail(email: String): Boolean {
         return col.findOne(UserDto::email eq email) != null
     }
+     */
 
     fun create(userDto: UserDto) {
         col.save(userDto)
@@ -36,7 +40,7 @@ object UserDBM {
     fun verifyEmail(id: Id<UserDto>): UserDto? {
         return col.findOneAndUpdate(
             UserDto::id eq id,
-            setValue(UserDto::email_verified, true),
+            setValue(UserDto::emailVerified, true),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
@@ -45,13 +49,13 @@ object UserDBM {
         return if (verifyEmail) col.findOneAndUpdate(
             UserDto::id eq id,
             set(
-                UserDto::password_hash setTo newPasswordHashed,
-                UserDto::email_verified setTo true
+                UserDto::passwordHash setTo newPasswordHashed,
+                UserDto::emailVerified setTo true
             ),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         ) else col.findOneAndUpdate(
             UserDto::id eq id,
-            setValue(UserDto::password_hash, newPasswordHashed),
+            setValue(UserDto::passwordHash, newPasswordHashed),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }

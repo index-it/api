@@ -24,14 +24,14 @@ fun Route.loginRoute() {
         val user = UserDao.getFromEmail(loginData.email)
             ?: throw AuthenticationException()
 
-        if (user.password_hash == null)
+        if (user.passwordHash == null)
             throw AuthenticationException()
 
-        if (!PasswordEncoder.matches(loginData.password, user.password_hash))
+        if (!PasswordEncoder.matches(loginData.password, user.passwordHash))
             throw AuthenticationException()
 
         // User email must be verified
-        if (!user.email_verified)
+        if (!user.emailVerified)
             return@post call.respond(HttpStatusCode.MethodNotAllowed)
 
         val userSessionId = UserSessionDao.create(user.id, call.request.userAgent(), call.request.origin.remoteAddress)

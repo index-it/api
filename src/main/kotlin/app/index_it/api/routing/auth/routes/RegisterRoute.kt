@@ -26,7 +26,7 @@ fun Route.registerRoute() {
         val existingUser = UserDao.getFromEmail(signupData.email)
 
         if (existingUser != null) {
-            if (!existingUser.email_verified && (getTimeMillis() - existingUser.creation_timestamp) > 7.days.inWholeMilliseconds) {
+            if (!existingUser.emailVerified && (getTimeMillis() - existingUser.creationTimestamp) > 7.days.inWholeMilliseconds) {
                 UserDao.delete(existingUser.id)
             } else {
                 call.respond(HttpStatusCode.Forbidden)
@@ -37,10 +37,10 @@ fun Route.registerRoute() {
         val hashedPassword = PasswordEncoder.encode(signupData.password)
         val user = UserDto(
             email = signupData.email,
-            password_hash = hashedPassword,
-            email_verified = false,
-            creation_timestamp = getTimeMillis(),
-            creation_source = UserDto.CreationSource.NONE
+            passwordHash = hashedPassword,
+            emailVerified = false,
+            creationTimestamp = getTimeMillis(),
+            creationSource = UserDto.CreationSource.NONE
         )
 
         UserDao.create(user)

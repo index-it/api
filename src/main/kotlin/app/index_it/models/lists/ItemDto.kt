@@ -16,18 +16,17 @@ import org.litote.kmongo.id.toId
  * Represents an item in a list
  */
 @Serializable
-@Suppress("PropertyName")
 data class ItemDto(
     @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
-    @Contextual val user_id: Id<UserDto>,
-    @Contextual val list_id: Id<ListDto>,
-    val category_id: Id<CategoryDto>,
+    @Contextual val userId: Id<UserDto>,
+    @Contextual val listId: Id<ListDto>,
+    val categoryId: Id<CategoryDto>,
     val name: String,
     // TODO: Add more property as you fin the need for them
 ) {
     @Serializable
     data class ItemCreateRequestDto(
-        val category_id: String,
+        val categoryId: String,
         val name: String
     ): Validatable<ItemCreateRequestDto> {
         override fun validate() = Validation {
@@ -40,7 +39,7 @@ data class ItemDto(
 
     @Serializable
     data class ItemUpdateRequestDto(
-        val category_id: String,
+        val categoryId: String,
         val name: String?
     ): Validatable<ItemUpdateRequestDto> {
         override fun validate() = Validation {
