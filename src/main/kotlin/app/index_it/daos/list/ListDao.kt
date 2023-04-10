@@ -9,13 +9,13 @@ import org.litote.kmongo.Id
 object ListDao {
     fun create(userId: Id<UserDto>, listCreateRequestDto: ListDto.ListCreateRequestDto): ListDto {
         val listDto = ListDto(
-            user_id = userId,
+            userId = userId,
             name = listCreateRequestDto.name,
             icon = listCreateRequestDto.icon,
             color = listCreateRequestDto.color
         )
         ListDBM.create(listDto)
-        ListCM.cache(listDto.user_id, listDto)
+        ListCM.cache(listDto.userId, listDto)
 
         return listDto
     }

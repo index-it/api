@@ -37,7 +37,7 @@ object ItemDao {
 
     fun getAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): List<ItemDto> {
         // TODO: Query db instead?
-        var items = ItemCM.getAll(userId, listId).filter { it.category_id == categoryId }
+        var items = ItemCM.getAll(userId, listId).filter { it.categoryId == categoryId }
 
         if (items.isEmpty()) {
             items = ItemDBM.getAllOfCategory(userId, listId, categoryId)
@@ -50,9 +50,9 @@ object ItemDao {
 
     fun create(userId: Id<UserDto>, listId: Id<ListDto>, itemCreateRequestDto: ItemDto.ItemCreateRequestDto): ItemDto {
         val itemDto = ItemDto(
-            user_id = userId,
-            list_id = listId,
-            category_id = itemCreateRequestDto.category_id.toObjectId(),
+            userId = userId,
+            listId = listId,
+            categoryId = itemCreateRequestDto.categoryId.toObjectId(),
             name = itemCreateRequestDto.name
         )
 

@@ -18,10 +18,9 @@ import org.litote.kmongo.id.toId
  * Represents a single list, which can contain categories to organize list items in it
  */
 @Serializable
-@Suppress("PropertyName")
 data class ListDto(
     @Contextual @SerialName("_id") val id: Id<ListDto> = ObjectId().toId(),
-    @Contextual var user_id: Id<UserDto>,
+    @Contextual var userId: Id<UserDto>,
     var name: String,
     val categories: MutableList<CategoryDto> = mutableListOf(),
     var icon: String, // TODO: Define representation

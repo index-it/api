@@ -60,9 +60,9 @@ fun Application.configureSecurity() {
             passwordParamName = "password"
             validate {  credentials ->
                 UserDao.getFromEmail(credentials.name)?.let {
-                    if (it.password_hash == null)
+                    if (it.passwordHash == null)
                         null
-                    else if (PasswordEncoder.matches(credentials.password, it.password_hash))
+                    else if (PasswordEncoder.matches(credentials.password, it.passwordHash))
                         UserIdPrincipalForEmailVerificationAuth(it.id)
                     else
                         null

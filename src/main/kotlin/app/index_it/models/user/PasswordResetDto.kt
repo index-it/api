@@ -12,7 +12,7 @@ import java.util.*
 @Serializable
 data class PasswordResetDto(
     val token: String,
-    @Contextual val user_id: Id<UserDto>,
-    @Contextual val expire_at: Date,
-    @Contextual val creation_date: Date = Date()
+    @Contextual val userId: Id<UserDto>,
+    @Contextual val expireAt: Date,
+    @Contextual val creationDate: Date = Date()
 )

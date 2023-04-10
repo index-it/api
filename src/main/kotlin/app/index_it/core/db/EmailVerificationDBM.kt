@@ -12,16 +12,16 @@ object EmailVerificationDBM {
 
     init {
         col.ensureUniqueIndex(EmailVerificationDto::token)
-        col.ensureIndex(EmailVerificationDto::user_id)
+        col.ensureIndex(EmailVerificationDto::userId)
         // Make verification codes automatically expire
         col.ensureIndex(
-            EmailVerificationDto::expire_at,
+            EmailVerificationDto::expireAt,
             indexOptions = IndexOptions().expireAfter(0, TimeUnit.SECONDS)
         )
     }
 
     fun countSaved(id: Id<UserDto>): Int {
-        return col.find(EmailVerificationDto::user_id eq id).count()
+        return col.find(EmailVerificationDto::userId eq id).count()
     }
 
     fun save(emailVerificationDto: EmailVerificationDto) {
@@ -33,6 +33,6 @@ object EmailVerificationDBM {
     }
 
     fun deleteAll(id: Id<UserDto>) {
-        col.deleteMany(EmailVerificationDto::user_id eq id)
+        col.deleteMany(EmailVerificationDto::userId eq id)
     }
 }

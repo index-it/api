@@ -12,16 +12,16 @@ object PasswordResetDBM {
 
     init {
         col.ensureUniqueIndex(PasswordResetDto::token)
-        col.ensureIndex(PasswordResetDto::user_id)
+        col.ensureIndex(PasswordResetDto::userId)
         // Make password reset tokens automatically expire
         col.ensureIndex(
-            PasswordResetDto::expire_at,
+            PasswordResetDto::expireAt,
             indexOptions = IndexOptions().expireAfter(0, TimeUnit.SECONDS)
         )
     }
 
     fun countSaved(id: Id<UserDto>): Int {
-        return col.find(PasswordResetDto::user_id eq id).count()
+        return col.find(PasswordResetDto::userId eq id).count()
     }
 
     fun save(passwordResetDto: PasswordResetDto) {
@@ -33,6 +33,6 @@ object PasswordResetDBM {
     }
 
     fun deleteAll(id: Id<UserDto>) {
-        col.deleteMany(PasswordResetDto::user_id eq id)
+        col.deleteMany(PasswordResetDto::userId eq id)
     }
 }

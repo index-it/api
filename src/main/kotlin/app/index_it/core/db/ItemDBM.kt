@@ -14,20 +14,20 @@ object ItemDBM {
     private val col = MongoClient.database.getCollection<ItemDto>("items")
 
     init {
-        col.ensureIndex(ItemDto::user_id)
-        col.ensureIndex(ItemDto::list_id)
+        col.ensureIndex(ItemDto::userId)
+        col.ensureIndex(ItemDto::listId)
     }
 
     fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> {
-        return col.find(ItemDto::user_id eq userId, ItemDto::list_id eq listId).toList()
+        return col.find(ItemDto::userId eq userId, ItemDto::listId eq listId).toList()
     }
 
     fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? {
-        return col.findOne(ItemDto::user_id eq userId, ItemDto::list_id eq listId, ItemDto::id eq itemId)
+        return col.findOne(ItemDto::userId eq userId, ItemDto::listId eq listId, ItemDto::id eq itemId)
     }
 
     fun getAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): List<ItemDto> {
-        return col.find(ItemDto::user_id eq userId, ItemDto::list_id eq listId, ItemDto::category_id eq categoryId).toList()
+        return col.find(ItemDto::userId eq userId, ItemDto::listId eq listId, ItemDto::categoryId eq categoryId).toList()
     }
 
     fun create(itemDto: ItemDto) {
@@ -44,25 +44,25 @@ object ItemDBM {
             throw BadRequestException("No values to update found in itemDto (id $itemId, listId $listId, userId $userId)")
 
         return col.findOneAndUpdate(
-            and(ItemDto::id eq itemId, ItemDto::user_id eq userId, ItemDto::list_id eq listId),
+            and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),
             set(*properties.toTypedArray()),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>) {
-        col.deleteOne(ItemDto::id eq itemId, ItemDto::user_id eq userId, ItemDto::list_id eq listId)
+        col.deleteOne(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId)
     }
 
     fun deleteAllOfUser(userId: Id<UserDto>) {
-        col.deleteMany(ItemDto::user_id eq userId)
+        col.deleteMany(ItemDto::userId eq userId)
     }
 
     fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
-        col.deleteMany(ItemDto::list_id eq listId, ItemDto::user_id eq userId)
+        col.deleteMany(ItemDto::listId eq listId, ItemDto::userId eq userId)
     }
 
     fun deleteAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
-        col.deleteMany(ItemDto::list_id eq listId, ItemDto::user_id eq userId, ItemDto::category_id eq categoryId)
+        col.deleteMany(ItemDto::listId eq listId, ItemDto::userId eq userId, ItemDto::categoryId eq categoryId)
     }
 }

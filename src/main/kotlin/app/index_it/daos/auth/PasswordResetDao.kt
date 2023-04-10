@@ -25,8 +25,8 @@ object PasswordResetDao {
 
         val passwordResetDto = PasswordResetDto(
             token = hashedToken,
-            user_id = user.id,
-            expire_at = Date(getTimeMillis() + 3600000)
+            userId = user.id,
+            expireAt = Date(getTimeMillis() + 3600000)
         )
 
         save(passwordResetDto)

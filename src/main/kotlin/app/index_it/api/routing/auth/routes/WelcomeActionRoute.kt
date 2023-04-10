@@ -28,7 +28,7 @@ fun Route.welcomeActionRoute() {
 
         val action = if (userDto == null)
             WelcomeAction.REGISTER
-        else if (!userDto.email_verified)
+        else if (!userDto.emailVerified)
             WelcomeAction.VERIFY_EMAIL
         else
             WelcomeAction.LOGIN

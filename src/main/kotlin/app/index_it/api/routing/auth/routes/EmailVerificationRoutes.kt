@@ -27,7 +27,7 @@ fun Route.emailVerificationRoutes() {
                 UserDao.get(it)
             } ?: return@post call.respond(HttpStatusCode.Forbidden)
 
-            if (userDto.email_verified)
+            if (userDto.emailVerified)
                 return@post call.respond(HttpStatusCode.OK)
 
             if (EmailVerificationDao.isRateLimited(userDto.id))
@@ -48,7 +48,7 @@ fun Route.emailVerificationRoutes() {
                 UserDao.get(it)
             } ?: return@post call.respond(HttpStatusCode.Forbidden)
 
-            if (userDto.email_verified)
+            if (userDto.emailVerified)
                 call.respond(HttpStatusCode.OK)
             else
                 call.respond(HttpStatusCode.NotFound)
@@ -62,11 +62,11 @@ fun Route.emailVerificationRoutes() {
         val emailVerificationDto = EmailVerificationDao.get(request.token)
             ?: return@get call.respondRedirect(Env.email_verification_error_url)
 
-        val userDto = UserDao.get(emailVerificationDto.user_id)
+        val userDto = UserDao.get(emailVerificationDto.userId)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
-        if (userDto.email_verified)
+        if (userDto.emailVerified)
             return@get call.respondRedirect(Env.email_verification_success_url)
 
         UserDao.verifyEmail(userDto.id)

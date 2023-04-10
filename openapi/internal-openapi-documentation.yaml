@@ -32,15 +32,11 @@ paths:
       security: []
       responses:
         '200':
-          description: successful operation
+          description: Welcome action resolved
           content:
             application/json:
               schema:
-                type: string
-                enum:
-                  - REGISTER
-                  - LOGIN
-                  - VERIFY_EMAIL
+                $ref: '#/components/schemas/WelcomeAction'
   /register:
     post:
       tags:
@@ -482,6 +478,15 @@ paths:
           description: Connected to websocket
 components:
   schemas:
+    WelcomeAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - register
+            - login
+            - verify_email
     Credentials:
       type: object
       properties:
@@ -512,7 +517,7 @@ components:
       properties:
         _id:
           type: string
-        user_id:
+        userId:
           type: string
         name:
           type: string
@@ -540,11 +545,11 @@ components:
       properties:
         _id:
           type: string
-        user_id:
+        userId:
           type: string
-        list_id:
+        listId:
           type: string
-        category_id:
+        categoryId:
           type: string
         name:
           type: string
@@ -619,7 +624,7 @@ components:
               name:
                 required: true
                 type: string
-              category_id:
+              categoryId:
                 required: true
                 type: string
     ItemUpdateBody:
@@ -633,7 +638,7 @@ components:
             properties:
               name:
                 type: string
-              category_id:
+              categoryId:
                 type: string
     CategoryCreateBody:
       required: true
