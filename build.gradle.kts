@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.0")
 
     implementation("io.konform:konform-jvm:0.4.0")
 
@@ -55,17 +55,17 @@ dependencies {
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-    implementation("org.springframework.security:spring-security-crypto:5.7.3")
+    implementation("org.springframework.security:spring-security-crypto:6.0.2")
     // Needed for bcrypt to work
     implementation("commons-logging:commons-logging:1.2")
 
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
-    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+    implementation("ch.qos.logback:logback-classic:1.4.6")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
 tasks.test {
