@@ -1,26 +1,16 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
 orbs:
   gradle: circleci/gradle@3.0.0
   gcp-gcr: circleci/gcp-gcr@0.15.1
 
-jobs:
-  build-and-push-image:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - checkout
+workflows:
+  test-build-publish:
+    jobs:
+      - gradle/test
       - gcp-gcr/build-and-push-image:
           image: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
           registry-url: eu.gcr.io
-
-workflows:
-  test-build-deploy:
-    jobs:
-      - gradle/test
-      - build-and-push-image:
           filters:
             branches:
               only:
