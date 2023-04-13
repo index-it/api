@@ -39,4 +39,4 @@ out/
 .DS_Store
 
 ### SECRETS ###
-.env
+*.env
