@@ -15,7 +15,6 @@ application {
     mainClass.set("app.index_it.ApplicationKt")
 }
 
-
 repositories {
     mavenCentral()
 }
@@ -56,7 +55,7 @@ dependencies {
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-    implementation("org.springframework.security:spring-security-crypto:5.7.3")
+    implementation("org.springframework.security:spring-security-crypto:6.0.2")
     // Needed for bcrypt to work
     implementation("commons-logging:commons-logging:1.2")
 
@@ -67,6 +66,10 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 tasks.test {
