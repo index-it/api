@@ -7,10 +7,12 @@ orbs:
 workflows:
   test-build-publish:
     jobs:
-      - gradle/test
+      - gradle/test:
+          name: test
       - gcp-gcr/build-and-push-image:
           image: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
           registry-url: eu.gcr.io
+          requires: [test]
           filters:
             branches:
               only:
