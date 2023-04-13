@@ -1,5 +1,6 @@
 package app.index_it.api.routing.websocket
 
+import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.models.auth.UserAuthSessionDto
 import app.index_it.models.websocket.WebsocketConnection
@@ -9,7 +10,7 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 
 fun Route.websocketRoutes() {
-    authenticate("auth-user-session") {
+    authenticate(AuthenticationMethods.userSessionAuth) {
         webSocket("/ws") {
             val session = call.principal<UserAuthSessionDto>()
 

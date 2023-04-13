@@ -1,5 +1,6 @@
 package app.index_it.api.routing.list
 
+import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.api.routing.list.routes.*
 import io.ktor.resources.*
 import io.ktor.server.auth.*
@@ -24,7 +25,7 @@ class ListsRoute {
 }
 
 fun Route.listRoutes() {
-    authenticate("auth-user-session") {
+    authenticate(AuthenticationMethods.userSessionAuth) {
         listsRoute()
         listRoute()
 

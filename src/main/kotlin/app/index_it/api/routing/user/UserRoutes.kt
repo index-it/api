@@ -1,5 +1,6 @@
 package app.index_it.api.routing.user
 
+import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.api.routing.user.routes.logoutRoute
 import app.index_it.api.routing.user.routes.meRoutes
 import app.index_it.api.routing.user.routes.passwordOperationRoutes
@@ -22,7 +23,7 @@ class MeRoute
 fun Route.userRoutes() {
     passwordOperationRoutes()
 
-    authenticate("auth-user-session") {
+    authenticate(AuthenticationMethods.userSessionAuth) {
         logoutRoute()
         meRoutes()
     }
