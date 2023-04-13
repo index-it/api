@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   gradle: circleci/gradle@3.0.0
-  gcp-gcr: circleci/gcp-gcr@0.15.1
+  gcp-gcr: circleci/gcp-gcr@0.15.0
 
 workflows:
   test-build-publish:
@@ -10,7 +10,7 @@ workflows:
       - gradle/test:
           name: test
       - gcp-gcr/build-and-push-image:
-          image: 'index-api-<< pipeline.git.branch >>'
+          image: 'index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
           registry-url: eu.gcr.io
           requires: [test]
           filters:
