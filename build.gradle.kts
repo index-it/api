@@ -15,10 +15,6 @@ application {
     mainClass.set("app.index_it.ApplicationKt")
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-}
-
 
 repositories {
     mavenCentral()
@@ -60,7 +56,7 @@ dependencies {
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-    implementation("org.springframework.security:spring-security-crypto:6.0.2")
+    implementation("org.springframework.security:spring-security-crypto:5.7.3")
     // Needed for bcrypt to work
     implementation("commons-logging:commons-logging:1.2")
 
