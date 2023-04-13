@@ -17,7 +17,7 @@ import io.ktor.server.routing.*
 
 fun Route.itemRoute() {
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
-        val item = ItemDao.get(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.item_id.toObjectId())
+        val item = ItemDao.get(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId())
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -26,7 +26,7 @@ fun Route.itemRoute() {
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         val updatedItem = call.receive<ItemDto.ItemUpdateRequestDto>()
 
-        val item = ItemDao.update(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.item_id.toObjectId(), updatedItem)
+        val item = ItemDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId(), updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -35,9 +35,9 @@ fun Route.itemRoute() {
     }
 
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
-        ItemDao.delete(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.item_id.toObjectId())
+        ItemDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId())
         call.respond(HttpStatusCode.OK)
 
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.list_id}:${it.item_id}")
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")
     }
 }

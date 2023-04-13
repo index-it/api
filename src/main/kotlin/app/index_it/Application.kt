@@ -20,7 +20,6 @@ import io.ktor.util.logging.*
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 private val log = KotlinLogging.logger { }

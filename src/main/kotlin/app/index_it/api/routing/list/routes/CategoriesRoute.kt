@@ -17,7 +17,7 @@ import io.ktor.server.routing.*
 
 fun Route.categoriesRoute() {
     get<ListsRoute.ListRoute.CategoriesRoute> {
-        val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.list_id.toObjectId())
+        val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId())
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(categories)
@@ -26,7 +26,7 @@ fun Route.categoriesRoute() {
     post<ListsRoute.ListRoute.CategoriesRoute> {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val list = CategoryDao.create(userIdFromSession()!!, it.parent.list_id.toObjectId(), newCategory)
+        val list = CategoryDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newCategory)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)

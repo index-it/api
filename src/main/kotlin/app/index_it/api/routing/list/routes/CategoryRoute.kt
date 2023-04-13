@@ -18,7 +18,7 @@ import io.ktor.server.routing.*
 
 fun Route.categoryRoute() {
     get<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
-        val category = CategoryDao.get(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.category_id.toObjectId())
+        val category = CategoryDao.get(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -27,7 +27,7 @@ fun Route.categoryRoute() {
     put<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         val updatedCategory = call.receive<CategoryDto.CategoryUpdateRequestDto>()
 
-        val list = CategoryDao.update(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.category_id.toObjectId(), updatedCategory)
+        val list = CategoryDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId(), updatedCategory)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)
@@ -36,8 +36,8 @@ fun Route.categoryRoute() {
     }
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
-        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.category_id.toObjectId())
-        ItemDao.deleteAllOfCategory(userIdFromSession()!!, it.parent.parent.list_id.toObjectId(), it.category_id.toObjectId())
+        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        ItemDao.deleteAllOfCategory(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
         call.respond(HttpStatusCode.OK)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_DELETED, list)
