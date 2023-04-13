@@ -4,30 +4,25 @@ version: 2.1
 
 orbs:
   gradle: circleci/gradle@3.0.0
-  gcp-cloud-run: circleci/gcp-cloud-run@1.0.2
+  gcp-gcr: circleci/gcp-gcr@0.15.1
 
 jobs:
-  build-and-push-image-and-run:
+  build-and-push-image:
     docker:
       - image: 'cimg/base:stable'
     steps:
       - checkout
-      - gcp-cloud-run/init
-      - gcp-cloud-run/build:
-          tag: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
-      - gcp-cloud-run/deploy:
+      - gcp-gcr/build-and-push-image:
           image: 'gcr.io/${GOOGLE_PROJECT_ID}/index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
-          platform: managed
-          region: europe-west1
-          service-name: index-api-<< pipeline.git.branch >>
-          unauthenticated: true
+          registry-url: eu.gcr.io
 
 workflows:
   test-build-deploy:
     jobs:
       - gradle/test
-      - build-and-push-image-and-run:
+      - build-and-push-image:
           filters:
             branches:
               only:
-                - none # Change this when deploying is needed
+                - main
+                - test
