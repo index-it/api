@@ -60,9 +60,8 @@ fun main() {
      */
     Runtime.getRuntime().addShutdownHook(
         Thread {
-            log.info("[0/10] Shutdown started")
+            log.info("Shutdown started")
 
-            apiServer.stop(10, 10, TimeUnit.MINUTES)
             log.info("[1/10] Api server shutdown")
 
             SendinblueClient.close()
