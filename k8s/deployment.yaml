@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: index-api-stable
+  labels:
+    app: index-api-stable
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: index-api-stable
+  template:
+    metadata:
+      labels:
+        app: index-api-stable
+    spec:
+      containers:
+        - name: index-api
+          image: eu.gcr.io/index-352608/index-api-main:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - secretRef:
+                name: stable-env-secret
+      imagePullSecrets:
+        - name: gcr-json-key
