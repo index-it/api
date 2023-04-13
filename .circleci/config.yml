@@ -10,7 +10,7 @@ workflows:
       - gradle/test:
           name: test
       - gcp-gcr/build-and-push-image:
-          image: 'index-api-<< pipeline.git.branch >>-${CIRCLE_SHA1}'
+          image: 'index-api-<< pipeline.git.branch >>'
           registry-url: eu.gcr.io
           requires: [test]
           filters:
