@@ -18,7 +18,7 @@ object Env {
     private val dotenv: Dotenv? = try {
         dotenv()
     } catch (_: DotenvException) {
-        log.warn(".env file not found, using System environment variables")
+        log.info(".env file not found, using System environment variables")
         null
     }
 
