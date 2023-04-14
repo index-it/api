@@ -65,8 +65,6 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.2.4")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.8.20")
 }
 
 kotlin {
