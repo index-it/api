@@ -49,6 +49,8 @@ object WebsocketsQueueManager {
             true,
             websocketEventConsumer
         )
+
+        log.info { "Listening to RabbitMq websockets queue messages! "}
     }
 
     fun enqueue(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
