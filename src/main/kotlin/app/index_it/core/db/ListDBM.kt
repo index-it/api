@@ -1,71 +1,58 @@
 package app.index_it.core.db
 
 import app.index_it.core.clients.MongoClient
-import app.index_it.models.lists.CategoryDto
-import app.index_it.models.lists.ClientCategoryDto
-import app.index_it.models.lists.ClientListDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
+import io.ktor.server.plugins.*
 import org.litote.kmongo.*
 
 object ListDBM {
     private val col = MongoClient.database.getCollection<ListDto>("lists")
 
     init {
-        col.ensureIndex(ListDto::user_id)
-    }
-
-    object CategoryDBM {
-        fun create(userId: Id<UserDto>, listId: Id<ListDto>, categoryDto: CategoryDto): ListDto? {
-            return col.findOneAndUpdate(
-                and(ListDto::id eq listId, ListDto::user_id eq userId),
-                push(ListDto::categories, categoryDto)
-            )
-        }
-
-        fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, clientCategoryDto: ClientCategoryDto): ListDto? {
-            return col.findOneAndUpdate(
-                and(ListDto::id eq listId, ListDto::user_id eq userId, (ListDto::categories / CategoryDto::id) eq categoryId),
-                set(
-                    (ListDto::categories.posOp / CategoryDto::name) setTo clientCategoryDto.name,
-                    (ListDto::categories.posOp / CategoryDto::color) setTo clientCategoryDto.color,
-                ),
-                FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-            )
-        }
-
-        fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
-            return col.findOneAndUpdate(
-                and(ListDto::id eq listId, ListDto::user_id eq userId),
-                pullByFilter((ListDto::categories / CategoryDto::id) eq categoryId)
-            )
-        }
+        col.ensureIndex(ListDto::userId)
     }
 
     fun getAll(userId: Id<UserDto>): List<ListDto> {
-        return col.find(ListDto::user_id eq userId).toList()
+        return col.find(ListDto::userId eq userId).toList()
+    }
+
+    fun get(listId: Id<ListDto>): ListDto? {
+        return col.findOne(ListDto::id eq listId)
     }
 
     fun create(listDto: ListDto) {
         col.save(listDto)
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, clientListDto: ClientListDto): ListDto? {
+    fun update(userId: Id<UserDto>, listId: Id<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
+        val properties: MutableList<SetTo<*>> = mutableListOf()
+
+        if (listUpdateRequestDto.name != null)
+            properties.add(ListDto::name setTo listUpdateRequestDto.name)
+        if (listUpdateRequestDto.icon != null)
+            properties.add(ListDto::icon setTo listUpdateRequestDto.icon)
+        if (listUpdateRequestDto.color != null)
+            properties.add(ListDto::color setTo listUpdateRequestDto.color)
+
+        if (properties.isEmpty())
+            throw BadRequestException("No values to update found in listDto (id $listId, userId $userId)")
+
         return col.findOneAndUpdate(
-            and(ListDto::id eq listId, ListDto::user_id eq userId),
-            set(
-                ListDto::name setTo clientListDto.name,
-                ListDto::icon setTo clientListDto.icon,
-                ListDto::color setTo clientListDto.color
-            ),
+            and(ListDto::id eq listId, ListDto::userId eq userId),
+            set(*properties.toTypedArray()),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
-        col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::user_id eq userId))
+        col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::userId eq userId))
+    }
+
+    fun deleteAll(userId: Id<UserDto>) {
+        col.deleteMany(ListDto::userId eq userId)
     }
 }

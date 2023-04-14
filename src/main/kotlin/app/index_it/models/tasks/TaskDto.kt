@@ -11,9 +11,10 @@ import org.litote.kmongo.id.toId
 import java.util.*
 
 @Serializable
+@Suppress("Unused")
 data class TaskDto(
     @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
-    @Contextual val user_id: Id<UserDto>,
+    @Contextual val userId: Id<UserDto>,
     @Contextual val date: Date,
     val name: String,
     val description: String,

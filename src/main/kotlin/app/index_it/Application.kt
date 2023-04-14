@@ -1,30 +1,32 @@
 package app.index_it
 
-import io.ktor.server.application.Application
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
 import app.index_it.core.clients.MongoClient
+import app.index_it.core.clients.RabbitMqClient
 import app.index_it.core.clients.RedisClient
 import app.index_it.core.clients.SendinblueClient
+import app.index_it.core.clients.oauth.AppleOAuthClient
+import app.index_it.core.clients.oauth.FacebookOAuthClient
+import app.index_it.core.clients.oauth.GoogleOAuthClient
+import app.index_it.core.logic.websocket.WebsocketConnectionsManager
+import app.index_it.core.logic.websocket.WebsocketsQueueManager
 import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.logging.*
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
-import ch.qos.logback.classic.Logger
 
 private val log = KotlinLogging.logger { }
 
 fun main() {
     /**
-     * CONFIGURE LOGGING
-     */
-    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.convertAnSLF4JLevel(Env.log_level)
-
-    /**
-     * CONFIGURE ENVIRONMENT
+     * Load environment.
      */
     try {
         Env.loadEnv()
@@ -34,20 +36,62 @@ fun main() {
     }
 
     /**
-     * CONFIGURE SHUTDOWN HOOK
+     * Configure logging
+     */
+    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.convertAnSLF4JLevel(Env.log_level)
+
+    /**
+     * Launch api server
+     */
+    val apiServer = embeddedServer(Netty, port = Env.port, host = "0.0.0.0", module = Application::indexApplicationModule)
+
+    // Add shutdown hook to api server
+    apiServer.addShutdownHook {
+        log.info("[1/10] Closing all websocket connections")
+        runBlocking {
+            WebsocketConnectionsManager.close()
+        }
+        log.info("[1/10] All websocket connections have been closed")
+    }
+
+    /**
+     * Configure application shutdown hook
      */
     Runtime.getRuntime().addShutdownHook(
         Thread {
+            log.info("Shutdown started")
+
+            log.info("[1/10] Api server shutdown")
+
             SendinblueClient.close()
+            log.info("[2/10] SendinblueClient client shutdown")
+
+            GoogleOAuthClient.close()
+            log.info("[3/10] GoogleOAuthClient client shutdown")
+
+            AppleOAuthClient.close()
+            log.info("[4/10] AppleOAuthClient client shutdown")
+
+            FacebookOAuthClient.close()
+            log.info("[5/10] FacebookOAuthClient client shutdown")
+
+            WebsocketsQueueManager.close()
+            log.info("[6/10] WebsocketsQueueManager client shutdown")
+
+            RabbitMqClient.close()
+            log.info("[7/10] RabbitMqClient client shutdown")
+
             RedisClient.close()
+            log.info("[8/10] RedisClient client shutdown")
+
             MongoClient.close()
+            log.info("[9/10] MongoClient client shutdown")
+
+            log.info("Shutdown successful, bye bye ^^")
         }
     )
 
-    /**
-     * READY TO LAUNCH? LAUNCH!
-     */
-    embeddedServer(Netty, port = Env.port, host = "0.0.0.0", module = Application::indexApplicationModule).start(wait = true)
+    apiServer.start(wait = true)
 }
 
 private fun Application.indexApplicationModule() {
@@ -57,5 +101,6 @@ private fun Application.indexApplicationModule() {
     configureSecurity()
     configureStatusPages()
     configureValidator()
+    configureWebsockets()
     configureRouting()
 }

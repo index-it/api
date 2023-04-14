@@ -1,9 +1,9 @@
 package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.WelcomeActionRoute
-import app.index_it.daos.UserDao
-import app.index_it.models.user.WelcomeAction
-import io.ktor.http.*
+import app.index_it.daos.user.UserDao
+import app.index_it.models.auth.WelcomeAction
+import app.index_it.models.auth.WelcomeActionResponse
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -28,11 +28,11 @@ fun Route.welcomeActionRoute() {
 
         val action = if (userDto == null)
             WelcomeAction.REGISTER
-        else if (!userDto.email_verified)
+        else if (!userDto.emailVerified)
             WelcomeAction.VERIFY_EMAIL
         else
             WelcomeAction.LOGIN
 
-        call.respond(action.name)
+        call.respond(WelcomeActionResponse(action))
     }
 }

@@ -6,23 +6,33 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object ItemCM: DoubleHashedCM("items") {
-    private fun keyValue(userId: Id<UserDto>, listId: Id<ListDto>) = "${userId}_${listId}"
+    private fun keyValue(userId: Id<UserDto>, listId: Id<ListDto>) = "${userId}:${listId}"
 
-    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> = ItemCM.getAllValues(keyValue(userId, listId))
+    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> = getAll(keyValue(userId, listId))
 
-    fun createAll(userId: Id<UserDto>, listId: Id<ListDto>, itemsDto: List<ItemDto>) {
-        ItemCM.cacheAllValues(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
+    fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? = get(keyValue(userId, listId), itemId.toString())
+
+    fun cacheAll(userId: Id<UserDto>, listId: Id<ListDto>, itemsDto: List<ItemDto>) {
+        cacheAll(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
     }
 
-    fun create(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
-        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
-    }
-
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
-        ItemCM.cacheValue(keyValue(userId, listId), itemDto.id.toString(), itemDto)
+    fun cache(userId: Id<UserDto>, listId: Id<ListDto>, itemDto: ItemDto) {
+        cache(keyValue(userId, listId), itemDto.id.toString(), itemDto)
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>) {
-        ItemCM.uncacheValue(keyValue(userId, listId), itemId.toString())
+        delete(keyValue(userId, listId), itemId.toString())
+    }
+
+    fun deleteMultiple(userId: Id<UserDto>, listId: Id<ListDto>, itemIds: List<Id<ItemDto>>) {
+        deleteMultiple(keyValue(userId, listId), *itemIds.map { it.toString() }.toTypedArray())
+    }
+
+    fun deleteAllOfUser(userId: Id<UserDto>) {
+        deleteAll("${userId}_*")
+    }
+
+    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+        deleteAll(keyValue(userId, listId))
     }
 }

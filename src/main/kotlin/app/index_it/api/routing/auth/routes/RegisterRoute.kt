@@ -2,9 +2,9 @@ package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.daos.EmailVerificationDao
-import app.index_it.daos.UserDao
-import app.index_it.models.user.RegistrationCredentials
+import app.index_it.daos.auth.EmailVerificationDao
+import app.index_it.daos.user.UserDao
+import app.index_it.models.auth.RegistrationCredentials
 import app.index_it.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -13,6 +13,7 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.date.*
+import kotlin.time.Duration.Companion.days
 
 fun Route.registerRoute() {
     /**
@@ -21,21 +22,30 @@ fun Route.registerRoute() {
      */
     post<RegisterRoute> {
         val signupData = call.receive<RegistrationCredentials>()
-        if (UserDao.exists(signupData.email)) {
-            call.respond(HttpStatusCode.Forbidden)
-            return@post
+
+        val existingUser = UserDao.getFromEmail(signupData.email)
+
+        if (existingUser != null) {
+            if (!existingUser.emailVerified && (getTimeMillis() - existingUser.creationTimestamp) > 7.days.inWholeMilliseconds) {
+                UserDao.delete(existingUser.id)
+            } else {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
         }
 
         val hashedPassword = PasswordEncoder.encode(signupData.password)
         val user = UserDto(
             email = signupData.email,
-            password_hash = hashedPassword,
-            creation_timestamp = getTimeMillis()
+            passwordHash = hashedPassword,
+            emailVerified = false,
+            creationTimestamp = getTimeMillis(),
+            creationSource = UserDto.CreationSource.NONE
         )
 
         UserDao.create(user)
 
-        val emailSent = EmailVerificationDao.createAndSend(user.email)
+        val emailSent = EmailVerificationDao.createAndSend(user)
 
         if (emailSent)
         // User will need to verify its email

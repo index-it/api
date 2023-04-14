@@ -1,4 +1,11 @@
 package app.index_it.core.exceptions
 
-class AuthenticationException : RuntimeException()
-class AuthorizationException : RuntimeException()
+/**
+ * The entity is not authenticated
+ */
+class AuthenticationException(override val message: String? = null) : RuntimeException(message)
+
+/**
+ * The entity is not authorized
+ */
+class AuthorizationException(override val message: String? = null) : RuntimeException(message)

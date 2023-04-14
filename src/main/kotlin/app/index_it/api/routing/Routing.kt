@@ -1,18 +1,15 @@
 package app.index_it.api.routing
 
-import app.index_it.api.routing.admin.admin
-import app.index_it.api.routing.auth.auth
-import app.index_it.api.routing.swagger.swagger
-import app.index_it.core.db.NotifyDBM
-import io.ktor.http.*
+import app.index_it.api.routing.admin.adminRoutes
+import app.index_it.api.routing.auth.authRoutes
+import app.index_it.api.routing.kube.kubeRoutes
+import app.index_it.api.routing.list.listRoutes
+import app.index_it.api.routing.user.userRoutes
+import app.index_it.api.routing.websocket.websocketRoutes
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
-import java.net.URLDecoder
 
 fun Application.configureRouting() {
     // Needed for typed queries
@@ -21,18 +18,11 @@ fun Application.configureRouting() {
     }
 
     routing {
-        // TODO: Remove
-        get("/notify/{email}") {
-            val email = withContext(Dispatchers.IO) {
-                URLDecoder.decode(call.parameters["email"]!!, "UTF-8")
-            }
-            NotifyDBM.notify(email)
-            call.respond(HttpStatusCode.OK)
-        }
-
-        admin()
-        swagger()
-        auth()
-        // user()
+        kubeRoutes()
+        adminRoutes()
+        authRoutes()
+        userRoutes()
+        listRoutes()
+        websocketRoutes()
     }
 }

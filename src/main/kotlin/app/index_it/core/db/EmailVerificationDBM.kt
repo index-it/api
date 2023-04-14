@@ -2,36 +2,37 @@ package app.index_it.core.db
 
 import app.index_it.core.clients.MongoClient
 import app.index_it.models.email.EmailVerificationDto
+import app.index_it.models.user.UserDto
 import com.mongodb.client.model.IndexOptions
 import org.litote.kmongo.*
 import java.util.concurrent.TimeUnit
 
 object EmailVerificationDBM {
-    private val col = MongoClient.database.getCollection<EmailVerificationDto>("email-verification")
+    private val col = MongoClient.database.getCollection<EmailVerificationDto>("email-verification-tokens")
 
     init {
-        col.ensureUniqueIndex(EmailVerificationDto::code)
-        col.ensureIndex(EmailVerificationDto::user_email)
+        col.ensureUniqueIndex(EmailVerificationDto::token)
+        col.ensureIndex(EmailVerificationDto::userId)
         // Make verification codes automatically expire
         col.ensureIndex(
-            EmailVerificationDto::expire_at,
+            EmailVerificationDto::expireAt,
             indexOptions = IndexOptions().expireAfter(0, TimeUnit.SECONDS)
         )
     }
 
-    fun countSaved(email: String): Int {
-        return col.find(EmailVerificationDto::user_email eq email).count()
+    fun countSaved(id: Id<UserDto>): Int {
+        return col.find(EmailVerificationDto::userId eq id).count()
     }
 
     fun save(emailVerificationDto: EmailVerificationDto) {
         col.save(emailVerificationDto)
     }
 
-    fun get(code: String): EmailVerificationDto? {
-        return col.findOne(EmailVerificationDto::code eq code)
+    fun get(token: String): EmailVerificationDto? {
+        return col.findOne(EmailVerificationDto::token eq token)
     }
 
-    fun delete(code: String) {
-        col.deleteOne(EmailVerificationDto::code eq code)
+    fun deleteAll(id: Id<UserDto>) {
+        col.deleteMany(EmailVerificationDto::userId eq id)
     }
 }

@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: index-api-ingress
+  annotations:
+    cert-manager.io/issuer: letsencrypt-nginx
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.index-it.app
+        - api-beta.index-it.app
+      secretName: letsencrypt-nginx
+  rules:
+    - host: "api.index-it.app"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: index-api-stable
+                port:
+                  number: 80
+    - host: "api-beta.index-it.app"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: index-api-beta
+                port:
+                  number: 80
