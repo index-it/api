@@ -3,33 +3,16 @@ version: 2.1
 orbs:
   gradle: circleci/gradle@3.0.0
   gcp-gcr: circleci/gcp-gcr@0.15.0
-  discord: antonioned/discord@0.1.0
-
-jobs:
-  test:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - checkout
-      - gradle/test
-      - discord/status
-  create-image:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - checkout
-      - gcp-gcr/build-and-push-image:
-          image: 'index-api-<< pipeline.git.branch >>'
-          registry-url: eu.gcr.io
-      - discord/status
 
 workflows:
   test-build-publish:
     jobs:
-      - test
-      - create-image:
-          requires:
-            - test
+      - gradle/test:
+          name: test
+      - gcp-gcr/build-and-push-image:
+          image: 'index-api-<< pipeline.git.branch >>'
+          registry-url: eu.gcr.io
+          requires: [test]
           filters:
             branches:
               only:
