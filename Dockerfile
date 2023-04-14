@@ -7,5 +7,4 @@ FROM openjdk:18
 EXPOSE 80:80
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/index-api.jar /app/index-api.jar
-COPY --from=build /home/gradle/src/openapi /app/openapi
 ENTRYPOINT ["java","-jar","/app/index-api.jar"]

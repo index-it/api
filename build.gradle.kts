@@ -26,15 +26,12 @@ dependencies {
 
     implementation("redis.clients:jedis:4.3.1")
 
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
-
     // Rabbitmq client
     implementation("com.rabbitmq:amqp-client:5.16.0")
 
     implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
-    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
     implementation("io.ktor:ktor-server-websockets:$ktorVersion")
     implementation("io.ktor:ktor-server-request-validation:$ktorVersion")

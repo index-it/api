@@ -87,7 +87,7 @@ fun main() {
             MongoClient.close()
             log.info("[9/10] MongoClient client shutdown")
 
-            log.info("[10/10] Shutdown successful, bye bye ^^")
+            log.info("Shutdown successful, bye bye ^^")
         }
     )
 
