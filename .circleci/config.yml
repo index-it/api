@@ -11,7 +11,7 @@ jobs:
       - checkout
       - gradle/test
       - discord/status
-  build-and-push-image:
+  create-image:
     steps:
       - checkout
       - gcp-gcr/build-and-push-image:
@@ -23,7 +23,7 @@ workflows:
   test-build-publish:
     jobs:
       - test
-      - build-and-push-image:
+      - create-image:
           requires:
             - test
           filters:
