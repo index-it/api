@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: index-api-stable
+  name: index-api-beta
   labels:
-    app: index-api-stable
+    app: index-api-beta
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: index-api-stable
+      app: index-api-beta
   template:
     metadata:
       labels:
-        app: index-api-stable
+        app: index-api-beta
     spec:
       containers:
         - name: index-api
@@ -21,7 +21,7 @@ spec:
             - containerPort: 80
           envFrom:
             - secretRef:
-                name: stable-env-secret
+                name: beta-env-secret
           startupProbe:
             httpGet:
               path: /kube/startup

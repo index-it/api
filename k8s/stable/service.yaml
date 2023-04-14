@@ -5,9 +5,9 @@ metadata:
   labels:
     app: index-api-stable
 spec:
+  selector:
+    app: index-api-stable
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-  selector:
-    app: index-api-stable
