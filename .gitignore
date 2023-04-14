@@ -47,4 +47,4 @@ bin/
 .DS_Store
 
 ### SECRETS ###
-*.env
+**.env
