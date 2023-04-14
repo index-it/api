@@ -6,18 +6,22 @@ orbs:
   discord: antonioned/discord@0.1.0
 
 jobs:
-  - test:
-      steps:
-        - checkout
-        - gradle/test
-        - discord/status
-  - create-image:
-      steps:
-        - checkout
-        - gcp-gcr/build-and-push-image:
-            image: 'index-api-<< pipeline.git.branch >>'
-            registry-url: eu.gcr.io
-        - discord/status
+  test:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - gradle/test
+      - discord/status
+  create-image:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - gcp-gcr/build-and-push-image:
+          image: 'index-api-<< pipeline.git.branch >>'
+          registry-url: eu.gcr.io
+      - discord/status
 
 workflows:
   test-build-publish:
