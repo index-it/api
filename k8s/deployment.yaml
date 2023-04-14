@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: index-api
-          image: eu.gcr.io/index-352608/index-api-main:latest
+          image: eu.gcr.io/index-352608/index-api-test:latest
           ports:
             - containerPort: 80
           envFrom:
