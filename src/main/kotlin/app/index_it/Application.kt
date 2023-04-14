@@ -41,6 +41,16 @@ fun main() {
     (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.convertAnSLF4JLevel(Env.log_level)
 
     /**
+     * Initialize objects
+     * If objects aren't called they initialize lazily which can lead to a false positive ready state
+     */
+    MongoClient.init()
+    RedisClient
+    RabbitMqClient
+    WebsocketsQueueManager.startListening()
+
+
+    /**
      * Launch api server
      */
     val apiServer = embeddedServer(Netty, port = Env.port, host = "0.0.0.0", module = Application::indexApplicationModule)

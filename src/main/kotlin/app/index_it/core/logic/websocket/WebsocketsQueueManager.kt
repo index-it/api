@@ -11,6 +11,11 @@ import java.io.IOException
 
 private val log = KotlinLogging.logger { }
 
+/**
+ * Manages websocket messages via rabbitmq
+ *
+ * **IMPORTANT**: call [startListening] to receive messages!
+ */
 object WebsocketsQueueManager {
     private var websocketEventsChannel: Channel = RabbitMqClient.connection.createChannel(34)
 
@@ -18,7 +23,9 @@ object WebsocketsQueueManager {
         websocketEventsChannel.exchangeDeclare(Env.rabbitmq_exchange_name, BuiltinExchangeType.DIRECT, false)
         websocketEventsChannel.queueDeclare(Env.rabbitmq_websockets_queue_name, false, false, false, mapOf())
         websocketEventsChannel.queueBind(Env.rabbitmq_websockets_queue_name, Env.rabbitmq_exchange_name, Env.rabbitmq_websockets_routing_key)
+    }
 
+    fun startListening() {
         val websocketEventConsumer = object : DefaultConsumer(websocketEventsChannel) {
             @Throws(IOException::class)
             override fun handleDelivery(
@@ -42,6 +49,8 @@ object WebsocketsQueueManager {
             true,
             websocketEventConsumer
         )
+
+        log.info { "Listening to RabbitMq websockets queue messages! "}
     }
 
     fun enqueue(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
