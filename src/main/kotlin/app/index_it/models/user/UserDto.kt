@@ -16,8 +16,16 @@ data class UserDto(
     val creationTimestamp: Long,
     val creationSource: CreationSource
 ) {
+    @Serializable
     enum class CreationSource {
-        GOOGLE, APPLE, FACEBOOK, NONE
+        @SerialName("google")
+        GOOGLE,
+        @SerialName("apple")
+        APPLE,
+        @SerialName("facebook")
+        FACEBOOK,
+        @SerialName("none")
+        NONE
     }
 
     fun getResponseDto() = UserResponseDto(id, email, creationTimestamp, creationSource)

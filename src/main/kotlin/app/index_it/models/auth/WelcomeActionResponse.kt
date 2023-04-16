@@ -4,7 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WelcomeActionResponse(
-    val action: String
-) {
-    constructor(welcomeAction: WelcomeAction): this(welcomeAction.name.lowercase())
-}
+    val action: WelcomeAction
+)

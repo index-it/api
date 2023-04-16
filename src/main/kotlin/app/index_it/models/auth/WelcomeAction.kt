@@ -1,5 +1,14 @@
 package app.index_it.models.auth
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class WelcomeAction {
-    LOGIN, REGISTER, VERIFY_EMAIL
+    @SerialName("login")
+    LOGIN,
+    @SerialName("register")
+    REGISTER,
+    @SerialName("verifyEmail")
+    VERIFY_EMAIL
 }
