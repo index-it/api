@@ -9,13 +9,6 @@ workflows:
     jobs:
       - gradle/test:
           name: test
-      - gradle/run:
-          command: generateSwaggerUI
-          requires: [test]
-          filters:
-            branches:
-              only:
-                - main
       - gcp-gcr/build-and-push-image:
           image: 'index-api-<< pipeline.git.branch >>'
           registry-url: eu.gcr.io
