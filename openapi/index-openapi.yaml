@@ -11,7 +11,7 @@ externalDocs:
   url: https://docs.index-it.app/api
 servers:
   - url: https://api.index-it.app
-  - url: https://api-test.index-it.app
+  - url: https://api-beta.index-it.app
 paths:
   /welcome-action:
     get:
@@ -245,9 +245,9 @@ paths:
                 $ref: "#/components/schemas/List"
         '400':
           description: Invalid request body (see response message)
-  /lists/{list_id}:
+  /lists/{listId}:
     parameters:
-      - name: list_id
+      - name: listId
         in: path
         description: The id of the List
         required: true
@@ -265,7 +265,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/List"
         '404':
-          description: List with id list_id not found
+          description: List with id listId not found
     put:
       tags:
         - lists
@@ -282,7 +282,7 @@ paths:
         '400':
           description: Invalid request body (see response message)
         '404':
-          description: List with id list_id not found
+          description: List with id listId not found
     delete:
       tags:
         - lists
@@ -290,9 +290,9 @@ paths:
       responses:
         '200':
           description: List deleted and all items of the list deleted
-  /lists/{list_id}/categories:
+  /lists/{listId}/categories:
     parameters:
-      - name: list_id
+      - name: listId
         in: path
         description: The id of the List
         required: true
@@ -330,15 +330,15 @@ paths:
           description: Invalid request body (see response message)
         '404':
           description: List not found
-  /lists/{list_id}/categories/{category_id}:
+  /lists/{listId}/categories/{categoryId}:
     parameters:
-      - name: list_id
+      - name: listId
         in: path
         description: The id of the List
         required: true
         schema:
           type: string
-      - name: category_id
+      - name: categoryId
         in: path
         description: The id of the Category
         required: true
@@ -381,9 +381,9 @@ paths:
       responses:
         '200':
           description: Category deleted and items of that category deleted
-  /lists/{list_id}/items:
+  /lists/{listId}/items:
     parameters:
-      - name: list_id
+      - name: listId
         in: path
         description: The id of the List
         required: true
@@ -417,15 +417,15 @@ paths:
                 $ref: "#/components/schemas/Item"
         '400':
           description: Invalid request body (see response message)
-  /lists/{list_id}/items/{item_id}:
+  /lists/{listId}/items/{itemId}:
     parameters:
-      - name: list_id
+      - name: listId
         in: path
         description: The id of the Iist
         required: true
         schema:
           type: string
-      - name: item_id
+      - name: itemId
         in: path
         description: The id of the Item
         required: true
@@ -486,7 +486,7 @@ components:
           enum:
             - register
             - login
-            - verify_email
+            - verifyEmail
     Credentials:
       type: object
       properties:
@@ -502,16 +502,16 @@ components:
         email:
           type: string
           format: email
-        creation_timestamp:
+        creationTimestamp:
           type: number
           format: timestamp
-        creation_source:
+        creationSource:
           type: string
           enum:
-            - GOOGLE
-            - APPLE
-            - FACEBOOK
-            - NONE
+            - google
+            - apple
+            - facebook
+            - none
     List:
       type: object
       properties:
@@ -587,15 +587,16 @@ components:
             type: object
             properties:
               name:
-                required: true
                 type: string
               icon:
-                required: true
                 type: string
               color:
-                required: true
                 type: string
                 format: 0xAARRGGBB
+            required:
+              - name
+              - icon
+              - color
     ListUpdateBody:
       required: true
       description: >
@@ -622,11 +623,12 @@ components:
             type: object
             properties:
               name:
-                required: true
                 type: string
               categoryId:
-                required: true
                 type: string
+            required:
+              - name
+              - categoryId
     ItemUpdateBody:
       required: true
       description: >
@@ -650,12 +652,13 @@ components:
             type: object
             properties:
               name:
-                required: true
                 type: string
               color:
-                required: true
                 type: string
                 format: 0xAARRGGBB
+            required:
+              - name
+              - color
     CategoryUpdateBody:
       required: true
       description: >
