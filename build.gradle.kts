@@ -1,3 +1,5 @@
+import org.hidetake.gradle.swagger.generator.SwaggerSource
+
 val ktorVersion: String = "2.2.4"
 val kmongoVersion: String = "4.9.0"
 val kotlinVersion: String = "1.8.10"
@@ -7,6 +9,7 @@ plugins {
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.serialization") version "1.8.10"
     id("io.ktor.plugin") version "2.2.3"
+    id("org.hidetake.swagger.generator") version "2.19.2"
 }
 
 group = "app.index_it"
@@ -20,6 +23,8 @@ repositories {
 }
 
 dependencies {
+    swaggerUI("org.webjars:swagger-ui:4.18.2")
+
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.0")
 
     implementation("io.konform:konform-jvm:0.4.0")
@@ -78,5 +83,11 @@ tasks.test {
 ktor {
     fatJar {
         archiveFileName.set("index-api.jar")
+    }
+}
+
+swaggerSources {
+    create("indexApi").apply {
+        setInputFile(file("openapi/index-openapi.yaml"))
     }
 }
