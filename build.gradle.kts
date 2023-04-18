@@ -1,3 +1,4 @@
+import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
 import org.hidetake.gradle.swagger.generator.SwaggerSource
 
 val ktorVersion: String = "2.2.4"
@@ -89,5 +90,8 @@ ktor {
 swaggerSources {
     create("indexApi").apply {
         setInputFile(file("openapi/index-openapi.yaml"))
+        ui(closureOf<GenerateSwaggerUI> {
+            outputDir = file("openapi/swagger-ui")
+        })
     }
 }
