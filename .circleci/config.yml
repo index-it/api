@@ -4,11 +4,25 @@ orbs:
   gradle: circleci/gradle@3.0.0
   gcp-gcr: circleci/gcp-gcr@0.15.0
 
+jobs:
+  swagger-ui:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - run: ./gradlew generateSwaggerUI
+
 workflows:
   test-build-publish:
     jobs:
       - gradle/test:
           name: test
+      - swagger-ui:
+          requires: [test]
+          filters:
+            branches:
+              only:
+                - main
       - gcp-gcr/build-and-push-image:
           image: 'index-api-<< pipeline.git.branch >>'
           registry-url: eu.gcr.io
