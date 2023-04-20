@@ -57,7 +57,7 @@ fun Route.passwordOperationRoutes() {
 
         // Send notification email
         SendinblueClient.sendPasswordResetSuccessEmail(user.email)
-        
+
         call.respond(HttpStatusCode.OK)
     }
 }

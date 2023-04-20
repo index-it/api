@@ -1,7 +1,6 @@
 import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
-import org.hidetake.gradle.swagger.generator.SwaggerSource
 
-val ktorVersion: String = "2.2.4"
+val ktorVersion: String = "2.3.0"
 val kmongoVersion: String = "4.9.0"
 val kotlinVersion: String = "1.8.10"
 

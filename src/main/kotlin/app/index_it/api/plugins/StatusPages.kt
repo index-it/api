@@ -18,7 +18,7 @@ fun Application.configureStatusPages() {
             call.respond(HttpStatusCode.Forbidden)
         }
         exception<RequestValidationException> { call, cause ->
-            call.respond(HttpStatusCode.BadRequest, cause.reasons.joinToString())
+            call.respond(HttpStatusCode.BadRequest, cause.reasons.joinToString("\n"))
         }
         exception<Exception> { call, cause ->
             call.application.environment.log.error(cause)

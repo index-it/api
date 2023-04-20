@@ -34,6 +34,6 @@ inline fun <reified T : Validatable<T>> RequestValidationConfig.validateValidata
             ValidationResult.Valid
         else
             ValidationResult.Invalid(
-                validationResult.errors.map { error ->  "${error.dataPath} ${error.message}" }
+                validationResult.errors.map { error ->  "${error.dataPath}: ${error.message}" }
             )
     }
