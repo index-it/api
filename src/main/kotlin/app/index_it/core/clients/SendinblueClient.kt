@@ -35,7 +35,7 @@ object SendinblueClient {
         }
     }
 
-    suspend fun sendEmailVerificationEmail(email: String, code: String): Boolean {
+    suspend fun sendEmailVerificationEmail(email: String, token: String): Boolean {
         val response: HttpResponse = client.post("smtp/email") {
             setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
@@ -50,7 +50,12 @@ object SendinblueClient {
                             email,
                             "utf-8"
                         )
-                    }&code=${code}"
+                    }&token=${
+                        URLEncoder.encode(
+                            token,
+                            "utf-8"
+                        )
+                    }"
                 )
             ))
         }
