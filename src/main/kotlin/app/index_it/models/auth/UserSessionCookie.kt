@@ -2,6 +2,7 @@ package app.index_it.models.auth
 
 import app.index_it.models.user.UserDto
 import io.ktor.server.auth.*
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
 
@@ -10,6 +11,6 @@ import org.litote.kmongo.Id
  */
 @Serializable
 data class UserSessionCookie(
-    val sessionId: Id<UserAuthSessionDto>,
-    val userId: Id<UserDto>
+    @Contextual val sessionId: Id<UserAuthSessionDto>,
+    @Contextual val userId: Id<UserDto>
 ) : Principal

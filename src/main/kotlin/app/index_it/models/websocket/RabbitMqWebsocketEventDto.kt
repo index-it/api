@@ -6,6 +6,7 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
 
+@Serializable
 enum class RabbitMqWebsocketEventType(val realTimeDataKind: Boolean = true) {
     CLOSE_ALL_CLIENT_CONNECTIONS(false),
 
@@ -24,7 +25,7 @@ enum class RabbitMqWebsocketEventType(val realTimeDataKind: Boolean = true) {
 
 @Serializable
 data class RabbitMqWebsocketEventDto(
-    val fromSessionId: Id<UserAuthSessionDto>,
+    @Contextual val fromSessionId: Id<UserAuthSessionDto>,
     @Contextual val fromUserId: Id<UserDto>,
     val eventType: RabbitMqWebsocketEventType,
     // Serialized event data (already JSON encoded)
