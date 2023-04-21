@@ -9,8 +9,9 @@ import io.ktor.server.plugins.ratelimit.*
 import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureHTTP() {
-    // Needed for ssl on Google cloud un & to get request address behind proxies
-    install(ForwardedHeaders)
+    // Needed for k8s pods
+    // with https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers
+    install(XForwardedHeaders)
 
     install(CORS) {
         allowMethod(HttpMethod.Options)
