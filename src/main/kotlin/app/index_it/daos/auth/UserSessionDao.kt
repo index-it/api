@@ -1,19 +1,19 @@
 package app.index_it.daos.auth
 
 import app.index_it.core.cache.UserSessionCM
-import app.index_it.core.extentions.toObjectId
 import app.index_it.models.auth.UserAuthSessionDto
 import app.index_it.models.auth.UserSessionCookie
 import app.index_it.models.user.UserDto
-import io.ktor.server.sessions.*
 import io.ktor.util.date.*
+import org.bson.types.ObjectId
 import org.litote.kmongo.Id
+import org.litote.kmongo.id.toId
 
 object UserSessionDao {
     fun get(userId: Id<UserDto>, sessionId: Id<UserAuthSessionDto>) = UserSessionCM.get(userId, sessionId)
 
     fun create(userId: Id<UserDto>, device: String?, ip: String): UserSessionCookie {
-        val userSessionCookie = UserSessionCookie(generateSessionId().toObjectId(), userId)
+        val userSessionCookie = UserSessionCookie(ObjectId().toId(), userId)
 
         save(
             UserAuthSessionDto(
