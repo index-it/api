@@ -15,6 +15,9 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.URLDecoder
 
 fun Route.emailVerificationRoutes() {
     authenticate(AuthenticationMethods.emailVerificationFormAuth) {
@@ -59,7 +62,11 @@ fun Route.emailVerificationRoutes() {
      * Uses the code sent in the email inbox of the user to verify its email
      */
     get<VerifyEmailRoute> { request ->
-        val emailVerificationDto = EmailVerificationDao.get(request.token)
+        val token = withContext(Dispatchers.IO) {
+            URLDecoder.decode(request.token, "utf-8")
+        }
+
+        val emailVerificationDto = EmailVerificationDao.get(token)
             ?: return@get call.respondRedirect(Env.email_verification_error_url)
 
         val userDto = UserDao.get(emailVerificationDto.userId)
