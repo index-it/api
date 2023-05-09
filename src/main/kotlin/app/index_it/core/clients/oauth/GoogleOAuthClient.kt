@@ -1,23 +1,35 @@
 package app.index_it.core.clients.oauth
 
 import app.index_it.Env
-import app.index_it.models.oauth.google.GoogleOAuthTokenResponseDto
 import app.index_it.models.oauth.google.GoogleUserInfoDto
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
-import mu.KotlinLogging
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
+import com.google.api.client.http.HttpTransport
+import com.google.api.client.http.apache.v2.ApacheHttpTransport
+import com.google.api.client.json.JsonFactory
+import com.google.api.client.json.gson.GsonFactory
 
+object GoogleOAuthClient {
+    private val transport: HttpTransport = ApacheHttpTransport()
+    private val jsonFactory: JsonFactory = GsonFactory()
 
+    private val verifier = GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+        .setAudience(listOf(Env.google_client_id))
+        .build()
+
+    fun getUserInfoFromIdTokenIfValid(token: String): GoogleUserInfoDto? {
+        val idToken = verifier.verify(token) ?: return null
+        val payload = idToken.payload
+
+        return GoogleUserInfoDto(
+            email = payload.email,
+            verifiedEmail = payload.emailVerified
+        )
+    }
+}
+
+/*
 private val log = KotlinLogging.logger {  }
+
 
 object GoogleOAuthClient {
     private val client = HttpClient(Apache) {
@@ -89,3 +101,4 @@ object GoogleOAuthClient {
         client.close()
     }
 }
+*/

@@ -25,6 +25,8 @@ repositories {
 dependencies {
     swaggerUI("org.webjars:swagger-ui:4.18.2")
 
+    implementation("com.google.api-client:google-api-client:2.0.0")
+
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.0")
 
     implementation("io.konform:konform-jvm:0.4.0")

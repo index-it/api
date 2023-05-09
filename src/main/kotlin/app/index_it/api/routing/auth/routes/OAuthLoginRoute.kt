@@ -26,13 +26,8 @@ import io.ktor.util.date.*
  */
 fun Route.oauthLoginRoutes() {
     get<LoginWithGoogle> {
-        // Exchange the code for the token
-        val token = GoogleOAuthClient.exchangeCodeForToken(it.code)
+        val userInfo = GoogleOAuthClient.getUserInfoFromIdTokenIfValid(it.tokenId)
             ?: throw AuthenticationException()
-
-        // Get the email the token
-        val userInfo = GoogleOAuthClient.getUserInfo(token)
-            ?: return@get call.respond(HttpStatusCode.InternalServerError)
 
         if (!userInfo.verifiedEmail)
             return@get call.respond(HttpStatusCode.MethodNotAllowed)

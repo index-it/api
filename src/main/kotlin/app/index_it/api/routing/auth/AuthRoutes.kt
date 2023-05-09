@@ -23,7 +23,7 @@ class IsEmailVerifiedRoute
 class LoginRoute
 
 @Resource("/login-with-google")
-class LoginWithGoogle(val code: String)
+class LoginWithGoogle(val tokenId: String)
 
 @Resource("/login-with-apple")
 class LoginWithApple(val code: String)
