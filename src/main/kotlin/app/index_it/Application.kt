@@ -8,7 +8,6 @@ import app.index_it.core.clients.RedisClient
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
-import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.core.logic.websocket.WebsocketsQueueManager
 import ch.qos.logback.classic.Level
@@ -57,11 +56,11 @@ fun main() {
 
     // Add shutdown hook to api server
     apiServer.addShutdownHook {
-        log.info("[1/10] Closing all websocket connections")
+        log.info("[1/8] Closing all websocket connections")
         runBlocking {
             WebsocketConnectionsManager.close()
         }
-        log.info("[1/10] All websocket connections have been closed")
+        log.info("[1/8] All websocket connections have been closed")
     }
 
     /**
@@ -71,31 +70,28 @@ fun main() {
         Thread {
             log.info("Shutdown started")
 
-            log.info("[1/10] Api server shutdown")
+            log.info("[1/8] Api server shutdown")
 
             SendinblueClient.close()
-            log.info("[2/10] SendinblueClient client shutdown")
-
-            GoogleOAuthClient.close()
-            log.info("[3/10] GoogleOAuthClient client shutdown")
+            log.info("[2/8] SendinblueClient client shutdown")
 
             AppleOAuthClient.close()
-            log.info("[4/10] AppleOAuthClient client shutdown")
+            log.info("[3/8] AppleOAuthClient client shutdown")
 
             FacebookOAuthClient.close()
-            log.info("[5/10] FacebookOAuthClient client shutdown")
+            log.info("[4/8] FacebookOAuthClient client shutdown")
 
             WebsocketsQueueManager.close()
-            log.info("[6/10] WebsocketsQueueManager client shutdown")
+            log.info("[5/8] WebsocketsQueueManager client shutdown")
 
             RabbitMqClient.close()
-            log.info("[7/10] RabbitMqClient client shutdown")
+            log.info("[6/8] RabbitMqClient client shutdown")
 
             RedisClient.close()
-            log.info("[8/10] RedisClient client shutdown")
+            log.info("[7/8] RedisClient client shutdown")
 
             MongoClient.close()
-            log.info("[9/10] MongoClient client shutdown")
+            log.info("[8/8] MongoClient client shutdown")
 
             log.info("Shutdown successful, bye bye ^^")
         }
