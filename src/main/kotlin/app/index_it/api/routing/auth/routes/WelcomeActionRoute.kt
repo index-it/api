@@ -8,9 +8,6 @@ import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URLDecoder
 
 fun Route.welcomeActionRoute() {
     /**
@@ -20,11 +17,7 @@ fun Route.welcomeActionRoute() {
      * To log in the user must have verified the email address.
      */
     get<WelcomeActionRoute> { request ->
-        val email = withContext(Dispatchers.IO) {
-            URLDecoder.decode(request.email, "utf-8")
-        }
-
-        val userDto = UserDao.getFromEmail(email)
+        val userDto = UserDao.getFromEmail(request.email)
 
         val action = if (userDto == null)
             WelcomeAction.REGISTER

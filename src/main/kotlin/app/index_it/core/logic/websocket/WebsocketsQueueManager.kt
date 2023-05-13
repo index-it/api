@@ -3,6 +3,7 @@ package app.index_it.core.logic.websocket
 import app.index_it.Env
 import app.index_it.core.clients.RabbitMqClient
 import app.index_it.core.logic.ObjectMapper
+import app.index_it.core.logic.websocket.WebsocketsQueueManager.startListening
 import app.index_it.models.websocket.RabbitMqWebsocketEventDto
 import com.rabbitmq.client.*
 import kotlinx.coroutines.runBlocking
