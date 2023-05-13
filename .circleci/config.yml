@@ -19,6 +19,7 @@ workflows:
       - gradle/test:
           name: test
       - gcp-gcr/build-and-push-image:
+          name: build-and-push-image
           image: 'index-api-<< pipeline.git.branch >>'
           registry-url: eu.gcr.io
           requires: [test]
@@ -27,4 +28,5 @@ workflows:
               only:
                 - main
                 - test
-      - twist-notify
+      - twist-notify:
+          requires: [build-and-push-image]
