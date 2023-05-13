@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   gradle: circleci/gradle@3.0.0
   gcp-gcr: circleci/gcp-gcr@0.15.0
+  twist: doist/twist@0.0.2
 
 workflows:
   test-build-publish:
@@ -18,3 +19,4 @@ workflows:
               only:
                 - main
                 - test
+      - twist/notify
