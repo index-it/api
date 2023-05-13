@@ -5,6 +5,14 @@ orbs:
   gcp-gcr: circleci/gcp-gcr@0.15.0
   twist: doist/twist@0.0.2
 
+jobs:
+  twist-notify:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - twist/notify
+
 workflows:
   test-build-publish:
     jobs:
@@ -19,4 +27,4 @@ workflows:
               only:
                 - main
                 - test
-      - twist/notify
+      - twist-notify
