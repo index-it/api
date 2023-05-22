@@ -75,7 +75,7 @@ object FacebookOAuthClient {
                     log.debug { "Fetched Facebook user info\nData: $it" }
                 }
             else {
-                log.error("Failed fetching facebook user email with token\nResponse: $response")
+                log.warn("Failed fetching facebook user email with token\nResponse: $response")
                 null
             }
         } catch (e: Exception) {

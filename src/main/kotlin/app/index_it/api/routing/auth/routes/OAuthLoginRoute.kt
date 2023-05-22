@@ -98,7 +98,7 @@ fun Route.oauthLoginRoutes() {
 
         // Get the email the token
         val userInfo = FacebookOAuthClient.getUserInfo(it.accessToken)
-            ?: return@get call.respond(HttpStatusCode.InternalServerError)
+            ?: throw AuthenticationException()
 
         // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)
         var userF = UserDao.getFromEmail(userInfo.email)
