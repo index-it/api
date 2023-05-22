@@ -29,7 +29,7 @@ class LoginWithGoogle(val tokenId: String)
 class LoginWithApple(val code: String)
 
 @Resource("/login-with-facebook")
-class LoginWithFacebook(val code: String)
+class LoginWithFacebook(val accessToken: String)
 
 
 fun Route.authRoutes() {

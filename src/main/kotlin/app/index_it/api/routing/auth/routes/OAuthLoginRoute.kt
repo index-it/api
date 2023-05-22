@@ -91,12 +91,13 @@ fun Route.oauthLoginRoutes() {
     }
 
     get<LoginWithFacebook> {
-        // Exchange the code for the token
+        /* Exchange the code for the token
         val token = FacebookOAuthClient.exchangeCodeForToken(it.code)
             ?: throw AuthenticationException()
+         */
 
         // Get the email the token
-        val userInfo = FacebookOAuthClient.getUserInfo(token)
+        val userInfo = FacebookOAuthClient.getUserInfo(it.accessToken)
             ?: return@get call.respond(HttpStatusCode.InternalServerError)
 
         // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)

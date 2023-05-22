@@ -33,6 +33,7 @@ object FacebookOAuthClient {
         }
     }
 
+    /*
     suspend fun exchangeCodeForToken(code: String): String? {
         return try {
             val response = client.get("https://graph.facebook.com/v16.0/oauth/access_token") {
@@ -58,6 +59,7 @@ object FacebookOAuthClient {
             null
         }
     }
+     */
 
     suspend fun getUserInfo(token: String): FacebookUserInfoDto? {
         return try {
