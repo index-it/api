@@ -486,7 +486,6 @@ components:
           enum:
             - register
             - login
-            - verifyEmail
     Credentials:
       type: object
       properties:

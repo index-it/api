@@ -9,6 +9,4 @@ enum class WelcomeAction {
     LOGIN,
     @SerialName("register")
     REGISTER,
-    @SerialName("verifyEmail")
-    VERIFY_EMAIL
 }

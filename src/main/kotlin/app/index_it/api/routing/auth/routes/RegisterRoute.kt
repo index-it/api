@@ -2,6 +2,7 @@ package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
+import app.index_it.core.logic.usecases.UserAuthUseCase
 import app.index_it.daos.auth.EmailVerificationDao
 import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.RegistrationCredentials
@@ -26,7 +27,7 @@ fun Route.registerRoute() {
         val existingUser = UserDao.getFromEmail(signupData.email)
 
         if (existingUser != null) {
-            if (!existingUser.emailVerified && (getTimeMillis() - existingUser.creationTimestamp) > 7.days.inWholeMilliseconds) {
+            if (UserAuthUseCase.isIncompleteAccountOutdated(existingUser)) {
                 UserDao.delete(existingUser.id)
             } else {
                 call.respond(HttpStatusCode.Forbidden)

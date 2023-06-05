@@ -676,7 +676,7 @@ window.swaggerSpec={
         "properties" : {
           "action" : {
             "type" : "string",
-            "enum" : [ "register", "login", "verifyEmail" ]
+            "enum" : [ "register", "login" ]
           }
         }
       },

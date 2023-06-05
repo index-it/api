@@ -1,6 +1,7 @@
 package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.WelcomeActionRoute
+import app.index_it.core.logic.usecases.UserAuthUseCase
 import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.WelcomeAction
 import app.index_it.models.auth.WelcomeActionResponse
@@ -19,10 +20,8 @@ fun Route.welcomeActionRoute() {
     get<WelcomeActionRoute> { request ->
         val userDto = UserDao.getFromEmail(request.email)
 
-        val action = if (userDto == null)
+        val action = if (userDto == null || UserAuthUseCase.isIncompleteAccountOutdated(userDto))
             WelcomeAction.REGISTER
-        else if (!userDto.emailVerified)
-            WelcomeAction.VERIFY_EMAIL
         else
             WelcomeAction.LOGIN
 
