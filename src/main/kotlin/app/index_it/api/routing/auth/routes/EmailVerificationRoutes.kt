@@ -35,7 +35,7 @@ fun Route.emailVerificationRoutes() {
 
             val emailSent = EmailVerificationDao.createAndSend(userDto)
             if (emailSent)
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.Created)
             else
                 call.respond(HttpStatusCode.InternalServerError)
         }
