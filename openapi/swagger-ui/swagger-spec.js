@@ -733,7 +733,7 @@ window.swaggerSpec={
           },
           "color" : {
             "type" : "string",
-            "format" : "0xAARRGGBB"
+            "format" : "#AARRGGBB"
           }
         }
       },
@@ -748,7 +748,7 @@ window.swaggerSpec={
           },
           "color" : {
             "type" : "string",
-            "format" : "0xAARRGGBB"
+            "format" : "#AARRGGBB"
           }
         }
       },
@@ -819,7 +819,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "0xAARRGGBB"
+                  "format" : "#AARRGGBB"
                 }
               },
               "required" : [ "name", "icon", "color" ]
@@ -843,7 +843,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "0xAARRGGBB"
+                  "format" : "#AARRGGBB"
                 }
               }
             }
@@ -902,7 +902,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "0xAARRGGBB"
+                  "format" : "#AARRGGBB"
                 }
               },
               "required" : [ "name", "color" ]
@@ -923,7 +923,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "0xAARRGGBB"
+                  "format" : "#AARRGGBB"
                 }
               }
             }

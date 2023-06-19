@@ -21,7 +21,7 @@ import org.litote.kmongo.id.toId
 data class CategoryDto(
     @Contextual @SerialName("_id") val id: Id<CategoryDto> = ObjectId().toId(),
     var name: String,
-    var color: String // Represented as 0xFF010101 Includes opacity and hex color
+    var color: String // Represented as #FF010101 Includes opacity and hex color
 ) {
     @Serializable
     data class CategoryCreateRequestDto(
