@@ -62,6 +62,9 @@ object Env {
     lateinit var facebook_client_secret: String
     lateinit var facebook_redirect_uri: String
 
+    lateinit var template_list_names_id: String
+    lateinit var template_list_colors_id: String
+
     /**
      * Loads all the env variables from the .env file or system properties
      *
@@ -106,6 +109,9 @@ object Env {
         facebook_client_id = getStringFromEnv("facebook.client.id")
         facebook_client_secret = getStringFromEnv("facebook.client.secret")
         facebook_redirect_uri = getStringFromEnv("facebook.redirect.uri")
+
+        template_list_names_id = getStringFromEnv("template.list.names.id")
+        template_list_colors_id = getStringFromEnv("template.list.colors.id")
 
         log.debug { "Environment variables loaded" }
     }

@@ -25,13 +25,13 @@ repositories {
 dependencies {
     swaggerUI("org.webjars:swagger-ui:4.18.2")
 
-    implementation("com.google.api-client:google-api-client:2.0.0")
+    implementation("com.google.api-client:google-api-client:2.2.0")
 
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.0")
 
     implementation("io.konform:konform-jvm:0.4.0")
 
-    implementation("redis.clients:jedis:4.3.1")
+    implementation("redis.clients:jedis:4.4.0")
 
     // Rabbitmq client
     implementation("com.rabbitmq:amqp-client:5.16.0")
@@ -65,9 +65,9 @@ dependencies {
     implementation("commons-logging:commons-logging:1.2")
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-    implementation("ch.qos.logback:logback-classic:1.4.6")
+    implementation("ch.qos.logback:logback-classic:1.4.7")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("io.ktor:ktor-server-cors-jvm:2.2.4")
 
     testImplementation(kotlin("test"))

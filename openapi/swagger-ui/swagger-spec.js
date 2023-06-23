@@ -339,6 +339,24 @@ window.swaggerSpec={
         }
       }
     },
+    "/lists/template" : {
+      "get" : {
+        "tags" : [ "lists" ],
+        "operationId" : "get-list-template",
+        "responses" : {
+          "200" : {
+            "description" : "A list template that contains a name and a color",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListTemplate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/lists/{listId}" : {
       "parameters" : [ {
         "name" : "listId",
@@ -734,6 +752,17 @@ window.swaggerSpec={
           "color" : {
             "type" : "string",
             "format" : "#AARRGGBB"
+          }
+        }
+      },
+      "ListTemplate" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "color" : {
+            "type" : "string"
           }
         }
       },

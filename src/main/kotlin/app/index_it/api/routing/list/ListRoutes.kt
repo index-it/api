@@ -23,6 +23,10 @@ class ListsRoute {
             class ItemRoute(val parent: ItemsRoute, val itemId: String)
         }
     }
+
+    @Resource("template")
+    @Suppress("unused")
+    class TemplateRoute(val parent: ListsRoute)
 }
 
 fun Route.listRoutes() {
@@ -35,5 +39,7 @@ fun Route.listRoutes() {
 
         itemsRoute()
         itemRoute()
+
+        templateRoute()
     }
 }

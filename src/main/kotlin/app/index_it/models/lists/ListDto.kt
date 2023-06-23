@@ -59,4 +59,10 @@ data class ListDto(
             }
         }.invoke(this)
     }
+
+    @Serializable
+    data class ListTemplateResponseDto(
+        val name: String,
+        val color: String
+    )
 }
