@@ -5,17 +5,17 @@ import app.index_it.core.cache.TemplateListColorsCM
 import app.index_it.core.cache.TemplateListNamesCM
 import app.index_it.core.db.TemplateListColorsDBM
 import app.index_it.core.db.TemplateListNamesDBM
+import app.index_it.core.extentions.toObjectId
 import app.index_it.models.templates.ListColorsDto
 import app.index_it.models.templates.ListNamesDto
 import mu.KotlinLogging
 import org.litote.kmongo.Id
-import org.litote.kmongo.toId
 
 private val logger = KotlinLogging.logger {  }
 
 object ListTemplateDao {
-    private val templateListNamesId: Id<ListNamesDto> = Env.template_list_names_id.toId()
-    private val templateListColorsId: Id<ListColorsDto> = Env.template_list_colors_id.toId()
+    private val templateListNamesId: Id<ListNamesDto> = Env.template_list_names_id.toObjectId()
+    private val templateListColorsId: Id<ListColorsDto> = Env.template_list_colors_id.toObjectId()
 
     fun getRandomListName(): String {
         val names = getListNames() ?: return "Duck duck"
@@ -40,9 +40,10 @@ object ListTemplateDao {
 
         if (names == null) {
             names = TemplateListNamesDBM.get(templateListNamesId)
-                ?: return null
-
-            logger.warn { "No template for list names found with id $templateListNamesId" }
+                ?: run {
+                    logger.warn { "No template for list names found with id $templateListNamesId" }
+                    return null
+                }
 
             TemplateListNamesCM.cache(names)
         }
@@ -55,9 +56,10 @@ object ListTemplateDao {
 
         if (colors == null) {
             colors = TemplateListColorsDBM.get(templateListColorsId)
-                ?: return null
-
-            logger.warn { "No template for list colors found with id $templateListColorsId" }
+                ?: run {
+                    logger.warn { "No template for list colors found with id $templateListColorsId" }
+                    return null
+                }
 
             TemplateListColorsCM.cache(colors)
         }
