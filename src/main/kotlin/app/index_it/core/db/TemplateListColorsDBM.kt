@@ -8,7 +8,7 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
 object TemplateListColorsDBM {
-    private val col = MongoClient.database.getCollection<ListColorsDto>("template_list_colors")
+    private val col = MongoClient.database.getCollection<ListColorsDto>("template-list-colors")
 
     fun get(id: Id<ListColorsDto>): ListColorsDto? {
         return col.findOne(ListColorsDto::id eq id)
