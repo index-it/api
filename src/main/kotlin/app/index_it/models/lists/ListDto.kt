@@ -24,7 +24,7 @@ data class ListDto(
     var name: String,
     val categories: MutableList<CategoryDto> = mutableListOf(),
     var icon: String, // Single emoji at the moment
-    var color: String // Represented as #FF010101 Includes opacity and hex color
+    var color: String // Represented as #RRGGBB hex color
 ) {
     @Serializable
     data class ListCreateRequestDto(

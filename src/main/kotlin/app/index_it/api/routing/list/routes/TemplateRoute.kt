@@ -21,7 +21,7 @@ fun Route.templateRoute() {
         val colors = ListTemplateDao.getListColors()
             ?: ListColorsDto(
                 description = "colors are missing",
-                colors = listOf("#FF000000")
+                colors = listOf("#000000")
             )
 
         call.respond(colors)

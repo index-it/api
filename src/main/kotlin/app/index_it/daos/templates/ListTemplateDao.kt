@@ -27,11 +27,11 @@ object ListTemplateDao {
     }
 
     fun getRandomListColor(): String {
-        val colors = getListColors() ?: return "#FF000000"
+        val colors = getListColors() ?: return "#000000"
 
         return colors.colors.randomOrNull() ?: run {
             logger.warn { "Empty array of template list colors in template with id $templateListColorsId" }
-            "#FFFFFFFF"
+            "#FFFFFF"
         }
     }
 

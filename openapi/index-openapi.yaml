@@ -552,7 +552,7 @@ components:
           type: string
         color:
           type: string
-          format: '#AARRGGBB'
+          format: '#RRGGBB'
     ListTemplate:
       type: object
       properties:
@@ -571,7 +571,7 @@ components:
           type: array
           items:
             type: string
-            format: '#AARRGGBB'
+            format: '#RRGGBB'
     Category:
       type: object
       properties:
@@ -581,7 +581,7 @@ components:
           type: string
         color:
           type: string
-          format: '#AARRGGBB'
+          format: '#RRGGBB'
     Item:
       type: object
       properties:
@@ -634,7 +634,7 @@ components:
                 type: string
               color:
                 type: string
-                format: '#AARRGGBB'
+                format: '#RRGGBB'
             required:
               - name
               - icon
@@ -654,7 +654,7 @@ components:
                 type: string
               color:
                 type: string
-                format: '#AARRGGBB'
+                format: '#RRGGBB'
     ItemCreateBody:
       required: true
       description: >
@@ -697,7 +697,7 @@ components:
                 type: string
               color:
                 type: string
-                format: '#AARRGGBB'
+                format: '#RRGGBB'
             required:
               - name
               - color
@@ -714,6 +714,6 @@ components:
                 type: string
               color:
                 type: string
-                format: '#AARRGGBB'
+                format: '#RRGGBB'
 security:
   - sessionCookie: []

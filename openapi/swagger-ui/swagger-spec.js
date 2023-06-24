@@ -769,7 +769,7 @@ window.swaggerSpec={
           },
           "color" : {
             "type" : "string",
-            "format" : "#AARRGGBB"
+            "format" : "#RRGGBB"
           }
         }
       },
@@ -797,7 +797,7 @@ window.swaggerSpec={
             "type" : "array",
             "items" : {
               "type" : "string",
-              "format" : "#AARRGGBB"
+              "format" : "#RRGGBB"
             }
           }
         }
@@ -813,7 +813,7 @@ window.swaggerSpec={
           },
           "color" : {
             "type" : "string",
-            "format" : "#AARRGGBB"
+            "format" : "#RRGGBB"
           }
         }
       },
@@ -884,7 +884,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "#AARRGGBB"
+                  "format" : "#RRGGBB"
                 }
               },
               "required" : [ "name", "icon", "color" ]
@@ -908,7 +908,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "#AARRGGBB"
+                  "format" : "#RRGGBB"
                 }
               }
             }
@@ -967,7 +967,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "#AARRGGBB"
+                  "format" : "#RRGGBB"
                 }
               },
               "required" : [ "name", "color" ]
@@ -988,7 +988,7 @@ window.swaggerSpec={
                 },
                 "color" : {
                   "type" : "string",
-                  "format" : "#AARRGGBB"
+                  "format" : "#RRGGBB"
                 }
               }
             }
