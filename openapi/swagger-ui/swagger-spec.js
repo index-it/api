@@ -357,6 +357,24 @@ window.swaggerSpec={
         }
       }
     },
+    "/lists/template/colors" : {
+      "get" : {
+        "tags" : [ "lists" ],
+        "operationId" : "get-list-template-colors",
+        "responses" : {
+          "200" : {
+            "description" : "A list of default colors usable for lists",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListTemplateColors"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/lists/{listId}" : {
       "parameters" : [ {
         "name" : "listId",
@@ -763,6 +781,24 @@ window.swaggerSpec={
           },
           "color" : {
             "type" : "string"
+          }
+        }
+      },
+      "ListTemplateColors" : {
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "colors" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "#AARRGGBB"
+            }
           }
         }
       },

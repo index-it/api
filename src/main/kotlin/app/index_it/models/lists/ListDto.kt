@@ -23,7 +23,7 @@ data class ListDto(
     @Contextual var userId: Id<UserDto>,
     var name: String,
     val categories: MutableList<CategoryDto> = mutableListOf(),
-    var icon: String, // TODO: Define representation
+    var icon: String, // Single emoji at the moment
     var color: String // Represented as #FF010101 Includes opacity and hex color
 ) {
     @Serializable

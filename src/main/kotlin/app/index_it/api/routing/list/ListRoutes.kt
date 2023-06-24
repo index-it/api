@@ -26,7 +26,10 @@ class ListsRoute {
 
     @Resource("template")
     @Suppress("unused")
-    class TemplateRoute(val parent: ListsRoute)
+    class TemplateRoute(val parent: ListsRoute) {
+        @Resource("colors")
+        class ColorsRoute(val parent: TemplateRoute)
+    }
 }
 
 fun Route.listRoutes() {

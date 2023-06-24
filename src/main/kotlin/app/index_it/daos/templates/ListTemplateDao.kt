@@ -51,7 +51,7 @@ object ListTemplateDao {
         return names
     }
 
-    private fun getListColors() : ListColorsDto? {
+    fun getListColors() : ListColorsDto? {
         var colors = TemplateListColorsCM.get(templateListColorsId)
 
         if (colors == null) {
