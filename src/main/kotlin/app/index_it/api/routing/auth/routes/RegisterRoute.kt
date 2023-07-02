@@ -14,7 +14,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.date.*
-import kotlin.time.Duration.Companion.days
 
 fun Route.registerRoute() {
     /**
