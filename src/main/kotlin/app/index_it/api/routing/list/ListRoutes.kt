@@ -7,9 +7,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 
 @Resource("/lists")
+@Suppress("unused")
 class ListsRoute {
     @Resource("{listId}")
-    @Suppress("unused")
     class ListRoute(val parent: ListsRoute = ListsRoute(), val listId: String) {
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
@@ -23,13 +23,6 @@ class ListsRoute {
             class ItemRoute(val parent: ItemsRoute, val itemId: String)
         }
     }
-
-    @Resource("template")
-    @Suppress("unused")
-    class TemplateRoute(val parent: ListsRoute) {
-        @Resource("colors")
-        class ColorsRoute(val parent: TemplateRoute)
-    }
 }
 
 fun Route.listRoutes() {
@@ -42,7 +35,5 @@ fun Route.listRoutes() {
 
         itemsRoute()
         itemRoute()
-
-        templateRoute()
     }
 }

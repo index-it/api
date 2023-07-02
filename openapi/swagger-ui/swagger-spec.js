@@ -339,42 +339,6 @@ window.swaggerSpec={
         }
       }
     },
-    "/lists/template" : {
-      "get" : {
-        "tags" : [ "lists" ],
-        "operationId" : "get-list-template",
-        "responses" : {
-          "200" : {
-            "description" : "A list template that contains a name and a color",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ListTemplate"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/lists/template/colors" : {
-      "get" : {
-        "tags" : [ "lists" ],
-        "operationId" : "get-list-template-colors",
-        "responses" : {
-          "200" : {
-            "description" : "A list of default colors usable for lists",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ListTemplateColors"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/lists/{listId}" : {
       "parameters" : [ {
         "name" : "listId",
@@ -693,6 +657,60 @@ window.swaggerSpec={
         }
       }
     },
+    "/suggestions/colors" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-colors-suggestion",
+        "responses" : {
+          "200" : {
+            "description" : "A list of nice looking colors",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionColors"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestions/list-names" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-list-names-suggestion",
+        "responses" : {
+          "200" : {
+            "description" : "A list of good sounding list names",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionListNames"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestions/template/list" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-list-suggestion-template",
+        "responses" : {
+          "200" : {
+            "description" : "A list template that contains a name and a color",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionListTemplate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ws" : {
       "get" : {
         "tags" : [ "websocket" ],
@@ -773,7 +791,7 @@ window.swaggerSpec={
           }
         }
       },
-      "ListTemplate" : {
+      "SuggestionListTemplate" : {
         "type" : "object",
         "properties" : {
           "name" : {
@@ -784,7 +802,24 @@ window.swaggerSpec={
           }
         }
       },
-      "ListTemplateColors" : {
+      "SuggestionListNames" : {
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "names" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "SuggestionColors" : {
         "type" : "object",
         "properties" : {
           "_id" : {

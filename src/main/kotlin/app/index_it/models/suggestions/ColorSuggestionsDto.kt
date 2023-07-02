@@ -1,4 +1,4 @@
-package app.index_it.models.templates
+package app.index_it.models.suggestions
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -8,8 +8,8 @@ import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
 
 @Serializable
-data class ListColorsDto(
-    @Contextual @SerialName("_id") val id: Id<ListColorsDto> = ObjectId().toId(),
+data class ColorSuggestionsDto(
+    @Contextual @SerialName("_id") val id: Id<ColorSuggestionsDto> = ObjectId().toId(),
     val description: String,
     val colors: List<String>
 )

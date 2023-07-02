@@ -1,0 +1,31 @@
+package app.index_it.api.routing.suggestion
+
+import app.index_it.api.plugins.AuthenticationMethods
+import app.index_it.api.routing.suggestion.routes.suggestionsRoute
+import app.index_it.api.routing.suggestion.routes.templatesRoute
+import io.ktor.resources.*
+import io.ktor.server.auth.*
+import io.ktor.server.routing.*
+
+@Resource("/suggestions")
+@Suppress("unused")
+class SuggestionRoutes {
+    @Resource("colors")
+    class ColorsRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+
+    @Resource("list-names")
+    class ListNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+
+    @Resource("templates")
+    class TemplateRoute(val parent: SuggestionRoutes = SuggestionRoutes()) {
+        @Resource("list")
+        class ListRoute(val parent: TemplateRoute = TemplateRoute())
+    }
+}
+
+fun Route.suggestionRoutes() {
+    authenticate(AuthenticationMethods.userSessionAuth) {
+        suggestionsRoute()
+        templatesRoute()
+    }
+}

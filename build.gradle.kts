@@ -91,8 +91,10 @@ ktor {
 swaggerSources {
     create("indexApi").apply {
         setInputFile(file("openapi/index-openapi.yaml"))
-        ui(closureOf<GenerateSwaggerUI> {
-            outputDir = file("openapi/swagger-ui")
-        })
+        ui(
+            closureOf<GenerateSwaggerUI> {
+                outputDir = file("openapi/swagger-ui")
+            },
+        )
     }
 }
