@@ -50,7 +50,7 @@ object CategoryDBM {
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
         return col.findOneAndUpdate(
             and(ListDto::id eq listId, ListDto::userId eq userId),
-            pullByFilter((ListDto::categories / CategoryDto::id) eq categoryId)
+            pullByFilter(ListDto::categories, (ListDto::categories.posOp / CategoryDto::id) eq categoryId)
         )
     }
 }
