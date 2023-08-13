@@ -11,7 +11,11 @@ externalDocs:
   url: https://docs.index-it.app/api
 servers:
   - url: https://api.index-it.app
+    description: Stable api server
   - url: https://api-beta.index-it.app
+    description: Beta api server
+  - url: http://localhost:8080
+    description: Local development server
 paths:
   /welcome-action:
     get:

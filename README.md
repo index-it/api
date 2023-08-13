@@ -14,3 +14,20 @@ api
   &nbsp;
   <a href="https://index-it.app/discord"><img alt="Discord" src="https://img.shields.io/discord/1043536767934021713?color=4&logo=Discord"></a>
 </p>
+
+## Development
+This api requires the following services:
+- MongoDB
+- Redis
+- RabbitMq  
+
+A Docker compose file for development purposes is available in the root directory, named `docker-compose-dev.yml`  
+It creates all the required services and their web dashboards:  
+
+| Service | username | password | endpoint | web dashboard |    
+|---------|:----------:|:----------:|:----------|:---------------|    
+| MongoDB |   |   | localhost:27017 | localhost:8081 |    
+| Redis |   |   | localhost:6379 | localhost:8082 |    
+| RabbitMq | guest | guest | localhost:5672 | localhost:8083 |
+
+There is a pre-made `.env` file for development located in `/env/.env.development`, just copy it to the root directory and adjust it as needed
