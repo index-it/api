@@ -27,7 +27,8 @@ object WebsocketEventManager {
             sessionId,
             userId,
             eventType,
-            ObjectMapper.encode(eventData)
+            "missing"
+            // ObjectMapper.encode(eventData) // TODO: Can't encode any!
         )
     }
 

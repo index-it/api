@@ -95,8 +95,10 @@ abstract class DoubleHashedCM(
      * @param fields Fields to delete
      */
     fun deleteMultiple(keyValue: String, vararg fields: String) {
-        RedisClient.jedisPool.resource.use {
-            it.hdel(keyName(keyValue), *fields)
+        if (fields.isNotEmpty()) {
+            RedisClient.jedisPool.resource.use {
+                it.hdel(keyName(keyValue), *fields)
+            }
         }
     }
 

@@ -516,6 +516,23 @@ paths:
       responses:
         '201':
           description: Connected to websocket
+  /admin/users/verify-email:
+    get:
+      tags:
+        - admin
+      operationId: 'admin-verify-email'
+      parameters:
+        - name: email
+          in: query
+          description: The email of the user to verify
+          required: true
+          schema:
+            type: string
+      security:
+        - adminBearer: []
+      responses:
+        '200':
+          description: verifies the email of the user with the provided email
 components:
   schemas:
     WelcomeAction:
@@ -627,6 +644,9 @@ components:
       type: apiKey
       in: cookie
       name: user_session_id
+    adminBearer:
+      type: http
+      scheme: bearer
   requestBodies:
     EmailVerificationAuth:
       required: true

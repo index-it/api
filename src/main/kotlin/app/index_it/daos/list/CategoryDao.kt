@@ -57,6 +57,7 @@ object CategoryDao {
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
         val listDto = CategoryDBM.delete(userId, listId, categoryId)
+        println(listDto)
         if (listDto != null)
             ListCM.update(userId, listDto)
         else

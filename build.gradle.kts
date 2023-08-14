@@ -31,7 +31,7 @@ dependencies {
 
     implementation("io.konform:konform-jvm:0.4.0")
 
-    implementation("redis.clients:jedis:4.4.0")
+    implementation("redis.clients:jedis:4.4.3")
 
     // Rabbitmq client
     implementation("com.rabbitmq:amqp-client:5.16.0")

@@ -33,9 +33,9 @@ object CategoryDBM {
 
         // TODO: Test this ^^
         if (categoryUpdateRequestDto.name != null)
-            properties.add((ListDto::categories.allPosOp / CategoryDto::name) setTo categoryUpdateRequestDto.name)
+            properties.add((ListDto::categories.posOp / CategoryDto::name) setTo categoryUpdateRequestDto.name)
         if (categoryUpdateRequestDto.color != null)
-            properties.add((ListDto::categories.allPosOp / CategoryDto::color) setTo categoryUpdateRequestDto.color)
+            properties.add((ListDto::categories.posOp / CategoryDto::color) setTo categoryUpdateRequestDto.color)
 
         if (properties.isEmpty())
             throw BadRequestException("No values to update found in categoryDto (id $categoryId, listId $listId, userId $userId)")
@@ -50,7 +50,8 @@ object CategoryDBM {
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
         return col.findOneAndUpdate(
             and(ListDto::id eq listId, ListDto::userId eq userId),
-            pullByFilter(ListDto::categories, (ListDto::categories.posOp / CategoryDto::id) eq categoryId)
+            pullByFilter(ListDto::categories, CategoryDto::id eq categoryId),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
 }

@@ -42,7 +42,7 @@ object ItemDao {
         if (items.isEmpty()) {
             items = ItemDBM.getAllOfCategory(userId, listId, categoryId)
             if (items.isNotEmpty())
-                ItemCM.deleteAllOfList(userId, listId)
+                ItemCM.cacheAll(userId, listId, items)
         }
 
         return items
