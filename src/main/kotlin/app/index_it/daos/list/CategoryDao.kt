@@ -8,7 +8,7 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object CategoryDao {
-    fun create(userId: Id<UserDto>, listId: Id<ListDto>, categoryCreateRequestDto: CategoryDto.CategoryCreateRequestDto): ListDto? {
+    fun create(userId: Id<UserDto>, listId: Id<ListDto>, categoryCreateRequestDto: CategoryDto.CategoryCreateRequestDto): CategoryDto? {
         val categoryDto = CategoryDto(
             name = categoryCreateRequestDto.name,
             color = categoryCreateRequestDto.color
@@ -20,7 +20,7 @@ object CategoryDao {
         else
             ListCM.delete(userId, listId)
 
-        return listDto
+        return categoryDto
     }
 
     fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<CategoryDto>? {

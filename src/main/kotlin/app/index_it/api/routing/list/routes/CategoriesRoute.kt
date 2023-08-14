@@ -26,11 +26,12 @@ fun Route.categoriesRoute() {
     post<ListsRoute.ListRoute.CategoriesRoute> {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val list = CategoryDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newCategory)
+        val category = CategoryDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newCategory)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        call.respond(list)
+        call.respond(category)
 
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_CREATED, list)
+        // TODO: Make the category a separate collection instead of nesting it in the list dto
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_CREATED, category)
     }
 }
