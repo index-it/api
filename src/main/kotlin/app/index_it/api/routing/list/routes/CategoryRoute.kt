@@ -27,12 +27,12 @@ fun Route.categoryRoute() {
     put<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         val updatedCategory = call.receive<CategoryDto.CategoryUpdateRequestDto>()
 
-        val list = CategoryDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId(), updatedCategory)
+        val category = CategoryDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId(), updatedCategory)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        call.respond(list)
+        call.respond(category)
 
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_UPDATED, list)
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_UPDATED, category)
     }
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {

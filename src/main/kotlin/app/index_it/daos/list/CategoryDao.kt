@@ -45,14 +45,14 @@ object CategoryDao {
         return category
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): ListDto? {
+    fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
         val listDto = CategoryDBM.update(userId, listId, categoryId, categoryUpdateRequestDto)
         if (listDto != null)
             ListCM.update(userId, listDto)
         else
             ListCM.delete(userId, listId)
 
-        return listDto
+        return listDto?.categories?.firstOrNull { it.id == categoryId }
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
