@@ -22,7 +22,6 @@ data class ListDto(
     @Contextual @SerialName("_id") val id: Id<ListDto> = ObjectId().toId(),
     @Contextual var userId: Id<UserDto>,
     var name: String,
-    val categories: MutableList<CategoryDto> = mutableListOf(),
     var icon: String, // Single emoji at the moment
     var color: String // Represented as #RRGGBB hex color
 ) {
