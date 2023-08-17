@@ -1,5 +1,6 @@
-package app.index_it.core.cache
+package app.index_it.core.cache.suggestions
 
+import app.index_it.core.cache.core.HashedCM
 import app.index_it.models.suggestions.ColorSuggestionsDto
 import org.litote.kmongo.Id
 

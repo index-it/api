@@ -1,5 +1,6 @@
 package app.index_it.core.cache
 
+import app.index_it.core.cache.core.HashedCM
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 

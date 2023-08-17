@@ -1,7 +1,7 @@
 package app.index_it.daos.list
 
-import app.index_it.core.cache.ListCM
-import app.index_it.core.db.ListDBM
+import app.index_it.core.cache.lists.ListCM
+import app.index_it.core.db.lists.ListDBM
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id

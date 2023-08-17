@@ -1,7 +1,7 @@
 package app.index_it.daos.list
 
-import app.index_it.core.cache.CategoryCM
-import app.index_it.core.db.CategoryDBM
+import app.index_it.core.cache.lists.CategoryCM
+import app.index_it.core.db.lists.CategoryDBM
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto

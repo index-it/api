@@ -63,6 +63,8 @@ object Env {
     lateinit var facebook_redirect_uri: String
 
     lateinit var suggestion_list_names_id: String
+    lateinit var suggestion_category_names_id: String
+    lateinit var suggestion_item_names_id: String
     lateinit var suggestions_colors_id: String
 
     /**
@@ -111,6 +113,8 @@ object Env {
         facebook_redirect_uri = getStringFromEnv("facebook.redirect.uri")
 
         suggestion_list_names_id = getStringFromEnv("suggestion.list.names.id")
+        suggestion_category_names_id = getStringFromEnv("suggestion.category.names.id")
+        suggestion_item_names_id = getStringFromEnv("suggestion.item.names.id")
         suggestions_colors_id = getStringFromEnv("suggestion.colors.id")
 
         log.debug { "Environment variables loaded" }

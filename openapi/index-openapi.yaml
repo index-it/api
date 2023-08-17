@@ -495,7 +495,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SuggestionListNames"
+                $ref: "#/components/schemas/SuggestionNames"
+  /suggestions/category-names:
+    get:
+      tags:
+        - suggestions
+      operationId: 'get-category-names-suggestion'
+      responses:
+        '200':
+          description: A list of good sounding category names
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestionNames"
+  /suggestions/item-names:
+    get:
+      tags:
+        - suggestions
+      operationId: 'get-item-names-suggestion'
+      responses:
+        '200':
+          description: A list of good sounding item names
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestionNames"
   /suggestions/template/list:
     get:
       tags:
@@ -508,6 +532,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuggestionListTemplate"
+  /suggestions/template/category:
+    get:
+      tags:
+        - suggestions
+      operationId: 'get-category-suggestion-template'
+      responses:
+        '200':
+          description: A category template that contains a name and a color
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestionCategoryTemplate"
+  /suggestions/template/item:
+    get:
+      tags:
+        - suggestions
+      operationId: 'get-item-suggestion-template'
+      responses:
+        '200':
+          description: An item template that contains a name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestionItemTemplate"
   /ws:
     get:
       tags:
@@ -593,7 +641,19 @@ components:
           type: string
         color:
           type: string
-    SuggestionListNames:
+    SuggestionCategoryTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+    SuggestionItemTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+    SuggestionNames:
       type: object
       properties:
         _id:

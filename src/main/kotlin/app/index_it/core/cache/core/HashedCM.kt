@@ -1,4 +1,4 @@
-package app.index_it.core.cache
+package app.index_it.core.cache.core
 
 import app.index_it.core.clients.RedisClient
 import app.index_it.core.logic.ObjectMapper

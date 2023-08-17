@@ -2,6 +2,9 @@ package app.index_it.core.clients
 
 import app.index_it.Env
 import app.index_it.core.db.*
+import app.index_it.core.db.lists.CategoryDBM
+import app.index_it.core.db.lists.ItemDBM
+import app.index_it.core.db.lists.ListDBM
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.KMongo

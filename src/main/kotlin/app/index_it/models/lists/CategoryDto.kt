@@ -57,4 +57,10 @@ data class CategoryDto(
             }
         }.invoke(this)
     }
+
+    @Serializable
+    data class CategoryTemplateResponseDto(
+        val name: String,
+        val color: String
+    )
 }

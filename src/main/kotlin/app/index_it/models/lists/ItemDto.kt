@@ -49,4 +49,9 @@ data class ItemDto(
             }
         }.invoke(this)
     }
+
+    @Serializable
+    data class ItemTemplateResponseDto(
+        val name: String
+    )
 }

@@ -8,8 +8,8 @@ import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
 
 @Serializable
-data class ListNameSuggestionsDto(
-    @Contextual @SerialName("_id") val id: Id<ListNameSuggestionsDto> = ObjectId().toId(),
+data class NameSuggestionsDto(
+    @Contextual @SerialName("_id") val id: Id<NameSuggestionsDto> = ObjectId().toId(),
     val description: String,
     val names: List<String>
 )

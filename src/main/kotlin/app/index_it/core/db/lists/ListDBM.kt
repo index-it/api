@@ -1,4 +1,4 @@
-package app.index_it.core.db
+package app.index_it.core.db.lists
 
 import app.index_it.core.clients.MongoClient
 import app.index_it.models.lists.ListDto

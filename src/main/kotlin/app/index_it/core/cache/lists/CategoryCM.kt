@@ -1,5 +1,6 @@
-package app.index_it.core.cache
+package app.index_it.core.cache.lists
 
+import app.index_it.core.cache.core.DoubleHashedCM
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
