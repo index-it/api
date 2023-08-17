@@ -18,10 +18,6 @@ workflows:
     jobs:
       - gradle/test:
           name: test
-      - gradle/run:
-          name: build-swagger-UI
-          command: generateSwaggerUIIndexApi
-          requires: [test]
       - gcp-gcr/build-and-push-image:
           name: build-and-push-image
           image: 'index-api-<< pipeline.git.branch >>'
