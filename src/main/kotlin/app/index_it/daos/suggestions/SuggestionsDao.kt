@@ -19,8 +19,8 @@ private val logger = KotlinLogging.logger {  }
 
 object SuggestionsDao {
     private val listNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_list_names_id.toObjectId()
-    private val categoryNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_list_names_id.toObjectId()
-    private val itemNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_list_names_id.toObjectId()
+    private val categoryNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_category_names_id.toObjectId()
+    private val itemNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_item_names_id.toObjectId()
 
     private val colorSuggestionsId: Id<ColorSuggestionsDto> = Env.suggestions_colors_id.toObjectId()
 
