@@ -32,7 +32,7 @@ data class ItemDto(
         override fun validate() = Validation {
             ItemCreateRequestDto::name {
                 minLength(1)
-                maxLength(30)
+                maxLength(100)
             }
         }.invoke(this)
     }
@@ -45,7 +45,7 @@ data class ItemDto(
         override fun validate() = Validation {
             ItemUpdateRequestDto::name ifPresent {
                 minLength(1)
-                maxLength(30)
+                maxLength(100)
             }
         }.invoke(this)
     }
