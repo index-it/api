@@ -17,8 +17,8 @@ object CategoryCM: DoubleHashedCM("categories") {
         cacheAll(keyValue(userId, listId), categoriesDto.associateBy { it.id.toString() })
     }
 
-    fun cache(userId: Id<UserDto>, listId: Id<ListDto>, categorieDto: CategoryDto) {
-        cache(keyValue(userId, listId), categorieDto.id.toString(), CategoryDto)
+    fun cache(userId: Id<UserDto>, listId: Id<ListDto>, categoryDto: CategoryDto) {
+        cache(keyValue(userId, listId), categoryDto.id.toString(), categoryDto)
     }
 
     fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
