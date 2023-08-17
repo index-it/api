@@ -5,6 +5,7 @@ import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.user.MeRoute
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.daos.auth.UserSessionDao
+import app.index_it.daos.list.CategoryDao
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.list.ListDao
 import app.index_it.daos.user.UserDao
@@ -31,6 +32,7 @@ fun Route.meRoutes() {
         UserSessionDao.deleteAllSessionsOfUser(userId)
 
         ListDao.deleteAll(userId)
+        CategoryDao.deleteAllOfUser(userId)
         ItemDao.deleteAllOfUser(userId)
         // TODO: Delete planner data
         call.respond(HttpStatusCode.OK)

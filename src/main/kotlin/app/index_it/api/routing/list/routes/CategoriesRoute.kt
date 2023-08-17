@@ -18,7 +18,6 @@ import io.ktor.server.routing.*
 fun Route.categoriesRoute() {
     get<ListsRoute.ListRoute.CategoriesRoute> {
         val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId())
-            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(categories)
     }
@@ -27,11 +26,9 @@ fun Route.categoriesRoute() {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
         val category = CategoryDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newCategory)
-            ?: return@post call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
 
-        // TODO: Make the category a separate collection instead of nesting it in the list dto
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_CREATED, category)
     }
 }

@@ -2,6 +2,7 @@ package app.index_it.core.db
 
 import app.index_it.core.clients.MongoClient
 import app.index_it.models.lists.CategoryDto
+import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
@@ -10,48 +11,53 @@ import io.ktor.server.plugins.*
 import org.litote.kmongo.*
 
 object CategoryDBM {
-    private val col = MongoClient.database.getCollection<ListDto>("lists")
+    private val col = MongoClient.database.getCollection<CategoryDto>("categories")
 
-    fun create(userId: Id<UserDto>, listId: Id<ListDto>, categoryDto: CategoryDto): ListDto? {
-        return col.findOneAndUpdate(
-            and(ListDto::id eq listId, ListDto::userId eq userId),
-            push(ListDto::categories, categoryDto),
-            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-        )
+    init {
+        col.ensureIndex(CategoryDto::userId)
+        col.ensureIndex(CategoryDto::listId)
     }
 
-    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): MutableList<CategoryDto>? {
-        return col.findOne(and(ListDto::id eq listId, ListDto::userId eq userId))?.categories
+    fun create(categoryDto: CategoryDto) {
+        return col.save(categoryDto)
+    }
+
+    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<CategoryDto> {
+        return col.find(and(CategoryDto::userId eq userId, CategoryDto::listId eq listId)).toList()
     }
 
     fun get(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): CategoryDto? {
-        return col.findOne(and(ListDto::id eq listId, ListDto::userId eq userId))?.categories?.firstOrNull { it.id == categoryId }
+        return col.findOne(CategoryDto::userId eq userId, CategoryDto::listId eq listId, CategoryDto::id eq categoryId)
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): ListDto? {
+    fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
         val properties: MutableList<SetTo<*>> = mutableListOf()
 
-        // TODO: Test this ^^
         if (categoryUpdateRequestDto.name != null)
-            properties.add((ListDto::categories.posOp / CategoryDto::name) setTo categoryUpdateRequestDto.name)
+            properties.add(CategoryDto::name setTo categoryUpdateRequestDto.name)
+
         if (categoryUpdateRequestDto.color != null)
-            properties.add((ListDto::categories.posOp / CategoryDto::color) setTo categoryUpdateRequestDto.color)
+            properties.add(CategoryDto::color setTo categoryUpdateRequestDto.color)
 
         if (properties.isEmpty())
             throw BadRequestException("No values to update found in categoryDto (id $categoryId, listId $listId, userId $userId)")
 
         return col.findOneAndUpdate(
-            and(ListDto::id eq listId, ListDto::userId eq userId, (ListDto::categories / CategoryDto::id) eq categoryId),
+            and(CategoryDto::id eq categoryId, CategoryDto::userId eq userId, CategoryDto::listId eq listId),
             set(*properties.toTypedArray()),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
 
-    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): ListDto? {
-        return col.findOneAndUpdate(
-            and(ListDto::id eq listId, ListDto::userId eq userId),
-            pullByFilter(ListDto::categories, CategoryDto::id eq categoryId),
-            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-        )
+    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
+        col.deleteOne(CategoryDto::id eq categoryId, ItemDto::userId eq userId, ItemDto::listId eq listId)
+    }
+
+    fun deleteAllOfUser(userId: Id<UserDto>) {
+        col.deleteMany(CategoryDto::userId eq userId)
+    }
+
+    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+        col.deleteMany(CategoryDto::listId eq listId, CategoryDto::userId eq userId)
     }
 }

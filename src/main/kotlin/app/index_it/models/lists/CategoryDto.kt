@@ -2,6 +2,7 @@ package app.index_it.models.lists
 
 import app.index_it.core.logic.RegexPatterns
 import app.index_it.models.Validatable
+import app.index_it.models.user.UserDto
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -20,6 +21,8 @@ import org.litote.kmongo.id.toId
 @Serializable
 data class CategoryDto(
     @Contextual @SerialName("_id") val id: Id<CategoryDto> = ObjectId().toId(),
+    @Contextual val userId: Id<UserDto>,
+    @Contextual val listId: Id<ListDto>,
     var name: String,
     var color: String // Represented as #010101 hex color
 ) {
