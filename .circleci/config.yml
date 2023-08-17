@@ -12,20 +12,15 @@ jobs:
     steps:
       - checkout
       - twist/notify
-  build-swagger-ui:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - checkout
-      - run: ./gradlew generateSwaggerUIIndexApi
-
 
 workflows:
   test-build-publish:
     jobs:
       - gradle/test:
           name: test
-      - build-swagger-ui:
+      - gradle/run:
+          name: build-swagger-UI
+          command: generateSwaggerUIIndexApi
           requires: [test]
       - gcp-gcr/build-and-push-image:
           name: build-and-push-image
