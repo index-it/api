@@ -24,6 +24,7 @@ object CategoryCM: DoubleHashedCM("categories") {
         delete(keyValue(userId, listId), categoryId.toString())
     }
 
+    @Suppress("UNUSED")
     fun deleteMultiple(userId: Id<UserDto>, listId: Id<ListDto>, categoryIds: List<Id<CategoryDto>>) {
         deleteMultiple(keyValue(userId, listId), *categoryIds.map { it.toString() }.toTypedArray())
     }
