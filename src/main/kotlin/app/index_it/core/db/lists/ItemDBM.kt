@@ -9,6 +9,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
 import io.ktor.server.plugins.*
 import org.litote.kmongo.*
+import kotlin.reflect.full.memberProperties
 
 object ItemDBM {
     private val col = MongoClient.database.getCollection<ItemDto>("items")
@@ -35,10 +36,13 @@ object ItemDBM {
     }
 
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
-        val properties: MutableList<SetTo<*>> = mutableListOf()
+        val properties: MutableList<SetTo<Any>> = mutableListOf()
 
         if (itemUpdateRequestDto.name != null)
             properties.add(ItemDto::name setTo itemUpdateRequestDto.name)
+
+        if (itemUpdateRequestDto.completed != null)
+            properties.add(ItemDto::completed setTo itemUpdateRequestDto.completed)
 
         if (properties.isEmpty())
             throw BadRequestException("No values to update found in itemDto (id $itemId, listId $listId, userId $userId)")

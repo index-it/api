@@ -22,6 +22,7 @@ data class ItemDto(
     @Contextual val listId: Id<ListDto>,
     @Contextual val categoryId: Id<CategoryDto>,
     val name: String,
+    val completed: Boolean = false,
     // TODO: Add more property as you fin the need for them
 ) {
     @Serializable
@@ -40,7 +41,8 @@ data class ItemDto(
     @Serializable
     data class ItemUpdateRequestDto(
         val categoryId: String,
-        val name: String?
+        val name: String?,
+        val completed: Boolean?
     ): Validatable<ItemUpdateRequestDto> {
         override fun validate() = Validation {
             ItemUpdateRequestDto::name ifPresent {

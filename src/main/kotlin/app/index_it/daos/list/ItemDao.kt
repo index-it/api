@@ -53,7 +53,8 @@ object ItemDao {
             userId = userId,
             listId = listId,
             categoryId = itemCreateRequestDto.categoryId.toObjectId(),
-            name = itemCreateRequestDto.name
+            name = itemCreateRequestDto.name,
+            completed = false
         )
 
         ItemDBM.create(itemDto)
