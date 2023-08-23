@@ -16,7 +16,13 @@ import io.ktor.server.routing.*
 
 fun Route.itemsRoute() {
     get<ListsRoute.ListRoute.ItemsRoute> {
-        call.respond(ItemDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId()))
+        val items = when (it.completed) {
+            true ->  ItemDao.getAllCompleted(userIdFromSession()!!, it.parent.listId.toObjectId())
+            false -> ItemDao.getAllUncompleted(userIdFromSession()!!, it.parent.listId.toObjectId())
+            null -> ItemDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId())
+        }
+
+        call.respond(items)
     }
 
     post<ListsRoute.ListRoute.ItemsRoute> {

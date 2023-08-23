@@ -393,6 +393,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: completed
+        in: path
+        description: 'item completed property filter: true = only completed, false = only uncompleted, missing or null = all'
+        required: false
+        schema:
+          type: boolean
     get:
       tags:
         - list-items

@@ -18,7 +18,7 @@ class ListsRoute {
         }
 
         @Resource("items")
-        class ItemsRoute(val parent: ListRoute) {
+        class ItemsRoute(val parent: ListRoute, val completed: Boolean? = null) {
             @Resource("{itemId}")
             class ItemRoute(val parent: ItemsRoute, val itemId: String)
         }

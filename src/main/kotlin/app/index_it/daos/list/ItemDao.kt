@@ -23,6 +23,14 @@ object ItemDao {
         return items
     }
 
+    fun getAllUncompleted(userId: Id<UserDto>, listId: Id<ListDto>) =
+        getAll(userId, listId)
+            .filter { !it.completed }
+
+    fun getAllCompleted(userId: Id<UserDto>, listId: Id<ListDto>) =
+        getAll(userId, listId)
+            .filter { it.completed }
+
     fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? {
         var item = ItemCM.get(userId, listId, itemId)
 

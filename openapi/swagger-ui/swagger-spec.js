@@ -14,9 +14,14 @@ window.swaggerSpec={
     "url" : "https://docs.index-it.app/api"
   },
   "servers" : [ {
-    "url" : "https://api.index-it.app"
+    "url" : "https://api.index-it.app",
+    "description" : "Stable api server"
   }, {
-    "url" : "https://api-beta.index-it.app"
+    "url" : "https://api-beta.index-it.app",
+    "description" : "Beta api server"
+  }, {
+    "url" : "http://localhost:8080",
+    "description" : "Local development server"
   } ],
   "paths" : {
     "/welcome-action" : {
@@ -542,6 +547,14 @@ window.swaggerSpec={
         "schema" : {
           "type" : "string"
         }
+      }, {
+        "name" : "completed",
+        "in" : "path",
+        "description" : "item completed property filter: true = only completed, false = only uncompleted, missing or null = all",
+        "required" : false,
+        "schema" : {
+          "type" : "boolean"
+        }
       } ],
       "get" : {
         "tags" : [ "list-items" ],
@@ -685,7 +698,43 @@ window.swaggerSpec={
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/SuggestionListNames"
+                  "$ref" : "#/components/schemas/SuggestionNames"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestions/category-names" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-category-names-suggestion",
+        "responses" : {
+          "200" : {
+            "description" : "A list of good sounding category names",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionNames"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestions/item-names" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-item-names-suggestion",
+        "responses" : {
+          "200" : {
+            "description" : "A list of good sounding item names",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionNames"
                 }
               }
             }
@@ -711,6 +760,42 @@ window.swaggerSpec={
         }
       }
     },
+    "/suggestions/template/category" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-category-suggestion-template",
+        "responses" : {
+          "200" : {
+            "description" : "A category template that contains a name and a color",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionCategoryTemplate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestions/template/item" : {
+      "get" : {
+        "tags" : [ "suggestions" ],
+        "operationId" : "get-item-suggestion-template",
+        "responses" : {
+          "200" : {
+            "description" : "An item template that contains a name",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuggestionItemTemplate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ws" : {
       "get" : {
         "tags" : [ "websocket" ],
@@ -718,6 +803,29 @@ window.swaggerSpec={
         "responses" : {
           "201" : {
             "description" : "Connected to websocket"
+          }
+        }
+      }
+    },
+    "/admin/users/verify-email" : {
+      "get" : {
+        "tags" : [ "admin" ],
+        "operationId" : "admin-verify-email",
+        "parameters" : [ {
+          "name" : "email",
+          "in" : "query",
+          "description" : "The email of the user to verify",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "security" : [ {
+          "adminBearer" : [ ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "verifies the email of the user with the provided email"
           }
         }
       }
@@ -802,7 +910,26 @@ window.swaggerSpec={
           }
         }
       },
-      "SuggestionListNames" : {
+      "SuggestionCategoryTemplate" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "color" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SuggestionItemTemplate" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SuggestionNames" : {
         "type" : "object",
         "properties" : {
           "_id" : {
@@ -878,6 +1005,10 @@ window.swaggerSpec={
         "type" : "apiKey",
         "in" : "cookie",
         "name" : "user_session_id"
+      },
+      "adminBearer" : {
+        "type" : "http",
+        "scheme" : "bearer"
       }
     },
     "requestBodies" : {
