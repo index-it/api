@@ -11,6 +11,7 @@ fun Application.configureSerialization() {
         json(Json {
             serializersModule = IdKotlinXSerializationModule
             ignoreUnknownKeys = true
+            encodeDefaults = true
         })
     }
 }
