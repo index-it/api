@@ -1,6 +1,7 @@
 package app.index_it.models.lists
 
 import app.index_it.core.logic.RegexPatterns
+import app.index_it.core.logic.currentMillis
 import app.index_it.models.Validatable
 import app.index_it.models.user.UserDto
 import io.konform.validation.Validation
@@ -23,7 +24,11 @@ data class ListDto(
     @Contextual var userId: Id<UserDto>,
     var name: String,
     var icon: String, // Single emoji at the moment
-    var color: String // Represented as #RRGGBB hex color
+    var color: String, // Represented as #RRGGBB hex color
+    @SerialName("created_at")
+    val createdAt: Long = currentMillis(),
+    @SerialName("edited_at")
+    val editedAt: Long? = null
 ) {
     @Serializable
     data class ListCreateRequestDto(

@@ -3,6 +3,7 @@ package app.index_it.daos.list
 import app.index_it.core.cache.lists.ItemCM
 import app.index_it.core.db.lists.ItemDBM
 import app.index_it.core.extentions.toObjectId
+import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
@@ -62,7 +63,10 @@ object ItemDao {
             listId = listId,
             categoryId = itemCreateRequestDto.categoryId.toObjectId(),
             name = itemCreateRequestDto.name,
-            completed = false
+            completed = false,
+            createdAt = currentMillis(),
+            editedAt = null,
+            completedAt = null
         )
 
         ItemDBM.create(itemDto)

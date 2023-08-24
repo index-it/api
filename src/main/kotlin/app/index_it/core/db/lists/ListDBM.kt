@@ -1,6 +1,7 @@
 package app.index_it.core.db.lists
 
 import app.index_it.core.clients.MongoClient
+import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.Filters
@@ -40,6 +41,8 @@ object ListDBM {
 
         if (properties.isEmpty())
             throw BadRequestException("No values to update found in listDto (id $listId, userId $userId)")
+
+        properties.add(ListDto::editedAt setTo currentMillis())
 
         return col.findOneAndUpdate(
             and(ListDto::id eq listId, ListDto::userId eq userId),

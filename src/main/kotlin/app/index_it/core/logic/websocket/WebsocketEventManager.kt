@@ -1,7 +1,6 @@
 package app.index_it.core.logic.websocket
 
 import app.index_it.api.plugins.userIdFromSession
-import app.index_it.core.logic.ObjectMapper
 import app.index_it.models.auth.UserAuthSessionDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventType

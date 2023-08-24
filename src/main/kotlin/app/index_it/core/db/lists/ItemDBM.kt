@@ -1,6 +1,7 @@
 package app.index_it.core.db.lists
 
 import app.index_it.core.clients.MongoClient
+import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
@@ -9,7 +10,6 @@ import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
 import io.ktor.server.plugins.*
 import org.litote.kmongo.*
-import kotlin.reflect.full.memberProperties
 
 object ItemDBM {
     private val col = MongoClient.database.getCollection<ItemDto>("items")
@@ -36,7 +36,7 @@ object ItemDBM {
     }
 
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
-        val properties: MutableList<SetTo<Any>> = mutableListOf()
+        val properties: MutableList<SetTo<Any?>> = mutableListOf()
 
         if (itemUpdateRequestDto.name != null)
             properties.add(ItemDto::name setTo itemUpdateRequestDto.name)
@@ -46,6 +46,12 @@ object ItemDBM {
 
         if (properties.isEmpty())
             throw BadRequestException("No values to update found in itemDto (id $itemId, listId $listId, userId $userId)")
+
+        when (itemUpdateRequestDto.completed) {
+            true -> properties.add(ItemDto::completedAt setTo currentMillis())
+            false -> properties.add(ItemDto::completedAt setTo null)
+            else -> properties.add(ItemDto::editedAt setTo currentMillis())
+        }
 
         return col.findOneAndUpdate(
             and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),

@@ -2,6 +2,7 @@ package app.index_it.daos.list
 
 import app.index_it.core.cache.lists.ListCM
 import app.index_it.core.db.lists.ListDBM
+import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
@@ -12,7 +13,9 @@ object ListDao {
             userId = userId,
             name = listCreateRequestDto.name,
             icon = listCreateRequestDto.icon,
-            color = listCreateRequestDto.color
+            color = listCreateRequestDto.color,
+            createdAt = currentMillis(),
+            editedAt = null
         )
         ListDBM.create(listDto)
         ListCM.cache(listDto.userId, listDto)

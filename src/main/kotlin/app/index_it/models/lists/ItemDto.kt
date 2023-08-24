@@ -1,5 +1,6 @@
 package app.index_it.models.lists
 
+import app.index_it.core.logic.currentMillis
 import app.index_it.models.Validatable
 import app.index_it.models.user.UserDto
 import io.konform.validation.Validation
@@ -23,7 +24,12 @@ data class ItemDto(
     @Contextual val categoryId: Id<CategoryDto>,
     val name: String,
     val completed: Boolean = false,
-    // TODO: Add more property as you fin the need for them
+    @SerialName("created_at")
+    val createdAt: Long = currentMillis(),
+    @SerialName("edited_at")
+    val editedAt: Long? = null,
+    @SerialName("completed_at")
+    val completedAt: Long? = null
 ) {
     @Serializable
     data class ItemCreateRequestDto(
