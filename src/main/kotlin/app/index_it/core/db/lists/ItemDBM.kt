@@ -41,6 +41,9 @@ object ItemDBM {
         if (itemUpdateRequestDto.name != null)
             properties.add(ItemDto::name setTo itemUpdateRequestDto.name)
 
+        if (itemUpdateRequestDto.categoryId != null)
+            properties.add(ItemDto::categoryId setTo itemUpdateRequestDto.categoryId)
+
         if (itemUpdateRequestDto.completed != null)
             properties.add(ItemDto::completed setTo itemUpdateRequestDto.completed)
 

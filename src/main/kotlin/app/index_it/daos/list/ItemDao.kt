@@ -61,7 +61,7 @@ object ItemDao {
         val itemDto = ItemDto(
             userId = userId,
             listId = listId,
-            categoryId = itemCreateRequestDto.categoryId.toObjectId(),
+            categoryId = itemCreateRequestDto.categoryId,
             name = itemCreateRequestDto.name,
             completed = false,
             createdAt = currentMillis(),
