@@ -4,6 +4,7 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
+import app.index_it.daos.list.ItemContentDao
 import app.index_it.daos.list.ItemDao
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
@@ -36,6 +37,7 @@ fun Route.itemRoute() {
 
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         ItemDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId())
+        ItemContentDao.delete(userIdFromSession()!!, it.itemId.toObjectId())
         call.respond(HttpStatusCode.OK)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")

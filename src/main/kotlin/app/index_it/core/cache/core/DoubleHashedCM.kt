@@ -30,12 +30,12 @@ abstract class DoubleHashedCM(
     /**
      * Constructs the hash key from the base + dynamic
      */
-    fun keyName(keyValue: String) = "${keyBase}:$keyValue"
+    protected fun keyName(keyValue: String) = "${keyBase}:$keyValue"
 
     /**
      * Get all the fields of a specific key of the hash
      */
-    inline fun <reified T> getAll(keyValue: String): List<T> {
+    protected inline fun <reified T> getAll(keyValue: String): List<T> {
         RedisClient.jedisPool.resource.use {
             return ObjectMapper.decodeList(it.hgetAll(keyName(keyValue)).values)
         }
@@ -44,7 +44,7 @@ abstract class DoubleHashedCM(
     /**
      * Get a single field from the hash
      */
-    inline fun <reified T> get(keyValue: String, field: String): T? {
+    protected inline fun <reified T> get(keyValue: String, field: String): T? {
         RedisClient.jedisPool.resource.use {
             val json = it.hget(keyName(keyValue), field)
             return if (json != null) ObjectMapper.decode(json) else null
@@ -57,7 +57,7 @@ abstract class DoubleHashedCM(
      * @param keyValue Value of the hash key
      * @param fieldToDataMap Map of field name to field data
      */
-    inline fun <reified T> cacheAll(keyValue: String, fieldToDataMap: Map<String, T>) {
+    protected inline fun <reified T> cacheAll(keyValue: String, fieldToDataMap: Map<String, T>) {
         RedisClient.jedisPool.resource.use {
             val jsonMap = fieldToDataMap.mapValues { mapItem -> ObjectMapper.encode(mapItem.value) }
             it.hset(keyName(keyValue), jsonMap)
@@ -71,7 +71,7 @@ abstract class DoubleHashedCM(
      * @param field Field for the value
      * @param data Data to cache
      */
-    inline fun <reified T> cache(keyValue: String, field: String, data: T) {
+    protected inline fun <reified T> cache(keyValue: String, field: String, data: T) {
         RedisClient.jedisPool.resource.use {
             val json = ObjectMapper.encode(data)
             it.hset(keyName(keyValue), field, json)
@@ -83,7 +83,7 @@ abstract class DoubleHashedCM(
      * @param keyValue Value of the hash key
      * @param field Field to delete
      */
-    fun delete(keyValue: String, field: String) {
+    protected fun delete(keyValue: String, field: String) {
         RedisClient.jedisPool.resource.use {
             it.hdel(keyName(keyValue), field)
         }
@@ -94,7 +94,7 @@ abstract class DoubleHashedCM(
      * @param keyValue Value of the hash key
      * @param fields Fields to delete
      */
-    fun deleteMultiple(keyValue: String, vararg fields: String) {
+    protected fun deleteMultiple(keyValue: String, vararg fields: String) {
         if (fields.isNotEmpty()) {
             RedisClient.jedisPool.resource.use {
                 it.hdel(keyName(keyValue), *fields)
@@ -106,7 +106,7 @@ abstract class DoubleHashedCM(
      * Delete all fields from the hash
      * @param keyValue Value of the hash key
      */
-    fun deleteAll(keyValue: String) {
+    protected fun deleteAll(keyValue: String) {
         RedisClient.jedisPool.resource.use {
             it.del(keyName(keyValue))
         }

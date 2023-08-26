@@ -24,7 +24,7 @@ abstract class HashedCM(
     /**
      * Get a single field from the hash
      */
-    inline fun <reified T> get(field: String): T? {
+    protected inline fun <reified T> get(field: String): T? {
         RedisClient.jedisPool.resource.use {
             val json = it.hget(keyName, field)
             return if (json != null) ObjectMapper.decode(json) else null
@@ -37,7 +37,7 @@ abstract class HashedCM(
      * @param field Field where the data will be cached
      * @param data Data to cache
      */
-    inline fun <reified T> cache(field: String, data: T) {
+    protected inline fun <reified T> cache(field: String, data: T) {
         RedisClient.jedisPool.resource.use {
             val json = ObjectMapper.encode(data)
             it.hset(keyName, field, json)
@@ -47,7 +47,7 @@ abstract class HashedCM(
     /**
      * Delete a field from the hash
      */
-    fun delete(field: String) {
+    protected fun delete(field: String) {
         RedisClient.jedisPool.resource.use {
             it.hdel(keyName, field)
         }

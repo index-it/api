@@ -5,6 +5,7 @@ import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.CategoryDao
+import app.index_it.daos.list.ItemContentDao
 import app.index_it.daos.list.ItemDao
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
@@ -36,8 +37,13 @@ fun Route.categoryRoute() {
     }
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
-        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        val itemsOfCategory = ItemDao.getAllOfCategory(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        ItemContentDao.deleteAllOfItems(userIdFromSession()!!, itemsOfCategory.map { item -> item.id })
+
         ItemDao.deleteAllOfCategory(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+
+        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+
         call.respond(HttpStatusCode.OK)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_DELETED, list)

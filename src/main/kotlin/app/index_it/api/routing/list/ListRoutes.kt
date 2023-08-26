@@ -20,7 +20,10 @@ class ListsRoute {
         @Resource("items")
         class ItemsRoute(val parent: ListRoute, val completed: Boolean? = null) {
             @Resource("{itemId}")
-            class ItemRoute(val parent: ItemsRoute, val itemId: String)
+            class ItemRoute(val parent: ItemsRoute, val itemId: String) {
+                @Resource("content")
+                class ContentRoute(val parent: ItemRoute)
+            }
         }
     }
 }
@@ -35,5 +38,6 @@ fun Route.listRoutes() {
 
         itemsRoute()
         itemRoute()
+        itemContentRoute()
     }
 }

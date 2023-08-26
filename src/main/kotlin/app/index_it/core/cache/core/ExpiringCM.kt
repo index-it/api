@@ -18,12 +18,12 @@ abstract class ExpiringCM(
     /**
      * Constructs a key from the base + dynamic
      */
-    fun keyName(hashValue: String) = "${keyBase}:$hashValue"
+    protected fun keyName(hashValue: String) = "${keyBase}:$hashValue"
 
     /**
      * Get data from a key
      */
-    inline fun <reified T> get(keyValue: String): T? {
+    protected inline fun <reified T> get(keyValue: String): T? {
         RedisClient.jedisPool.resource.use {
             val json = it.get(keyName(keyValue))
             return if (json != null) ObjectMapper.decode(json) else null
@@ -33,7 +33,7 @@ abstract class ExpiringCM(
     /**
      * Cache data in a key
      */
-    inline fun <reified T> cache(keyValue: String, data: T) {
+    protected inline fun <reified T> cache(keyValue: String, data: T) {
         RedisClient.jedisPool.resource.use {
             val json = ObjectMapper.encode(data)
             it.setex(keyName(keyValue), expirationInSeconds, json)
@@ -43,7 +43,7 @@ abstract class ExpiringCM(
     /**
      * Delete a key
      */
-    fun delete(keyValue: String) {
+    protected fun delete(keyValue: String) {
         RedisClient.jedisPool.resource.use {
             it.del(keyName(keyValue))
         }

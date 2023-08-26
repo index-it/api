@@ -5,6 +5,7 @@ import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.CategoryDao
+import app.index_it.daos.list.ItemContentDao
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.list.ListDao
 import app.index_it.models.lists.ListDto
@@ -35,9 +36,15 @@ fun Route.listRoute() {
     }
 
     delete<ListsRoute.ListRoute> {
-        ListDao.delete(userIdFromSession()!!, it.listId.toObjectId())
-        CategoryDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
+        val items = ItemDao.getAll(userIdFromSession()!!, it.listId.toObjectId())
+        ItemContentDao.deleteAllOfItems(userIdFromSession()!!, items.map { item -> item.id })
+
         ItemDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
+
+        CategoryDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
+
+        ListDao.delete(userIdFromSession()!!, it.listId.toObjectId())
+
         call.respond(HttpStatusCode.OK)
 
         // TODO: Decide whether to wrap delete operations in classes (global class maybe? DeleteOperationEvent(id: String) that can be extended too)
