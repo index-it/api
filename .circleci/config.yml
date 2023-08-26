@@ -18,6 +18,8 @@ workflows:
     jobs:
       - gradle/test:
           name: test
+          executor: default
+          tag: '20.0.1'
       - gcp-gcr/build-and-push-image:
           name: build-and-push-image
           image: 'index-api-<< pipeline.git.branch >>'
