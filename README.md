@@ -33,3 +33,6 @@ It creates all the required services and their web dashboards:
 There is a pre-made `.env` file for development located in `/env/.env.development`, just copy it to the root directory and adjust it as needed
 
 > Important: editing documents with the MongoDB dashboard **is not recommended** as it tends to mess up data types!
+
+##### Swagger UI
+Swagger is available at [localhost:$PORT/swagger-ui](http://localhost:8080/swagger-ui)

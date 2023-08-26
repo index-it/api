@@ -1,11 +1,11 @@
 package app.index_it
 
 import app.index_it.Env.loadEnv
+import ch.qos.logback.classic.Level
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.DotenvException
 import io.github.cdimascio.dotenv.dotenv
-import mu.KotlinLogging
-import org.slf4j.event.Level
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val log = KotlinLogging.logger {  }
 
@@ -18,7 +18,7 @@ object Env {
     private val dotenv: Dotenv? = try {
         dotenv()
     } catch (_: DotenvException) {
-        log.info(".env file not found, using System environment variables")
+        log.info { ".env file not found, using System environment variables" }
         null
     }
 

@@ -11,7 +11,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val log = KotlinLogging.logger {  }
 
@@ -73,11 +73,11 @@ object FacebookOAuthClient {
                     log.debug { "Fetched Facebook user info\nData: $it" }
                 }
             else {
-                log.warn("Failed fetching facebook user email with token\nResponse: $response")
+                log.warn { "Failed fetching facebook user email with token\nResponse: $response" }
                 null
             }
         } catch (e: Exception) {
-            log.error("Failed fetching facebook user email with token", e)
+            log.error(e) { "Failed fetching facebook user email with token" }
             null
         }
     }

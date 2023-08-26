@@ -7,7 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import java.time.Duration
 
@@ -18,7 +18,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.emitRabbitMqWebsocketEvent(ev
         val websocketEventDto = WebsocketEventManager.rabbitMqWebsocketEventDtoFromRestCall(this, eventType, eventData)
         WebsocketEventManager.emit(websocketEventDto)
     } catch (e: Exception) {
-        logger.error("Error emitting websocket event (event type $eventType, event data $eventData)", e)
+        logger.error(e) { "Error emitting websocket event (event type $eventType, event data $eventData)" }
     }
 }
 

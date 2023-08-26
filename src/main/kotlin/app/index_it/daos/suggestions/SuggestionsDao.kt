@@ -12,7 +12,7 @@ import app.index_it.core.db.suggestions.SuggestionListNamesDBM
 import app.index_it.core.extentions.toObjectId
 import app.index_it.models.suggestions.ColorSuggestionsDto
 import app.index_it.models.suggestions.NameSuggestionsDto
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.litote.kmongo.Id
 
 private val logger = KotlinLogging.logger {  }

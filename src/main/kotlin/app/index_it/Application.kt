@@ -10,18 +10,16 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.core.logic.websocket.WebsocketsQueueManager
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
-import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.util.logging.*
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.system.exitProcess
+import ch.qos.logback.classic.Logger
+import io.ktor.server.application.*
+import org.slf4j.LoggerFactory
 
-private val log = KotlinLogging.logger { }
+private val logger = KotlinLogging.logger { }
 
 fun main() {
     /**
@@ -30,14 +28,14 @@ fun main() {
     try {
         Env.loadEnv()
     } catch (e: NoSuchElementException) {
-        log.error(e)
+        logger.error { e }
         exitProcess(404)
     }
 
     /**
      * Configure logging
      */
-    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.convertAnSLF4JLevel(Env.log_level)
+    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Env.log_level
 
     /**
      * Initialize objects
@@ -56,11 +54,11 @@ fun main() {
 
     // Add shutdown hook to api server
     apiServer.addShutdownHook {
-        log.info("[1/8] Closing all websocket connections")
+        logger.info { "[1/8] Closing all websocket connections" }
         runBlocking {
             WebsocketConnectionsManager.close()
         }
-        log.info("[1/8] All websocket connections have been closed")
+        logger.info { "[1/8] All websocket connections have been closed" }
     }
 
     /**
@@ -68,32 +66,32 @@ fun main() {
      */
     Runtime.getRuntime().addShutdownHook(
         Thread {
-            log.info("Shutdown started")
+            logger.info { "Shutdown started" }
 
-            log.info("[1/8] Api server shutdown")
+            logger.info { "[1/8] Api server shutdown" }
 
             SendinblueClient.close()
-            log.info("[2/8] SendinblueClient client shutdown")
+            logger.info { "[2/8] SendinblueClient client shutdown" }
 
             AppleOAuthClient.close()
-            log.info("[3/8] AppleOAuthClient client shutdown")
+            logger.info { "[3/8] AppleOAuthClient client shutdown" }
 
             FacebookOAuthClient.close()
-            log.info("[4/8] FacebookOAuthClient client shutdown")
+            logger.info { "[4/8] FacebookOAuthClient client shutdown" }
 
             WebsocketsQueueManager.close()
-            log.info("[5/8] WebsocketsQueueManager client shutdown")
+            logger.info { "[5/8] WebsocketsQueueManager client shutdown" }
 
             RabbitMqClient.close()
-            log.info("[6/8] RabbitMqClient client shutdown")
+            logger.info { "[6/8] RabbitMqClient client shutdown" }
 
             RedisClient.close()
-            log.info("[7/8] RedisClient client shutdown")
+            logger.info { "[7/8] RedisClient client shutdown" }
 
             MongoClient.close()
-            log.info("[8/8] MongoClient client shutdown")
+            logger.info { "[8/8] MongoClient client shutdown" }
 
-            log.info("Shutdown successful, bye bye ^^")
+            logger.info { "Shutdown successful, bye bye ^^" }
         }
     )
 
@@ -109,4 +107,5 @@ private fun Application.indexApplicationModule() {
     configureValidator()
     configureWebsockets()
     configureRouting()
+    configureSwagger()
 }

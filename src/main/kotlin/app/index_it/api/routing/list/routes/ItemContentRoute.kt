@@ -16,6 +16,7 @@ import io.ktor.server.routing.*
 fun Route.itemContentRoute() {
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute> {
         val content = ItemContentDao.getOrCreate(userIdFromSession()!!, it.parent.itemId.toObjectId())
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(content)
     }

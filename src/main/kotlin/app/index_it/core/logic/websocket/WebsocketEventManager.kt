@@ -10,7 +10,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val log = KotlinLogging.logger{}
 
@@ -40,7 +40,7 @@ object WebsocketEventManager {
               I don't want the API server to handle this and perhaps respond with a 500 status code
               Since websockets aren't related to the success of the http call
              */
-            log.error("Unhandled exception in the websocket event manager", e)
+            log.error(e) { "Unhandled exception in the websocket event manager" }
         }
     }
 
@@ -65,12 +65,16 @@ object WebsocketEventManager {
         if (userLocalConnections.isNotEmpty()) {
             userLocalConnections.forEach {
                 try {
-                    it.websocketSession.sendSerialized(WebsocketFrameDataDto.fromWebsocketEvent(rabbitMqWebsocketEventDto))
+                    it.websocketSession.sendSerialized(
+                        WebsocketFrameDataDto.fromWebsocketEvent(
+                            rabbitMqWebsocketEventDto
+                        )
+                    )
                     log.debug { "Sent websocket event to websocket session: $it" }
                 } catch (e: IllegalStateException) {
                     WebsocketConnectionsManager.removeConnection(it)
                 } catch (e: WebsocketConverterNotFoundException) {
-                    log.error("Could not find websocket converter for serialization", e)
+                    log.error(e) { "Could not find websocket converter for serialization" }
                 }
             }
         }

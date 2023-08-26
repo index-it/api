@@ -19,6 +19,10 @@ object ItemDBM {
         col.ensureIndex(ItemDto::listId)
     }
 
+    fun exists(userId: Id<UserDto>, itemId: Id<ItemDto>): Boolean {
+        return col.findOne(and(ItemDto::id eq itemId, ItemDto::userId eq  userId)) != null
+    }
+
     fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> {
         return col.find(ItemDto::userId eq userId, ItemDto::listId eq listId).toList()
     }

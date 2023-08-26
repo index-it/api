@@ -4,7 +4,7 @@ import app.index_it.models.auth.UserAuthSessionDto
 import app.index_it.models.user.UserDto
 import app.index_it.models.websocket.WebsocketConnection
 import io.ktor.websocket.*
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.litote.kmongo.Id
 import java.util.*
 

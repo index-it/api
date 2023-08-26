@@ -8,7 +8,11 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object ItemContentDao {
-    fun create(userId: Id<UserDto>, itemId: Id<ItemDto>): ItemContentDto {
+    fun create(userId: Id<UserDto>, itemId: Id<ItemDto>): ItemContentDto? {
+        if (!ItemDao.exists(userId, itemId)) {
+            return  null
+        }
+
         val itemContentDto = ItemContentDto(
             userId = userId,
             itemId = itemId,

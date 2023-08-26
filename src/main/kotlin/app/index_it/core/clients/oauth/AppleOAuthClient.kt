@@ -14,7 +14,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val log = KotlinLogging.logger {  }
 
@@ -53,11 +53,11 @@ object AppleOAuthClient {
                     it.idToken
                 }
             } else {
-                log.error("Failed exchanging apple oauth code for token\nResponse: $response")
+                log.error { "Failed exchanging apple oauth code for token\nResponse: $response" }
                 null
             }
         } catch (e: Exception) {
-            log.error("Failed exchanging apple oauth code for token", e)
+            log.error(e) { "Failed exchanging apple oauth code for token" }
             null
         }
     }

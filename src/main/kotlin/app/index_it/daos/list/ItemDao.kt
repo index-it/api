@@ -2,7 +2,6 @@ package app.index_it.daos.list
 
 import app.index_it.core.cache.lists.ItemCM
 import app.index_it.core.db.lists.ItemDBM
-import app.index_it.core.extentions.toObjectId
 import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
@@ -11,6 +10,9 @@ import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
 object ItemDao {
+    fun exists(userId: Id<UserDto>, itemId: Id<ItemDto>): Boolean {
+        return ItemDBM.exists(userId, itemId)
+    }
     fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> {
         // TODO: Query db instead?
         var items = ItemCM.getAll(userId, listId)

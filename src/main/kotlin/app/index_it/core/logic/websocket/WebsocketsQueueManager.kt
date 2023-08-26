@@ -7,7 +7,7 @@ import app.index_it.core.logic.websocket.WebsocketsQueueManager.startListening
 import app.index_it.models.websocket.RabbitMqWebsocketEventDto
 import com.rabbitmq.client.*
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.IOException
 
 private val log = KotlinLogging.logger { }
@@ -40,7 +40,7 @@ object WebsocketsQueueManager {
                         WebsocketEventManager.consume(ObjectMapper.decodeFromByteArray(body))
                     }
                 } else {
-                    log.error("Missing rabbitmq message body in websocket queue")
+                    log.error { "Missing rabbitmq message body in websocket queue" }
                 }
             }
         }
