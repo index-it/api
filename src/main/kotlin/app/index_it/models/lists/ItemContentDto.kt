@@ -12,6 +12,7 @@ import org.bson.types.ObjectId
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
 
+@Serializable
 data class ItemContentDto(
     @Contextual @SerialName("_id") val id: Id<ItemContentDto> = ObjectId().toId(),
     @Contextual val userId: Id<UserDto>,
