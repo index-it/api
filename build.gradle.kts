@@ -39,6 +39,11 @@ tasks.test {
     useJUnitPlatform()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_20
+    targetCompatibility = JavaVersion.VERSION_20
+}
+
 ktor {
     fatJar {
         archiveFileName.set("index-api.jar")
