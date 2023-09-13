@@ -7,7 +7,6 @@ import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
-import io.ktor.server.plugins.*
 import org.litote.kmongo.*
 
 object CategoryDBM {
@@ -33,14 +32,8 @@ object CategoryDBM {
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
         val properties: MutableList<SetTo<*>> = mutableListOf()
 
-        if (categoryUpdateRequestDto.name != null)
-            properties.add(CategoryDto::name setTo categoryUpdateRequestDto.name)
-
-        if (categoryUpdateRequestDto.color != null)
-            properties.add(CategoryDto::color setTo categoryUpdateRequestDto.color)
-
-        if (properties.isEmpty())
-            throw BadRequestException("No values to update found in categoryDto (id $categoryId, listId $listId, userId $userId)")
+        properties.add(CategoryDto::name setTo categoryUpdateRequestDto.name)
+        properties.add(CategoryDto::color setTo categoryUpdateRequestDto.color)
 
         return col.findOneAndUpdate(
             and(CategoryDto::id eq categoryId, CategoryDto::userId eq userId, CategoryDto::listId eq listId),

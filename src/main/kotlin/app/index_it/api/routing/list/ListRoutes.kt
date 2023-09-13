@@ -23,6 +23,9 @@ class ListsRoute {
             class ItemRoute(val parent: ItemsRoute, val itemId: String) {
                 @Resource("content")
                 class ContentRoute(val parent: ItemRoute)
+
+                @Resource("completion")
+                class CompletionRoute(val parent: ItemRoute, val completed: Boolean)
             }
         }
     }
@@ -39,5 +42,6 @@ fun Route.listRoutes() {
         itemsRoute()
         itemRoute()
         itemContentRoute()
+        itemCompletionRoute()
     }
 }

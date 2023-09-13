@@ -64,6 +64,7 @@ object ItemDao {
             userId = userId,
             listId = listId,
             categoryId = itemCreateRequestDto.categoryId,
+            taskId = null,
             name = itemCreateRequestDto.name,
             completed = false,
             createdAt = currentMillis(),
@@ -75,6 +76,17 @@ object ItemDao {
         ItemCM.cache(userId, listId, itemDto)
 
         return itemDto
+    }
+
+    fun setCompletion(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, completed: Boolean): ItemDto? {
+        val item = ItemDBM.setCompletion(userId, listId, itemId, completed)
+
+        if (item != null)
+            ItemCM.cache(userId, listId, item)
+        else
+            ItemCM.delete(userId, listId, itemId)
+
+        return item
     }
 
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {

@@ -49,16 +49,17 @@ data class ListDto(
 
     @Serializable
     data class ListUpdateRequestDto(
-        var name: String?,
-        var icon: String?,
-        var color: String?
+        var name: String,
+        var icon: String,
+        var color: String
     ): Validatable<ListUpdateRequestDto> {
         override fun validate() = Validation {
-            ListUpdateRequestDto::name ifPresent {
+            ListUpdateRequestDto::name {
                 minLength(1)
                 maxLength(50)
             }
-            ListUpdateRequestDto::color ifPresent {
+            // TODO: Icon validation
+            ListUpdateRequestDto::color {
                 pattern(RegexPatterns.colorPattern)
             }
         }.invoke(this)

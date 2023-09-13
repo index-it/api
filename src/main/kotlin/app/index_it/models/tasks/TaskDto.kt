@@ -1,28 +1,90 @@
 package app.index_it.models.tasks
 
+import app.index_it.core.logic.currentMillis
+import app.index_it.models.Validatable
 import app.index_it.models.lists.ItemDto
+import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
+import io.konform.validation.Validation
+import io.konform.validation.jsonschema.maxLength
+import io.konform.validation.jsonschema.minLength
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
-import java.util.*
 
+/**
+ * Represents a task, kind of like a TODO entry
+ *
+ * @param id
+ * @param userId
+ * @param itemId id of the item to which this task is linked - when the task gets completed, the item also gets completed and vice-versa
+ * @param name
+ * @param description
+ * @param subTasks a list of sub tasks
+ */
 @Serializable
 @Suppress("Unused")
 data class TaskDto(
-    @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
+    @Contextual @SerialName("_id") val id: Id<TaskDto> = ObjectId().toId(),
     @Contextual val userId: Id<UserDto>,
-    @Contextual val date: Date,
+    @Contextual val itemId: Id<ItemDto>?,
+    @Contextual val listId: Id<ListDto>?,
     val name: String,
-    val description: String,
+    val description: String?,
     val subTasks: MutableList<SubTaskDto> = mutableListOf(),
-)
+    val dueDate: Long?,
+    val completed: Boolean,
+    @SerialName("created_at")
+    val createdAt: Long = currentMillis(),
+    @SerialName("edited_at")
+    val editedAt: Long? = null,
+    @SerialName("completed_at")
+    val completedAt: Long? = null
+) {
+    @Serializable
+    data class TaskCreateRequestDto(
+        val name: String,
+        val description: String?,
+        val dueDate: Long?,
+        val subTasks: MutableList<SubTaskDto>
+    ): Validatable<TaskCreateRequestDto> {
+        override fun validate() = Validation {
+            TaskCreateRequestDto::name {
+                minLength(1)
+                maxLength(100)
+            }
+            TaskCreateRequestDto::description ifPresent {
+                minLength(1)
+                maxLength(500)
+            }
+        }.invoke(this)
+    }
+
+    @Serializable
+    data class TaskUpdateRequestDto(
+        val name: String,
+        val description: String,
+        val dueDate: Long,
+        val subTasks: MutableList<SubTaskDto>
+    ): Validatable<TaskUpdateRequestDto> {
+        override fun validate() = Validation {
+            TaskUpdateRequestDto::name {
+                minLength(1)
+                maxLength(100)
+            }
+            TaskUpdateRequestDto::description {
+                minLength(1)
+                maxLength(500)
+            }
+        }.invoke(this)
+    }
+}
 
 @Serializable
 data class SubTaskDto(
     val name: String,
-    val completed: Boolean = false
+    val completed: Boolean
 )

@@ -40,7 +40,7 @@ object ListDao {
         var list = ListCM.get(userId, listId)
 
         if (list == null) {
-            list = ListDBM.get(listId)
+            list = ListDBM.get(userId, listId)
                 ?: return null
             ListCM.cache(userId, list)
         }

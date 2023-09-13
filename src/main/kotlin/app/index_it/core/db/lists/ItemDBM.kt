@@ -8,7 +8,6 @@ import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
-import io.ktor.server.plugins.*
 import org.litote.kmongo.*
 
 object ItemDBM {
@@ -39,26 +38,23 @@ object ItemDBM {
         col.save(itemDto)
     }
 
+    fun setCompletion(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, completed: Boolean): ItemDto? {
+        return col.findOneAndUpdate(
+            and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),
+            set(
+                ItemDto::completed setTo completed,
+                ItemDto::completedAt setTo if(completed) currentMillis() else null,
+            ),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        )
+    }
+
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
         val properties: MutableList<SetTo<Any?>> = mutableListOf()
 
-        if (itemUpdateRequestDto.name != null)
-            properties.add(ItemDto::name setTo itemUpdateRequestDto.name)
-
-        if (itemUpdateRequestDto.categoryId != null)
-            properties.add(ItemDto::categoryId setTo itemUpdateRequestDto.categoryId)
-
-        if (itemUpdateRequestDto.completed != null)
-            properties.add(ItemDto::completed setTo itemUpdateRequestDto.completed)
-
-        if (properties.isEmpty())
-            throw BadRequestException("No values to update found in itemDto (id $itemId, listId $listId, userId $userId)")
-
-        when (itemUpdateRequestDto.completed) {
-            true -> properties.add(ItemDto::completedAt setTo currentMillis())
-            false -> properties.add(ItemDto::completedAt setTo null)
-            else -> properties.add(ItemDto::editedAt setTo currentMillis())
-        }
+        properties.add(ItemDto::name setTo itemUpdateRequestDto.name)
+        properties.add(ItemDto::categoryId setTo itemUpdateRequestDto.categoryId)
+        properties.add(ItemDto::editedAt setTo currentMillis())
 
         return col.findOneAndUpdate(
             and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),

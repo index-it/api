@@ -44,15 +44,15 @@ data class CategoryDto(
 
     @Serializable
     data class CategoryUpdateRequestDto(
-        val name: String?,
-        val color: String?
+        val name: String,
+        val color: String
     ): Validatable<CategoryUpdateRequestDto> {
         override fun validate() = Validation {
-            CategoryUpdateRequestDto::name ifPresent {
+            CategoryUpdateRequestDto::name {
                 minLength(1)
                 maxLength(30)
             }
-            CategoryUpdateRequestDto::color ifPresent {
+            CategoryUpdateRequestDto::color {
                 pattern(RegexPatterns.colorPattern)
             }
         }.invoke(this)

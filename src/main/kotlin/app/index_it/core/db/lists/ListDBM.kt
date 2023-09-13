@@ -7,7 +7,6 @@ import app.index_it.models.user.UserDto
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
-import io.ktor.server.plugins.*
 import org.litote.kmongo.*
 
 object ListDBM {
@@ -21,8 +20,8 @@ object ListDBM {
         return col.find(ListDto::userId eq userId).toList()
     }
 
-    fun get(listId: Id<ListDto>): ListDto? {
-        return col.findOne(ListDto::id eq listId)
+    fun get(userId: Id<UserDto>, listId: Id<ListDto>): ListDto? {
+        return col.findOne(ListDto::id eq listId, ListDto::userId eq userId)
     }
 
     fun create(listDto: ListDto) {
@@ -32,16 +31,9 @@ object ListDBM {
     fun update(userId: Id<UserDto>, listId: Id<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
         val properties: MutableList<SetTo<*>> = mutableListOf()
 
-        if (listUpdateRequestDto.name != null)
-            properties.add(ListDto::name setTo listUpdateRequestDto.name)
-        if (listUpdateRequestDto.icon != null)
-            properties.add(ListDto::icon setTo listUpdateRequestDto.icon)
-        if (listUpdateRequestDto.color != null)
-            properties.add(ListDto::color setTo listUpdateRequestDto.color)
-
-        if (properties.isEmpty())
-            throw BadRequestException("No values to update found in listDto (id $listId, userId $userId)")
-
+        properties.add(ListDto::name setTo listUpdateRequestDto.name)
+        properties.add(ListDto::icon setTo listUpdateRequestDto.icon)
+        properties.add(ListDto::color setTo listUpdateRequestDto.color)
         properties.add(ListDto::editedAt setTo currentMillis())
 
         return col.findOneAndUpdate(

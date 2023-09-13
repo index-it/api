@@ -6,7 +6,6 @@ import app.index_it.models.lists.ItemDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
-import io.ktor.server.plugins.*
 import org.litote.kmongo.*
 
 object ItemContentDBM {
@@ -29,9 +28,6 @@ object ItemContentDBM {
         val properties: MutableList<SetTo<Any?>> = mutableListOf()
 
         properties.add(ItemContentDto::content setTo itemContentCreateOrUpdateRequest.content)
-
-        if (properties.isEmpty())
-            throw BadRequestException("No values to update found in itemContentDto (item id $itemId)")
 
         return col.findOneAndUpdate(
             and(ItemContentDto::itemId eq itemId, ItemContentDto::userId eq userId),

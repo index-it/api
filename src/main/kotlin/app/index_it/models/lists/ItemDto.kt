@@ -2,6 +2,7 @@ package app.index_it.models.lists
 
 import app.index_it.core.logic.currentMillis
 import app.index_it.models.Validatable
+import app.index_it.models.tasks.TaskDto
 import app.index_it.models.user.UserDto
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
@@ -22,6 +23,7 @@ data class ItemDto(
     @Contextual val userId: Id<UserDto>,
     @Contextual val listId: Id<ListDto>,
     @Contextual val categoryId: Id<CategoryDto>,
+    @Contextual val taskId: Id<TaskDto>?,
     val name: String,
     val completed: Boolean = false,
     @SerialName("created_at")
@@ -47,11 +49,11 @@ data class ItemDto(
     @Serializable
     data class ItemUpdateRequestDto(
         @Contextual val categoryId: Id<CategoryDto>?,
-        val name: String?,
-        val completed: Boolean?
+        val name: String,
+        val completed: Boolean
     ): Validatable<ItemUpdateRequestDto> {
         override fun validate() = Validation {
-            ItemUpdateRequestDto::name ifPresent {
+            ItemUpdateRequestDto::name {
                 minLength(1)
                 maxLength(100)
             }
