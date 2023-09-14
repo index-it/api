@@ -30,13 +30,13 @@ import org.litote.kmongo.id.toId
 data class TaskDto(
     @Contextual @SerialName("_id") val id: Id<TaskDto> = ObjectId().toId(),
     @Contextual val userId: Id<UserDto>,
-    @Contextual val itemId: Id<ItemDto>?,
-    @Contextual val listId: Id<ListDto>?,
+    @Contextual val itemId: Id<ItemDto>? = null,
+    @Contextual val listId: Id<ListDto>? = null,
     val name: String,
-    val description: String?,
+    val description: String? = null,
     val subTasks: MutableList<SubTaskDto> = mutableListOf(),
-    val dueDate: Long?,
-    val completed: Boolean,
+    val dueDate: Long? = null,
+    val completed: Boolean = false,
     @SerialName("created_at")
     val createdAt: Long = currentMillis(),
     @SerialName("edited_at")

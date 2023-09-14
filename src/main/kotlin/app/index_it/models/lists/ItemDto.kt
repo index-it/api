@@ -23,7 +23,7 @@ data class ItemDto(
     @Contextual val userId: Id<UserDto>,
     @Contextual val listId: Id<ListDto>,
     @Contextual val categoryId: Id<CategoryDto>,
-    @Contextual val taskId: Id<TaskDto>?,
+    @Contextual val taskId: Id<TaskDto>? = null,
     val name: String,
     val completed: Boolean = false,
     @SerialName("created_at")
