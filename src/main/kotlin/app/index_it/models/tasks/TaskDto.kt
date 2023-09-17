@@ -47,9 +47,9 @@ data class TaskDto(
     @Serializable
     data class TaskCreateRequestDto(
         val name: String,
-        val description: String?,
-        val dueDate: Long?,
-        val subTasks: MutableList<SubTaskDto>
+        val description: String? = null,
+        val dueDate: Long? = null,
+        val subTasks: MutableList<SubTaskDto> = mutableListOf()
     ): Validatable<TaskCreateRequestDto> {
         override fun validate() = Validation {
             TaskCreateRequestDto::name {
@@ -66,16 +66,16 @@ data class TaskDto(
     @Serializable
     data class TaskUpdateRequestDto(
         val name: String,
-        val description: String,
-        val dueDate: Long,
-        val subTasks: MutableList<SubTaskDto>
+        val description: String? = null,
+        val dueDate: Long? = null,
+        val subTasks: MutableList<SubTaskDto> = mutableListOf()
     ): Validatable<TaskUpdateRequestDto> {
         override fun validate() = Validation {
             TaskUpdateRequestDto::name {
                 minLength(1)
                 maxLength(100)
             }
-            TaskUpdateRequestDto::description {
+            TaskUpdateRequestDto::description ifPresent {
                 minLength(1)
                 maxLength(500)
             }
