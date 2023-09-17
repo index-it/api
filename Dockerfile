@@ -1,7 +1,10 @@
-FROM openjdk:20
+FROM gradle:8.3.0-jdk20
+COPY . /project
+WORKDIR /project
+RUN chmod +x ./gradlew
 RUN ./gradlew shadowJar --no-daemon
 
-EXPOSE 80:80
 RUN mkdir /app
-COPY --from=build ./build/libs/index-api.jar /app/index-api.jar
+COPY /build/libs/index-api.jar /app/index-api.jar
+EXPOSE 80:80
 ENTRYPOINT ["java","-jar","/app/index-api.jar"]
