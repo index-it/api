@@ -41,7 +41,6 @@ tasks.test {
 
 java {
     sourceCompatibility = JavaVersion.VERSION_20
-    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 ktor {
