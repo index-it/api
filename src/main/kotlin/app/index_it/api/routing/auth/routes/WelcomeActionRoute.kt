@@ -5,8 +5,9 @@ import app.index_it.core.logic.usecases.UserAuthUseCase
 import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.WelcomeAction
 import app.index_it.models.auth.WelcomeActionResponse
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -17,7 +18,39 @@ fun Route.welcomeActionRoute() {
      * or log in if there is.
      * To log in the user must have verified the email address.
      */
-    get<WelcomeActionRoute> { request ->
+    get<WelcomeActionRoute>({
+        tags = listOf("auth")
+        operationId = "welcome-action"
+        summary = "retrieve the required first step for a user auth flow"
+        description = "this is used to initialize a user auth flow"
+        protected = false
+        request {
+            queryParameter<String>("email") {
+                description = "the encoded email of the user"
+                example = "sample%40mail.com"
+                required = true
+                allowEmptyValue = false
+                allowReserved = false
+            }
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "welcome action found and sent"
+                body<WelcomeActionResponse> {
+                    description = "contains the action the user should perform to authenticate"
+                    required = true
+                    example("registration", WelcomeActionResponse(WelcomeAction.REGISTER)) {
+                        summary = "sample register action"
+                        description = "this tells the user they need to register in order to authenticate"
+                    }
+                    example("login", WelcomeActionResponse(WelcomeAction.LOGIN)) {
+                        summary = "sample login action"
+                        description = "this tells the user they can login to authenticate"
+                    }
+                }
+            }
+        }
+    }) { request ->
         val userDto = UserDao.getFromEmail(request.email)
 
         val action = if (userDto == null || UserAuthUseCase.isIncompleteAccountOutdated(userDto))

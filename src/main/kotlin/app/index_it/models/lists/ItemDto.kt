@@ -49,8 +49,7 @@ data class ItemDto(
     @Serializable
     data class ItemUpdateRequestDto(
         @Contextual val categoryId: Id<CategoryDto>?,
-        val name: String,
-        val completed: Boolean
+        val name: String
     ): Validatable<ItemUpdateRequestDto> {
         override fun validate() = Validation {
             ItemUpdateRequestDto::name {

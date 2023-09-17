@@ -11,16 +11,42 @@ import app.index_it.daos.auth.UserSessionDao
 import app.index_it.daos.user.UserDao
 import app.index_it.models.auth.PasswordResetRequestBody
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.resources.*
-import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.passwordOperationRoutes() {
-    get<PasswordForgottenRoute> { request ->
+    get<PasswordForgottenRoute>({
+        tags = listOf("auth")
+        operationId = "password-forgotten"
+        summary = "request a password reset email"
+        description = "will send an email with instructions on how to reset the password, this is subject to rate limits as with all email operations"
+        protected = false
+        request {
+            queryParameter<String>("email") {
+                description = "the encoded email of the user"
+                example = "sample%40mail.com"
+                required = true
+                allowEmptyValue = false
+                allowReserved = false
+            }
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "email sent"
+            }
+            HttpStatusCode.NotFound to {
+                description = "something went wrong"
+            }
+            HttpStatusCode.TooManyRequests to {
+                description = "action rate limited"
+            }
+        }
+    }) { request ->
         val user = UserDao.getFromEmail(request.email)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
@@ -35,7 +61,33 @@ fun Route.passwordOperationRoutes() {
             call.respond(HttpStatusCode.InternalServerError)
     }
 
-    post<ResetPasswordRoute> { request ->
+    post<ResetPasswordRoute>({
+        tags = listOf("auth")
+        operationId = "reset-password"
+        summary = "reset the password via an auth token"
+        description = "a user can reset its password via a token that is sent via email when he requests it"
+        protected = false
+        request {
+            queryParameter<String>("token") {
+                description = "reset token"
+                required = true
+                allowEmptyValue = false
+                allowReserved = false
+            }
+            body<PasswordResetRequestBody> {
+                description = "contains the new password"
+                required = true
+            }
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "password reset"
+            }
+            HttpStatusCode.NotFound to {
+                description = "something went wrong"
+            }
+        }
+    }) { request ->
         val passwordResetDto = PasswordResetDao.get(request.token)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 

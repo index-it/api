@@ -1,9 +1,9 @@
 package app.index_it.api.routing.kube
 
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
-import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -23,15 +23,21 @@ class KubeRoute {
 }
 
 fun Route.kubeRoutes() {
-    get<KubeRoute.StartupRoute> {
+    get<KubeRoute.StartupRoute>({
+        hidden = true
+    }) {
         call.respond(HttpStatusCode.OK)
     }
 
-    get<KubeRoute.ReadinessRoute> {
+    get<KubeRoute.ReadinessRoute>({
+        hidden = true
+    }) {
         call.respond(HttpStatusCode.OK)
     }
 
-    get<KubeRoute.LivenessRoute> {
+    get<KubeRoute.LivenessRoute>({
+        hidden = true
+    }) {
         call.respond(HttpStatusCode.OK)
     }
 }

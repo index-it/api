@@ -9,23 +9,55 @@ import app.index_it.daos.list.CategoryDao
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.list.ListDao
 import app.index_it.daos.user.UserDao
+import app.index_it.models.auth.RegistrationCredentials
+import app.index_it.models.auth.UserSessionCookie
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import io.github.smiley4.ktorswaggerui.dsl.resources.delete
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 
 fun Route.meRoutes() {
-    get<MeRoute> {
+    get<MeRoute>({
+        tags = listOf("user")
+        operationId = "me"
+        summary = "get the logged in user data"
+        response {
+            HttpStatusCode.OK to {
+                description = "user data"
+            }
+        }
+    }) {
         val user = UserDao.get(userIdFromSession()!!)
             ?: throw AuthenticationException()
 
         call.respond(user.getResponseDto())
     }
 
-    delete<MeRoute> {
+    delete<MeRoute>({
+        tags = listOf("user")
+        operationId = "delete-account"
+        summary = "delete the logged in user account"
+        description = "this deletes **all** the data of the logged in user from index systems, it's irreversible"
+        request {
+            body<RegistrationCredentials> {
+                description = "email and password, password requirements: 8-100 chars with at least an uppercase, lowercase and number character"
+                required = true
+                example("example-credentials", RegistrationCredentials("sample@mail.com", "verySecurePwd1234"))
+            }
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "user data deleted and session terminated"
+            }
+        }
+    }) {
         val userId = userIdFromSession()!!
+
+        call.sessions.clear<UserSessionCookie>()
 
         UserDao.delete(userId)
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)

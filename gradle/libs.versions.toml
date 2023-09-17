@@ -12,8 +12,8 @@ kmongo="4.10.0"
 jedis="4.4.3"
 amqpClient="5.18.0"
 
-ktor="2.3.3"
-ktorSwagger="2.3.1"
+ktor="2.3.4"
+ktorSwagger="2.5.0"
 konform="0.4.0"
 
 googleApiClient="2.2.0"
