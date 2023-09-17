@@ -3,6 +3,7 @@ package app.index_it.models.lists
 import app.index_it.core.logic.RegexPatterns
 import app.index_it.models.Validatable
 import app.index_it.models.user.UserDto
+import io.github.smiley4.ktorswaggerui.dsl.Example
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
