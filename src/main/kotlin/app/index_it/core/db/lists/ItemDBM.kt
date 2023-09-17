@@ -5,6 +5,7 @@ import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
+import app.index_it.models.tasks.TaskDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
@@ -44,6 +45,16 @@ object ItemDBM {
             set(
                 ItemDto::completed setTo completed,
                 ItemDto::completedAt setTo if(completed) currentMillis() else null,
+            ),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        )
+    }
+
+    fun setLinking(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, taskId: Id<TaskDto>?): ItemDto? {
+        return col.findOneAndUpdate(
+            and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),
+            set(
+                ItemDto::taskId setTo taskId
             ),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )

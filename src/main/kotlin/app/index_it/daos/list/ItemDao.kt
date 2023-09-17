@@ -6,6 +6,7 @@ import app.index_it.core.logic.currentMillis
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
+import app.index_it.models.tasks.TaskDto
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
 
@@ -80,6 +81,17 @@ object ItemDao {
 
     fun setCompletion(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, completed: Boolean): ItemDto? {
         val item = ItemDBM.setCompletion(userId, listId, itemId, completed)
+
+        if (item != null)
+            ItemCM.cache(userId, listId, item)
+        else
+            ItemCM.delete(userId, listId, itemId)
+
+        return item
+    }
+
+    fun setLinking(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, taskId: Id<TaskDto>?): ItemDto? {
+        val item = ItemDBM.setLinking(userId, listId, itemId, taskId)
 
         if (item != null)
             ItemCM.cache(userId, listId, item)

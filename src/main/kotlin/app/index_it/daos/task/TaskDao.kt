@@ -3,6 +3,8 @@ package app.index_it.daos.task
 import app.index_it.core.cache.tasks.TaskCM
 import app.index_it.core.db.tasks.TaskDBM
 import app.index_it.core.logic.currentMillis
+import app.index_it.models.lists.ItemDto
+import app.index_it.models.lists.ListDto
 import app.index_it.models.tasks.TaskDto
 import app.index_it.models.user.UserDto
 import org.litote.kmongo.Id
@@ -18,6 +20,26 @@ object TaskDao {
             dueDate = taskCreateRequestDto.dueDate,
             subTasks = taskCreateRequestDto.subTasks,
             completed = false,
+            createdAt = currentMillis(),
+            editedAt = null,
+            completedAt = null,
+        )
+        TaskDBM.create(taskDto)
+        TaskCM.cache(taskDto.userId, taskDto)
+
+        return taskDto
+    }
+
+    fun createLinked(userId: Id<UserDto>, item: ItemDto): TaskDto {
+        val taskDto = TaskDto(
+            userId = userId,
+            listId = item.listId,
+            itemId = item.id,
+            name = item.name,
+            description = null,
+            dueDate = null,
+            subTasks = mutableListOf(), // maybe enhance this in the future by scraping the item content and getting to-do lists from it
+            completed = false, // handle this differently perhaps?
             createdAt = currentMillis(),
             editedAt = null,
             completedAt = null,
@@ -63,6 +85,17 @@ object TaskDao {
 
     fun setCompletion(userId: Id<UserDto>, taskId: Id<TaskDto>, completed: Boolean): TaskDto? {
         val taskDto = TaskDBM.setCompletion(userId, taskId, completed)
+
+        if (taskDto != null)
+            TaskCM.update(userId, taskDto)
+        else
+            TaskCM.delete(userId, taskId)
+
+        return taskDto
+    }
+
+    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, itemId: Id<ItemDto>?): TaskDto? {
+        val taskDto = TaskDBM.setLinking(userId, taskId, listId, itemId)
 
         if (taskDto != null)
             TaskCM.update(userId, taskDto)

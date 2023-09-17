@@ -6,14 +6,14 @@ import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.task.TaskDao
 import app.index_it.models.lists.ItemDto
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.itemCompletionRoute() {
-    get<ListsRoute.ListRoute.ItemsRoute.ItemRoute.CompletionRoute>({
+    put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.CompletionRoute>({
         tags = listOf("items")
         operationId = "item-completion"
         summary = "completes or un-completes an item"
@@ -45,7 +45,7 @@ fun Route.itemCompletionRoute() {
         val userId = userIdFromSession()!!
         // TODO: Maybe change string args to Id<> ones since they support serialization?
         val item = ItemDao.setCompletion(userId, it.parent.parent.parent.listId.toObjectId(), it.parent.itemId.toObjectId(), it.completed)
-            ?: return@get call.respond(HttpStatusCode.NotFound)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (item.taskId != null) {
             TaskDao.setCompletion(userId, item.taskId, it.completed)

@@ -2,6 +2,8 @@ package app.index_it.core.db.tasks
 
 import app.index_it.core.clients.MongoClient
 import app.index_it.core.logic.currentMillis
+import app.index_it.models.lists.ItemDto
+import app.index_it.models.lists.ListDto
 import app.index_it.models.tasks.TaskDto
 import app.index_it.models.user.UserDto
 import com.mongodb.client.model.FindOneAndUpdateOptions
@@ -39,6 +41,17 @@ object TaskDBM {
             set(
                 TaskDto::completed setTo completed,
                 TaskDto::completedAt setTo if(completed) currentMillis() else null,
+            ),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        )
+    }
+
+    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, itemId: Id<ItemDto>?): TaskDto? {
+        return col.findOneAndUpdate(
+            and(TaskDto::id eq taskId, TaskDto::userId eq userId),
+            set(
+                TaskDto::listId setTo listId,
+                TaskDto::itemId setTo itemId
             ),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
