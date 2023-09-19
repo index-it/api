@@ -3,18 +3,24 @@ version: 2.1
 orbs:
   gradle: circleci/gradle@3.0.0
   gcp-gcr: circleci/gcp-gcr@0.15.0
-  twist: doist/twist@0.0.2
+  slack: circleci/slack@4.12.5
 
 jobs:
-  twist-notify:
+  build-and-push-image:
     docker:
-      - image: 'cimg/base:stable'
+      - image: cimg/base:image
     steps:
       - checkout
-      - twist/notify
-
-executors:
-
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-image
+          image: 'index-api-<< pipeline.git.branch >>'
+          registry-url: eu.gcr.io
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
 workflows:
   test-build-publish:
@@ -24,15 +30,10 @@ workflows:
           executor:
             name: gradle/default
             tag: '20.0.1'
-      - gcp-gcr/build-and-push-image:
-          name: build-and-push-image
-          image: 'index-api-<< pipeline.git.branch >>'
-          registry-url: eu.gcr.io
+      - build-and-push-image:
           requires: [test]
           filters:
             branches:
               only:
                 - main
                 - test
-      - twist-notify:
-          requires: [build-and-push-image]
