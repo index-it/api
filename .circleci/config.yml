@@ -7,8 +7,7 @@ orbs:
 
 jobs:
   build-and-push-image:
-    docker:
-      - image: cimg/base:image
+    executor: gcp-gcr/default
     steps:
       - checkout
       - gcp-gcr/build-and-push-image:
