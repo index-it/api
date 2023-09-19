@@ -22,6 +22,9 @@ class SuggestionRoutes {
     @Resource("item-names")
     class ItemNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
 
+    @Resource("task-names")
+    class TaskNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+
     @Resource("templates")
     class TemplateRoute(val parent: SuggestionRoutes = SuggestionRoutes()) {
         @Resource("list")
@@ -32,6 +35,9 @@ class SuggestionRoutes {
 
         @Resource("item")
         class ItemRoute(val parent: TemplateRoute = TemplateRoute())
+
+        @Resource("task")
+        class TaskRoute(val parent: TemplateRoute = TemplateRoute())
     }
 }
 

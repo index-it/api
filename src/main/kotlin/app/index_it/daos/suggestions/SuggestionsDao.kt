@@ -5,10 +5,12 @@ import app.index_it.core.cache.suggestions.SuggestionCategoryNamesCM
 import app.index_it.core.cache.suggestions.SuggestionColorsCM
 import app.index_it.core.cache.suggestions.SuggestionItemNamesCM
 import app.index_it.core.cache.suggestions.SuggestionListNamesCM
+import app.index_it.core.cache.suggestions.SuggestionTaskNamesCM
 import app.index_it.core.db.suggestions.SuggestionCategoryNamesDBM
 import app.index_it.core.db.suggestions.SuggestionColors
 import app.index_it.core.db.suggestions.SuggestionItemNamesDBM
 import app.index_it.core.db.suggestions.SuggestionListNamesDBM
+import app.index_it.core.db.suggestions.SuggestionTaskNamesDBM
 import app.index_it.core.extentions.toObjectId
 import app.index_it.models.suggestions.ColorSuggestionsDto
 import app.index_it.models.suggestions.NameSuggestionsDto
@@ -21,6 +23,7 @@ object SuggestionsDao {
     private val listNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_list_names_id.toObjectId()
     private val categoryNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_category_names_id.toObjectId()
     private val itemNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_item_names_id.toObjectId()
+    private val taskNameSuggestionsId: Id<NameSuggestionsDto> = Env.suggestion_task_names_id.toObjectId()
 
     private val colorSuggestionsId: Id<ColorSuggestionsDto> = Env.suggestions_colors_id.toObjectId()
 
@@ -83,6 +86,22 @@ object SuggestionsDao {
                 }
 
             SuggestionItemNamesCM.cache(names)
+        }
+
+        return names
+    }
+
+    fun getTaskNames() : NameSuggestionsDto? {
+        var names = SuggestionTaskNamesCM.get(taskNameSuggestionsId)
+
+        if (names == null) {
+            names = SuggestionTaskNamesDBM.get(taskNameSuggestionsId)
+                    ?: run {
+                        logger.warn { "No template for task names found with id $taskNameSuggestionsId" }
+                        return null
+                    }
+
+            SuggestionTaskNamesCM.cache(names)
         }
 
         return names

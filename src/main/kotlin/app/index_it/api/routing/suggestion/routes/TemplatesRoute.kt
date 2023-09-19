@@ -5,6 +5,7 @@ import app.index_it.daos.suggestions.SuggestionsDao
 import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
+import app.index_it.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -60,5 +61,21 @@ fun Route.templatesRoute() {
         val name = SuggestionsDao.getRandomNameSuggestion(SuggestionsDao.getItemNames())
 
         call.respond(ItemDto.ItemTemplateResponseDto(name))
+    }
+
+    get<SuggestionRoutes.TemplateRoute.TaskRoute>({
+        tags = listOf("templates")
+        operationId = "task-template"
+        summary = "gets a task template"
+        response {
+            HttpStatusCode.OK to {
+                description = "the task template"
+                body<TaskDto.TaskTemplateResponseDto>()
+            }
+        }
+    }) {
+        val name = SuggestionsDao.getRandomNameSuggestion(SuggestionsDao.getTaskNames())
+
+        call.respond(TaskDto.TaskTemplateResponseDto(name))
     }
 }

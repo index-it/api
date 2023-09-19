@@ -81,6 +81,11 @@ data class TaskDto(
             }
         }.invoke(this)
     }
+
+    @Serializable
+    data class TaskTemplateResponseDto(
+        val name: String
+    )
 }
 
 @Serializable

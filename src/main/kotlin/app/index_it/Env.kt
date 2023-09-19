@@ -65,6 +65,7 @@ object Env {
     lateinit var suggestion_list_names_id: String
     lateinit var suggestion_category_names_id: String
     lateinit var suggestion_item_names_id: String
+    lateinit var suggestion_task_names_id: String
     lateinit var suggestions_colors_id: String
 
     /**
@@ -115,6 +116,7 @@ object Env {
         suggestion_list_names_id = getStringFromEnv("suggestion.list.names.id")
         suggestion_category_names_id = getStringFromEnv("suggestion.category.names.id")
         suggestion_item_names_id = getStringFromEnv("suggestion.item.names.id")
+        suggestion_task_names_id = getStringFromEnv("suggestion.task.names.id")
         suggestions_colors_id = getStringFromEnv("suggestion.colors.id")
 
         log.debug { "Environment variables loaded" }

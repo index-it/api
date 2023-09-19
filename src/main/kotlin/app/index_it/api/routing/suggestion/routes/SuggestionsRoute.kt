@@ -90,4 +90,24 @@ fun Route.suggestionsRoute() {
 
         call.respond(names)
     }
+
+    get<SuggestionRoutes.TaskNamesRoute>({
+        tags = listOf("suggestions")
+        operationId = "task-names-suggestion"
+        summary = "gets task name suggestions"
+        response {
+            HttpStatusCode.OK to {
+                description = "suggested task names"
+                body<NameSuggestionsDto>()
+            }
+        }
+    }) {
+        val names = SuggestionsDao.getTaskNames()
+                ?: NameSuggestionsDto(
+                    description = "names are missing",
+                    names = listOf("Bungee jumping", "Visit Prague")
+                )
+
+        call.respond(names)
+    }
 }

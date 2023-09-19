@@ -10,6 +10,9 @@ fun Application.configureSwagger() {
         /**
          * Swagger config
          */
+
+        // For websocket routes: pathFilter = { method, url => url.firstOrNul() != "hidden" }
+
         swagger {
             forwardRoot = false
             swaggerUrl = "swagger"
