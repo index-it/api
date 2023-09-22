@@ -63,6 +63,7 @@ object TaskDBM {
         properties.add(TaskDto::name setTo taskUpdateRequestDto.name)
         properties.add(TaskDto::description setTo taskUpdateRequestDto.description)
         properties.add(TaskDto::dueDate setTo taskUpdateRequestDto.dueDate)
+        properties.add(TaskDto::priority setTo taskUpdateRequestDto.priority)
         properties.add(TaskDto::subTasks setTo taskUpdateRequestDto.subTasks)
         properties.add(TaskDto::editedAt setTo currentMillis())
 

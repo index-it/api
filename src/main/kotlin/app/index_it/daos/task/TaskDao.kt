@@ -20,6 +20,7 @@ object TaskDao {
             dueDate = taskCreateRequestDto.dueDate,
             subTasks = taskCreateRequestDto.subTasks,
             completed = false,
+            priority = taskCreateRequestDto.priority,
             createdAt = currentMillis(),
             editedAt = null,
             completedAt = null,

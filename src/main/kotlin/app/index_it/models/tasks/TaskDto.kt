@@ -24,6 +24,7 @@ import org.litote.kmongo.id.toId
  * @param name
  * @param description
  * @param subTasks a list of sub tasks
+ * @param priority task priority indicated as an int: 0 --> very low, 1 --> low, 2 --> medium, 3 --> high
  */
 @Serializable
 @Suppress("Unused")
@@ -37,6 +38,7 @@ data class TaskDto(
     val subTasks: MutableList<SubTaskDto> = mutableListOf(),
     val dueDate: Long? = null,
     val completed: Boolean = false,
+    val priority: Int? = null,
     @SerialName("created_at")
     val createdAt: Long = currentMillis(),
     @SerialName("edited_at")
@@ -49,7 +51,8 @@ data class TaskDto(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
-        val subTasks: MutableList<SubTaskDto> = mutableListOf()
+        val subTasks: MutableList<SubTaskDto> = mutableListOf(),
+        val priority: Int? = null
     ): Validatable<TaskCreateRequestDto> {
         override fun validate() = Validation {
             TaskCreateRequestDto::name {
@@ -68,7 +71,8 @@ data class TaskDto(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
-        val subTasks: MutableList<SubTaskDto> = mutableListOf()
+        val subTasks: MutableList<SubTaskDto> = mutableListOf(),
+        val priority: Int? = null,
     ): Validatable<TaskUpdateRequestDto> {
         override fun validate() = Validation {
             TaskUpdateRequestDto::name {
