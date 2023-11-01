@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  index:
+    image: eu.gcr.io/index-352608/index-api-test:latest
+    container_name: "index-api"
+    env_file:
+      - .env
+    ports:
+      - "8080:${PORT}"

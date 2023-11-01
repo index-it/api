@@ -1,14 +1,14 @@
 version: "3.8"
 services:
   index:
-    image: ghcr.io/index-it/api:latest
+    image: eu.gcr.io/index-352608/index-api-test:latest
     container_name: "index-api"
     depends_on:
       - index-redis
     env_file:
       - .env
     ports:
-      - "${PORT}:8080"
+      - "8080:${PORT}"
     networks:
       - index-network
   index-redis:
