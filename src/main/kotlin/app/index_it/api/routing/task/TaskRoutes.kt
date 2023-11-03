@@ -20,7 +20,7 @@ class TasksRoute(val completed: Boolean? = null) {
         class CompletionRoute(val parent: TaskRoute, val completed: Boolean) {}
 
         @Resource("linking")
-        class LinkingRoute(val parent: TaskRoute, val listId: String?, val itemId: String?) {}
+        class LinkingRoute(val parent: TaskRoute, val listId: String?, val categoryId: String?, val itemId: String?) {}
     }
 }
 

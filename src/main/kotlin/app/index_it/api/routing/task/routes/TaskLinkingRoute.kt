@@ -5,6 +5,7 @@ import app.index_it.api.routing.task.TasksRoute
 import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.ItemDao
 import app.index_it.daos.task.TaskDao
+import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.tasks.TaskDto
@@ -29,6 +30,10 @@ fun Route.taskLinkingRoute() {
                 required = false
                 description = "id of the list or null for un-linking"
             }
+            queryParameter<String?>("categoryId") {
+                required = false
+                description = "id of the category or null for un-linking"
+            }
             queryParameter<String?>("itemId") {
                 required = false
                 description = "id of the item or null for un-linking"
@@ -47,6 +52,7 @@ fun Route.taskLinkingRoute() {
         val userId = userIdFromSession()!!
         val taskId = it.parent.taskId.toObjectId<TaskDto>()
         val listId = it.listId?.toObjectId<ListDto>()
+        val categoryId = it.categoryId?.toObjectId<CategoryDto>()
         val itemId = it.itemId?.toObjectId<ItemDto>()
 
         val originalTask = TaskDao.get(userId, taskId)
@@ -67,7 +73,7 @@ fun Route.taskLinkingRoute() {
             }
         }
 
-        val task = TaskDao.setLinking(userId, it.parent.taskId.toObjectId(), listId, itemId)
+        val task = TaskDao.setLinking(userId, it.parent.taskId.toObjectId(), listId, categoryId, itemId)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(task)
