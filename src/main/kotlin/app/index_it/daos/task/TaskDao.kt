@@ -3,6 +3,7 @@ package app.index_it.daos.task
 import app.index_it.core.cache.tasks.TaskCM
 import app.index_it.core.db.tasks.TaskDBM
 import app.index_it.core.logic.currentMillis
+import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.tasks.TaskDto
@@ -14,6 +15,7 @@ object TaskDao {
         val taskDto = TaskDto(
             userId = userId,
             listId = null,
+            categoryId = null,
             itemId = null,
             name = taskCreateRequestDto.name,
             description = taskCreateRequestDto.description,
@@ -35,6 +37,7 @@ object TaskDao {
         val taskDto = TaskDto(
             userId = userId,
             listId = item.listId,
+            categoryId = item.categoryId,
             itemId = item.id,
             name = item.name,
             description = null,
@@ -95,8 +98,19 @@ object TaskDao {
         return taskDto
     }
 
-    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, itemId: Id<ItemDto>?): TaskDto? {
-        val taskDto = TaskDBM.setLinking(userId, taskId, listId, itemId)
+    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, categoryId: Id<CategoryDto>?, itemId: Id<ItemDto>?): TaskDto? {
+        val taskDto = TaskDBM.setLinking(userId, taskId, listId, categoryId, itemId)
+
+        if (taskDto != null)
+            TaskCM.update(userId, taskDto)
+        else
+            TaskCM.delete(userId, taskId)
+
+        return taskDto
+    }
+    
+    fun setCategory(userId: Id<UserDto>, taskId: Id<TaskDto>, categoryId: Id<CategoryDto>): TaskDto? {
+        val taskDto = TaskDBM.setCategory(userId, taskId, categoryId)
 
         if (taskDto != null)
             TaskCM.update(userId, taskDto)

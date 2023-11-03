@@ -2,6 +2,7 @@ package app.index_it.core.db.tasks
 
 import app.index_it.core.clients.MongoClient
 import app.index_it.core.logic.currentMillis
+import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.tasks.TaskDto
@@ -46,12 +47,23 @@ object TaskDBM {
         )
     }
 
-    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, itemId: Id<ItemDto>?): TaskDto? {
+    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, categoryId: Id<CategoryDto>?, itemId: Id<ItemDto>?): TaskDto? {
         return col.findOneAndUpdate(
             and(TaskDto::id eq taskId, TaskDto::userId eq userId),
             set(
                 TaskDto::listId setTo listId,
+                TaskDto::categoryId setTo categoryId,
                 TaskDto::itemId setTo itemId
+            ),
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        )
+    }
+
+    fun setCategory(userId: Id<UserDto>, taskId: Id<TaskDto>, categoryId: Id<CategoryDto>): TaskDto? {
+        return col.findOneAndUpdate(
+            and(TaskDto::id eq taskId, TaskDto::userId eq userId),
+            set(
+                TaskDto::categoryId setTo categoryId,
             ),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )

@@ -6,6 +6,7 @@ import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
 import app.index_it.daos.list.ItemContentDao
 import app.index_it.daos.list.ItemDao
+import app.index_it.daos.task.TaskDao
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -84,8 +85,14 @@ fun Route.itemRoute() {
     }) {
         val updatedItem = call.receive<ItemDto.ItemUpdateRequestDto>()
 
-        val item = ItemDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId(), updatedItem)
+        val userId = userIdFromSession()!!
+        
+        val item = ItemDao.update(userId, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId(), updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
+
+        if (item.taskId != null) {
+            TaskDao.setCategory(userId, item.taskId, item.categoryId)
+        }
 
         call.respond(item)
 

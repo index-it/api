@@ -2,6 +2,7 @@ package app.index_it.models.tasks
 
 import app.index_it.core.logic.currentMillis
 import app.index_it.models.Validatable
+import app.index_it.models.lists.CategoryDto
 import app.index_it.models.lists.ItemDto
 import app.index_it.models.lists.ListDto
 import app.index_it.models.user.UserDto
@@ -32,6 +33,7 @@ data class TaskDto(
     @Contextual @SerialName("_id") val id: Id<TaskDto> = ObjectId().toId(),
     @Contextual val userId: Id<UserDto>,
     @Contextual val itemId: Id<ItemDto>? = null,
+    @Contextual val categoryId: Id<CategoryDto>? = null,
     @Contextual val listId: Id<ListDto>? = null,
     val name: String,
     val description: String? = null,
