@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import java.util.UUID
+import java.util.*
 
 object UserTable : UUIDTable() {
     val email = varchar("email", 150).uniqueIndex()

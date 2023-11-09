@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import java.util.UUID
+import java.util.*
 
 object ListTable : UUIDTable() {
     val user = reference("user", UserTable).index()

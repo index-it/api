@@ -2,22 +2,22 @@ package app.index_it
 
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
-import app.index_it.data.sources.mongo.MongoClient
 import app.index_it.core.clients.RabbitMqClient
-import app.index_it.data.sources.cache.RedisClient
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.core.logic.websocket.WebsocketsQueueManager
+import app.index_it.data.sources.cache.RedisClient
+import app.index_it.data.sources.mongo.MongoClient
+import ch.qos.logback.classic.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
-import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlin.system.exitProcess
-import ch.qos.logback.classic.Logger
-import io.ktor.server.application.*
 import org.slf4j.LoggerFactory
+import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger { }
 

@@ -8,8 +8,8 @@ import app.index_it.api.routing.auth.SendVerificationEmailRoute
 import app.index_it.api.routing.auth.VerifyEmailRoute
 import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.daos.user.UserDao
-import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

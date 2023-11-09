@@ -5,12 +5,12 @@ import app.index_it.data.models.auth.UserAuthSessionDto
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventDto
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import app.index_it.data.models.websocket.WebsocketFrameDataDto
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val log = KotlinLogging.logger{}
 

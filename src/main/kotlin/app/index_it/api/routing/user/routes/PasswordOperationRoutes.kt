@@ -6,8 +6,6 @@ import app.index_it.api.routing.user.ResetPasswordRoute
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
-import app.index_it.data.daos.auth.PasswordResetDao
-import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.PasswordResetRequestBody
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventType

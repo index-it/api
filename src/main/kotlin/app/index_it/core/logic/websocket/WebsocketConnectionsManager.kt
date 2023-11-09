@@ -3,8 +3,8 @@ package app.index_it.core.logic.websocket
 import app.index_it.data.models.auth.UserAuthSessionDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.models.websocket.WebsocketConnection
-import io.ktor.websocket.*
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.websocket.*
 import org.litote.kmongo.Id
 import java.util.*
 

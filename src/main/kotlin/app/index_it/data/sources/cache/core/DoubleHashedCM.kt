@@ -1,7 +1,7 @@
 package app.index_it.data.sources.cache.core
 
-import app.index_it.data.sources.cache.RedisClient
 import app.index_it.core.logic.ObjectMapper
+import app.index_it.data.sources.cache.RedisClient
 
 /**
  * Hashed cache manager that accepts a dynamic values as hash keys

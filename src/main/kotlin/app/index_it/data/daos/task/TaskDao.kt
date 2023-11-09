@@ -1,6 +1,5 @@
 package app.index_it.data.daos.task
 
-import app.index_it.data.sources.mongo.tasks.TaskDBM
 import app.index_it.core.logic.currentMillis
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
@@ -8,6 +7,7 @@ import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.tasks.TaskCM
+import app.index_it.data.sources.mongo.tasks.TaskDBM
 import org.litote.kmongo.Id
 
 object TaskDao {

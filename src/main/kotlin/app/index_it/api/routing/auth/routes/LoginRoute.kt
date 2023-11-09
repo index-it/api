@@ -3,7 +3,6 @@ package app.index_it.api.routing.auth.routes
 import app.index_it.api.routing.auth.LoginRoute
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.LoginCredentials
 import io.github.smiley4.ktorswaggerui.dsl.resources.post

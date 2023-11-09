@@ -1,6 +1,5 @@
 package app.index_it.data.sources.cache.cm.tasks
 
-import app.index_it.data.sources.cache.core.DoubleHashedCM
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import org.litote.kmongo.Id

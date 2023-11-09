@@ -1,6 +1,5 @@
 package app.index_it.data.models.suggestions
 
-import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionSchema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

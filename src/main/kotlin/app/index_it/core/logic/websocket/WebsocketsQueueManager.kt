@@ -6,8 +6,8 @@ import app.index_it.core.logic.ObjectMapper
 import app.index_it.core.logic.websocket.WebsocketsQueueManager.startListening
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventDto
 import com.rabbitmq.client.*
-import kotlinx.coroutines.runBlocking
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 
 private val log = KotlinLogging.logger { }

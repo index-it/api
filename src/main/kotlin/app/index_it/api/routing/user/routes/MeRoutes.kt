@@ -4,8 +4,6 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.user.MeRoute
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.data.daos.auth.UserSessionDao
-import app.index_it.data.daos.list.CategoryDao
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.list.ListDao
 import app.index_it.data.daos.user.UserDao

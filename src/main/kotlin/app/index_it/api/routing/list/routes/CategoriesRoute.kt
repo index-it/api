@@ -4,7 +4,6 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.data.daos.list.CategoryDao
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.get

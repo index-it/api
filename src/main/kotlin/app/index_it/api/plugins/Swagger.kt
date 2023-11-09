@@ -2,7 +2,9 @@ package app.index_it.api.plugins
 
 import app.index_it.Env
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.dsl.AuthType
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSort
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSyntaxHighlight
 import io.ktor.server.application.*
 
 fun Application.configureSwagger() {

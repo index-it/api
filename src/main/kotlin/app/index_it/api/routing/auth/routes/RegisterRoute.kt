@@ -3,7 +3,6 @@ package app.index_it.api.routing.auth.routes
 import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.usecases.UserAuthUseCase
-import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.RegistrationCredentials
 import app.index_it.data.models.user.UserDto

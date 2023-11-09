@@ -3,6 +3,7 @@ package app.index_it.core.clients
 import app.index_it.Env
 import app.index_it.data.models.email.SendinblueCodeOperationRequestBody
 import app.index_it.data.models.email.SendinblueGenericRequestBody
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
@@ -13,7 +14,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URLEncoder
 
 private val log = KotlinLogging.logger { }

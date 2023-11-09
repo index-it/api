@@ -1,6 +1,5 @@
 package app.index_it.data.sources.cache.cm.lists
 
-import app.index_it.data.sources.cache.core.DoubleHashedCM
 import app.index_it.data.models.lists.ItemContentDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.user.UserDto

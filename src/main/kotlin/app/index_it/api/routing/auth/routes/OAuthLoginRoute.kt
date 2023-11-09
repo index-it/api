@@ -7,7 +7,6 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.user.UserDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
