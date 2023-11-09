@@ -1,10 +1,10 @@
 package app.index_it.core.logic.websocket
 
 import app.index_it.api.plugins.userIdFromSession
-import app.index_it.models.auth.UserAuthSessionDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
-import app.index_it.models.websocket.WebsocketFrameDataDto
+import app.index_it.data.models.auth.UserAuthSessionDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.models.websocket.WebsocketFrameDataDto
 import io.ktor.serialization.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

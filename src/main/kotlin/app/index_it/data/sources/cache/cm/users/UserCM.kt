@@ -1,7 +1,7 @@
-package app.index_it.data.sources.cache.users
+package app.index_it.data.sources.cache.cm.users
 
-import app.index_it.core.cache.core.HashedCM
-import app.index_it.models.user.UserDto
+import app.index_it.data.sources.cache.core.HashedCM
+import app.index_it.data.models.user.UserDto
 import org.litote.kmongo.Id
 
 object UserCM : HashedCM("users") {

@@ -1,83 +1,29 @@
 package app.index_it.data.sources.db.schemas.lists
 
-import app.index_it.core.logic.RegexPatterns
-import app.index_it.core.logic.currentMillis
-import app.index_it.data.models.Validatable
-import app.index_it.data.models.lists.ListDto
+import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UserTable
-import app.index_it.models.user.UserDto
-import io.konform.validation.Validation
-import io.konform.validation.jsonschema.maxLength
-import io.konform.validation.jsonschema.minLength
-import io.konform.validation.jsonschema.pattern
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.toId
+import java.util.UUID
 
 object ListTable : UUIDTable() {
-    val user = reference("user", UserTable)
+    val user = reference("user", UserTable).index()
     val name = varchar("name", 100)
     val emoji = char("emoji")
-    val color = 
+    val color = char("color", 7)
+    val createdAt = long("created_at")
+    val editedAt = long("edited_at").nullable()
 }
 
-/**
- * Represents a single list, which can contain categories to organize list items in it
- */
-@Serializable
-data class ListDto(
-    @Contextual @SerialName("_id") val id: Id<ListDto> = ObjectId().toId(),
-    @Contextual var userId: Id<UserDto>,
-    var name: String,
-    var icon: String, // Single emoji at the moment
-    var color: String, // Represented as #RRGGBB hex color
-    @SerialName("created_at")
-    val createdAt: Long = currentMillis(),
-    @SerialName("edited_at")
-    val editedAt: Long? = null
-) {
-    @Serializable
-    data class ListCreateRequestDto(
-        var name: String,
-        var icon: String,
-        var color: String
-    ): Validatable<ListCreateRequestDto> {
-        override fun validate() = Validation {
-            ListCreateRequestDto::name {
-                minLength(1)
-                maxLength(50)
-            }
-            ListCreateRequestDto::color {
-                pattern(RegexPatterns.colorPattern)
-            }
-        }.invoke(this)
-    }
+class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<ListEntity>(ListTable)
 
-    @Serializable
-    data class ListUpdateRequestDto(
-        var name: String,
-        var icon: String,
-        var color: String
-    ): Validatable<ListUpdateRequestDto> {
-        override fun validate() = Validation {
-            ListUpdateRequestDto::name {
-                minLength(1)
-                maxLength(50)
-            }
-            // TODO: Icon validation
-            ListUpdateRequestDto::color {
-                pattern(RegexPatterns.colorPattern)
-            }
-        }.invoke(this)
-    }
-
-    @Serializable
-    data class ListTemplateResponseDto(
-        val name: String,
-        val color: String
-    )
+    val user by UserEntity referencedOn ListTable.user
+    val name by ListTable.name
+    val emoji by ListTable.emoji
+    val color by ListTable.color
+    val createdAt by ListTable.createdAt
+    val editedAt by ListTable.editedAt
 }

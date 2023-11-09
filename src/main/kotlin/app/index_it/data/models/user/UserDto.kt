@@ -1,4 +1,4 @@
-package app.index_it.models.user
+package app.index_it.data.models.user
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName

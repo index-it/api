@@ -4,11 +4,11 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.CategoryDao
-import app.index_it.daos.list.ItemContentDao
-import app.index_it.daos.list.ItemDao
-import app.index_it.models.lists.CategoryDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.list.CategoryDao
+import app.index_it.data.daos.list.ItemContentDao
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.models.lists.CategoryDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -43,7 +43,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val category = CategoryDao.get(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        val category = app.index_it.data.daos.list.CategoryDao.get(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -82,7 +82,7 @@ fun Route.categoryRoute() {
     }) {
         val updatedCategory = call.receive<CategoryDto.CategoryUpdateRequestDto>()
 
-        val category = CategoryDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId(), updatedCategory)
+        val category = app.index_it.data.daos.list.CategoryDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId(), updatedCategory)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -116,7 +116,7 @@ fun Route.categoryRoute() {
 
         ItemDao.deleteAllOfCategory(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
 
-        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        val list = app.index_it.data.daos.list.CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
 
         call.respond(HttpStatusCode.OK)
 

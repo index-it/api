@@ -3,8 +3,8 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemContentDao
-import app.index_it.models.lists.ItemContentDto
+import app.index_it.data.daos.list.ItemContentDao
+import app.index_it.data.models.lists.ItemContentDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*

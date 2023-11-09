@@ -1,26 +1,13 @@
 package app.index_it.data.sources.db.schemas.tasks
 
-import app.index_it.core.logic.currentMillis
-import app.index_it.data.models.Validatable
-import app.index_it.data.models.tasks.SubTaskDto
-import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.sources.db.schemas.lists.ItemEntity
 import app.index_it.data.sources.db.schemas.lists.ItemTable
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UserTable
-import io.konform.validation.Validation
-import io.konform.validation.jsonschema.maxLength
-import io.konform.validation.jsonschema.minLength
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.toId
 import java.util.UUID
 
 object TaskTable : UUIDTable() {

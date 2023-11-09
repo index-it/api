@@ -7,9 +7,9 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.user.UserDto
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.user.UserDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -79,7 +79,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = app.index_it.data.daos.auth.UserSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
@@ -138,7 +138,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userA.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = app.index_it.data.daos.auth.UserSessionDao.create(userA.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
@@ -194,7 +194,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userF.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = app.index_it.data.daos.auth.UserSessionDao.create(userF.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)

@@ -6,8 +6,8 @@ import app.index_it.api.plugins.UserIdPrincipalForEmailVerificationAuth
 import app.index_it.api.routing.auth.IsEmailVerifiedRoute
 import app.index_it.api.routing.auth.SendVerificationEmailRoute
 import app.index_it.api.routing.auth.VerifyEmailRoute
-import app.index_it.daos.auth.EmailVerificationDao
-import app.index_it.daos.user.UserDao
+import app.index_it.data.daos.auth.EmailVerificationDao
+import app.index_it.data.daos.user.UserDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
@@ -17,7 +17,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.emailVerificationRoutes() {
-    authenticate(AuthenticationMethods.emailVerificationFormAuth) {
+    authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
 
         /**
          * Sends an email to verify the user email
@@ -50,10 +50,10 @@ fun Route.emailVerificationRoutes() {
             if (userDto.emailVerified)
                 return@post call.respond(HttpStatusCode.OK)
 
-            if (EmailVerificationDao.isRateLimited(userDto.id))
+            if (app.index_it.data.daos.auth.EmailVerificationDao.isRateLimited(userDto.id))
                 return@post call.respond(HttpStatusCode.TooManyRequests)
 
-            val emailSent = EmailVerificationDao.createAndSend(userDto)
+            val emailSent = app.index_it.data.daos.auth.EmailVerificationDao.createAndSend(userDto)
             if (emailSent)
                 call.respond(HttpStatusCode.Created)
             else
@@ -133,7 +133,7 @@ fun Route.emailVerificationRoutes() {
             return@get call.respondRedirect(Env.email_verification_success_url)
 
         UserDao.verifyEmail(userDto.id)
-        EmailVerificationDao.deleteAll(userDto.id)
+        app.index_it.data.daos.auth.EmailVerificationDao.deleteAll(userDto.id)
         call.respondRedirect(Env.email_verification_success_url)
     }
 }

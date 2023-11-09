@@ -1,4 +1,4 @@
-package app.index_it.models
+package app.index_it.data.models
 
 import io.konform.validation.ValidationResult
 

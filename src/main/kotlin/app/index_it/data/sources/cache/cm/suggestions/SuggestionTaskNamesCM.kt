@@ -1,7 +1,7 @@
-package app.index_it.data.sources.cache.suggestions
+package app.index_it.data.sources.cache.cm.suggestions
 
-import app.index_it.core.cache.core.HashedCM
-import app.index_it.models.suggestions.NameSuggestionsDto
+import app.index_it.data.sources.cache.core.HashedCM
+import app.index_it.data.models.suggestions.NameSuggestionsDto
 import org.litote.kmongo.Id
 
 object SuggestionTaskNamesCM: HashedCM("suggestion_task_names") {

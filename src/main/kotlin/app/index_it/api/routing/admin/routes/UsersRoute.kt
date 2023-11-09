@@ -2,7 +2,7 @@ package app.index_it.api.routing.admin.routes
 
 import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.api.routing.admin.AdminRoute
-import app.index_it.daos.user.UserDao
+import app.index_it.data.daos.user.UserDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,7 +14,7 @@ fun Route.usersRoute() {
         tags = listOf("admin")
         operationId = "verify-user-email"
         summary = "verifies the email on behalf of a user"
-        securitySchemeName = AuthenticationMethods.adminBearerAuth
+        securitySchemeName = AuthenticationMethods.ADMIN_BEARER_AUTH
         request {
             queryParameter<String>("email") {
                 description = "the encoded email of the user"

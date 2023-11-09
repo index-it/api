@@ -25,7 +25,7 @@ class TasksRoute(val completed: Boolean? = null) {
 }
 
 fun Route.taskRoutes() {
-    authenticate(AuthenticationMethods.userSessionAuth) {
+    authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         tasksRoute()
         taskRoute()
         taskLinkingRoute()

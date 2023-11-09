@@ -2,9 +2,9 @@ package app.index_it
 
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
-import app.index_it.core.clients.MongoClient
+import app.index_it.data.sources.mongo.MongoClient
 import app.index_it.core.clients.RabbitMqClient
-import app.index_it.core.clients.RedisClient
+import app.index_it.data.sources.cache.RedisClient
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient

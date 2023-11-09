@@ -42,7 +42,7 @@ class SuggestionRoutes {
 }
 
 fun Route.suggestionRoutes() {
-    authenticate(AuthenticationMethods.userSessionAuth) {
+    authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         suggestionsRoute()
         templatesRoute()
     }

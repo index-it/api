@@ -1,6 +1,6 @@
-package app.index_it.models.auth
+package app.index_it.data.models.auth
 
-import app.index_it.models.Validatable
+import app.index_it.data.models.Validatable
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.maxLength

@@ -1,7 +1,7 @@
-package app.index_it.data.sources.db
+package app.index_it.data.sources.mongo.users
 
-import app.index_it.core.clients.MongoClient
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.mongo.MongoClient
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument
 import org.litote.kmongo.*

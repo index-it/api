@@ -1,7 +1,7 @@
-package app.index_it.models.websocket
+package app.index_it.data.models.websocket
 
-import app.index_it.models.auth.UserAuthSessionDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.auth.UserAuthSessionDto
+import app.index_it.data.models.user.UserDto
 import io.ktor.server.websocket.*
 import org.litote.kmongo.Id
 

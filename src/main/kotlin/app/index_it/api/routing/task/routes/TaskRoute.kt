@@ -3,9 +3,9 @@ package app.index_it.api.routing.task.routes
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.tasks.SubTaskDto
-import app.index_it.models.tasks.TaskDto
+import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.tasks.SubTaskDto
+import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put

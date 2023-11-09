@@ -1,4 +1,4 @@
-package app.index_it.models.email
+package app.index_it.data.models.email
 
 import kotlinx.serialization.Serializable
 

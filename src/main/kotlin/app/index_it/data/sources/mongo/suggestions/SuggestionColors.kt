@@ -1,7 +1,7 @@
-package app.index_it.data.sources.db.suggestions
+package app.index_it.data.sources.mongo.suggestions
 
-import app.index_it.core.clients.MongoClient
-import app.index_it.models.suggestions.ColorSuggestionsDto
+import app.index_it.data.sources.mongo.MongoClient
+import app.index_it.data.models.suggestions.ColorSuggestionsDto
 import org.litote.kmongo.Id
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne

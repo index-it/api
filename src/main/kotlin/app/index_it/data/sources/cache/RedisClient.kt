@@ -1,4 +1,4 @@
-package app.index_it.core.clients
+package app.index_it.data.sources.cache
 
 import app.index_it.Env
 import redis.clients.jedis.JedisPool

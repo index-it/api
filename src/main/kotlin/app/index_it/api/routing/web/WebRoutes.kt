@@ -1,6 +1,6 @@
 package app.index_it.api.routing.web
 
-import app.index_it.core.db.NotifyDBM
+import app.index_it.data.sources.mongo.users.NotifyDBM
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.resources.*

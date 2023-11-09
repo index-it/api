@@ -1,10 +1,10 @@
-package app.index_it.daos.auth
+package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
-import app.index_it.core.db.EmailVerificationDBM
 import app.index_it.core.logic.TokenGenerator
-import app.index_it.models.email.EmailVerificationDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.email.EmailVerificationDto
+import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.mongo.users.EmailVerificationDBM
 import io.ktor.util.date.*
 import org.litote.kmongo.Id
 import java.util.*
@@ -29,7 +29,7 @@ object EmailVerificationDao {
             expireAt = Date(getTimeMillis() + 3600000)
         )
 
-        save(emailVerificationDto)
+        app.index_it.data.daos.auth.EmailVerificationDao.save(emailVerificationDto)
         return SendinblueClient.sendEmailVerificationEmail(user.email, token)
     }
 

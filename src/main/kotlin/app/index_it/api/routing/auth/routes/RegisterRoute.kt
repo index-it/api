@@ -3,10 +3,10 @@ package app.index_it.api.routing.auth.routes
 import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.usecases.UserAuthUseCase
-import app.index_it.daos.auth.EmailVerificationDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.RegistrationCredentials
-import app.index_it.models.user.UserDto
+import app.index_it.data.daos.auth.EmailVerificationDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.RegistrationCredentials
+import app.index_it.data.models.user.UserDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -69,7 +69,7 @@ fun Route.registerRoute() {
 
         UserDao.create(user)
 
-        val emailSent = EmailVerificationDao.createAndSend(user)
+        val emailSent = app.index_it.data.daos.auth.EmailVerificationDao.createAndSend(user)
 
         if (emailSent)
         // User will need to verify its email

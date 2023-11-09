@@ -1,8 +1,8 @@
-package app.index_it.data.sources.db
+package app.index_it.data.sources.mongo.users
 
-import app.index_it.core.clients.MongoClient
-import app.index_it.models.email.EmailVerificationDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.email.EmailVerificationDto
+import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.mongo.MongoClient
 import com.mongodb.client.model.IndexOptions
 import org.litote.kmongo.*
 import java.util.concurrent.TimeUnit

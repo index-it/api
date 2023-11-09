@@ -1,4 +1,4 @@
-package app.index_it.models.oauth.facebook
+package app.index_it.data.models.oauth.facebook
 
 import kotlinx.serialization.Serializable
 

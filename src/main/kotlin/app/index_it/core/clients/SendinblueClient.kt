@@ -1,8 +1,8 @@
 package app.index_it.core.clients
 
 import app.index_it.Env
-import app.index_it.models.email.SendinblueCodeOperationRequestBody
-import app.index_it.models.email.SendinblueGenericRequestBody
+import app.index_it.data.models.email.SendinblueCodeOperationRequestBody
+import app.index_it.data.models.email.SendinblueGenericRequestBody
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*

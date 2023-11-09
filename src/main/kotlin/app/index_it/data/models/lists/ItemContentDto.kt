@@ -1,7 +1,7 @@
-package app.index_it.models.lists
+package app.index_it.data.models.lists
 
-import app.index_it.models.Validatable
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.Validatable
+import app.index_it.data.models.user.UserDto
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength

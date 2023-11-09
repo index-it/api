@@ -1,6 +1,6 @@
-package app.index_it.models.email
+package app.index_it.data.models.email
 
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.user.UserDto
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id

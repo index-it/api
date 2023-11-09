@@ -23,6 +23,8 @@ dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.spring.security)
 
+    implementation(libs.bundles.postgres)
+
     implementation(libs.kotlinx.coroutines)
     implementation(libs.dotenv)
     implementation(libs.kmongo)

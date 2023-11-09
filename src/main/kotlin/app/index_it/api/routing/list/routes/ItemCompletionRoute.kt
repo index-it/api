@@ -3,9 +3,9 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.lists.ItemDto
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.lists.ItemDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*

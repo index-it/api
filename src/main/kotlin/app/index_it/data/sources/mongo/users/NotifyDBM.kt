@@ -1,7 +1,7 @@
-package app.index_it.data.sources.db
+package app.index_it.data.sources.mongo.users
 
-import app.index_it.core.clients.MongoClient
-import app.index_it.models.web.NotifyDto
+import app.index_it.data.models.web.NotifyDto
+import app.index_it.data.sources.mongo.MongoClient
 import org.litote.kmongo.ensureUniqueIndex
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne

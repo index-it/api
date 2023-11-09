@@ -1,9 +1,9 @@
-package app.index_it.data.sources.db.lists
+package app.index_it.data.sources.mongo.lists
 
-import app.index_it.core.clients.MongoClient
+import app.index_it.data.sources.mongo.MongoClient
 import app.index_it.core.logic.currentMillis
-import app.index_it.models.lists.ListDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.user.UserDto
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReturnDocument

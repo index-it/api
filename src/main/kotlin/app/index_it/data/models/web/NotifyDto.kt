@@ -1,4 +1,4 @@
-package app.index_it.models.web
+package app.index_it.data.models.web
 
 import kotlinx.serialization.Serializable
 

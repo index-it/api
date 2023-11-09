@@ -4,11 +4,11 @@ import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.lists.ItemDto
-import app.index_it.models.lists.ListDto
-import app.index_it.models.tasks.TaskDto
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.lists.ItemDto
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*

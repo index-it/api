@@ -1,6 +1,6 @@
 package app.index_it.core.logic.usecases
 
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.user.UserDto
 import io.ktor.util.date.*
 import kotlin.time.Duration.Companion.days
 

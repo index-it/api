@@ -1,4 +1,4 @@
-package app.index_it.models.auth
+package app.index_it.data.models.auth
 
 import kotlinx.serialization.Serializable
 

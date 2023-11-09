@@ -1,4 +1,4 @@
-package app.index_it.models.suggestions
+package app.index_it.data.models.suggestions
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName

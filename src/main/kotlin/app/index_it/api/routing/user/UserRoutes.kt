@@ -23,7 +23,7 @@ class MeRoute
 fun Route.userRoutes() {
     passwordOperationRoutes()
 
-    authenticate(AuthenticationMethods.userSessionAuth) {
+    authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         logoutRoute()
         meRoutes()
     }

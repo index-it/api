@@ -1,4 +1,4 @@
-package app.index_it.models.websocket
+package app.index_it.data.models.websocket
 
 import kotlinx.serialization.Serializable
 

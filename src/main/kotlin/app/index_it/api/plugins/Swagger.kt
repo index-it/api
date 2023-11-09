@@ -101,15 +101,15 @@ fun Application.configureSwagger() {
          * SECURITY
          */
 
-        securityScheme(AuthenticationMethods.userSessionAuth) {
+        securityScheme(AuthenticationMethods.USER_SESSION_AUTH) {
             type = AuthType.HTTP
         }
 
-        securityScheme(AuthenticationMethods.adminBearerAuth) {
+        securityScheme(AuthenticationMethods.ADMIN_BEARER_AUTH) {
             type = AuthType.API_KEY
         }
 
-        defaultSecuritySchemeName = AuthenticationMethods.userSessionAuth
+        defaultSecuritySchemeName = AuthenticationMethods.USER_SESSION_AUTH
 
         defaultUnauthorizedResponse {
             description = "Invalid session"

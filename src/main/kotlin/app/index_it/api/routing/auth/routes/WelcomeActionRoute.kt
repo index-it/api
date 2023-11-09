@@ -2,9 +2,9 @@ package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.WelcomeActionRoute
 import app.index_it.core.logic.usecases.UserAuthUseCase
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.WelcomeAction
-import app.index_it.models.auth.WelcomeActionResponse
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.WelcomeAction
+import app.index_it.data.models.auth.WelcomeActionResponse
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*

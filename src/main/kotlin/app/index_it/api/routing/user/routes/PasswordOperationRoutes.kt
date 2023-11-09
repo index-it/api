@@ -6,11 +6,11 @@ import app.index_it.api.routing.user.ResetPasswordRoute
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
-import app.index_it.daos.auth.PasswordResetDao
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.PasswordResetRequestBody
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.auth.PasswordResetDao
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.PasswordResetRequestBody
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -50,10 +50,10 @@ fun Route.passwordOperationRoutes() {
         val user = UserDao.getFromEmail(request.email)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
-        if (PasswordResetDao.isRateLimited(user.id))
+        if (app.index_it.data.daos.auth.PasswordResetDao.isRateLimited(user.id))
             return@get call.respond(HttpStatusCode.TooManyRequests)
 
-        val sentEmail = PasswordResetDao.createAndSend(user)
+        val sentEmail = app.index_it.data.daos.auth.PasswordResetDao.createAndSend(user)
 
         if (sentEmail)
             call.respond(HttpStatusCode.OK)
@@ -88,7 +88,7 @@ fun Route.passwordOperationRoutes() {
             }
         }
     }) { request ->
-        val passwordResetDto = PasswordResetDao.get(request.token)
+        val passwordResetDto = app.index_it.data.daos.auth.PasswordResetDao.get(request.token)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val user = UserDao.get(passwordResetDto.userId)
@@ -105,7 +105,7 @@ fun Route.passwordOperationRoutes() {
         WebsocketConnectionsManager.closeAllSessionsOfUser(passwordResetDto.userId)
 
         // Invalidate all other user active sessions
-        UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
+        app.index_it.data.daos.auth.UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
 
         // Send notification email
         SendinblueClient.sendPasswordResetSuccessEmail(user.email)

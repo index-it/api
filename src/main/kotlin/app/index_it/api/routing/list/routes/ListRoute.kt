@@ -4,12 +4,12 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.CategoryDao
-import app.index_it.daos.list.ItemContentDao
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.list.ListDao
-import app.index_it.models.lists.ListDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.list.CategoryDao
+import app.index_it.data.daos.list.ItemContentDao
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.daos.list.ListDao
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -103,7 +103,7 @@ fun Route.listRoute() {
 
         ItemDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
 
-        CategoryDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
+        app.index_it.data.daos.list.CategoryDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
 
         ListDao.delete(userIdFromSession()!!, it.listId.toObjectId())
 

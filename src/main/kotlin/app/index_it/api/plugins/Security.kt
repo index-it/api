@@ -2,11 +2,11 @@ package app.index_it.api.plugins
 
 import app.index_it.Env
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.UserAuthSessionDto
-import app.index_it.models.auth.UserSessionCookie
-import app.index_it.models.user.UserDto
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.UserAuthSessionDto
+import app.index_it.data.models.auth.UserSessionCookie
+import app.index_it.data.models.user.UserDto
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -23,9 +23,9 @@ import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
  * Available authentication methods for api routes
  */
 object AuthenticationMethods {
-    const val emailVerificationFormAuth = "email_verification_form_auth"
-    const val userSessionAuth = "user_session_auth"
-    const val adminBearerAuth = "admin_bearer_auth"
+    const val EMAIL_VERIFICATION_FORM_AUTH = "email_verification_form_auth"
+    const val USER_SESSION_AUTH = "user_session_auth"
+    const val ADMIN_BEARER_AUTH = "admin_bearer_auth"
 }
 
 /**
@@ -55,7 +55,7 @@ fun Application.configureSecurity() {
 
     install(Authentication) {
         // Used only for email verification operation
-        form(AuthenticationMethods.emailVerificationFormAuth) {
+        form(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
             userParamName = "email"
             passwordParamName = "password"
             validate {  credentials ->
@@ -73,7 +73,7 @@ fun Application.configureSecurity() {
             }
         }
 
-        session<UserSessionCookie>(AuthenticationMethods.userSessionAuth) {
+        session<UserSessionCookie>(AuthenticationMethods.USER_SESSION_AUTH) {
             validate { userSessionCookie ->
                 val session = UserSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
 
@@ -88,7 +88,7 @@ fun Application.configureSecurity() {
             }
         }
 
-        bearer(AuthenticationMethods.adminBearerAuth) {
+        bearer(AuthenticationMethods.ADMIN_BEARER_AUTH) {
             authenticate { tokenCredential ->
                 if (tokenCredential.token == Env.admin_api_key) {
                     UserIdPrincipal("admin")

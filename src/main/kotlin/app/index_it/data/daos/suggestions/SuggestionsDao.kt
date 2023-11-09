@@ -1,19 +1,15 @@
-package app.index_it.daos.suggestions
+package app.index_it.data.daos.suggestions
 
 import app.index_it.Env
-import app.index_it.core.cache.suggestions.SuggestionCategoryNamesCM
-import app.index_it.core.cache.suggestions.SuggestionColorsCM
-import app.index_it.core.cache.suggestions.SuggestionItemNamesCM
-import app.index_it.core.cache.suggestions.SuggestionListNamesCM
-import app.index_it.core.cache.suggestions.SuggestionTaskNamesCM
-import app.index_it.core.db.suggestions.SuggestionCategoryNamesDBM
-import app.index_it.core.db.suggestions.SuggestionColors
-import app.index_it.core.db.suggestions.SuggestionItemNamesDBM
-import app.index_it.core.db.suggestions.SuggestionListNamesDBM
-import app.index_it.core.db.suggestions.SuggestionTaskNamesDBM
+import app.index_it.data.sources.mongo.suggestions.SuggestionCategoryNamesDBM
+import app.index_it.data.sources.mongo.suggestions.SuggestionColors
+import app.index_it.data.sources.mongo.suggestions.SuggestionItemNamesDBM
+import app.index_it.data.sources.mongo.suggestions.SuggestionListNamesDBM
+import app.index_it.data.sources.mongo.suggestions.SuggestionTaskNamesDBM
 import app.index_it.core.extentions.toObjectId
-import app.index_it.models.suggestions.ColorSuggestionsDto
-import app.index_it.models.suggestions.NameSuggestionsDto
+import app.index_it.data.models.suggestions.ColorSuggestionsDto
+import app.index_it.data.models.suggestions.NameSuggestionsDto
+import app.index_it.data.sources.cache.cm.suggestions.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.litote.kmongo.Id
 

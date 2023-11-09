@@ -1,8 +1,8 @@
-package app.index_it.daos.user
+package app.index_it.data.daos.user
 
-import app.index_it.core.cache.UserCM
-import app.index_it.core.db.UserDBM
-import app.index_it.models.user.UserDto
+import app.index_it.data.sources.cache.cm.users.UserCM
+import app.index_it.data.sources.mongo.users.UserDBM
+import app.index_it.data.models.user.UserDto
 import org.litote.kmongo.Id
 
 object UserDao {

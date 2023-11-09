@@ -8,6 +8,8 @@ slf4jApi="2.0.7"
 
 dotenv="6.4.1"
 
+exposed="0.44.1"
+postgresql="42.6.0"
 kmongo="4.10.0"
 jedis="4.4.3"
 amqpClient="5.18.0"
@@ -38,6 +40,11 @@ dotenv = { group = "io.github.cdimascio", name = "dotenv-kotlin", version.ref = 
 
 kmongo = { group = "org.litote.kmongo", name = "kmongo-serialization", version.ref = "kmongo" }
 kmongo-id = { group = "org.litote.kmongo", name = "kmongo-id-serialization", version.ref = "kmongo" }
+
+exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
+exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 jedis = { group = "redis.clients", name = "jedis", version.ref = "jedis" }
 amqp-client = { group = "com.rabbitmq", name = "amqp-client", version.ref = "amqpClient" }
 
@@ -75,6 +82,13 @@ junit = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "ju
 logging = [
     "kotlin-logging",
     "logback"
+]
+
+postgres = [
+    "postgresql",
+    "exposed-core",
+    "exposed-dao",
+    "exposed-jdbc"
 ]
 
 ktor-server = [

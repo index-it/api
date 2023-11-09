@@ -1,11 +1,13 @@
-package app.index_it.data.models.lists
+package app.index_it.data.sources.db.schemas.lists
 
 import app.index_it.core.logic.currentMillis
 import app.index_it.data.models.Validatable
-import app.index_it.data.sources.db.schemas.lists.CategoryDto
-import app.index_it.data.sources.db.schemas.lists.ListDto
-import app.index_it.models.tasks.TaskDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.lists.CategoryDto
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.sources.db.schemas.tasks.TaskEntity
+import app.index_it.data.sources.db.schemas.tasks.TaskTable
+import app.index_it.data.sources.db.schemas.user.UserEntity
+import app.index_it.data.sources.db.schemas.user.UserTable
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -13,56 +15,36 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
+import java.util.UUID
 
-/**
- * Represents an item in a list
- */
-@Serializable
-data class ItemDto(
-    @Contextual @SerialName("_id") val id: Id<ItemDto> = ObjectId().toId(),
-    @Contextual val userId: Id<UserDto>,
-    @Contextual val listId: Id<ListDto>,
-    @Contextual val categoryId: Id<CategoryDto>,
-    @Contextual val taskId: Id<TaskDto>? = null,
-    val name: String,
-    val completed: Boolean = false,
-    @SerialName("created_at")
-    val createdAt: Long = currentMillis(),
-    @SerialName("edited_at")
-    val editedAt: Long? = null,
-    @SerialName("completed_at")
-    val completedAt: Long? = null
-) {
-    @Serializable
-    data class ItemCreateRequestDto(
-        @Contextual val categoryId: Id<CategoryDto>,
-        val name: String
-    ): Validatable<ItemCreateRequestDto> {
-        override fun validate() = Validation {
-            ItemCreateRequestDto::name {
-                minLength(1)
-                maxLength(100)
-            }
-        }.invoke(this)
-    }
+object ItemTable : UUIDTable() {
+    val user = reference("user", UserTable).index()
+    val list = reference("list", ListTable).index()
+    val category = reference("category", CategoryTable)
+    val task = reference("task", TaskTable)
+    val name = varchar("name", 150)
+    val completed = bool("completed")
+    val createdAt = long("created_at")
+    val editedAt = long("edited_at").nullable()
+    val completedAt = long("completed_at").nullable()
+}
 
-    @Serializable
-    data class ItemUpdateRequestDto(
-        @Contextual val categoryId: Id<CategoryDto>,
-        val name: String
-    ): Validatable<ItemUpdateRequestDto> {
-        override fun validate() = Validation {
-            ItemUpdateRequestDto::name {
-                minLength(1)
-                maxLength(100)
-            }
-        }.invoke(this)
-    }
+class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<ItemEntity>(ItemTable)
 
-    @Serializable
-    data class ItemTemplateResponseDto(
-        val name: String
-    )
+    val user by UserEntity referencedOn ItemTable.user
+    val list by ListEntity referencedOn ItemTable.list
+    val category by CategoryEntity referencedOn ItemTable.category
+    val task by TaskEntity referencedOn ItemTable.task
+    val name by ItemTable.name
+    val completed by ItemTable.completed
+    val createdAt by ItemTable.createdAt
+    val editedAt by ItemTable.editedAt
+    val completedAt by ItemTable.completedAt
 }

@@ -1,6 +1,6 @@
-package app.index_it.core.cache.core
+package app.index_it.data.sources.cache.core
 
-import app.index_it.core.clients.RedisClient
+import app.index_it.data.sources.cache.RedisClient
 import app.index_it.core.logic.ObjectMapper
 
 /**

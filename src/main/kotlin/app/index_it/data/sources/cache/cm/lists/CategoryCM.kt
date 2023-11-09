@@ -1,9 +1,9 @@
-package app.index_it.data.sources.cache.lists
+package app.index_it.data.sources.cache.cm.lists
 
 import app.index_it.data.sources.cache.core.DoubleHashedCM
-import app.index_it.models.lists.CategoryDto
-import app.index_it.models.lists.ListDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.lists.CategoryDto
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.user.UserDto
 import org.litote.kmongo.Id
 
 object CategoryCM: app.index_it.data.sources.cache.core.DoubleHashedCM("categories") {

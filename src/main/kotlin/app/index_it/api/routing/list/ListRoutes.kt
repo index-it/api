@@ -32,7 +32,7 @@ class ListsRoute {
 }
 
 fun Route.listRoutes() {
-    authenticate(AuthenticationMethods.userSessionAuth) {
+    authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         listsRoute()
         listRoute()
 

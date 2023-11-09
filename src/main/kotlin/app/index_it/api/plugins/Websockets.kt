@@ -1,7 +1,7 @@
 package app.index_it.api.plugins
 
 import app.index_it.core.logic.websocket.WebsocketEventManager
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.websocket.*

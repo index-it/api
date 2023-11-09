@@ -1,9 +1,9 @@
 package app.index_it.api.routing.suggestion.routes
 
 import app.index_it.api.routing.suggestion.SuggestionRoutes
-import app.index_it.daos.suggestions.SuggestionsDao
-import app.index_it.models.suggestions.ColorSuggestionsDto
-import app.index_it.models.suggestions.NameSuggestionsDto
+import app.index_it.data.daos.suggestions.SuggestionsDao
+import app.index_it.data.models.suggestions.ColorSuggestionsDto
+import app.index_it.data.models.suggestions.NameSuggestionsDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*

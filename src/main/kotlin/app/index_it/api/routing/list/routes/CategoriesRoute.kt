@@ -4,9 +4,9 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
 import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.CategoryDao
-import app.index_it.models.lists.CategoryDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.list.CategoryDao
+import app.index_it.data.models.lists.CategoryDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -33,7 +33,7 @@ fun Route.categoriesRoute() {
             }
         }
     }) {
-        val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId())
+        val categories = app.index_it.data.daos.list.CategoryDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId())
 
         call.respond(categories)
     }
@@ -62,7 +62,7 @@ fun Route.categoriesRoute() {
     }) {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val category = CategoryDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newCategory)
+        val category = app.index_it.data.daos.list.CategoryDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newCategory)
 
         call.respond(category)
 

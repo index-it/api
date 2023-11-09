@@ -1,11 +1,11 @@
 package app.index_it.api.plugins
 
-import app.index_it.models.Validatable
-import app.index_it.models.auth.PasswordResetRequestBody
-import app.index_it.models.auth.RegistrationCredentials
-import app.index_it.models.lists.CategoryDto
-import app.index_it.models.lists.ItemDto
-import app.index_it.models.lists.ListDto
+import app.index_it.data.models.Validatable
+import app.index_it.data.models.auth.PasswordResetRequestBody
+import app.index_it.data.models.auth.RegistrationCredentials
+import app.index_it.data.models.lists.CategoryDto
+import app.index_it.data.models.lists.ItemDto
+import app.index_it.data.models.lists.ListDto
 import io.konform.validation.Valid
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*

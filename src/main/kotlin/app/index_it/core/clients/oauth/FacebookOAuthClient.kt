@@ -1,6 +1,6 @@
 package app.index_it.core.clients.oauth
 
-import app.index_it.models.oauth.facebook.FacebookUserInfoDto
+import app.index_it.data.models.oauth.facebook.FacebookUserInfoDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*

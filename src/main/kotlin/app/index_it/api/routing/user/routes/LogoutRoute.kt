@@ -2,8 +2,8 @@ package app.index_it.api.routing.user.routes
 
 import app.index_it.api.routing.user.LogoutRoute
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.models.auth.UserSessionCookie
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.models.auth.UserSessionCookie
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -24,7 +24,7 @@ fun Route.logoutRoute() {
     }) {
         val session = call.sessions.get<UserSessionCookie>()!!
 
-        UserSessionDao.delete(session.userId, session.sessionId)
+        app.index_it.data.daos.auth.UserSessionDao.delete(session.userId, session.sessionId)
 
         WebsocketConnectionsManager.closeConnection(session.sessionId)
         call.sessions.clear<UserSessionCookie>()

@@ -1,8 +1,8 @@
 package app.index_it.core.logic.websocket
 
-import app.index_it.models.auth.UserAuthSessionDto
-import app.index_it.models.user.UserDto
-import app.index_it.models.websocket.WebsocketConnection
+import app.index_it.data.models.auth.UserAuthSessionDto
+import app.index_it.data.models.user.UserDto
+import app.index_it.data.models.websocket.WebsocketConnection
 import io.ktor.websocket.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.litote.kmongo.Id

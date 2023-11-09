@@ -1,10 +1,10 @@
-package app.index_it.daos.auth
+package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
-import app.index_it.core.db.PasswordResetDBM
+import app.index_it.data.sources.mongo.users.PasswordResetDBM
 import app.index_it.core.logic.TokenGenerator
-import app.index_it.models.user.PasswordResetDto
-import app.index_it.models.user.UserDto
+import app.index_it.data.models.user.PasswordResetDto
+import app.index_it.data.models.user.UserDto
 import io.ktor.util.date.*
 import org.litote.kmongo.Id
 import java.util.*
@@ -29,7 +29,7 @@ object PasswordResetDao {
             expireAt = Date(getTimeMillis() + 3600000)
         )
 
-        save(passwordResetDto)
+        app.index_it.data.daos.auth.PasswordResetDao.save(passwordResetDto)
         return SendinblueClient.sendPasswordResetEmail(user.email, token)
     }
 
