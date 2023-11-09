@@ -8,7 +8,7 @@ import java.util.*
 
 object ItemContentTable : UUIDTable() {
     val item = reference("item", ItemTable)
-    val content = text("content")
+    val content = text("content", eagerLoading = true)
 }
 
 class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {

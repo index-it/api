@@ -38,6 +38,10 @@ object Env {
     lateinit var mongo_connection_string: String
     lateinit var mongo_db_name: String
 
+    lateinit var postgres_url: String
+    lateinit var postgres_user: String
+    lateinit var postgres_password: String
+
     lateinit var redis_connection_string: String
 
     lateinit var rabbitmq_connection_string: String
@@ -89,6 +93,9 @@ object Env {
         sendinblue_api_key = getStringFromEnv("sendinblue.api.key")
         mongo_connection_string = getStringFromEnv("mongo.connection.string")
         mongo_db_name = getStringFromEnv("mongo.db.name")
+        postgres_url = getStringFromEnv("postgres.url")
+        postgres_user = getStringFromEnv("postgres.user")
+        postgres_password = getStringFromEnv("postgres.password")
         redis_connection_string = getStringFromEnv("redis.connection.string")
 
         rabbitmq_connection_string = getStringFromEnv("rabbitmq.connection.string")

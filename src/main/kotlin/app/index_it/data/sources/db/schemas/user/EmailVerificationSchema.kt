@@ -15,8 +15,10 @@ object EmailVerificationTable : IntIdTable() {
 class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<EmailVerificationEntity>(EmailVerificationTable)
 
-    val token by EmailVerificationTable.token
-    val user by UserEntity referencedOn EmailVerificationTable.user
-    val createdAt by EmailVerificationTable.createdAt
-    val expiresAt by EmailVerificationTable.expiresAt
+    var token by EmailVerificationTable.token
+    var user by EmailVerificationTable.user
+    var createdAt by EmailVerificationTable.createdAt
+    var expiresAt by EmailVerificationTable.expiresAt
+
+    var userEntity by UserEntity referencedOn EmailVerificationTable.user
 }

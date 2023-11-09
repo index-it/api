@@ -11,7 +11,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import java.util.*
 
 object ItemTable : UUIDTable() {
-    val user = reference("user", UserTable).index()
+    // val user = reference("user", UserTable).index()
     val list = reference("list", ListTable).index()
     val category = reference("category", CategoryTable)
     val task = reference("task", TaskTable)
@@ -25,7 +25,7 @@ object ItemTable : UUIDTable() {
 class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ItemEntity>(ItemTable)
 
-    val user by UserEntity referencedOn ItemTable.user
+    // val user by UserEntity referencedOn ItemTable.user
     val list by ListEntity referencedOn ItemTable.list
     val category by CategoryEntity referencedOn ItemTable.category
     val task by TaskEntity referencedOn ItemTable.task
