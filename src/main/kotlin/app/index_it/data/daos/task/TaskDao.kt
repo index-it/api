@@ -1,6 +1,7 @@
 package app.index_it.data.daos.task
 
 import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.lists.ListDto
@@ -8,10 +9,9 @@ import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.tasks.TaskCM
 import app.index_it.data.sources.mongo.tasks.TaskDBM
-import org.litote.kmongo.Id
 
 object TaskDao {
-    fun create(userId: Id<UserDto>, taskCreateRequestDto: TaskDto.TaskCreateRequestDto): TaskDto {
+    fun create(userId: IxId<UserDto>, taskCreateRequestDto: TaskDto.TaskCreateRequestDto): TaskDto {
         val taskDto = TaskDto(
             userId = userId,
             listId = null,
@@ -33,7 +33,7 @@ object TaskDao {
         return taskDto
     }
 
-    fun createLinked(userId: Id<UserDto>, item: ItemDto): TaskDto {
+    fun createLinked(userId: IxId<UserDto>, item: ItemDto): TaskDto {
         val taskDto = TaskDto(
             userId = userId,
             listId = item.listId,
@@ -54,7 +54,7 @@ object TaskDao {
         return taskDto
     }
 
-    fun getAll(userId: Id<UserDto>): List<TaskDto> {
+    fun getAll(userId: IxId<UserDto>): List<TaskDto> {
         // TODO: Decide whether to fetch from cache or db in this case (probably fetch from db directly or not?)
         var tasks = TaskCM.getAll(userId)
 
@@ -67,15 +67,15 @@ object TaskDao {
         return tasks
     }
 
-    fun getAllUncompleted(userId: Id<UserDto>) =
+    fun getAllUncompleted(userId: IxId<UserDto>) =
         getAll(userId)
             .filter { !it.completed }
 
-    fun getAllCompleted(userId: Id<UserDto>) =
+    fun getAllCompleted(userId: IxId<UserDto>) =
         getAll(userId)
             .filter { it.completed }
 
-    fun get(userId: Id<UserDto>, taskId: Id<TaskDto>): TaskDto? {
+    fun get(userId: IxId<UserDto>, taskId: IxId<TaskDto>): TaskDto? {
         var task = TaskCM.get(userId, taskId)
 
         if (task == null) {
@@ -87,7 +87,7 @@ object TaskDao {
         return task
     }
 
-    fun setCompletion(userId: Id<UserDto>, taskId: Id<TaskDto>, completed: Boolean): TaskDto? {
+    fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): TaskDto? {
         val taskDto = TaskDBM.setCompletion(userId, taskId, completed)
 
         if (taskDto != null)
@@ -98,7 +98,7 @@ object TaskDao {
         return taskDto
     }
 
-    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, categoryId: Id<CategoryDto>?, itemId: Id<ItemDto>?): TaskDto? {
+    fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, listId: IxId<ListDto>?, categoryId: IxId<CategoryDto>?, itemId: IxId<ItemDto>?): TaskDto? {
         val taskDto = TaskDBM.setLinking(userId, taskId, listId, categoryId, itemId)
 
         if (taskDto != null)
@@ -109,7 +109,7 @@ object TaskDao {
         return taskDto
     }
     
-    fun setCategory(userId: Id<UserDto>, taskId: Id<TaskDto>, categoryId: Id<CategoryDto>): TaskDto? {
+    fun setCategory(userId: IxId<UserDto>, taskId: IxId<TaskDto>, categoryId: IxId<CategoryDto>): TaskDto? {
         val taskDto = TaskDBM.setCategory(userId, taskId, categoryId)
 
         if (taskDto != null)
@@ -120,7 +120,7 @@ object TaskDao {
         return taskDto
     }
 
-    fun update(userId: Id<UserDto>, taskId: Id<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
+    fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
         val taskDto = TaskDBM.update(userId, taskId, taskUpdateRequestDto)
 
         if (taskDto != null)
@@ -131,12 +131,12 @@ object TaskDao {
         return taskDto
     }
 
-    fun delete(userId: Id<UserDto>, taskId: Id<TaskDto>) {
+    fun delete(userId: IxId<UserDto>, taskId: IxId<TaskDto>) {
         TaskDBM.delete(userId, taskId)
         TaskCM.delete(userId, taskId)
     }
 
-    fun deleteAll(userId: Id<UserDto>) {
+    fun deleteAll(userId: IxId<UserDto>) {
         TaskDBM.deleteAllOfUser(userId)
         TaskCM.deleteAll(userId)
     }

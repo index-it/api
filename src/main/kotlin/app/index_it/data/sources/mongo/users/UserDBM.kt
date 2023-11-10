@@ -1,5 +1,6 @@
 package app.index_it.data.sources.mongo.users
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.mongo.MongoClient
 import com.mongodb.client.model.FindOneAndUpdateOptions
@@ -14,7 +15,7 @@ object UserDBM {
     }
 
     /*
-    fun exists(id: Id<UserDto>): Boolean {
+    fun exists(id: IxId<UserDto>): Boolean {
         return col.findOne(UserDto::id eq id) != null
     }
      */
@@ -29,7 +30,7 @@ object UserDBM {
         col.save(userDto)
     }
 
-    fun get(id: Id<UserDto>): UserDto? {
+    fun get(id: IxId<UserDto>): UserDto? {
         return col.findOne(UserDto::id eq id)
     }
 
@@ -37,7 +38,7 @@ object UserDBM {
         return col.findOne(UserDto::email eq email)
     }
 
-    fun verifyEmail(id: Id<UserDto>): UserDto? {
+    fun verifyEmail(id: IxId<UserDto>): UserDto? {
         return col.findOneAndUpdate(
             UserDto::id eq id,
             setValue(UserDto::emailVerified, true),
@@ -45,7 +46,7 @@ object UserDBM {
         )
     }
 
-    fun resetPassword(id: Id<UserDto>, newPasswordHashed: String, verifyEmail: Boolean): UserDto? {
+    fun resetPassword(id: IxId<UserDto>, newPasswordHashed: String, verifyEmail: Boolean): UserDto? {
         return if (verifyEmail) col.findOneAndUpdate(
             UserDto::id eq id,
             set(
@@ -60,7 +61,7 @@ object UserDBM {
         )
     }
 
-    fun delete(id: Id<UserDto>) {
+    fun delete(id: IxId<UserDto>) {
         col.deleteOne(UserDto::id eq id)
     }
 }

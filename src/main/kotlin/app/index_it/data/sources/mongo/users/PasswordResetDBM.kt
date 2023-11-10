@@ -20,7 +20,7 @@ object PasswordResetDBM {
         )
     }
 
-    fun countSaved(id: Id<UserDto>): Int {
+    fun countSaved(id: IxId<UserDto>): Int {
         return col.find(PasswordResetDto::userId eq id).count()
     }
 
@@ -32,7 +32,7 @@ object PasswordResetDBM {
         return col.findOne(PasswordResetDto::token eq token)
     }
 
-    fun deleteAll(id: Id<UserDto>) {
+    fun deleteAll(id: IxId<UserDto>) {
         col.deleteMany(PasswordResetDto::userId eq id)
     }
 }

@@ -21,15 +21,15 @@ object CategoryDBM {
         return col.save(categoryDto)
     }
 
-    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<CategoryDto> {
+    fun getAll(userId: IxId<UserDto>, listId: IxId<ListDto>): List<CategoryDto> {
         return col.find(and(CategoryDto::userId eq userId, CategoryDto::listId eq listId)).toList()
     }
 
-    fun get(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): CategoryDto? {
+    fun get(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>): CategoryDto? {
         return col.findOne(CategoryDto::userId eq userId, CategoryDto::listId eq listId, CategoryDto::id eq categoryId)
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
+    fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
         val properties: MutableList<SetTo<*>> = mutableListOf()
 
         properties.add(CategoryDto::name setTo categoryUpdateRequestDto.name)
@@ -42,15 +42,15 @@ object CategoryDBM {
         )
     }
 
-    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
+    fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>) {
         col.deleteOne(CategoryDto::id eq categoryId, ItemDto::userId eq userId, ItemDto::listId eq listId)
     }
 
-    fun deleteAllOfUser(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: IxId<UserDto>) {
         col.deleteMany(CategoryDto::userId eq userId)
     }
 
-    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+    fun deleteAllOfList(userId: IxId<UserDto>, listId: IxId<ListDto>) {
         col.deleteMany(CategoryDto::listId eq listId, CategoryDto::userId eq userId)
     }
 }

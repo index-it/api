@@ -16,11 +16,11 @@ object ListDBM {
         col.ensureIndex(ListDto::userId)
     }
 
-    fun getAll(userId: Id<UserDto>): List<ListDto> {
+    fun getAll(userId: IxId<UserDto>): List<ListDto> {
         return col.find(ListDto::userId eq userId).toList()
     }
 
-    fun get(userId: Id<UserDto>, listId: Id<ListDto>): ListDto? {
+    fun get(userId: IxId<UserDto>, listId: IxId<ListDto>): ListDto? {
         return col.findOne(ListDto::id eq listId, ListDto::userId eq userId)
     }
 
@@ -28,7 +28,7 @@ object ListDBM {
         col.save(listDto)
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
+    fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
         val properties: MutableList<SetTo<*>> = mutableListOf()
 
         properties.add(ListDto::name setTo listUpdateRequestDto.name)
@@ -43,11 +43,11 @@ object ListDBM {
         )
     }
 
-    fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
+    fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>) {
         col.deleteOne(Filters.and(ListDto::id eq listId, ListDto::userId eq userId))
     }
 
-    fun deleteAll(userId: Id<UserDto>) {
+    fun deleteAll(userId: IxId<UserDto>) {
         col.deleteMany(ListDto::userId eq userId)
     }
 }

@@ -19,19 +19,19 @@ object ItemDBM {
         col.ensureIndex(ItemDto::listId)
     }
 
-    fun exists(userId: Id<UserDto>, itemId: Id<ItemDto>): Boolean {
+    fun exists(userId: IxId<UserDto>, itemId: IxId<ItemDto>): Boolean {
         return col.findOne(and(ItemDto::id eq itemId, ItemDto::userId eq  userId)) != null
     }
 
-    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<ItemDto> {
+    fun getAll(userId: IxId<UserDto>, listId: IxId<ListDto>): List<ItemDto> {
         return col.find(ItemDto::userId eq userId, ItemDto::listId eq listId).toList()
     }
 
-    fun get(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>): ItemDto? {
+    fun get(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>): ItemDto? {
         return col.findOne(ItemDto::userId eq userId, ItemDto::listId eq listId, ItemDto::id eq itemId)
     }
 
-    fun getAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): List<ItemDto> {
+    fun getAllOfCategory(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>): List<ItemDto> {
         return col.find(ItemDto::userId eq userId, ItemDto::listId eq listId, ItemDto::categoryId eq categoryId).toList()
     }
 
@@ -39,7 +39,7 @@ object ItemDBM {
         col.save(itemDto)
     }
 
-    fun setCompletion(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, completed: Boolean): ItemDto? {
+    fun setCompletion(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, completed: Boolean): ItemDto? {
         return col.findOneAndUpdate(
             and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),
             set(
@@ -50,7 +50,7 @@ object ItemDBM {
         )
     }
 
-    fun setLinking(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, taskId: Id<TaskDto>?): ItemDto? {
+    fun setLinking(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): ItemDto? {
         return col.findOneAndUpdate(
             and(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId),
             set(
@@ -60,7 +60,7 @@ object ItemDBM {
         )
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
+    fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
         val properties: MutableList<SetTo<Any?>> = mutableListOf()
 
         properties.add(ItemDto::name setTo itemUpdateRequestDto.name)
@@ -74,19 +74,19 @@ object ItemDBM {
         )
     }
 
-    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, itemId: Id<ItemDto>) {
+    fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>) {
         col.deleteOne(ItemDto::id eq itemId, ItemDto::userId eq userId, ItemDto::listId eq listId)
     }
 
-    fun deleteAllOfUser(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: IxId<UserDto>) {
         col.deleteMany(ItemDto::userId eq userId)
     }
 
-    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+    fun deleteAllOfList(userId: IxId<UserDto>, listId: IxId<ListDto>) {
         col.deleteMany(ItemDto::listId eq listId, ItemDto::userId eq userId)
     }
 
-    fun deleteAllOfCategory(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
+    fun deleteAllOfCategory(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>) {
         col.deleteMany(ItemDto::listId eq listId, ItemDto::userId eq userId, ItemDto::categoryId eq categoryId)
     }
 }

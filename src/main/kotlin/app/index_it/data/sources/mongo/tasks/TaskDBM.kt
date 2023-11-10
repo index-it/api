@@ -20,15 +20,15 @@ object TaskDBM {
     }
 
     @Suppress("UNUSED")
-    fun exists(userId: Id<UserDto>, taskId: Id<TaskDto>): Boolean {
+    fun exists(userId: IxId<UserDto>, taskId: IxId<TaskDto>): Boolean {
         return col.findOne(and(TaskDto::id eq taskId, TaskDto::userId eq  userId)) != null
     }
 
-    fun getAll(userId: Id<UserDto>): List<TaskDto> {
+    fun getAll(userId: IxId<UserDto>): List<TaskDto> {
         return col.find(TaskDto::userId eq userId).toList()
     }
 
-    fun get(userId: Id<UserDto>, taskId: Id<TaskDto>): TaskDto? {
+    fun get(userId: IxId<UserDto>, taskId: IxId<TaskDto>): TaskDto? {
         return col.findOne(TaskDto::userId eq userId, TaskDto::id eq taskId)
     }
 
@@ -36,7 +36,7 @@ object TaskDBM {
         col.save(taskDto)
     }
 
-    fun setCompletion(userId: Id<UserDto>, taskId: Id<TaskDto>, completed: Boolean): TaskDto? {
+    fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): TaskDto? {
         return col.findOneAndUpdate(
             and(TaskDto::id eq taskId, TaskDto::userId eq userId),
             set(
@@ -47,7 +47,7 @@ object TaskDBM {
         )
     }
 
-    fun setLinking(userId: Id<UserDto>, taskId: Id<TaskDto>, listId: Id<ListDto>?, categoryId: Id<CategoryDto>?, itemId: Id<ItemDto>?): TaskDto? {
+    fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, listId: IxId<ListDto>?, categoryId: IxId<CategoryDto>?, itemId: IxId<ItemDto>?): TaskDto? {
         return col.findOneAndUpdate(
             and(TaskDto::id eq taskId, TaskDto::userId eq userId),
             set(
@@ -59,7 +59,7 @@ object TaskDBM {
         )
     }
 
-    fun setCategory(userId: Id<UserDto>, taskId: Id<TaskDto>, categoryId: Id<CategoryDto>): TaskDto? {
+    fun setCategory(userId: IxId<UserDto>, taskId: IxId<TaskDto>, categoryId: IxId<CategoryDto>): TaskDto? {
         return col.findOneAndUpdate(
             and(TaskDto::id eq taskId, TaskDto::userId eq userId),
             set(
@@ -69,7 +69,7 @@ object TaskDBM {
         )
     }
 
-    fun update(userId: Id<UserDto>, taskId: Id<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
+    fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
         val properties: MutableList<SetTo<Any?>> = mutableListOf()
 
         properties.add(TaskDto::name setTo taskUpdateRequestDto.name)
@@ -86,11 +86,11 @@ object TaskDBM {
         )
     }
 
-    fun delete(userId: Id<UserDto>, taskId: Id<TaskDto>) {
+    fun delete(userId: IxId<UserDto>, taskId: IxId<TaskDto>) {
         col.deleteOne(TaskDto::id eq taskId, TaskDto::userId eq userId)
     }
 
-    fun deleteAllOfUser(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: IxId<UserDto>) {
         col.deleteMany(TaskDto::userId eq userId)
     }
 }

@@ -1,19 +1,27 @@
 package app.index_it.data.daos.list
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.lists.toDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.lists.CategoryCM
+import app.index_it.data.sources.db.schemas.lists.CategoryEntity
+import app.index_it.data.sources.db.schemas.lists.CategoryTable
+import app.index_it.data.sources.db.schemas.lists.ListTable
 import app.index_it.data.sources.mongo.lists.CategoryDBM
-import org.litote.kmongo.Id
+import app.index_it.data.sources.db.toEntityId
 
 object CategoryDao {
-    fun getAll(userId: Id<UserDto>, listId: Id<ListDto>): List<CategoryDto> {
+    fun getAll(userId: IxId<UserDto>, listId: IxId<ListDto>): List<CategoryDto> {
         // TODO: Query db instead?
         var categories = CategoryCM.getAll(userId, listId)
 
         if (categories.isEmpty()) {
-            categories = CategoryDBM.getAll(userId, listId)
+            categories = CategoryEntity
+                .find { CategoryTable.list eq listId.toEntityId(ListTable) }
+                .map { it.toDto() }
+
             if (categories.isNotEmpty())
                 CategoryCM.cacheAll(userId, listId, categories)
         }
@@ -21,7 +29,7 @@ object CategoryDao {
         return categories
     }
 
-    fun get(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>): CategoryDto? {
+    fun get(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>): CategoryDto? {
         var category = CategoryCM.get(userId, listId, categoryId)
 
         if (category == null) {
@@ -33,7 +41,7 @@ object CategoryDao {
         return category
     }
 
-    fun create(userId: Id<UserDto>, listId: Id<ListDto>, categoryCreateRequestDto: CategoryDto.CategoryCreateRequestDto): CategoryDto {
+    fun create(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryCreateRequestDto: CategoryDto.CategoryCreateRequestDto): CategoryDto {
         val categoryDto = CategoryDto(
             userId = userId,
             listId = listId,
@@ -47,7 +55,7 @@ object CategoryDao {
         return categoryDto
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
+    fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
         val category = CategoryDBM.update(userId, listId, categoryId, categoryUpdateRequestDto)
 
         if (category != null)
@@ -58,17 +66,17 @@ object CategoryDao {
         return category
     }
 
-    fun delete(userId: Id<UserDto>, listId: Id<ListDto>, categoryId: Id<CategoryDto>) {
+    fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>) {
         CategoryDBM.delete(userId, listId, categoryId)
         CategoryCM.delete(userId, listId, categoryId)
     }
 
-    fun deleteAllOfUser(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: IxId<UserDto>) {
         CategoryDBM.deleteAllOfUser(userId)
         CategoryCM.deleteAllOfUser(userId)
     }
 
-    fun deleteAllOfList(userId: Id<UserDto>, listId: Id<ListDto>) {
+    fun deleteAllOfList(userId: IxId<UserDto>, listId: IxId<ListDto>) {
         CategoryDBM.deleteAllOfList(userId, listId)
         CategoryCM.deleteAllOfList(userId, listId)
     }

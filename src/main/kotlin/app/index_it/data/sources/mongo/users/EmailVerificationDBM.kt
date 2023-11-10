@@ -1,5 +1,6 @@
 package app.index_it.data.sources.mongo.users
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.mongo.MongoClient
@@ -20,7 +21,7 @@ object EmailVerificationDBM {
         )
     }
 
-    fun countSaved(id: Id<UserDto>): Int {
+    fun countSaved(id: IxId<UserDto>): Int {
         return col.find(EmailVerificationDto::userId eq id).count()
     }
 
@@ -32,7 +33,7 @@ object EmailVerificationDBM {
         return col.findOne(EmailVerificationDto::token eq token)
     }
 
-    fun deleteAll(id: Id<UserDto>) {
+    fun deleteAll(id: IxId<UserDto>) {
         col.deleteMany(EmailVerificationDto::userId eq id)
     }
 }

@@ -20,11 +20,11 @@ object ItemContentDBM {
         col.save(itemContentDto)
     }
 
-    fun get(userId: Id<UserDto>, itemId: Id<ItemDto>): ItemContentDto? {
+    fun get(userId: IxId<UserDto>, itemId: IxId<ItemDto>): ItemContentDto? {
         return col.findOne(and(ItemContentDto::itemId eq itemId, ItemContentDto::userId eq userId))
     }
 
-    fun update(userId: Id<UserDto>, itemId: Id<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
+    fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
         val properties: MutableList<SetTo<Any?>> = mutableListOf()
 
         properties.add(ItemContentDto::content setTo itemContentCreateOrUpdateRequest.content)
@@ -36,17 +36,17 @@ object ItemContentDBM {
         )
     }
 
-    fun delete(userId: Id<UserDto>, itemId: Id<ItemDto>) {
+    fun delete(userId: IxId<UserDto>, itemId: IxId<ItemDto>) {
         col.deleteOne(
             and(ItemContentDto::itemId eq itemId, ItemContentDto::userId eq userId)
         )
     }
 
-    fun deleteAllOfUser(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: IxId<UserDto>) {
         col.deleteMany(ItemContentDto::userId eq userId)
     }
 
-    fun deleteAllOfItems(userId: Id<UserDto>, itemIds: List<Id<ItemDto>>) {
+    fun deleteAllOfItems(userId: IxId<UserDto>, itemIds: List<Id<ItemDto>>) {
         col.deleteMany(
             and(ItemContentDto::userId eq userId, ItemContentDto::itemId `in` itemIds)
         )

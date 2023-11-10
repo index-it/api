@@ -1,6 +1,7 @@
 package app.index_it.data.models.tasks
 
 import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
@@ -12,9 +13,6 @@ import io.konform.validation.jsonschema.minLength
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.toId
 
 /**
  * Represents a task, kind of like a TODO entry
@@ -30,11 +28,11 @@ import org.litote.kmongo.id.toId
 @Serializable
 @Suppress("Unused")
 data class TaskDto(
-    @Contextual @SerialName("_id") val id: Id<TaskDto> = ObjectId().toId(),
-    @Contextual val userId: Id<UserDto>,
-    @Contextual val itemId: Id<ItemDto>? = null,
-    @Contextual val categoryId: Id<CategoryDto>? = null,
-    @Contextual val listId: Id<ListDto>? = null,
+    @Contextual @SerialName("_id") val id: IxId<TaskDto>,
+    @Contextual val userId: IxId<UserDto>,
+    @Contextual val itemId: IxId<ItemDto>? = null,
+    @Contextual val categoryId: IxId<CategoryDto>? = null,
+    @Contextual val listId: IxId<ListDto>? = null,
     val name: String,
     val description: String? = null,
     val subTasks: MutableList<SubTaskDto> = mutableListOf(),

@@ -2,6 +2,7 @@ package app.index_it.data.models.lists
 
 import app.index_it.core.logic.RegexPatterns
 import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
 import app.index_it.data.models.user.UserDto
 import io.konform.validation.Validation
@@ -11,17 +12,14 @@ import io.konform.validation.jsonschema.pattern
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.toId
 
 /**
  * Represents a single list, which can contain categories to organize list items in it
  */
 @Serializable
 data class ListDto(
-    @Contextual @SerialName("_id") val id: Id<ListDto> = ObjectId().toId(),
-    @Contextual var userId: Id<UserDto>,
+    @Contextual @SerialName("_id") val id: IxId<ListDto>,
+    @Contextual var userId: IxId<UserDto>,
     var name: String,
     var icon: String, // Single emoji at the moment
     var color: String, // Represented as #RRGGBB hex color

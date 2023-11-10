@@ -1,14 +1,14 @@
 package app.index_it.data.daos.list
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ItemContentDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.lists.ItemContentCM
 import app.index_it.data.sources.mongo.lists.ItemContentDBM
-import org.litote.kmongo.Id
 
 object ItemContentDao {
-    fun create(userId: Id<UserDto>, itemId: Id<ItemDto>): ItemContentDto? {
+    fun create(userId: IxId<UserDto>, itemId: IxId<ItemDto>): ItemContentDto? {
         if (!ItemDao.exists(userId, itemId)) {
             return  null
         }
@@ -25,7 +25,7 @@ object ItemContentDao {
         return itemContentDto
     }
 
-    fun get(userId: Id<UserDto>, itemId: Id<ItemDto>): ItemContentDto? {
+    fun get(userId: IxId<UserDto>, itemId: IxId<ItemDto>): ItemContentDto? {
         var content = ItemContentCM.get(userId, itemId)
 
         if (content == null) {
@@ -37,10 +37,10 @@ object ItemContentDao {
         return content
     }
 
-    fun getOrCreate(userId: Id<UserDto>, itemId: Id<ItemDto>) =
+    fun getOrCreate(userId: IxId<UserDto>, itemId: IxId<ItemDto>) =
         get(userId, itemId) ?: create(userId, itemId)
 
-    fun update(userId: Id<UserDto>, itemId: Id<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
+    fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
         val content = ItemContentDBM.update(userId, itemId, itemContentCreateOrUpdateRequest)
 
         if (content != null)
@@ -51,17 +51,17 @@ object ItemContentDao {
         return content
     }
 
-    fun delete(userId: Id<UserDto>, itemId: Id<ItemDto>) {
+    fun delete(userId: IxId<UserDto>, itemId: IxId<ItemDto>) {
         ItemContentCM.delete(userId, itemId)
         ItemContentDBM.delete(userId, itemId)
     }
 
-    fun deleteAllOfItems(userId: Id<UserDto>, itemIds: List<Id<ItemDto>>) {
+    fun deleteAllOfItems(userId: IxId<UserDto>, itemIds: List<Id<ItemDto>>) {
         ItemContentCM.deleteMultiple(userId, itemIds)
         ItemContentDBM.deleteAllOfItems(userId, itemIds)
     }
 
-    fun deleteAllOfUser(userId: Id<UserDto>) {
+    fun deleteAllOfUser(userId: IxId<UserDto>) {
         ItemContentCM.deleteAllOfUser(userId)
         ItemContentDBM.deleteAllOfUser(userId)
     }

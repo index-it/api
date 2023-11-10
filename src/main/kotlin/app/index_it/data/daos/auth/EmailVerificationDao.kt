@@ -2,18 +2,35 @@ package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.TokenGenerator
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
+import app.index_it.data.models.email.fromDto
+import app.index_it.data.models.email.toDto
 import app.index_it.data.models.user.UserDto
-import app.index_it.data.sources.mongo.users.EmailVerificationDBM
+import app.index_it.data.sources.db.schemas.user.EmailVerificationEntity
+import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
+import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.toEntityId
 import io.ktor.util.date.*
-import org.litote.kmongo.Id
-import java.util.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object EmailVerificationDao {
-    private fun save(emailVerificationDto: EmailVerificationDto) = EmailVerificationDBM.save(emailVerificationDto)
+    private fun save(emailVerificationDto: EmailVerificationDto) =
+        transaction {
+            EmailVerificationEntity.new {
+                fromDto(emailVerificationDto)
+            }
+        }
+
 
     fun get(token: String): EmailVerificationDto? {
-        return EmailVerificationDBM.get(TokenGenerator.hashToken(token))
+        return EmailVerificationEntity
+            .find { EmailVerificationTable.token eq TokenGenerator.hashToken(token) }
+            .limit(1)
+            .firstOrNull()
+            ?.toDto()
     }
 
     /**
@@ -26,20 +43,20 @@ object EmailVerificationDao {
         val emailVerificationDto = EmailVerificationDto(
             token = hashedToken,
             userId = user.id,
-            expireAt = Date(getTimeMillis() + 3600000)
+            expireAt = getTimeMillis() + 3600000
         )
 
-        app.index_it.data.daos.auth.EmailVerificationDao.save(emailVerificationDto)
+        save(emailVerificationDto)
         return SendinblueClient.sendEmailVerificationEmail(user.email, token)
     }
 
     /**
      * Deletes all email verification tokens of a specific email.
      */
-    fun deleteAll(id: Id<UserDto>) = EmailVerificationDBM.deleteAll(id)
+    fun deleteAll(id: IxId<UserDto>) = EmailVerificationTable.deleteWhere { user eq id.toEntityId(UserTable) }
 
-    fun isRateLimited(id: Id<UserDto>): Boolean {
-        val sent = EmailVerificationDBM.countSaved(id)
+    fun isRateLimited(id: IxId<UserDto>): Boolean {
+        val sent = EmailVerificationEntity.count(EmailVerificationTable.user eq id.toEntityId(UserTable))
         return sent >= 5
     }
 }

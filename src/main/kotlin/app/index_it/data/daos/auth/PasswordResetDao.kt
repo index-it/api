@@ -2,18 +2,29 @@ package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.TokenGenerator
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
-import app.index_it.data.sources.mongo.users.PasswordResetDBM
+import app.index_it.data.models.user.fromDto
+import app.index_it.data.models.user.toDto
+import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable
+import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.toEntityId
 import io.ktor.util.date.*
-import org.litote.kmongo.Id
-import java.util.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object PasswordResetDao {
-    private fun save(passwordResetDto: PasswordResetDto) = PasswordResetDBM.save(passwordResetDto)
+    private fun save(passwordResetDto: PasswordResetDto) = PasswordResetEntity.new {
+        fromDto(passwordResetDto)
+    }
 
     fun get(token: String): PasswordResetDto? {
-        return PasswordResetDBM.get(TokenGenerator.hashToken(token))
+        return PasswordResetEntity
+            .find { PasswordResetTable.token eq TokenGenerator.hashToken(token) }
+            .limit(1)
+            .firstOrNull()
+            ?.toDto()
     }
 
     /**
@@ -26,18 +37,18 @@ object PasswordResetDao {
         val passwordResetDto = PasswordResetDto(
             token = hashedToken,
             userId = user.id,
-            expireAt = Date(getTimeMillis() + 3600000)
+            expireAt = getTimeMillis() + 3600000
         )
 
-        app.index_it.data.daos.auth.PasswordResetDao.save(passwordResetDto)
+        save(passwordResetDto)
         return SendinblueClient.sendPasswordResetEmail(user.email, token)
     }
 
     /**
      * Up to 7 password resets in an hour
      */
-    fun isRateLimited(id: Id<UserDto>): Boolean {
-        val sent = PasswordResetDBM.countSaved(id)
+    fun isRateLimited(id: IxId<UserDto>): Boolean {
+        val sent = PasswordResetEntity.count(PasswordResetTable.user eq id.toEntityId(UserTable))
         return sent >= 7
     }
 }

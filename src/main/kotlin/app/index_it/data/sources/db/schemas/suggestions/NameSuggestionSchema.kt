@@ -1,21 +1,54 @@
 package app.index_it.data.sources.db.schemas.suggestions
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.toId
+import org.jetbrains.exposed.sql.ReferenceOption
 
+/**
+ * @property id
+ * @property description
+ */
 object NameSuggestionTable : IntIdTable() {
     val description = varchar("description", 100)
-    // TODO: names
 }
 
-@Serializable
-data class NameSuggestionSchema(
-    @Contextual @SerialName("_id") val id: Id<NameSuggestionSchema> = ObjectId().toId(),
-    val description: String,
-    val names: List<String>
-)
+/**
+ * @property id
+ * @property description
+ * @property names
+ */
+class NameSuggestionEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<NameSuggestionEntity>(NameSuggestionTable)
+
+    val description by NameSuggestionTable.description
+    val names by NameEntity referrersOn NameTable.suggestion
+}
+
+
+/**
+ * @property id
+ * @property suggestion
+ * @property name
+ */
+object NameTable : IntIdTable() {
+    val suggestion = reference(
+        name = "suggestion",
+        foreign = NameSuggestionTable,
+        onDelete = ReferenceOption.CASCADE
+    )
+    val name = varchar("name", 150)
+}
+
+/**
+ * @property id
+ * @property suggestion
+ * @property name
+ */
+class NameEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<NameEntity>(NameTable)
+
+    val suggestion by NameSuggestionEntity referencedOn NameTable.suggestion
+    val name by NameTable.name
+}

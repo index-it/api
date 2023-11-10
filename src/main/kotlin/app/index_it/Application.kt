@@ -9,6 +9,7 @@ import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.core.logic.websocket.WebsocketsQueueManager
 import app.index_it.data.sources.cache.RedisClient
+import app.index_it.data.sources.db.PostgresClient
 import app.index_it.data.sources.mongo.MongoClient
 import ch.qos.logback.classic.Logger
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -42,6 +43,7 @@ fun main() {
      * If objects aren't called they initialize lazily which can lead to a false positive ready state
      */
     MongoClient.init()
+    PostgresClient.createTables()
     RedisClient
     RabbitMqClient
     WebsocketsQueueManager.startListening()

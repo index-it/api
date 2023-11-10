@@ -1,14 +1,14 @@
 package app.index_it.data.daos.list
 
 import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.lists.ListCM
 import app.index_it.data.sources.mongo.lists.ListDBM
-import org.litote.kmongo.Id
 
 object ListDao {
-    fun create(userId: Id<UserDto>, listCreateRequestDto: ListDto.ListCreateRequestDto): ListDto {
+    fun create(userId: IxId<UserDto>, listCreateRequestDto: ListDto.ListCreateRequestDto): ListDto {
         val listDto = ListDto(
             userId = userId,
             name = listCreateRequestDto.name,
@@ -23,7 +23,7 @@ object ListDao {
         return listDto
     }
 
-    fun getAll(userId: Id<UserDto>): List<ListDto> {
+    fun getAll(userId: IxId<UserDto>): List<ListDto> {
         // TODO: Decide whether to fetch from cache or db in this case (probably fetch from db directly or not?)
         var lists = ListCM.getAll(userId)
 
@@ -36,7 +36,7 @@ object ListDao {
         return lists
     }
 
-    fun get(userId: Id<UserDto>, listId: Id<ListDto>): ListDto? {
+    fun get(userId: IxId<UserDto>, listId: IxId<ListDto>): ListDto? {
         var list = ListCM.get(userId, listId)
 
         if (list == null) {
@@ -48,7 +48,7 @@ object ListDao {
         return list
     }
 
-    fun update(userId: Id<UserDto>, listId: Id<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
+    fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
         val listDto = ListDBM.update(userId, listId, listUpdateRequestDto)
 
         if (listDto != null)
@@ -59,12 +59,12 @@ object ListDao {
         return listDto
     }
 
-    fun delete(userId: Id<UserDto>, listId: Id<ListDto>) {
+    fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>) {
         ListDBM.delete(userId, listId)
         ListCM.delete(userId, listId)
     }
 
-    fun deleteAll(userId: Id<UserDto>) {
+    fun deleteAll(userId: IxId<UserDto>) {
         ListDBM.deleteAll(userId)
         ListCM.deleteAll(userId)
     }

@@ -8,10 +8,28 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.*
 
+/**
+ * @property id
+ * @property user
+ * @property item
+ * @property name
+ * @property description
+ * @property dueDate
+ * @property completed
+ * @property priority
+ * @property createdAt
+ * @property editedAt
+ * @property completedAt
+ */
 object TaskTable : UUIDTable() {
-    val user = reference("user", UserTable)
+    val user = reference(
+        name = "user",
+        foreign = UserTable,
+        onDelete = ReferenceOption.CASCADE
+    )
     val item = reference("item", ItemTable).nullable()
     val name = varchar("name", 150)
     val description = varchar("description", 500).nullable()
@@ -24,11 +42,26 @@ object TaskTable : UUIDTable() {
     val completedAt = long("completed_at").nullable()
 }
 
+/**
+ * @property id
+ * @property user
+ * @property item
+ * @property name
+ * @property description
+ * @property dueDate
+ * @property completed
+ * @property priority
+ * @property createdAt
+ * @property editedAt
+ * @property completedAt
+ * @property userEntity
+ * @property itemEntity
+ */
 class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<TaskEntity>(TaskTable)
 
-    val user by UserEntity referencedOn TaskTable.user
-    val item by ItemEntity optionalReferencedOn TaskTable.item
+    val user by TaskTable.user
+    val item by TaskTable.item
     val name by TaskTable.name
     val description by TaskTable.description
     val dueDate by TaskTable.dueDate
@@ -37,4 +70,7 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val createdAt by TaskTable.createdAt
     val editedAt by TaskTable.editedAt
     val completedAt by TaskTable.completedAt
+
+    val userEntity by UserEntity referencedOn TaskTable.user
+    val itemEntity by ItemEntity optionalReferencedOn TaskTable.item
 }
