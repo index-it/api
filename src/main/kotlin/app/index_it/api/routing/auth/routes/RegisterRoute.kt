@@ -2,7 +2,10 @@ package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
+import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.newIxId
 import app.index_it.core.logic.usecases.UserAuthUseCase
+import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.RegistrationCredentials
 import app.index_it.data.models.user.UserDto
@@ -59,16 +62,17 @@ fun Route.registerRoute() {
 
         val hashedPassword = PasswordEncoder.encode(signupData.password)
         val user = UserDto(
+            id = newIxId(),
             email = signupData.email,
             passwordHash = hashedPassword,
             emailVerified = false,
-            creationTimestamp = getTimeMillis(),
+            creationTimestamp = currentMillis(),
             creationSource = UserDto.CreationSource.NONE
         )
 
         UserDao.create(user)
 
-        val emailSent = app.index_it.data.daos.auth.EmailVerificationDao.createAndSend(user)
+        val emailSent = EmailVerificationDao.createAndSend(user)
 
         if (emailSent)
         // User will need to verify its email

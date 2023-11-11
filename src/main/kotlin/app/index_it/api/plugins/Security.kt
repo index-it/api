@@ -2,6 +2,7 @@ package app.index_it.api.plugins
 
 import app.index_it.Env
 import app.index_it.core.logic.PasswordEncoder
+import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import app.index_it.data.daos.auth.UserSessionDao
@@ -79,7 +80,7 @@ fun Application.configureSecurity() {
                 val session = UserSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
 
                 // If there is no session or if it has expired (session expires after 7 days)
-                if (session == null || (getTimeMillis() - session.iat) >= (Env.session_max_age_in_seconds*1000))
+                if (session == null || (currentMillis() - session.iat) >= (Env.session_max_age_in_seconds*1000))
                     null
                 else
                     session

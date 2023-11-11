@@ -1,5 +1,6 @@
 package app.index_it.data.models.user
 
+import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
 import app.index_it.data.sources.db.schemas.user.UserTable
@@ -18,7 +19,7 @@ data class PasswordResetDto(
     val token: String,
     @Contextual val userId: IxId<UserDto>,
     @Contextual val expireAt: Long,
-    @Contextual val creationDate: Long = getTimeMillis() // TODO: Rename
+    @Contextual val creationDate: Long = currentMillis() // TODO: Rename
 )
 
 fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {

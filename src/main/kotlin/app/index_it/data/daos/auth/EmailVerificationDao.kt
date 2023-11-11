@@ -2,11 +2,11 @@ package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.TokenGenerator
+import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
-import app.index_it.data.models.email.fromDto
-import app.index_it.data.models.email.toDto
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.db.dbi.user.impl.EmailVerificationDBIImpl
 import app.index_it.data.sources.db.schemas.user.EmailVerificationEntity
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
 import app.index_it.data.sources.db.schemas.user.UserTable
@@ -17,20 +17,12 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object EmailVerificationDao {
-    private fun save(emailVerificationDto: EmailVerificationDto) =
-        transaction {
-            EmailVerificationEntity.new {
-                fromDto(emailVerificationDto)
-            }
-        }
+    private suspend fun save(emailVerificationDto: EmailVerificationDto) =
+        EmailVerificationDBIImpl.save(emailVerificationDto)
 
 
-    fun get(token: String): EmailVerificationDto? {
-        return EmailVerificationEntity
-            .find { EmailVerificationTable.token eq TokenGenerator.hashToken(token) }
-            .limit(1)
-            .firstOrNull()
-            ?.toDto()
+    suspend fun get(token: String): EmailVerificationDto? {
+        return EmailVerificationDBIImpl.get(token)
     }
 
     /**
@@ -43,7 +35,7 @@ object EmailVerificationDao {
         val emailVerificationDto = EmailVerificationDto(
             token = hashedToken,
             userId = user.id,
-            expireAt = getTimeMillis() + 3600000
+            expireAt = currentMillis() + 3600000
         )
 
         save(emailVerificationDto)
@@ -53,10 +45,10 @@ object EmailVerificationDao {
     /**
      * Deletes all email verification tokens of a specific email.
      */
-    fun deleteAll(id: IxId<UserDto>) = EmailVerificationTable.deleteWhere { user eq id.toEntityId(UserTable) }
+    suspend fun deleteAll(id: IxId<UserDto>) = EmailVerificationDBIImpl.deleteAll(id)
 
-    fun isRateLimited(id: IxId<UserDto>): Boolean {
-        val sent = EmailVerificationEntity.count(EmailVerificationTable.user eq id.toEntityId(UserTable))
+    suspend fun isRateLimited(id: IxId<UserDto>): Boolean {
+        val sent = EmailVerificationDBIImpl.count(id)
         return sent >= 5
     }
 }

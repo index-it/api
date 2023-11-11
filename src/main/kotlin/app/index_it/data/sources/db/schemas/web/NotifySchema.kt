@@ -20,5 +20,5 @@ object NotifyTable : IntIdTable() {
 class NotifyEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<NotifyEntity>(NotifyTable)
 
-    val email by NotifyTable.email
+    var email by NotifyTable.email
 }

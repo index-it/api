@@ -7,6 +7,9 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
+import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.newIxId
+import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.user.UserDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -65,10 +68,11 @@ fun Route.oauthLoginRoutes() {
         if (userG == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
             userG = UserDto(
+                id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = getTimeMillis(),
+                creationTimestamp = currentMillis(),
                 creationSource = UserDto.CreationSource.GOOGLE
             )
 
@@ -78,7 +82,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = app.index_it.data.daos.auth.UserSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = UserSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
@@ -124,10 +128,11 @@ fun Route.oauthLoginRoutes() {
         if (userA == null) {
             // Create the user in the db with a random id, the email gotten from Apple, email verified to true
             userA = UserDto(
+                id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = getTimeMillis(),
+                creationTimestamp = currentMillis(),
                 creationSource = UserDto.CreationSource.APPLE
             )
 
@@ -137,7 +142,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = app.index_it.data.daos.auth.UserSessionDao.create(userA.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = UserSessionDao.create(userA.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
@@ -180,10 +185,11 @@ fun Route.oauthLoginRoutes() {
         if (userF == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
             userF = UserDto(
+                id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = getTimeMillis(),
+                creationTimestamp = currentMillis(),
                 creationSource = UserDto.CreationSource.FACEBOOK
             )
 
@@ -193,7 +199,7 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = app.index_it.data.daos.auth.UserSessionDao.create(userF.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = UserSessionDao.create(userF.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)

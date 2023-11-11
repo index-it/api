@@ -50,10 +50,10 @@ fun Route.emailVerificationRoutes() {
             if (userDto.emailVerified)
                 return@post call.respond(HttpStatusCode.OK)
 
-            if (app.index_it.data.daos.auth.EmailVerificationDao.isRateLimited(userDto.id))
+            if (EmailVerificationDao.isRateLimited(userDto.id))
                 return@post call.respond(HttpStatusCode.TooManyRequests)
 
-            val emailSent = app.index_it.data.daos.auth.EmailVerificationDao.createAndSend(userDto)
+            val emailSent = EmailVerificationDao.createAndSend(userDto)
             if (emailSent)
                 call.respond(HttpStatusCode.Created)
             else
@@ -133,7 +133,7 @@ fun Route.emailVerificationRoutes() {
             return@get call.respondRedirect(Env.email_verification_success_url)
 
         UserDao.verifyEmail(userDto.id)
-        app.index_it.data.daos.auth.EmailVerificationDao.deleteAll(userDto.id)
+        EmailVerificationDao.deleteAll(userDto.id)
         call.respondRedirect(Env.email_verification_success_url)
     }
 }

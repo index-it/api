@@ -60,16 +60,16 @@ object TaskTable : UUIDTable() {
 class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<TaskEntity>(TaskTable)
 
-    val user by TaskTable.user
-    val item by TaskTable.item
-    val name by TaskTable.name
-    val description by TaskTable.description
-    val dueDate by TaskTable.dueDate
-    val completed by TaskTable.completed
-    val priority by TaskTable.priority
-    val createdAt by TaskTable.createdAt
-    val editedAt by TaskTable.editedAt
-    val completedAt by TaskTable.completedAt
+    var user by TaskTable.user
+    var item by TaskTable.item
+    var name by TaskTable.name
+    var description by TaskTable.description
+    var dueDate by TaskTable.dueDate
+    var completed by TaskTable.completed
+    var priority by TaskTable.priority
+    var createdAt by TaskTable.createdAt
+    var editedAt by TaskTable.editedAt
+    var completedAt by TaskTable.completedAt
 
     val userEntity by UserEntity referencedOn TaskTable.user
     val itemEntity by ItemEntity optionalReferencedOn TaskTable.item

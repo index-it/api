@@ -13,7 +13,6 @@ import org.jetbrains.exposed.sql.update
 
 object UserDBIImpl : UserDBI {
     private fun UserEntity.fromDto(userDto: UserDto) {
-
         email = userDto.email
         passwordHash = userDto.passwordHash
         emailVerified = userDto.emailVerified

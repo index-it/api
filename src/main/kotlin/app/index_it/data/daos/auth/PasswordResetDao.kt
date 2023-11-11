@@ -2,11 +2,13 @@ package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.TokenGenerator
+import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.models.user.fromDto
 import app.index_it.data.models.user.toDto
+import app.index_it.data.sources.db.dbi.user.impl.PasswordResetDBIImpl
 import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable
 import app.index_it.data.sources.db.schemas.user.UserTable
@@ -15,17 +17,11 @@ import io.ktor.util.date.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object PasswordResetDao {
-    private fun save(passwordResetDto: PasswordResetDto) = PasswordResetEntity.new {
-        fromDto(passwordResetDto)
-    }
+    private suspend fun save(passwordResetDto: PasswordResetDto) =
+        PasswordResetDBIImpl.save(passwordResetDto)
 
-    fun get(token: String): PasswordResetDto? {
-        return PasswordResetEntity
-            .find { PasswordResetTable.token eq TokenGenerator.hashToken(token) }
-            .limit(1)
-            .firstOrNull()
-            ?.toDto()
-    }
+    suspend fun get(token: String): PasswordResetDto? =
+        PasswordResetDBIImpl.get(token)
 
     /**
      * Sends a password reset email to the provided email
@@ -37,7 +33,7 @@ object PasswordResetDao {
         val passwordResetDto = PasswordResetDto(
             token = hashedToken,
             userId = user.id,
-            expireAt = getTimeMillis() + 3600000
+            expireAt = currentMillis() + 3600000
         )
 
         save(passwordResetDto)
@@ -47,8 +43,8 @@ object PasswordResetDao {
     /**
      * Up to 7 password resets in an hour
      */
-    fun isRateLimited(id: IxId<UserDto>): Boolean {
-        val sent = PasswordResetEntity.count(PasswordResetTable.user eq id.toEntityId(UserTable))
+    suspend fun isRateLimited(id: IxId<UserDto>): Boolean {
+        val sent = PasswordResetDBIImpl.count(id)
         return sent >= 7
     }
 }
