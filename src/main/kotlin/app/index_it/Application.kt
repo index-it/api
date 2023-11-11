@@ -42,7 +42,7 @@ fun main() {
      * Initialize objects
      * If objects aren't called they initialize lazily which can lead to a false positive ready state
      */
-    MongoClient.init()
+    // MongoClient.init()
     PostgresClient.createTables()
     RedisClient
     RabbitMqClient
