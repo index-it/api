@@ -2,6 +2,8 @@ package app.index_it.api.plugins
 
 import app.index_it.Env
 import app.index_it.core.logic.PasswordEncoder
+import app.index_it.core.logic.typedId.impl.IxId
+import app.index_it.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.UserAuthSessionDto
@@ -17,7 +19,6 @@ import io.ktor.util.date.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
 import org.litote.kmongo.Id
-import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 /**
  * Available authentication methods for api routes
@@ -31,12 +32,12 @@ object AuthenticationMethods {
 /**
  * Used to store the Id in the email verification routes (that cannot use proper session authentication)
  */
-data class UserIdPrincipalForEmailVerificationAuth(val id: Id<UserDto>) : Principal
+data class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserDto>) : Principal
 
 /**
  * Gets the Id of a UserDto from the auth-user-session UserSessionDto
  */
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): Id<UserDto>? = call.principal<UserAuthSessionDto>()?.userId
+fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserDto>? = call.principal<UserAuthSessionDto>()?.userId
 
 fun Application.configureSecurity() {
 

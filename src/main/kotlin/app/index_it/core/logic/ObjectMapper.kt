@@ -1,8 +1,8 @@
 package app.index_it.core.logic
 
+import app.index_it.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 object ObjectMapper {
     val json = Json {
