@@ -1,5 +1,10 @@
 package app.index_it.data.sources.db.schemas.suggestions
 
+import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionTable.description
+import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionTable.id
+import app.index_it.data.sources.db.schemas.suggestions.NameTable.id
+import app.index_it.data.sources.db.schemas.suggestions.NameTable.name
+import app.index_it.data.sources.db.schemas.suggestions.NameTable.suggestion
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

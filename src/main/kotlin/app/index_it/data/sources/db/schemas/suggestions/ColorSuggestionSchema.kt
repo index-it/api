@@ -1,5 +1,10 @@
 package app.index_it.data.sources.db.schemas.suggestions
 
+import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionTable.description
+import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionTable.id
+import app.index_it.data.sources.db.schemas.suggestions.ColorTable.color
+import app.index_it.data.sources.db.schemas.suggestions.ColorTable.id
+import app.index_it.data.sources.db.schemas.suggestions.ColorTable.suggestion
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

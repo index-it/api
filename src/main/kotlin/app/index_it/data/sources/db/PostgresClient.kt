@@ -1,7 +1,6 @@
 package app.index_it.data.sources.db
 
 import app.index_it.Env
-import app.index_it.data.sources.db.schemas.web.NotifyTable
 import app.index_it.data.sources.db.schemas.lists.CategoryTable
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable
 import app.index_it.data.sources.db.schemas.lists.ItemTable
@@ -14,6 +13,7 @@ import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable
 import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.web.NotifyTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction

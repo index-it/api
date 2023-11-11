@@ -3,10 +3,7 @@ package app.index_it.data.models.lists
 import app.index_it.core.logic.RegexPatterns
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
-import app.index_it.data.sources.db.schemas.lists.CategoryEntity
-import app.index_it.data.sources.db.schemas.lists.ListTable
-import app.index_it.data.sources.db.toEntityId
-import app.index_it.data.sources.db.toIxId
+import app.index_it.data.models.user.UserDto
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -22,7 +19,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CategoryDto(
     @Contextual @SerialName("_id") val id: IxId<CategoryDto>,
-    // @Contextual val userId: IxId<UserDto>,
+    @Contextual val userId: IxId<UserDto>,
     @Contextual val listId: IxId<ListDto>,
     var name: String,
     var color: String // Represented as #010101 hex color
@@ -65,16 +62,3 @@ data class CategoryDto(
         val color: String
     )
 }
-
-fun CategoryEntity.fromDto(categoryDto: CategoryDto) {
-    list = categoryDto.listId.toEntityId(ListTable)
-    name = categoryDto.name
-    color = categoryDto.color
-}
-
-fun CategoryEntity.toDto() = CategoryDto(
-    id = id.toIxId(),
-    listId = list.toIxId(),
-    name = name,
-    color = color
-)

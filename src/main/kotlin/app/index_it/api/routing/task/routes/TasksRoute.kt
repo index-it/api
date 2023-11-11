@@ -3,11 +3,8 @@ package app.index_it.api.routing.task.routes
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.core.extentions.toObjectId
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
-import app.index_it.data.models.lists.ItemDto
-import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
@@ -97,15 +94,13 @@ fun Route.tasksRoute() {
         }
     }) {
         val userId = userIdFromSession() ?: throw AuthenticationException()
-        val listId = it.listId.toObjectId<ListDto>()
-        val itemId = it.itemId.toObjectId<ItemDto>()
 
-        val item = ItemDao.get(userId, listId, itemId)
+        val item = ItemDao.get(userId, it.itemId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val task = TaskDao.createLinked(userIdFromSession()!!, item)
 
-        ItemDao.setLinking(userId, listId, itemId, task.id)
+        ItemDao.setLinking(userId, item.listId, item.id, task.id)
 
         call.respond(task)
 

@@ -6,7 +6,6 @@ import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
 import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
-import io.ktor.util.date.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 

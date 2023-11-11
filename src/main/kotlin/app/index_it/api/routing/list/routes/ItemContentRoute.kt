@@ -2,7 +2,6 @@ package app.index_it.api.routing.list.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toObjectId
 import app.index_it.data.daos.list.ItemContentDao
 import app.index_it.data.models.lists.ItemContentDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -39,7 +38,7 @@ fun Route.itemContentRoute() {
             }
         }
     }) {
-        val content = ItemContentDao.getOrCreate(userIdFromSession()!!, it.parent.itemId.toObjectId())
+        val content = ItemContentDao.getOrCreate(userIdFromSession()!!, it.parent.itemId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(content)
@@ -74,10 +73,15 @@ fun Route.itemContentRoute() {
         }
     }) {
         val updatedItemContent = call.receive<ItemContentDto.ItemContentCreateOrUpdateRequest>()
+        val userId = userIdFromSession()!!
 
-        val content = ItemContentDao.update(userIdFromSession()!!, it.parent.itemId.toObjectId(), updatedItemContent)
+        val newContent = ItemContentDao.update(userId, it.parent.itemId, updatedItemContent)
+            .takeIf { updated -> updated }
+            ?.let { _ ->
+                ItemContentDao.get(userId, it.parent.itemId)
+            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        call.respond(content)
+        call.respond(newContent)
     }
 }

@@ -6,20 +6,24 @@ import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.tasks.TaskDto
+import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.list.ItemDBI
 import app.index_it.data.sources.db.schemas.lists.CategoryTable
 import app.index_it.data.sources.db.schemas.lists.ItemEntity
 import app.index_it.data.sources.db.schemas.lists.ItemTable
 import app.index_it.data.sources.db.schemas.lists.ListTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
+import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 
 object ItemDBIImpl : ItemDBI {
     private fun ItemEntity.fromDto(itemDto: ItemDto) {
+        user = itemDto.userId.toEntityId(UserTable)
         list = itemDto.listId.toEntityId(ListTable)
         category = itemDto.categoryId.toEntityId(CategoryTable)
         task = itemDto.taskId?.toEntityId(TaskTable)
@@ -32,6 +36,7 @@ object ItemDBIImpl : ItemDBI {
 
     private fun ItemEntity.toDto() = ItemDto(
         id = id.toIxId(),
+        userId = user.toIxId(),
         listId = list.toIxId(),
         categoryId = category.toIxId(),
         taskId = task?.toIxId(),
@@ -42,10 +47,8 @@ object ItemDBIImpl : ItemDBI {
         completedAt = completedAt
     )
 
-    override suspend fun exists(id: IxId<ItemDto>): Boolean = dbQuery {
-        ItemEntity.findById(id.id) != null
-
-    }
+    private fun userFilter(userId: IxId<UserDto>) = Op.build { ItemTable.user eq userId.toEntityId(UserTable) }
+    private fun userAndItemFilter(userId: IxId<UserDto>, itemId: IxId<ItemDto>) = Op.build { (ItemTable.id eq itemId.toEntityId(ItemTable)) and userFilter(userId) }
 
     override suspend fun create(itemDto: ItemDto) {
         dbQuery {
@@ -55,50 +58,54 @@ object ItemDBIImpl : ItemDBI {
         }
     }
 
-    override suspend fun get(id: IxId<ItemDto>): ItemDto? = dbQuery {
-        ItemEntity.findById(id.id)?.toDto()
+    override suspend fun get(userId: IxId<UserDto>, itemId: IxId<ItemDto>): ItemDto? = dbQuery {
+        ItemEntity
+            .find { userAndItemFilter(userId, itemId) }
+            .limit(1)
+            .firstOrNull()
+            ?.toDto()
     }
 
-    override suspend fun getOfCategory(id: IxId<CategoryDto>): List<ItemDto> = dbQuery {
+    override suspend fun exists(userId: IxId<UserDto>, itemId: IxId<ItemDto>): Boolean = dbQuery {
+        get(userId, itemId) != null
+    }
+
+    override suspend fun getOfCategory(userId: IxId<UserDto>, categoryId: IxId<CategoryDto>): List<ItemDto> = dbQuery {
         ItemEntity
-            .find { ItemTable.category eq id.toEntityId(CategoryTable) }
+            .find { userFilter(userId) and (ItemTable.category eq categoryId.toEntityId(CategoryTable)) }
             .map { it.toDto() }
     }
 
-    override suspend fun getOfList(id: IxId<ListDto>): List<ItemDto> = dbQuery {
+    override suspend fun getOfList(userId: IxId<UserDto>, listId: IxId<ListDto>): List<ItemDto> = dbQuery {
         ItemEntity
-            .find { ItemTable.list eq id.toEntityId(ListTable) }
+            .find { userFilter(userId) and (ItemTable.list eq listId.toEntityId(ListTable)) }
             .map { it.toDto() }
     }
 
-    override suspend fun setCompletion(itemId: IxId<ItemDto>, completed: Boolean) {
-        dbQuery {
-            ItemTable.update({ ItemTable.id eq itemId.toEntityId(ItemTable) }) {
-                it[this.completed] = completed
-                it[this.completedAt] = if (completed) currentMillis() else null
-            }
-        }
+    override suspend fun setCompletion(userId: IxId<UserDto>, itemId: IxId<ItemDto>, completed: Boolean): Boolean = dbQuery {
+        ItemTable.update({ userAndItemFilter(userId, itemId) }) {
+            it[this.completed] = completed
+            it[this.completedAt] = if (completed) currentMillis() else null
+        } > 0
     }
 
-    override suspend fun setLinking(itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?) {
-        dbQuery {
-            ItemTable.update({ ItemTable.id eq itemId.toEntityId(ItemTable) }) {
-                it[this.task] = taskId?.toEntityId(TaskTable)
-            }
-        }
+    override suspend fun setLinking(userId: IxId<UserDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): Boolean = dbQuery {
+        ItemTable.update({ userAndItemFilter(userId, itemId) }) {
+            it[this.task] = taskId?.toEntityId(TaskTable)
+        } > 0
     }
 
-    override suspend fun update(id: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto) {
-        ItemTable.update({ ItemTable.id eq id.toEntityId(ItemTable) }) {
+    override suspend fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): Boolean = dbQuery {
+        ItemTable.update({ userAndItemFilter(userId, itemId) }) {
             it[name] = itemUpdateRequestDto.name
             it[category] = itemUpdateRequestDto.categoryId.toEntityId(CategoryTable)
             it[editedAt] = currentMillis()
-        }
+        } > 0
     }
 
-    override suspend fun delete(id: IxId<ItemDto>) {
+    override suspend fun delete(userId: IxId<UserDto>, itemId: IxId<ItemDto>) {
         dbQuery {
-            ItemTable.deleteWhere { ItemTable.id eq id.toEntityId(ItemTable) }
+            ItemTable.deleteWhere { userAndItemFilter(userId, itemId) }
         }
     }
 }

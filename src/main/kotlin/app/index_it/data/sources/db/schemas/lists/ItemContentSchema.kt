@@ -1,5 +1,11 @@
 package app.index_it.data.sources.db.schemas.lists
 
+import app.index_it.data.sources.db.schemas.lists.ItemContentTable.content
+import app.index_it.data.sources.db.schemas.lists.ItemContentTable.id
+import app.index_it.data.sources.db.schemas.lists.ItemContentTable.item
+import app.index_it.data.sources.db.schemas.lists.ItemContentTable.user
+import app.index_it.data.sources.db.schemas.user.UserEntity
+import app.index_it.data.sources.db.schemas.user.UserTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -9,15 +15,21 @@ import java.util.*
 
 /**
  * @property id
+ * @property user
  * @property item
  * @property content
  */
 object ItemContentTable : UUIDTable() {
+    val user = reference(
+        name = "user",
+        foreign = UserTable,
+        onDelete = ReferenceOption.CASCADE
+    ).index()
     val item = reference(
         name = "item",
         foreign = ItemTable,
         onDelete = ReferenceOption.CASCADE
-    )
+    ).index()
     val content = text("content", eagerLoading = true)
 }
 
@@ -30,8 +42,10 @@ object ItemContentTable : UUIDTable() {
 class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ItemContentEntity>(ItemContentTable)
 
+    var user by ItemContentTable.user
     var item by ItemContentTable.item
     var content by ItemContentTable.content
 
-    var itemEntity by ItemEntity referencedOn ItemContentTable.item
+    val userEntity by UserEntity referencedOn ItemContentTable.user
+    val itemEntity by ItemEntity referencedOn ItemContentTable.item
 }

@@ -2,6 +2,17 @@ package app.index_it.data.sources.db.schemas.tasks
 
 import app.index_it.data.sources.db.schemas.lists.ItemEntity
 import app.index_it.data.sources.db.schemas.lists.ItemTable
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.completed
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.completedAt
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.createdAt
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.description
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.dueDate
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.editedAt
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.id
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.item
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.name
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.priority
+import app.index_it.data.sources.db.schemas.tasks.TaskTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UserTable
 import org.jetbrains.exposed.dao.UUIDEntity
@@ -30,7 +41,11 @@ object TaskTable : UUIDTable() {
         foreign = UserTable,
         onDelete = ReferenceOption.CASCADE
     )
-    val item = reference("item", ItemTable).nullable()
+    val item = reference(
+        name = "item",
+        foreign = ItemTable,
+        onDelete = ReferenceOption.SET_NULL
+    ).nullable()
     val name = varchar("name", 150)
     val description = varchar("description", 500).nullable()
     // subtasks

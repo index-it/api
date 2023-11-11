@@ -1,5 +1,10 @@
 package app.index_it.data.sources.db.schemas.user
 
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable.createdAt
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable.expiresAt
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable.id
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable.token
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable.user
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

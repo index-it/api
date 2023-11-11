@@ -3,9 +3,7 @@ package app.index_it.data.models.tasks
 import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
-import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
-import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.user.UserDto
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
@@ -31,8 +29,8 @@ data class TaskDto(
     @Contextual @SerialName("_id") val id: IxId<TaskDto>,
     @Contextual val userId: IxId<UserDto>,
     @Contextual val itemId: IxId<ItemDto>? = null,
-    @Contextual val categoryId: IxId<CategoryDto>? = null,
-    @Contextual val listId: IxId<ListDto>? = null,
+    // @Contextual val categoryId: IxId<CategoryDto>? = null,
+    // @Contextual val listId: IxId<ListDto>? = null,
     val name: String,
     val description: String? = null,
     val subTasks: MutableList<SubTaskDto> = mutableListOf(),

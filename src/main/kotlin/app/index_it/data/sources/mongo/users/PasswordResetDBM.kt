@@ -1,5 +1,6 @@
 package app.index_it.data.sources.mongo.users
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.mongo.MongoClient

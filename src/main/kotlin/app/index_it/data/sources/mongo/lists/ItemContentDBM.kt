@@ -1,5 +1,6 @@
 package app.index_it.data.sources.mongo.lists
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ItemContentDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.user.UserDto
@@ -46,7 +47,7 @@ object ItemContentDBM {
         col.deleteMany(ItemContentDto::userId eq userId)
     }
 
-    fun deleteAllOfItems(userId: IxId<UserDto>, itemIds: List<Id<ItemDto>>) {
+    fun deleteAllOfItems(userId: IxId<UserDto>, itemIds: List<IxId<ItemDto>>) {
         col.deleteMany(
             and(ItemContentDto::userId eq userId, ItemContentDto::itemId `in` itemIds)
         )

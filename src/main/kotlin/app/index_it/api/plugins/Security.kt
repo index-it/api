@@ -16,10 +16,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.server.sessions.serialization.*
-import io.ktor.util.date.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
-import org.litote.kmongo.Id
 
 /**
  * Available authentication methods for api routes

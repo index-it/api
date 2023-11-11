@@ -1,9 +1,9 @@
 package app.index_it.data.sources.mongo.tasks
 
 import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
-import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.mongo.MongoClient
@@ -47,27 +47,26 @@ object TaskDBM {
         )
     }
 
-    fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, listId: IxId<ListDto>?, categoryId: IxId<CategoryDto>?, itemId: IxId<ItemDto>?): TaskDto? {
+    fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): TaskDto? {
         return col.findOneAndUpdate(
             and(TaskDto::id eq taskId, TaskDto::userId eq userId),
             set(
-                TaskDto::listId setTo listId,
-                TaskDto::categoryId setTo categoryId,
                 TaskDto::itemId setTo itemId
             ),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
 
+    // TODO: remove
+    /*
     fun setCategory(userId: IxId<UserDto>, taskId: IxId<TaskDto>, categoryId: IxId<CategoryDto>): TaskDto? {
         return col.findOneAndUpdate(
             and(TaskDto::id eq taskId, TaskDto::userId eq userId),
-            set(
-                TaskDto::categoryId setTo categoryId,
-            ),
+            set(),
             FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         )
     }
+     */
 
     fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
         val properties: MutableList<SetTo<Any?>> = mutableListOf()

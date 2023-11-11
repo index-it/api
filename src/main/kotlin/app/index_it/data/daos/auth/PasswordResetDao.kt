@@ -6,15 +6,7 @@ import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
-import app.index_it.data.models.user.fromDto
-import app.index_it.data.models.user.toDto
 import app.index_it.data.sources.db.dbi.user.impl.PasswordResetDBIImpl
-import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
-import app.index_it.data.sources.db.schemas.user.PasswordResetTable
-import app.index_it.data.sources.db.schemas.user.UserTable
-import app.index_it.data.sources.db.toEntityId
-import io.ktor.util.date.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object PasswordResetDao {
     private suspend fun save(passwordResetDto: PasswordResetDto) =

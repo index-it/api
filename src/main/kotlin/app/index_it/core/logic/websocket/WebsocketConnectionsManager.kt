@@ -1,11 +1,11 @@
 package app.index_it.core.logic.websocket
 
+import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.auth.UserAuthSessionDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.models.websocket.WebsocketConnection
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.websocket.*
-import org.litote.kmongo.Id
 import java.util.*
 
 private val log = KotlinLogging.logger {  }
@@ -17,7 +17,7 @@ object WebsocketConnectionsManager {
         log.debug { "Handling new websocket connection: $websocketConnection" }
     }
 
-    fun getConnectionsOfUserExcludingSession(userId: Id<UserDto>, excludedSessionId: Id<UserAuthSessionDto>): List<WebsocketConnection> {
+    fun getConnectionsOfUserExcludingSession(userId: IxId<UserDto>, excludedSessionId: IxId<UserAuthSessionDto>): List<WebsocketConnection> {
         return connections.filter { it.userId == userId && it.sessionId != excludedSessionId }
     }
 
@@ -26,7 +26,7 @@ object WebsocketConnectionsManager {
         log.debug { "Not handling the following websocket connection anymore: $websocketConnection" }
     }
 
-    suspend fun closeConnection(sessionId: Id<UserAuthSessionDto>) {
+    suspend fun closeConnection(sessionId: IxId<UserAuthSessionDto>) {
         connections.find { it.sessionId == sessionId }?.also {
             it.websocketSession.close(CloseReason(CloseReason.Codes.NORMAL, "Session closed"))
             log.debug { "Closed websocket session: $it" }
@@ -34,7 +34,7 @@ object WebsocketConnectionsManager {
         }
     }
 
-    suspend fun closeAllSessionsOfUser(userId: Id<UserDto>) {
+    suspend fun closeAllSessionsOfUser(userId: IxId<UserDto>) {
         connections
             .filter { it.userId == userId }
             .onEach {

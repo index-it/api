@@ -1,6 +1,12 @@
 package app.index_it.data.sources.db.schemas.user
 
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.db.schemas.user.UserTable.createdAt
+import app.index_it.data.sources.db.schemas.user.UserTable.creationSource
+import app.index_it.data.sources.db.schemas.user.UserTable.email
+import app.index_it.data.sources.db.schemas.user.UserTable.emailVerified
+import app.index_it.data.sources.db.schemas.user.UserTable.id
+import app.index_it.data.sources.db.schemas.user.UserTable.passwordHash
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

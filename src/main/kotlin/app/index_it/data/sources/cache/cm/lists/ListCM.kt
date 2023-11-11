@@ -3,8 +3,9 @@ package app.index_it.data.sources.cache.cm.lists
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.cache.core.DoubleHashedCM
 
-object ListCM: app.index_it.data.sources.cache.core.DoubleHashedCM("lists") {
+object ListCM: DoubleHashedCM("lists") {
     fun getAll(userId: IxId<UserDto>): List<ListDto> = getAll(userId.toString())
 
     fun get(userId: IxId<UserDto>, listId: IxId<ListDto>): ListDto? = get(userId.toString(), listId.toString())

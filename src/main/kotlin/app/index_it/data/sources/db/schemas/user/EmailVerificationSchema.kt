@@ -1,5 +1,10 @@
 package app.index_it.data.sources.db.schemas.user
 
+import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.createdAt
+import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.expiresAt
+import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.id
+import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.token
+import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.user
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

@@ -1,7 +1,6 @@
 package app.index_it.data.sources.db.dbi
 
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 interface DBI {

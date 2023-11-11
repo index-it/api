@@ -3,9 +3,6 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toObjectId
-import app.index_it.data.daos.list.ItemContentDao
-import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.list.ListDao
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
@@ -39,7 +36,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        val list = ListDao.get(userIdFromSession()!!, it.listId.toObjectId())
+        val list = ListDao.get(userIdFromSession()!!, it.listId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)
@@ -73,9 +70,16 @@ fun Route.listRoute() {
         }
     }) {
         val updatedList = call.receive<ListDto.ListUpdateRequestDto>()
-        val list = ListDao.update(userIdFromSession()!!, it.listId.toObjectId(), updatedList)
+        val userId = userIdFromSession()!!
+
+        val newList = ListDao.update(userId, it.listId, updatedList)
+            .takeIf { updated -> updated }
+            ?.let {  _ ->
+                ListDao.get(userId, it.listId)
+            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
-        call.respond(list)
+
+        call.respond(newList)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_UPDATED, it.listId)
     }
@@ -97,14 +101,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        val items = ItemDao.getAll(userIdFromSession()!!, it.listId.toObjectId())
-        ItemContentDao.deleteAllOfItems(userIdFromSession()!!, items.map { item -> item.id })
-
-        ItemDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
-
-        app.index_it.data.daos.list.CategoryDao.deleteAllOfList(userIdFromSession()!!, it.listId.toObjectId())
-
-        ListDao.delete(userIdFromSession()!!, it.listId.toObjectId())
+        ListDao.delete(userIdFromSession()!!, it.listId)
 
         call.respond(HttpStatusCode.OK)
 

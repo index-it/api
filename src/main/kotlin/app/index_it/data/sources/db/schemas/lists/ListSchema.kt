@@ -1,5 +1,12 @@
 package app.index_it.data.sources.db.schemas.lists
 
+import app.index_it.data.sources.db.schemas.lists.ListTable.color
+import app.index_it.data.sources.db.schemas.lists.ListTable.createdAt
+import app.index_it.data.sources.db.schemas.lists.ListTable.editedAt
+import app.index_it.data.sources.db.schemas.lists.ListTable.emoji
+import app.index_it.data.sources.db.schemas.lists.ListTable.id
+import app.index_it.data.sources.db.schemas.lists.ListTable.name
+import app.index_it.data.sources.db.schemas.lists.ListTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UserTable
 import org.jetbrains.exposed.dao.UUIDEntity

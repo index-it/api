@@ -5,8 +5,8 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.PasswordResetDBI
-import app.index_it.data.sources.db.schemas.user.PasswordResetTable
 import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
+import app.index_it.data.sources.db.schemas.user.PasswordResetTable
 import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId

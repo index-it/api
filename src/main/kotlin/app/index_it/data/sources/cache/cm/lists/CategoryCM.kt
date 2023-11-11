@@ -4,8 +4,9 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.cache.core.DoubleHashedCM
 
-object CategoryCM: app.index_it.data.sources.cache.core.DoubleHashedCM("categories") {
+object CategoryCM: DoubleHashedCM("categories") {
     private fun keyValue(userId: IxId<UserDto>, listId: IxId<ListDto>) = "${userId}:${listId}"
 
     fun getAll(userId: IxId<UserDto>, listId: IxId<ListDto>): List<CategoryDto> = getAll(keyValue(userId, listId))
@@ -25,7 +26,7 @@ object CategoryCM: app.index_it.data.sources.cache.core.DoubleHashedCM("categori
     }
 
     @Suppress("UNUSED")
-    fun deleteMultiple(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryIds: List<Id<CategoryDto>>) {
+    fun deleteMultiple(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryIds: List<IxId<CategoryDto>>) {
         deleteMultiple(keyValue(userId, listId), *categoryIds.map { it.toString() }.toTypedArray())
     }
 

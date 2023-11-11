@@ -1,6 +1,6 @@
 package app.index_it.data.sources.mongo.suggestions
 
-import app.index_it.core.logic.typedId.impl.IxId
+import app.index_it.core.logic.typedId.impl.IxIntId
 import app.index_it.data.models.suggestions.ColorSuggestionsDto
 import app.index_it.data.sources.mongo.MongoClient
 import org.litote.kmongo.eq
@@ -10,7 +10,7 @@ import org.litote.kmongo.getCollection
 object SuggestionColors {
     private val col = MongoClient.database.getCollection<ColorSuggestionsDto>("suggestion-colors")
 
-    fun get(id: IxId<ColorSuggestionsDto>): ColorSuggestionsDto? {
+    fun get(id: IxIntId<ColorSuggestionsDto>): ColorSuggestionsDto? {
         return col.findOne(ColorSuggestionsDto::id eq id)
     }
 }

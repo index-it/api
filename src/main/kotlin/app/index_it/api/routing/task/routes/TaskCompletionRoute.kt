@@ -2,7 +2,6 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
-import app.index_it.core.extentions.toObjectId
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
 import app.index_it.data.models.tasks.TaskDto
@@ -39,13 +38,20 @@ fun Route.taskCompletionRoute() {
         }
     }) {
         val userId = userIdFromSession()!!
-        val task = TaskDao.setCompletion(userId, it.parent.taskId.toObjectId(), it.completed)
+        val updatedTask = TaskDao.setCompletion(userId, it.parent.taskId, it.completed)
+            .takeIf { updated -> updated }
+            ?.let {  _ ->
+                TaskDao.get(userId, it.parent.taskId)
+            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (task.listId != null && task.itemId != null) {
-            ItemDao.setCompletion(userId, task.listId, task.itemId, it.completed)
+        if (updatedTask.itemId != null) {
+            ItemDao.get(userId, updatedTask.itemId)
+                ?.also { linkedItem ->
+                    ItemDao.setCompletion(userId, linkedItem.listId, linkedItem.id, it.completed)
+                }
         }
 
-        call.respond(task)
+        call.respond(updatedTask)
     }
 }

@@ -7,14 +7,6 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.impl.EmailVerificationDBIImpl
-import app.index_it.data.sources.db.schemas.user.EmailVerificationEntity
-import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
-import app.index_it.data.sources.db.schemas.user.UserTable
-import app.index_it.data.sources.db.toEntityId
-import io.ktor.util.date.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object EmailVerificationDao {
     private suspend fun save(emailVerificationDto: EmailVerificationDto) =

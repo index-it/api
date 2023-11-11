@@ -2,6 +2,11 @@ package app.index_it.data.daos.user
 
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.cache.cm.lists.CategoryCM
+import app.index_it.data.sources.cache.cm.lists.ItemCM
+import app.index_it.data.sources.cache.cm.lists.ItemContentCM
+import app.index_it.data.sources.cache.cm.lists.ListCM
+import app.index_it.data.sources.cache.cm.tasks.TaskCM
 import app.index_it.data.sources.cache.cm.users.UserCM
 import app.index_it.data.sources.db.dbi.user.impl.UserDBIImpl
 
@@ -47,5 +52,11 @@ object UserDao {
     suspend fun delete(id: IxId<UserDto>) {
         UserCM.delete(id)
         UserDBIImpl.delete(id)
+
+        ListCM.deleteAll(id)
+        CategoryCM.deleteAllOfUser(id)
+        ItemCM.deleteAllOfUser(id)
+        ItemContentCM.deleteAllOfUser(id)
+        TaskCM.deleteAll(id)
     }
 }

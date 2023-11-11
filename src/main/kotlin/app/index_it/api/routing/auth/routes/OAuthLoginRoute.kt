@@ -20,7 +20,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import io.ktor.util.date.*
 
 /**
  * A user can register / sign-in with Google, Facebook and Apple

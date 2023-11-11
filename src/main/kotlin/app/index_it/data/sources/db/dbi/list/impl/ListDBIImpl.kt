@@ -10,7 +10,8 @@ import app.index_it.data.sources.db.schemas.lists.ListTable
 import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 
@@ -34,6 +35,8 @@ object ListDBIImpl : ListDBI {
         editedAt = editedAt
     )
 
+    private fun userAndListFilter(userId: IxId<UserDto>, listId: IxId<ListDto>) = Op.build { (ListTable.id eq listId.toEntityId(ListTable)) and (ListTable.user eq userId.toEntityId(UserTable)) }
+
     override suspend fun create(listDto: ListDto) {
         dbQuery {
             ListEntity.new(listDto.id.id) {
@@ -48,24 +51,26 @@ object ListDBIImpl : ListDBI {
             .map { it.toDto() }
     }
 
-    override suspend fun get(id: IxId<ListDto>): ListDto? = dbQuery {
-        ListEntity.findById(id.id)?.toDto()
+    override suspend fun get(userId: IxId<UserDto>, listId: IxId<ListDto>): ListDto? = dbQuery {
+        ListEntity
+            .find { userAndListFilter(userId, listId) }
+            .limit(1)
+            .firstOrNull()
+            ?.toDto()
     }
 
-    override suspend fun update(id: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto) {
-        dbQuery {
-            ListTable.update({ ListTable.id eq id.toEntityId(ListTable) }) {
-                it[name] = listUpdateRequestDto.name
-                it[emoji] = listUpdateRequestDto.icon.first()
-                it[color] = listUpdateRequestDto.color
-                it[editedAt] = currentMillis()
-            }
-        }
+    override suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): Boolean = dbQuery {
+        ListTable.update({ userAndListFilter(userId, listId) }) {
+            it[name] = listUpdateRequestDto.name
+            it[emoji] = listUpdateRequestDto.icon.first()
+            it[color] = listUpdateRequestDto.color
+            it[editedAt] = currentMillis()
+        } > 0
     }
 
-    override suspend fun delete(id: IxId<ListDto>) {
+    override suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>) {
         dbQuery {
-            ListTable.deleteWhere { ListTable.id eq id.toEntityId(ListTable) }
+            ListTable.deleteWhere { userAndListFilter(userId, listId) }
         }
     }
 

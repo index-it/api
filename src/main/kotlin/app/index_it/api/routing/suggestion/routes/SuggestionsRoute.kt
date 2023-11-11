@@ -1,6 +1,7 @@
 package app.index_it.api.routing.suggestion.routes
 
 import app.index_it.api.routing.suggestion.SuggestionRoutes
+import app.index_it.core.logic.typedId.newIxIntId
 import app.index_it.data.daos.suggestions.SuggestionsDao
 import app.index_it.data.models.suggestions.ColorSuggestionsDto
 import app.index_it.data.models.suggestions.NameSuggestionsDto
@@ -24,6 +25,7 @@ fun Route.suggestionsRoute() {
     }) {
         val colors = SuggestionsDao.getColors()
             ?: ColorSuggestionsDto(
+                id = newIxIntId(),
                 description = "colors are missing",
                 colors = listOf("#000000", "#FFFFFF")
             )
@@ -44,6 +46,7 @@ fun Route.suggestionsRoute() {
     }) {
         val names = SuggestionsDao.getListNames()
             ?: NameSuggestionsDto(
+                id = newIxIntId(),
                 description = "names are missing",
                 names = listOf("Vacations")
             )
@@ -64,6 +67,7 @@ fun Route.suggestionsRoute() {
     }) {
         val names = SuggestionsDao.getCategoryNames()
             ?: NameSuggestionsDto(
+                id = newIxIntId(),
                 description = "names are missing",
                 names = listOf("Planned", "In progress", "Completed")
             )
@@ -84,6 +88,7 @@ fun Route.suggestionsRoute() {
     }) {
         val names = SuggestionsDao.getItemNames()
             ?: NameSuggestionsDto(
+                id = newIxIntId(),
                 description = "names are missing",
                 names = listOf("Bungee jumping", "Visit Prague")
             )
@@ -104,6 +109,7 @@ fun Route.suggestionsRoute() {
     }) {
         val names = SuggestionsDao.getTaskNames()
                 ?: NameSuggestionsDto(
+                    id = newIxIntId(),
                     description = "names are missing",
                     names = listOf("Bungee jumping", "Visit Prague")
                 )

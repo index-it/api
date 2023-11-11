@@ -3,9 +3,7 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toObjectId
-import app.index_it.data.daos.list.ItemContentDao
-import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.daos.list.CategoryDao
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -42,7 +40,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val category = app.index_it.data.daos.list.CategoryDao.get(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        val category = CategoryDao.get(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -80,13 +78,18 @@ fun Route.categoryRoute() {
         }
     }) {
         val updatedCategory = call.receive<CategoryDto.CategoryUpdateRequestDto>()
+        val userId = userIdFromSession()!!
 
-        val category = app.index_it.data.daos.list.CategoryDao.update(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId(), updatedCategory)
+        val newCategory = CategoryDao.update(userId, it.parent.parent.listId, it.categoryId, updatedCategory)
+            .takeIf { updated -> updated }
+            ?.let { _ ->
+                CategoryDao.get(userId, it.parent.parent.listId, it.categoryId)
+            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        call.respond(category)
+        call.respond(newCategory)
 
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_UPDATED, category)
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_UPDATED, newCategory)
     }
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
@@ -110,12 +113,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val itemsOfCategory = ItemDao.getAllOfCategory(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
-        ItemContentDao.deleteAllOfItems(userIdFromSession()!!, itemsOfCategory.map { item -> item.id })
-
-        ItemDao.deleteAllOfCategory(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
-
-        val list = app.index_it.data.daos.list.CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.categoryId.toObjectId())
+        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
 
         call.respond(HttpStatusCode.OK)
 

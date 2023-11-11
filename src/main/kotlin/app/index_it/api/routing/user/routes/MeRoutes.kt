@@ -4,8 +4,7 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.user.MeRoute
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.data.daos.list.ItemDao
-import app.index_it.data.daos.list.ListDao
+import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.RegistrationCredentials
 import app.index_it.data.models.auth.UserSessionCookie
@@ -54,17 +53,13 @@ fun Route.meRoutes() {
         }
     }) {
         val userId = userIdFromSession()!!
-
         call.sessions.clear<UserSessionCookie>()
 
         UserDao.delete(userId)
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
-        app.index_it.data.daos.auth.UserSessionDao.deleteAllSessionsOfUser(userId)
+        UserSessionDao.deleteAllSessionsOfUser(userId)
 
-        ListDao.deleteAll(userId)
-        app.index_it.data.daos.list.CategoryDao.deleteAllOfUser(userId)
-        ItemDao.deleteAllOfUser(userId)
-        // TODO: Delete planner data
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
+
         call.respond(HttpStatusCode.OK)
     }
 }

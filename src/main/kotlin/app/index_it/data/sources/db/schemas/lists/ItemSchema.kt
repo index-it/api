@@ -1,7 +1,18 @@
 package app.index_it.data.sources.db.schemas.lists
 
+import app.index_it.data.sources.db.schemas.lists.ItemTable.category
+import app.index_it.data.sources.db.schemas.lists.ItemTable.completed
+import app.index_it.data.sources.db.schemas.lists.ItemTable.completedAt
+import app.index_it.data.sources.db.schemas.lists.ItemTable.createdAt
+import app.index_it.data.sources.db.schemas.lists.ItemTable.editedAt
+import app.index_it.data.sources.db.schemas.lists.ItemTable.id
+import app.index_it.data.sources.db.schemas.lists.ItemTable.list
+import app.index_it.data.sources.db.schemas.lists.ItemTable.name
+import app.index_it.data.sources.db.schemas.lists.ItemTable.task
 import app.index_it.data.sources.db.schemas.tasks.TaskEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
+import app.index_it.data.sources.db.schemas.user.UserEntity
+import app.index_it.data.sources.db.schemas.user.UserTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -21,7 +32,11 @@ import java.util.*
  * @property completedAt
  */
 object ItemTable : UUIDTable() {
-    // val user = reference("user", UserTable).index()
+    val user = reference(
+        name = "user",
+        foreign = UserTable,
+        onDelete = ReferenceOption.CASCADE
+    ).index()
     val list = reference(
         name = "list",
         foreign = ListTable,
@@ -31,8 +46,12 @@ object ItemTable : UUIDTable() {
         name = "category",
         foreign = CategoryTable,
         onDelete = ReferenceOption.CASCADE
-    )
-    val task = reference("task", TaskTable).nullable()
+    ).index()
+    val task = reference(
+        name = "task",
+        foreign = TaskTable,
+        onDelete = ReferenceOption.SET_NULL
+    ).nullable()
     val name = varchar("name", 150)
     val completed = bool("completed")
     val createdAt = long("created_at")
@@ -57,7 +76,7 @@ object ItemTable : UUIDTable() {
 class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ItemEntity>(ItemTable)
 
-    // val user by UserEntity referencedOn ItemTable.user
+    var user by ItemTable.user
     var list by ItemTable.list
     var category by ItemTable.category
     var task by ItemTable.task
@@ -67,7 +86,8 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var editedAt by ItemTable.editedAt
     var completedAt by ItemTable.completedAt
 
+    val userEntity by UserEntity referencedOn ItemTable.user
     val listEntity by ListEntity referencedOn ItemTable.list
     val categoryEntity by CategoryEntity referencedOn ItemTable.category
-    val taskEntity by TaskEntity referencedOn ItemTable.task
+    val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }

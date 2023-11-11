@@ -1,6 +1,7 @@
 package app.index_it.api.routing.web
 
-import app.index_it.data.sources.mongo.users.NotifyDBM
+import app.index_it.data.models.web.NotifyDto
+import app.index_it.data.sources.db.dbi.user.impl.NotifyDBIImpl
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.resources.*
@@ -28,7 +29,7 @@ fun Route.webRoutes() {
             }
         }
     }) {
-        NotifyDBM.notify(it.email)
+        NotifyDBIImpl.save(NotifyDto(it.email))
 
         call.respond(HttpStatusCode.OK)
     }

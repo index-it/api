@@ -2,12 +2,8 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
-import app.index_it.core.extentions.toObjectId
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
-import app.index_it.data.models.lists.CategoryDto
-import app.index_it.data.models.lists.ItemDto
-import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
@@ -50,32 +46,40 @@ fun Route.taskLinkingRoute() {
         }
     }) {
         val userId = userIdFromSession()!!
-        val taskId = it.parent.taskId.toObjectId<TaskDto>()
-        val listId = it.listId?.toObjectId<ListDto>()
-        val categoryId = it.categoryId?.toObjectId<CategoryDto>()
-        val itemId = it.itemId?.toObjectId<ItemDto>()
+        val taskId = it.parent.taskId
+        val itemId = it.itemId
 
-        val originalTask = TaskDao.get(userId, taskId)
+        val task = TaskDao.get(userId, taskId)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         // if statement for small performance check
         // checks if an update is actually needed, if the values are equal it doesn't perform the if code
-        if (originalTask.listId != listId || originalTask.itemId != itemId) {
+        if (task.itemId != itemId) {
+            val originalLinkedItem = task.itemId?.let { originalItemId -> ItemDao.get(userId, originalItemId) }
+
             // unlinks the old item if existing
-            if (originalTask.listId != null && originalTask.itemId != null) {
-                ItemDao.setLinking(userId, originalTask.listId, originalTask.itemId, null)
+            if (originalLinkedItem != null) {
+                ItemDao.setLinking(userId, originalLinkedItem.listId, originalLinkedItem.id, null)
             }
 
             // links the new item if required
-            if (listId != null && itemId != null) {
-                ItemDao.setLinking(userId, listId, itemId, taskId)
+            if (itemId != null) {
+                val newLinkedItem = ItemDao.get(userId, itemId)
+                    ?: return@put call.respond(HttpStatusCode.NotFound)
+
+                ItemDao.setLinking(userId, newLinkedItem.listId, newLinkedItem.id, taskId)
+                    .takeIf { updated -> updated }
                     ?: return@put call.respond(HttpStatusCode.NotFound)
             }
         }
 
-        val task = TaskDao.setLinking(userId, it.parent.taskId.toObjectId(), listId, categoryId, itemId)
+        val updatedTask = TaskDao.setLinking(userId, it.parent.taskId, itemId)
+            .takeIf { updated -> updated }
+            ?.let {
+                TaskDao.get(userId, taskId)
+            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        call.respond(task)
+        call.respond(updatedTask)
     }
 }

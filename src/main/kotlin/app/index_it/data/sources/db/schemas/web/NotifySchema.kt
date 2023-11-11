@@ -1,5 +1,7 @@
 package app.index_it.data.sources.db.schemas.web
 
+import app.index_it.data.sources.db.schemas.web.NotifyTable.email
+import app.index_it.data.sources.db.schemas.web.NotifyTable.id
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
