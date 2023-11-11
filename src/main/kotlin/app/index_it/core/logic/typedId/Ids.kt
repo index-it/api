@@ -1,6 +1,9 @@
 package app.index_it.core.logic.typedId
 
 import app.index_it.core.logic.typedId.impl.IxId
+import app.index_it.core.logic.typedId.impl.IxIntId
 import java.util.*
 
+fun <T> String.toIxId() = IxId<T>(this)
+fun <T> Int.toIxIntId() = IxIntId<T>(this)
 fun <T> newIxId() = IxId<T>(UUID.randomUUID())
