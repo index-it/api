@@ -10,6 +10,6 @@ interface CategoryDBI : DBI {
     suspend fun create(categoryDto: CategoryDto)
     suspend fun get(categoryId: IxId<CategoryDto>): CategoryDto?
     suspend fun getOfList(listId: IxId<ListDto>): List<CategoryDto>
-    suspend fun update(categoryId: IxId<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto?
+    suspend fun update(categoryId: IxId<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto)
     suspend fun delete(categoryId: IxId<CategoryDto>)
 }

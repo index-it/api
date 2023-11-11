@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemDto(
     @Contextual @SerialName("_id") val id: IxId<ItemDto>,
-    @Contextual val userId: IxId<UserDto>,
+    // @Contextual val userId: IxId<UserDto>,
     @Contextual val listId: IxId<ListDto>,
     @Contextual val categoryId: IxId<CategoryDto>,
     @Contextual val taskId: IxId<TaskDto>? = null,

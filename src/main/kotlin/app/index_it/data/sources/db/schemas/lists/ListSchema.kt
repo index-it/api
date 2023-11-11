@@ -44,12 +44,12 @@ object ListTable : UUIDTable() {
 class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ListEntity>(ListTable)
 
-    val user by ListTable.user
-    val name by ListTable.name
-    val emoji by ListTable.emoji
-    val color by ListTable.color
-    val createdAt by ListTable.createdAt
-    val editedAt by ListTable.editedAt
+    var user by ListTable.user
+    var name by ListTable.name
+    var emoji by ListTable.emoji
+    var color by ListTable.color
+    var createdAt by ListTable.createdAt
+    var editedAt by ListTable.editedAt
 
     val userEntity by UserEntity referencedOn ListTable.user
 }

@@ -13,8 +13,8 @@ interface ItemDBI : DBI {
     suspend fun get(id: IxId<ItemDto>): ItemDto?
     suspend fun getOfCategory(id: IxId<CategoryDto>): List<ItemDto>
     suspend fun getOfList(id: IxId<ListDto>): List<ItemDto>
-    suspend fun setCompletion(itemId: IxId<ItemDto>, completed: Boolean): ItemDto?
-    suspend fun setLinking(itemId: IxId<ItemDto>, taskId: IxId<TaskDto>): ItemDto?
-    suspend fun update(id: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto?
+    suspend fun setCompletion(itemId: IxId<ItemDto>, completed: Boolean)
+    suspend fun setLinking(itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?)
+    suspend fun update(id: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto)
     suspend fun delete(id: IxId<ItemDto>)
 }

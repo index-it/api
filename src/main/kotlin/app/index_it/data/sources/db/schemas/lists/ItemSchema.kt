@@ -32,7 +32,7 @@ object ItemTable : UUIDTable() {
         foreign = CategoryTable,
         onDelete = ReferenceOption.CASCADE
     )
-    val task = reference("task", TaskTable)
+    val task = reference("task", TaskTable).nullable()
     val name = varchar("name", 150)
     val completed = bool("completed")
     val createdAt = long("created_at")
@@ -58,14 +58,14 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ItemEntity>(ItemTable)
 
     // val user by UserEntity referencedOn ItemTable.user
-    val list by ItemTable.list
-    val category by ItemTable.category
-    val task by ItemTable.task
-    val name by ItemTable.name
-    val completed by ItemTable.completed
-    val createdAt by ItemTable.createdAt
-    val editedAt by ItemTable.editedAt
-    val completedAt by ItemTable.completedAt
+    var list by ItemTable.list
+    var category by ItemTable.category
+    var task by ItemTable.task
+    var name by ItemTable.name
+    var completed by ItemTable.completed
+    var createdAt by ItemTable.createdAt
+    var editedAt by ItemTable.editedAt
+    var completedAt by ItemTable.completedAt
 
     val listEntity by ListEntity referencedOn ItemTable.list
     val categoryEntity by CategoryEntity referencedOn ItemTable.category
