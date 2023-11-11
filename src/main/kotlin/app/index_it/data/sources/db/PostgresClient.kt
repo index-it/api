@@ -9,6 +9,7 @@ import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionTable
 import app.index_it.data.sources.db.schemas.suggestions.ColorTable
 import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionTable
 import app.index_it.data.sources.db.schemas.suggestions.NameTable
+import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable
@@ -45,7 +46,8 @@ object PostgresClient {
                 ItemTable,
                 ItemContentTable,
 
-                TaskTable
+                TaskTable,
+                SubTaskTable
             )
         }
     }

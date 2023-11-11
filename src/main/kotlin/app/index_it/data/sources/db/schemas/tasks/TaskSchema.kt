@@ -86,6 +86,7 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var editedAt by TaskTable.editedAt
     var completedAt by TaskTable.completedAt
 
+    val subTasks by SubTaskEntity referrersOn SubTaskTable.task
     val userEntity by UserEntity referencedOn TaskTable.user
     val itemEntity by ItemEntity optionalReferencedOn TaskTable.item
 }

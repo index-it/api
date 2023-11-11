@@ -13,7 +13,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Represents a task, kind of like a TODO entry
+ * Represents a task, kind of like a to-do
  *
  * @param id
  * @param userId
@@ -33,7 +33,7 @@ data class TaskDto(
     // @Contextual val listId: IxId<ListDto>? = null,
     val name: String,
     val description: String? = null,
-    val subTasks: MutableList<SubTaskDto> = mutableListOf(),
+    val subTasks: List<SubTaskDto> = emptyList(),
     val dueDate: Long? = null,
     val completed: Boolean = false,
     val priority: Int? = null,
@@ -49,7 +49,7 @@ data class TaskDto(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
-        val subTasks: MutableList<SubTaskDto> = mutableListOf(),
+        val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null
     ): Validatable<TaskCreateRequestDto> {
         override fun validate() = Validation {
@@ -69,7 +69,7 @@ data class TaskDto(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
-        val subTasks: MutableList<SubTaskDto> = mutableListOf(),
+        val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null,
     ): Validatable<TaskUpdateRequestDto> {
         override fun validate() = Validation {

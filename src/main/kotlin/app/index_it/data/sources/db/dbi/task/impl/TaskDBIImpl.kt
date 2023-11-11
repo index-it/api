@@ -3,19 +3,20 @@ package app.index_it.data.sources.db.dbi.task.impl
 import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ItemDto
+import app.index_it.data.models.tasks.SubTaskDto
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.task.TaskDBI
 import app.index_it.data.sources.db.schemas.lists.ItemTable
+import app.index_it.data.sources.db.schemas.tasks.SubTaskEntity
+import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
 import app.index_it.data.sources.db.schemas.tasks.TaskEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object TaskDBIImpl : TaskDBI {
     private fun TaskEntity.fromDto(taskDto: TaskDto) {
@@ -42,7 +43,20 @@ object TaskDBIImpl : TaskDBI {
         priority = priority,
         createdAt = createdAt,
         editedAt = editedAt,
-        completedAt = completedAt
+        completedAt = completedAt,
+        subTasks = subTasks.map { it.toDto() }
+    )
+
+    /*
+    private fun SubTaskEntity.fromDto(subTaskDto: SubTaskDto) {
+        name = subTaskDto.name
+        completed = subTaskDto.completed
+    }
+     */
+
+    private fun SubTaskEntity.toDto() = SubTaskDto(
+        name = name,
+        completed = completed
     )
 
     private fun userAndTaskFilter(userId: IxId<UserDto>, taskId: IxId<TaskDto>) = Op.build { (TaskTable.user eq userId.toEntityId(UserTable)) and (TaskTable.id eq taskId.toEntityId(TaskTable)) }
@@ -55,6 +69,12 @@ object TaskDBIImpl : TaskDBI {
         dbQuery {
             TaskEntity.new(taskDto.id.id) {
                 fromDto(taskDto)
+            }
+
+            SubTaskTable.batchInsert(taskDto.subTasks) {
+                this[SubTaskTable.task] = taskDto.id.toEntityId(TaskTable)
+                this[SubTaskTable.name] = it.name
+                this[SubTaskTable.completed] = it.completed
             }
         }
     }
@@ -88,6 +108,13 @@ object TaskDBIImpl : TaskDBI {
 
 
     override suspend fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): Boolean = dbQuery {
+        SubTaskTable.deleteWhere { SubTaskTable.task eq taskId.toEntityId(TaskTable) }
+        SubTaskTable.batchInsert(taskUpdateRequestDto.subTasks) {
+            this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
+            this[SubTaskTable.name] = it.name
+            this[SubTaskTable.completed] = it.completed
+        }
+
         TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
             it[name] = taskUpdateRequestDto.name
             it[description] = taskUpdateRequestDto.description
