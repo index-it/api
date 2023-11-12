@@ -12,27 +12,19 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Route.taskLinkingRoute() {
-    put<TasksRoute.TaskRoute.LinkingRoute>({
+fun Route.taskConnectionRoute() {
+    put<TasksRoute.TaskRoute.ConnectionRoute>({
         tags = listOf("tasks")
-        operationId = "task-linking"
-        summary = "links or un-links a task to an item"
+        operationId = "task-connection"
+        summary = "connects or removes a connection of a task to an item"
         request {
             pathParameter<String>("taskId") {
                 required = true
                 description = "the id of the task"
             }
-            queryParameter<String?>("listId") {
-                required = false
-                description = "id of the list or null for un-linking"
-            }
-            queryParameter<String?>("categoryId") {
-                required = false
-                description = "id of the category or null for un-linking"
-            }
             queryParameter<String?>("itemId") {
                 required = false
-                description = "id of the item or null for un-linking"
+                description = "id of the item or null to remove the connection"
             }
         }
         response {
@@ -41,7 +33,7 @@ fun Route.taskLinkingRoute() {
                 body<TaskDto>()
             }
             HttpStatusCode.NotFound to {
-                description = "task or linked item not found"
+                description = "task or connected item not found"
             }
         }
     }) {
@@ -55,24 +47,24 @@ fun Route.taskLinkingRoute() {
         // if statement for small performance check
         // checks if an update is actually needed, if the values are equal it doesn't perform the if code
         if (task.itemId != itemId) {
-            val originalLinkedItem = task.itemId?.let { originalItemId -> ItemDao.get(userId, originalItemId) }
+            val originalConnectedItem = task.itemId?.let { originalItemId -> ItemDao.get(userId, originalItemId) }
 
             // unlinks the old item if existing
-            if (originalLinkedItem != null) {
-                ItemDao.setLinking(userId, originalLinkedItem.listId, originalLinkedItem.id, null)
+            if (originalConnectedItem != null) {
+                ItemDao.setTaskConnection(userId, originalConnectedItem.listId, originalConnectedItem.id, null)
             }
 
             // links the new item if required
             if (itemId != null) {
-                val newLinkedItem = ItemDao.get(userId, itemId)
+                val newConnectedItem = ItemDao.get(userId, itemId)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
 
-                ItemDao.setLinking(userId, newLinkedItem.listId, newLinkedItem.id, taskId)
+                ItemDao.setTaskConnection(userId, newConnectedItem.listId, newConnectedItem.id, taskId)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
             }
         }
 
-        val updatedTask = TaskDao.setLinking(userId, it.parent.taskId, itemId)
+        val updatedTask = TaskDao.setItemConnection(userId, it.parent.taskId, itemId)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(updatedTask)

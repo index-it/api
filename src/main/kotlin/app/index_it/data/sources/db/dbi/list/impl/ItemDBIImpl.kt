@@ -89,7 +89,7 @@ object ItemDBIImpl : ItemDBI {
         } > 0
     }
 
-    override suspend fun setLinking(userId: IxId<UserDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): Boolean = dbQuery {
+    override suspend fun setTaskConnection(userId: IxId<UserDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): Boolean = dbQuery {
         ItemTable.update({ userAndItemFilter(userId, itemId) }) {
             it[this.task] = taskId?.toEntityId(TaskTable)
         } > 0

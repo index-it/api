@@ -12,7 +12,7 @@ interface TaskDBI : DBI {
     suspend fun get(userId: IxId<UserDto>, taskId: IxId<TaskDto>): TaskDto?
     suspend fun exists(userId: IxId<UserDto>, taskId: IxId<TaskDto>): Boolean
     suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): Boolean
-    suspend fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): Boolean
+    suspend fun setItemConnection(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): Boolean
     suspend fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): Boolean
     suspend fun delete(userId: IxId<UserDto>, taskId: IxId<TaskDto>)
 }

@@ -99,8 +99,8 @@ object ItemDao {
         }
     }
 
-    suspend fun setLinking(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): ItemDto? {
-        val updated = ItemDBIImpl.setLinking(userId, itemId, taskId)
+    suspend fun setTaskConnection(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): ItemDto? {
+        val updated = ItemDBIImpl.setTaskConnection(userId, itemId, taskId)
 
         return if (updated) {
             ItemCM.delete(userId, listId, itemId)

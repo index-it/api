@@ -2,7 +2,7 @@ package app.index_it.api.routing.task
 
 import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.api.routing.task.routes.taskCompletionRoute
-import app.index_it.api.routing.task.routes.taskLinkingRoute
+import app.index_it.api.routing.task.routes.taskConnectionRoute
 import app.index_it.api.routing.task.routes.taskRoute
 import app.index_it.api.routing.task.routes.tasksRoute
 import app.index_it.core.logic.typedId.impl.IxId
@@ -24,7 +24,7 @@ class TasksRoute(val completed: Boolean? = null) {
         class CompletionRoute(val parent: TaskRoute, val completed: Boolean) {}
 
         @Resource("linking")
-        class LinkingRoute(val parent: TaskRoute, @Contextual val itemId: IxId<ItemDto>?) {}
+        class ConnectionRoute(val parent: TaskRoute, @Contextual val itemId: IxId<ItemDto>?) {}
     }
 }
 
@@ -32,7 +32,7 @@ fun Route.taskRoutes() {
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         tasksRoute()
         taskRoute()
-        taskLinkingRoute()
+        taskConnectionRoute()
         taskCompletionRoute()
     }
 }

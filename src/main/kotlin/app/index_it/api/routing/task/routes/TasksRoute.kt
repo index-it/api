@@ -100,7 +100,7 @@ fun Route.tasksRoute() {
 
         val task = TaskDao.createLinked(userIdFromSession()!!, item)
 
-        ItemDao.setLinking(userId, item.listId, item.id, task.id)
+        ItemDao.setTaskConnection(userId, item.listId, item.id, task.id)
 
         call.respond(task)
 
