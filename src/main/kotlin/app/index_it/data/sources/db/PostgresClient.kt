@@ -15,13 +15,17 @@ import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable
 import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.schemas.web.NotifyTable
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+
+private val log = KotlinLogging.logger {  }
 
 object PostgresClient {
     private val database = Database.connect(
@@ -45,11 +49,12 @@ object PostgresClient {
 
     suspend fun init() {
         createTables()
+        runMigrations()
         setupColorSuggestions()
         setupListNameSuggestions()
         setupCategoryNameSuggestions()
         setupItemNameSuggestions()
-        setupItemNameSuggestions()
+        setupTaskNameSuggestions()
     }
 
     private suspend fun createTables() {
@@ -74,6 +79,18 @@ object PostgresClient {
                 TaskTable,
                 SubTaskTable
             )
+        }
+    }
+
+    private fun runMigrations() {
+        val flyway = Flyway.configure().dataSource(Env.postgres_url, Env.postgres_user, Env.postgres_password).load()
+        try {
+            flyway.info()
+            flyway.migrate()
+            log.info { "Flyway migration has finished" }
+        } catch (e: Exception) {
+            log.error(e) { "Exception running flyway migration" }
+            throw e
         }
     }
 
@@ -254,7 +271,7 @@ object PostgresClient {
                 "Salsa dancing",
                 "Wilderness camping",
                 "Sculpture park visit",
-                "Rollercoaster thrill",
+                "Roller coaster thrill",
                 "Potluck picnic",
                 "Vintage car ride",
                 "Historical reenactment",
@@ -274,5 +291,6 @@ object PostgresClient {
         }
     }
 
+    @Suppress("UNUSED")
     fun getDb() = database
 }
