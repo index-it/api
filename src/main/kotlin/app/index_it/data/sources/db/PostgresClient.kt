@@ -151,12 +151,12 @@ object PostgresClient {
     }
 
     private suspend fun setupCategoryNameSuggestions() {
-        if (SuggestionNamesDBIImpl.get(DEFAULT_ITEM_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-            NameSuggestionEntity.new(DEFAULT_ITEM_NAME_SUGGESTIONS_ID) {
+        if (SuggestionNamesDBIImpl.get(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
+            NameSuggestionEntity.new(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID) {
                 description = "Default category names"
             }
 
-            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_ITEM_NAME_SUGGESTIONS_ID }
+            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID }
 
             val defaultNames = listOf(
                 "Completed Conquests",
@@ -182,19 +182,19 @@ object PostgresClient {
             )
 
             NameTable.batchInsert(defaultNames) {
-                this[NameTable.suggestion] = DEFAULT_ITEM_NAME_SUGGESTIONS_ID
+                this[NameTable.suggestion] = DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID
                 this[NameTable.name] = it
             }
         }
     }
 
     private suspend fun setupItemNameSuggestions() {
-        if (SuggestionNamesDBIImpl.get(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-            NameSuggestionEntity.new(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID) {
+        if (SuggestionNamesDBIImpl.get(DEFAULT_ITEM_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
+            NameSuggestionEntity.new(DEFAULT_ITEM_NAME_SUGGESTIONS_ID) {
                 description = "Default item names"
             }
 
-            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID }
+            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_ITEM_NAME_SUGGESTIONS_ID }
 
             val defaultNames = listOf(
                 "Skydiving Over Peaks",
@@ -220,7 +220,7 @@ object PostgresClient {
             )
 
             NameTable.batchInsert(defaultNames) {
-                this[NameTable.suggestion] = DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID
+                this[NameTable.suggestion] = DEFAULT_ITEM_NAME_SUGGESTIONS_ID
                 this[NameTable.name] = it
             }
         }
