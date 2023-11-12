@@ -91,10 +91,6 @@ fun Route.taskRoute() {
         val userId = userIdFromSession()!!
 
         val updatedTask = TaskDao.update(userId, it.taskId, updateData)
-            .takeIf { updated -> updated }
-            ?.let { _ ->
-                TaskDao.get(userId, it.taskId)
-            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(updatedTask)

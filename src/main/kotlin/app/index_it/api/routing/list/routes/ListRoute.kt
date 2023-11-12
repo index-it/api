@@ -73,10 +73,6 @@ fun Route.listRoute() {
         val userId = userIdFromSession()!!
 
         val newList = ListDao.update(userId, it.listId, updatedList)
-            .takeIf { updated -> updated }
-            ?.let {  _ ->
-                ListDao.get(userId, it.listId)
-            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newList)

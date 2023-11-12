@@ -39,10 +39,6 @@ fun Route.taskCompletionRoute() {
     }) {
         val userId = userIdFromSession()!!
         val updatedTask = TaskDao.setCompletion(userId, it.parent.taskId, it.completed)
-            .takeIf { updated -> updated }
-            ?.let {  _ ->
-                TaskDao.get(userId, it.parent.taskId)
-            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (updatedTask.itemId != null) {

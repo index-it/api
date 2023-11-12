@@ -88,14 +88,26 @@ object TaskDao {
         return task
     }
 
-    suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): Boolean {
-        TaskCM.delete(userId, taskId)
-        return TaskDBIImpl.setCompletion(userId, taskId, completed)
+    suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): TaskDto? {
+        val updated = TaskDBIImpl.setCompletion(userId, taskId, completed)
+
+        return if (updated) {
+            TaskCM.delete(userId, taskId)
+            get(userId, taskId)
+        } else {
+            null
+        }
     }
 
-    suspend fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): Boolean {
-        TaskCM.delete(userId, taskId)
-        return TaskDBIImpl.setLinking(userId, taskId, itemId)
+    suspend fun setLinking(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): TaskDto? {
+        val updated = TaskDBIImpl.setLinking(userId, taskId, itemId)
+
+        return if (updated) {
+            TaskCM.delete(userId, taskId)
+            get(userId, taskId)
+        } else {
+            null
+        }
     }
 
     /*
@@ -111,9 +123,15 @@ object TaskDao {
     }
      */
 
-    suspend fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): Boolean {
-        TaskCM.delete(userId, taskId)
-        return TaskDBIImpl.update(userId, taskId, taskUpdateRequestDto)
+    suspend fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
+        val updated = TaskDBIImpl.update(userId, taskId, taskUpdateRequestDto)
+
+        return if (updated) {
+            TaskCM.delete(userId, taskId)
+            get(userId, taskId)
+        } else {
+            null
+        }
     }
 
     suspend fun delete(userId: IxId<UserDto>, taskId: IxId<TaskDto>) {

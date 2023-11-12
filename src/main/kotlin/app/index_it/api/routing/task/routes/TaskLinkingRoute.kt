@@ -68,16 +68,11 @@ fun Route.taskLinkingRoute() {
                     ?: return@put call.respond(HttpStatusCode.NotFound)
 
                 ItemDao.setLinking(userId, newLinkedItem.listId, newLinkedItem.id, taskId)
-                    .takeIf { updated -> updated }
                     ?: return@put call.respond(HttpStatusCode.NotFound)
             }
         }
 
         val updatedTask = TaskDao.setLinking(userId, it.parent.taskId, itemId)
-            .takeIf { updated -> updated }
-            ?.let {
-                TaskDao.get(userId, taskId)
-            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(updatedTask)

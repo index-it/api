@@ -76,10 +76,6 @@ fun Route.itemContentRoute() {
         val userId = userIdFromSession()!!
 
         val newContent = ItemContentDao.update(userId, it.parent.itemId, updatedItemContent)
-            .takeIf { updated -> updated }
-            ?.let { _ ->
-                ItemContentDao.get(userId, it.parent.itemId)
-            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newContent)

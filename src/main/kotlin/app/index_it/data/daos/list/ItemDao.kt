@@ -88,19 +88,37 @@ object ItemDao {
         return itemDto
     }
 
-    suspend fun setCompletion(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, completed: Boolean): Boolean {
-        ItemCM.delete(userId, listId, itemId)
-        return ItemDBIImpl.setCompletion(userId, itemId, completed)
+    suspend fun setCompletion(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, completed: Boolean): ItemDto? {
+        val updated = ItemDBIImpl.setCompletion(userId, itemId, completed)
+
+        return if (updated) {
+            ItemCM.delete(userId, listId, itemId)
+            get(userId, listId, itemId)
+        } else {
+            null
+        }
     }
 
-    suspend fun setLinking(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): Boolean {
-        ItemCM.delete(userId, listId, itemId)
-        return ItemDBIImpl.setLinking(userId, itemId, taskId)
+    suspend fun setLinking(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): ItemDto? {
+        val updated = ItemDBIImpl.setLinking(userId, itemId, taskId)
+
+        return if (updated) {
+            ItemCM.delete(userId, listId, itemId)
+            get(userId, listId, itemId)
+        } else {
+            null
+        }
     }
 
-    suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): Boolean {
-        ItemCM.delete(userId, listId, itemId)
-        return ItemDBIImpl.update(userId, itemId, itemUpdateRequestDto)
+    suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
+        val updated = ItemDBIImpl.update(userId, itemId, itemUpdateRequestDto)
+
+        return if (updated) {
+            ItemCM.delete(userId, listId, itemId)
+            get(userId, listId, itemId)
+        } else {
+            null
+        }
     }
 
     suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>) {

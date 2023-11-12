@@ -53,9 +53,15 @@ object ListDao {
         return list
     }
 
-    suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): Boolean {
-        ListCM.delete(userId, listId)
-        return ListDBIImpl.update(userId, listId, listUpdateRequestDto)
+    suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
+        val updated = ListDBIImpl.update(userId, listId, listUpdateRequestDto)
+
+        return if (updated) {
+            ListCM.delete(userId, listId)
+            get(userId, listId)
+        } else {
+            null
+        }
     }
 
     suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>) {

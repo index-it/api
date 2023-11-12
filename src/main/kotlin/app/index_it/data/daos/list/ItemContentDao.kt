@@ -42,9 +42,15 @@ object ItemContentDao {
     suspend fun getOrCreate(userId: IxId<UserDto>, itemId: IxId<ItemDto>) =
         get(userId, itemId) ?: create(userId, itemId)
 
-    suspend fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): Boolean {
-        ItemContentCM.delete(userId, itemId)
-        return ItemContentDBIImpl.update(userId, itemId, itemContentCreateOrUpdateRequest)
+    suspend fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
+        val updated = ItemContentDBIImpl.update(userId, itemId, itemContentCreateOrUpdateRequest)
+
+        return if (updated) {
+            ItemContentCM.delete(userId, itemId)
+            get(userId, itemId)
+        } else {
+            null
+        }
     }
 
     suspend fun delete(userId: IxId<UserDto>, itemId: IxId<ItemDto>) {

@@ -81,10 +81,6 @@ fun Route.categoryRoute() {
         val userId = userIdFromSession()!!
 
         val newCategory = CategoryDao.update(userId, it.parent.parent.listId, it.categoryId, updatedCategory)
-            .takeIf { updated -> updated }
-            ?.let { _ ->
-                CategoryDao.get(userId, it.parent.parent.listId, it.categoryId)
-            }
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newCategory)
