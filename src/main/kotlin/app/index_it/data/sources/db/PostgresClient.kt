@@ -17,6 +17,7 @@ import app.index_it.data.sources.db.schemas.user.UserTable
 import app.index_it.data.sources.db.schemas.web.NotifyTable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -24,13 +25,16 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
 
 private val log = KotlinLogging.logger {  }
 
 object PostgresClient {
+    private const val DB_DRIVER = "org.postgresql.Driver"
     private val database = Database.connect(
         url = Env.postgres_url,
-        driver = "org.postgresql.Driver",
+        driver = DB_DRIVER,
         user = Env.postgres_user,
         password = Env.postgres_password
     )
@@ -48,7 +52,6 @@ object PostgresClient {
     private const val DEFAULT_TASK_NAME_SUGGESTIONS_ID = 4
 
     suspend fun init() {
-        createTables()
         runMigrations()
         setupColorSuggestions()
         setupListNameSuggestions()
@@ -57,33 +60,12 @@ object PostgresClient {
         setupTaskNameSuggestions()
     }
 
-    private suspend fun createTables() {
-        dbQuery {
-            SchemaUtils.create(
-                NotifyTable,
-
-                UserTable,
-                EmailVerificationTable,
-                PasswordResetTable,
-
-                ColorSuggestionTable,
-                ColorTable,
-                NameSuggestionTable,
-                NameTable,
-
-                ListTable,
-                CategoryTable,
-                ItemTable,
-                ItemContentTable,
-
-                TaskTable,
-                SubTaskTable
-            )
-        }
-    }
-
     private fun runMigrations() {
-        val flyway = Flyway.configure().dataSource(Env.postgres_url, Env.postgres_user, Env.postgres_password).load()
+        val flyway = Flyway
+            .configure()
+            .driver(DB_DRIVER)
+            .dataSource(Env.postgres_url, Env.postgres_user, Env.postgres_password)
+            .load()
         try {
             flyway.info()
             flyway.migrate()
@@ -130,163 +112,171 @@ object PostgresClient {
     }
 
     private suspend fun setupListNameSuggestions() {
-        if (SuggestionNamesDBIImpl.get(DEFAULT_LIST_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-            NameSuggestionEntity.new(DEFAULT_LIST_NAME_SUGGESTIONS_ID) {
-                description = "Default list names"
-            }
+        dbQuery {
+            if (SuggestionNamesDBIImpl.get(DEFAULT_LIST_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
+                NameSuggestionEntity.new(DEFAULT_LIST_NAME_SUGGESTIONS_ID) {
+                    description = "Default list names"
+                }
 
-            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_LIST_NAME_SUGGESTIONS_ID }
+                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_LIST_NAME_SUGGESTIONS_ID }
 
-            val defaultNames = listOf(
-                "Movie Mania",
-                "Pop Culture",
-                "Wanderlust Wonders",
-                "Melody Mix",
-                "Epic Eats",
-                "Comedy Corner",
-                "Urban Vibes",
-                "Artistic Antics",
-                "Retro Rewind",
-                "Majestic Peaks",
-                "Serene Sounds",
-                "Foodie Finds",
-                "Action Flicks",
-                "Quirky Quotients",
-                "Festive Feasts",
-                "Serendipity Soirees",
-                "Timeless Tunes",
-                "Whimsical Wanderings",
-                "Picturesque Paradises",
-                "Lyrical Laughter"
-            )
+                val defaultNames = listOf(
+                    "Movie Mania",
+                    "Pop Culture",
+                    "Wanderlust Wonders",
+                    "Melody Mix",
+                    "Epic Eats",
+                    "Comedy Corner",
+                    "Urban Vibes",
+                    "Artistic Antics",
+                    "Retro Rewind",
+                    "Majestic Peaks",
+                    "Serene Sounds",
+                    "Foodie Finds",
+                    "Action Flicks",
+                    "Quirky Quotients",
+                    "Festive Feasts",
+                    "Serendipity Soirees",
+                    "Timeless Tunes",
+                    "Whimsical Wanderings",
+                    "Picturesque Paradises",
+                    "Lyrical Laughter"
+                )
 
-            NameTable.batchInsert(defaultNames) {
-                this[NameTable.suggestion] = DEFAULT_LIST_NAME_SUGGESTIONS_ID
-                this[NameTable.name] = it
+                NameTable.batchInsert(defaultNames) {
+                    this[NameTable.suggestion] = DEFAULT_LIST_NAME_SUGGESTIONS_ID
+                    this[NameTable.name] = it
+                }
             }
         }
     }
 
     private suspend fun setupCategoryNameSuggestions() {
-        if (SuggestionNamesDBIImpl.get(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-            NameSuggestionEntity.new(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID) {
-                description = "Default category names"
-            }
+        dbQuery {
+            if (SuggestionNamesDBIImpl.get(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
+                NameSuggestionEntity.new(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID) {
+                    description = "Default category names"
+                }
 
-            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID }
+                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID }
 
-            val defaultNames = listOf(
-                "Completed Conquests",
-                "To-Do Treasures",
-                "In Progress Pioneers",
-                "Pending Pursuits",
-                "Achieved Ambitions",
-                "Ongoing Odysseys",
-                "Checked-off Challenges",
-                "Unfinished Ventures",
-                "Task Trailblazing",
-                "In the Pipeline",
-                "Triumphs in the Making",
-                "Tasks at Hand",
-                "Active Endeavors",
-                "Onward March",
-                "Upcoming Exploits",
-                "Underway Assignments",
-                "Steady Strides",
-                "Work in Motion",
-                "Tasks on Track",
-                "Tasks on Hold"
-            )
+                val defaultNames = listOf(
+                    "Completed Conquests",
+                    "To-Do Treasures",
+                    "In Progress Pioneers",
+                    "Pending Pursuits",
+                    "Achieved Ambitions",
+                    "Ongoing Odysseys",
+                    "Checked-off Challenges",
+                    "Unfinished Ventures",
+                    "Task Trailblazing",
+                    "In the Pipeline",
+                    "Triumphs in the Making",
+                    "Tasks at Hand",
+                    "Active Endeavors",
+                    "Onward March",
+                    "Upcoming Exploits",
+                    "Underway Assignments",
+                    "Steady Strides",
+                    "Work in Motion",
+                    "Tasks on Track",
+                    "Tasks on Hold"
+                )
 
-            NameTable.batchInsert(defaultNames) {
-                this[NameTable.suggestion] = DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID
-                this[NameTable.name] = it
+                NameTable.batchInsert(defaultNames) {
+                    this[NameTable.suggestion] = DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID
+                    this[NameTable.name] = it
+                }
             }
         }
     }
 
     private suspend fun setupItemNameSuggestions() {
-        if (SuggestionNamesDBIImpl.get(DEFAULT_ITEM_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-            NameSuggestionEntity.new(DEFAULT_ITEM_NAME_SUGGESTIONS_ID) {
-                description = "Default item names"
-            }
+        dbQuery {
+            if (SuggestionNamesDBIImpl.get(DEFAULT_ITEM_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
+                NameSuggestionEntity.new(DEFAULT_ITEM_NAME_SUGGESTIONS_ID) {
+                    description = "Default item names"
+                }
 
-            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_ITEM_NAME_SUGGESTIONS_ID }
+                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_ITEM_NAME_SUGGESTIONS_ID }
 
-            val defaultNames = listOf(
-                "Skydiving Over Peaks",
-                "Royal Castle Tour",
-                "Desert Star Camping",
-                "Arctic Cruise",
-                "Rainforest Trek",
-                "Canyon Rafting",
-                "Alpine Hike",
-                "Temple Exploration",
-                "Coral Reef Dive",
-                "Safari Adventure",
-                "Gondola Ride",
-                "Mountain Helicopter",
-                "Opera Night",
-                "Volcano Summit",
-                "Dolphin Swim",
-                "Northern Lights",
-                "Tea Ceremony",
-                "Savanna Safari",
-                "Horseback Voyage",
-                "Ballroom Masquerade"
-            )
+                val defaultNames = listOf(
+                    "Skydiving Over Peaks",
+                    "Royal Castle Tour",
+                    "Desert Star Camping",
+                    "Arctic Cruise",
+                    "Rainforest Trek",
+                    "Canyon Rafting",
+                    "Alpine Hike",
+                    "Temple Exploration",
+                    "Coral Reef Dive",
+                    "Safari Adventure",
+                    "Gondola Ride",
+                    "Mountain Helicopter",
+                    "Opera Night",
+                    "Volcano Summit",
+                    "Dolphin Swim",
+                    "Northern Lights",
+                    "Tea Ceremony",
+                    "Savanna Safari",
+                    "Horseback Voyage",
+                    "Ballroom Masquerade"
+                )
 
-            NameTable.batchInsert(defaultNames) {
-                this[NameTable.suggestion] = DEFAULT_ITEM_NAME_SUGGESTIONS_ID
-                this[NameTable.name] = it
+                NameTable.batchInsert(defaultNames) {
+                    this[NameTable.suggestion] = DEFAULT_ITEM_NAME_SUGGESTIONS_ID
+                    this[NameTable.name] = it
+                }
             }
         }
     }
 
     private suspend fun setupTaskNameSuggestions() {
-        if (SuggestionNamesDBIImpl.get(DEFAULT_TASK_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-            NameSuggestionEntity.new(DEFAULT_TASK_NAME_SUGGESTIONS_ID) {
-                description = "Default task names"
-            }
+        dbQuery {
+            if (SuggestionNamesDBIImpl.get(DEFAULT_TASK_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
+                NameSuggestionEntity.new(DEFAULT_TASK_NAME_SUGGESTIONS_ID) {
+                    description = "Default task names"
+                }
 
-            NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_TASK_NAME_SUGGESTIONS_ID }
+                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_TASK_NAME_SUGGESTIONS_ID }
 
-            val defaultNames = listOf(
-                "Cave exploration",
-                "Hot air ballooning",
-                "Food truck hopping",
-                "Mystery escape room",
-                "Stargazing night",
-                "Street art hunt",
-                "Wildlife safari",
-                "Antique market hunt",
-                "Aurora hunting",
-                "Poetry slam night",
-                "Glacier hiking",
-                "Live jazz show",
-                "Geocaching adventure",
-                "Botanical garden visit",
-                "Kayaking trip",
-                "Stand-up comedy",
-                "Salsa dancing",
-                "Wilderness camping",
-                "Sculpture park visit",
-                "Roller coaster thrill",
-                "Potluck picnic",
-                "Vintage car ride",
-                "Historical reenactment",
-                "Outdoor cinema",
-                "Karaoke contest",
-                "Street photography",
-                "Mindfulness retreat",
-                "Jet skiing",
-                "Local brewery tour",
-                "Bookstore crawl"
-            )
+                val defaultNames = listOf(
+                    "Cave exploration",
+                    "Hot air ballooning",
+                    "Food truck hopping",
+                    "Mystery escape room",
+                    "Stargazing night",
+                    "Street art hunt",
+                    "Wildlife safari",
+                    "Antique market hunt",
+                    "Aurora hunting",
+                    "Poetry slam night",
+                    "Glacier hiking",
+                    "Live jazz show",
+                    "Geocaching adventure",
+                    "Botanical garden visit",
+                    "Kayaking trip",
+                    "Stand-up comedy",
+                    "Salsa dancing",
+                    "Wilderness camping",
+                    "Sculpture park visit",
+                    "Roller coaster thrill",
+                    "Potluck picnic",
+                    "Vintage car ride",
+                    "Historical reenactment",
+                    "Outdoor cinema",
+                    "Karaoke contest",
+                    "Street photography",
+                    "Mindfulness retreat",
+                    "Jet skiing",
+                    "Local brewery tour",
+                    "Bookstore crawl"
+                )
 
-            NameTable.batchInsert(defaultNames) {
-                this[NameTable.suggestion] = DEFAULT_TASK_NAME_SUGGESTIONS_ID
-                this[NameTable.name] = it
+                NameTable.batchInsert(defaultNames) {
+                    this[NameTable.suggestion] = DEFAULT_TASK_NAME_SUGGESTIONS_ID
+                    this[NameTable.name] = it
+                }
             }
         }
     }

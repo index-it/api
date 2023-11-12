@@ -1,0 +1,37 @@
+CREATE TABLE IF NOT EXISTS "notify" (id SERIAL PRIMARY KEY, email VARCHAR(150) NOT NULL)
+ALTER TABLE "notify" ADD CONSTRAINT notify_email_unique UNIQUE (email)
+CREATE TABLE IF NOT EXISTS "user" (id uuid PRIMARY KEY, email VARCHAR(150) NOT NULL, password_hash VARCHAR(100) NULL, email_verified BOOLEAN NOT NULL, created_at BIGINT NOT NULL, creation_source VARCHAR(10) NOT NULL)
+ALTER TABLE "user" ADD CONSTRAINT user_email_unique UNIQUE (email)
+CREATE TABLE IF NOT EXISTS emailverification (id SERIAL PRIMARY KEY, token VARCHAR(100) NOT NULL, "user" uuid NOT NULL, created_at BIGINT NOT NULL, expires_at BIGINT NOT NULL, CONSTRAINT fk_emailverification_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT)
+ALTER TABLE emailverification ADD CONSTRAINT emailverification_token_unique UNIQUE (token)
+CREATE INDEX emailverification_user ON emailverification ("user")
+CREATE TABLE IF NOT EXISTS passwordreset (id SERIAL PRIMARY KEY, token VARCHAR(100) NOT NULL, "user" uuid NOT NULL, created_at BIGINT NOT NULL, expires_at BIGINT NOT NULL, CONSTRAINT fk_passwordreset_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT)
+ALTER TABLE passwordreset ADD CONSTRAINT passwordreset_token_unique UNIQUE (token)
+CREATE INDEX passwordreset_user ON passwordreset ("user")
+CREATE TABLE IF NOT EXISTS colorsuggestion (id SERIAL PRIMARY KEY, description VARCHAR(100) NOT NULL)
+CREATE TABLE IF NOT EXISTS color (id SERIAL PRIMARY KEY, suggestion INT NOT NULL, color CHAR(9) NOT NULL, CONSTRAINT fk_color_suggestion__id FOREIGN KEY (suggestion) REFERENCES colorsuggestion(id) ON DELETE CASCADE ON UPDATE RESTRICT)
+CREATE TABLE IF NOT EXISTS namesuggestion (id SERIAL PRIMARY KEY, description VARCHAR(100) NOT NULL)
+CREATE TABLE IF NOT EXISTS "name" (id SERIAL PRIMARY KEY, suggestion INT NOT NULL, "name" VARCHAR(150) NOT NULL, CONSTRAINT fk_name_suggestion__id FOREIGN KEY (suggestion) REFERENCES namesuggestion(id) ON DELETE CASCADE ON UPDATE RESTRICT)
+CREATE TABLE IF NOT EXISTS list (id uuid PRIMARY KEY, "user" uuid NOT NULL, "name" VARCHAR(100) NOT NULL, emoji CHAR NOT NULL, color CHAR(9) NOT NULL, created_at BIGINT NOT NULL, edited_at BIGINT NULL, CONSTRAINT fk_list_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT)
+CREATE INDEX list_user ON list ("user")
+CREATE TABLE IF NOT EXISTS category (id uuid PRIMARY KEY, "user" uuid NOT NULL, list uuid NOT NULL, "name" VARCHAR(50) NOT NULL, color CHAR(9) NOT NULL, CONSTRAINT fk_category_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT fk_category_list__id FOREIGN KEY (list) REFERENCES list(id) ON DELETE CASCADE ON UPDATE RESTRICT)
+CREATE INDEX category_user ON category ("user")
+CREATE INDEX category_list ON category (list)
+CREATE TABLE IF NOT EXISTS task (id uuid PRIMARY KEY, "user" uuid NOT NULL, item uuid NULL, "name" VARCHAR(150) NOT NULL, description VARCHAR(500) NULL, due_date BIGINT NULL, completed BOOLEAN NOT NULL, priority INT NULL, created_at BIGINT NOT NULL, edited_at BIGINT NULL, completed_at BIGINT NULL)
+CREATE TABLE IF NOT EXISTS item (id uuid PRIMARY KEY, "user" uuid NOT NULL, list uuid NOT NULL, category uuid NOT NULL, task uuid NULL, "name" VARCHAR(150) NOT NULL, completed BOOLEAN NOT NULL, created_at BIGINT NOT NULL, edited_at BIGINT NULL, completed_at BIGINT NULL)
+CREATE INDEX item_user ON item ("user")
+CREATE INDEX item_list ON item (list)
+CREATE INDEX item_category ON item (category)
+CREATE TABLE IF NOT EXISTS itemcontent (id uuid PRIMARY KEY, "user" uuid NOT NULL, item uuid NOT NULL, "content" TEXT NOT NULL)
+CREATE INDEX itemcontent_user ON itemcontent ("user")
+CREATE INDEX itemcontent_item ON itemcontent (item)
+CREATE TABLE IF NOT EXISTS subtask (id SERIAL PRIMARY KEY, task uuid NOT NULL, "name" VARCHAR(150) NOT NULL, completed BOOLEAN NOT NULL)
+ALTER TABLE task ADD CONSTRAINT fk_task_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT
+ALTER TABLE task ADD CONSTRAINT fk_task_item__id FOREIGN KEY (item) REFERENCES item(id) ON DELETE SET NULL ON UPDATE RESTRICT
+ALTER TABLE item ADD CONSTRAINT fk_item_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT
+ALTER TABLE item ADD CONSTRAINT fk_item_list__id FOREIGN KEY (list) REFERENCES list(id) ON DELETE CASCADE ON UPDATE RESTRICT
+ALTER TABLE item ADD CONSTRAINT fk_item_category__id FOREIGN KEY (category) REFERENCES category(id) ON DELETE CASCADE ON UPDATE RESTRICT
+ALTER TABLE item ADD CONSTRAINT fk_item_task__id FOREIGN KEY (task) REFERENCES task(id) ON DELETE SET NULL ON UPDATE RESTRICT
+ALTER TABLE itemcontent ADD CONSTRAINT fk_itemcontent_user__id FOREIGN KEY ("user") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT
+ALTER TABLE itemcontent ADD CONSTRAINT fk_itemcontent_item__id FOREIGN KEY (item) REFERENCES item(id) ON DELETE CASCADE ON UPDATE RESTRICT
+ALTER TABLE subtask ADD CONSTRAINT fk_subtask_task__id FOREIGN KEY (task) REFERENCES task(id) ON DELETE CASCADE ON UPDATE RESTRICT

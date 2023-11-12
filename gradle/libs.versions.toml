@@ -47,6 +47,7 @@ exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.r
 exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 flyway = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
+flyway-postgres = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
 jedis = { group = "redis.clients", name = "jedis", version.ref = "jedis" }
 amqp-client = { group = "com.rabbitmq", name = "amqp-client", version.ref = "amqpClient" }
 
@@ -91,7 +92,8 @@ postgres = [
     "exposed-core",
     "exposed-dao",
     "exposed-jdbc",
-    "flyway"
+    "flyway",
+    "flyway-postgres"
 ]
 
 ktor-server = [
