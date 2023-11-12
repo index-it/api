@@ -43,7 +43,9 @@ fun main() {
      * If objects aren't called they initialize lazily which can lead to a false positive ready state
      */
     // MongoClient.init()
-    PostgresClient.createTables()
+    runBlocking {
+        PostgresClient.init()
+    }
     RedisClient
     RabbitMqClient
     WebsocketsQueueManager.startListening()

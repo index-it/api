@@ -27,7 +27,7 @@ object NameSuggestionTable : IntIdTable() {
 class NameSuggestionEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<NameSuggestionEntity>(NameSuggestionTable)
 
-    val description by NameSuggestionTable.description
+    var description by NameSuggestionTable.description
     val names by NameEntity referrersOn NameTable.suggestion
 }
 

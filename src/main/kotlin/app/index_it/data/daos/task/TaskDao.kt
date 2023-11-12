@@ -91,6 +91,7 @@ object TaskDao {
     suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): TaskDto? {
         val updated = TaskDBIImpl.setCompletion(userId, taskId, completed)
 
+        // This is done everywhere to make sure that cache is always in sync with the real data
         return if (updated) {
             TaskCM.delete(userId, taskId)
             get(userId, taskId)

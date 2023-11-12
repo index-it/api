@@ -27,7 +27,7 @@ object ColorSuggestionTable : IntIdTable() {
 class ColorSuggestionEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ColorSuggestionEntity>(ColorSuggestionTable)
 
-    val description by ColorSuggestionTable.description
+    var description by ColorSuggestionTable.description
     val colors by ColorEntity referrersOn ColorTable.suggestion
 }
 
