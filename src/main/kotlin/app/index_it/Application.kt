@@ -10,7 +10,6 @@ import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.core.logic.websocket.WebsocketsQueueManager
 import app.index_it.data.sources.cache.RedisClient
 import app.index_it.data.sources.db.PostgresClient
-import app.index_it.data.sources.mongo.MongoClient
 import ch.qos.logback.classic.Logger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
@@ -58,11 +57,11 @@ fun main() {
 
     // Add shutdown hook to api server
     apiServer.addShutdownHook {
-        logger.info { "[1/8] Closing all websocket connections" }
+        logger.info { "[1/7] Closing all websocket connections" }
         runBlocking {
             WebsocketConnectionsManager.close()
         }
-        logger.info { "[1/8] All websocket connections have been closed" }
+        logger.info { "[1/7] All websocket connections have been closed" }
     }
 
     /**
@@ -72,28 +71,25 @@ fun main() {
         Thread {
             logger.info { "Shutdown started" }
 
-            logger.info { "[1/8] Api server shutdown" }
+            logger.info { "[1/7] Api server shutdown" }
 
             SendinblueClient.close()
-            logger.info { "[2/8] SendinblueClient client shutdown" }
+            logger.info { "[2/7] SendinblueClient client shutdown" }
 
             AppleOAuthClient.close()
-            logger.info { "[3/8] AppleOAuthClient client shutdown" }
+            logger.info { "[3/7] AppleOAuthClient client shutdown" }
 
             FacebookOAuthClient.close()
-            logger.info { "[4/8] FacebookOAuthClient client shutdown" }
+            logger.info { "[4/7] FacebookOAuthClient client shutdown" }
 
             WebsocketsQueueManager.close()
-            logger.info { "[5/8] WebsocketsQueueManager client shutdown" }
+            logger.info { "[5/7] WebsocketsQueueManager client shutdown" }
 
             RabbitMqClient.close()
-            logger.info { "[6/8] RabbitMqClient client shutdown" }
+            logger.info { "[6/7] RabbitMqClient client shutdown" }
 
             RedisClient.close()
-            logger.info { "[7/8] RedisClient client shutdown" }
-
-            MongoClient.close()
-            logger.info { "[8/8] MongoClient client shutdown" }
+            logger.info { "[7/7] RedisClient client shutdown" }
 
             logger.info { "Shutdown successful, bye bye ^^" }
         }
