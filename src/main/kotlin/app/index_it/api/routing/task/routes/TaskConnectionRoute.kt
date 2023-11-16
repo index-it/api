@@ -2,8 +2,10 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*

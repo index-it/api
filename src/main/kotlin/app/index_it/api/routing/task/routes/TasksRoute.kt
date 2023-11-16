@@ -71,8 +71,8 @@ fun Route.tasksRoute() {
 
     post<TasksRoute.CreateConnectedFromItem>({
         tags = listOf("tasks")
-        operationId = "create-linked-task"
-        summary = "creates a new task from an existing item (aka linked task)"
+        operationId = "create-connected-task"
+        summary = "creates a new task from an existing item (aka connected task)"
         request {
             queryParameter<String>("listId") {
                 description = "id of the list"
@@ -85,7 +85,7 @@ fun Route.tasksRoute() {
         }
         response {
             HttpStatusCode.OK to {
-                description = "the linked task"
+                description = "the connected task"
                 body<TaskDto>()
             }
             HttpStatusCode.NotFound to {
@@ -93,10 +93,13 @@ fun Route.tasksRoute() {
             }
         }
     }) {
+        println("DUDUDUHHUSADH")
         val userId = userIdFromSession() ?: throw AuthenticationException()
 
         val item = ItemDao.get(userId, it.itemId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
+
+        println(item)
 
         val task = TaskDao.createLinked(userIdFromSession()!!, item)
 

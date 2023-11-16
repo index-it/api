@@ -101,23 +101,21 @@ object ItemDao {
     suspend fun setTaskConnection(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): ItemDto? {
         val updated = ItemDBIImpl.setTaskConnection(userId, itemId, taskId)
 
-        return if (updated) {
+        if (updated) {
             ItemCM.delete(userId, listId, itemId)
-            get(userId, listId, itemId)
-        } else {
-            null
         }
+
+        return get(userId, listId, itemId)
     }
 
     suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto): ItemDto? {
         val updated = ItemDBIImpl.update(userId, itemId, itemUpdateRequestDto)
 
-        return if (updated) {
+        if (updated) {
             ItemCM.delete(userId, listId, itemId)
-            get(userId, listId, itemId)
-        } else {
-            null
         }
+
+        return get(userId, listId, itemId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>) {

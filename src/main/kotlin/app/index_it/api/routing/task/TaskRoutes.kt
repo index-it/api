@@ -20,11 +20,11 @@ class TasksRoute(val completed: Boolean? = null) {
 
     @Resource("{taskId}")
     class TaskRoute(val parent: TasksRoute, @Contextual val taskId: IxId<TaskDto>) {
+        @Resource("connection")
+        class ConnectionRoute(val parent: TaskRoute, @Contextual val itemId: IxId<ItemDto>? = null) {}
+
         @Resource("completion")
         class CompletionRoute(val parent: TaskRoute, val completed: Boolean) {}
-
-        @Resource("connection")
-        class ConnectionRoute(val parent: TaskRoute, @Contextual val itemId: IxId<ItemDto>?) {}
     }
 }
 
