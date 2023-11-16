@@ -6,7 +6,6 @@ import app.index_it.api.routing.user.MeRoute
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
-import app.index_it.data.models.auth.RegistrationCredentials
 import app.index_it.data.models.auth.UserSessionCookie
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete

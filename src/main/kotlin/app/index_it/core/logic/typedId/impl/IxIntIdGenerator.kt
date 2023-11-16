@@ -3,7 +3,6 @@ package app.index_it.core.logic.typedId.impl
 import app.index_it.core.logic.typedId.Id
 import app.index_it.core.logic.typedId.IdGenerator
 import com.google.errorprone.annotations.DoNotCall
-import java.util.*
 import kotlin.reflect.KClass
 
 /**

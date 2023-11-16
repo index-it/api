@@ -3,10 +3,7 @@ package app.index_it.api.plugins
 import app.index_it.Env
 import app.index_it.core.logic.ObjectMapper
 import app.index_it.core.logic.typedId.Id
-import app.index_it.core.logic.typedId.impl.IxId
-import com.github.victools.jsonschema.generator.CustomDefinition
 import com.github.victools.jsonschema.generator.SchemaGenerator
-import com.github.victools.jsonschema.generator.SchemaKeyword
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.data.AuthType
 import io.github.smiley4.ktorswaggerui.data.EncodingData

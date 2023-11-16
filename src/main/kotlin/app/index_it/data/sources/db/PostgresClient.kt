@@ -4,29 +4,18 @@ import app.index_it.Env
 import app.index_it.core.logic.typedId.toIxIntId
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionColorsDBIImpl
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionNamesDBIImpl
-import app.index_it.data.sources.db.schemas.lists.CategoryTable
-import app.index_it.data.sources.db.schemas.lists.ItemContentTable
-import app.index_it.data.sources.db.schemas.lists.ItemTable
-import app.index_it.data.sources.db.schemas.lists.ListTable
-import app.index_it.data.sources.db.schemas.suggestions.*
-import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
-import app.index_it.data.sources.db.schemas.tasks.TaskTable
-import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
-import app.index_it.data.sources.db.schemas.user.PasswordResetTable
-import app.index_it.data.sources.db.schemas.user.UserTable
-import app.index_it.data.sources.db.schemas.web.NotifyTable
+import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionEntity
+import app.index_it.data.sources.db.schemas.suggestions.ColorTable
+import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionEntity
+import app.index_it.data.sources.db.schemas.suggestions.NameTable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.File
 
 private val log = KotlinLogging.logger {  }
 
