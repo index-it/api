@@ -1,0 +1,19 @@
+package app.index_it.core.logic.typedId.impl
+
+import app.index_it.core.logic.typedId.Id
+import app.index_it.core.logic.typedId.IdGenerator
+import com.google.errorprone.annotations.DoNotCall
+import java.util.*
+import kotlin.reflect.KClass
+
+/**
+ * Generator of [IxIntId] based on [Int].
+ */
+object IxIntIdGenerator : IdGenerator {
+    override val idClass: KClass<out Id<*>> = IxIntId::class
+
+    override val wrappedIdClass: KClass<out Any> = Int::class
+
+    @DoNotCall("This doesn't generate a safe int id, it always uses 0!")
+    override fun <T> generateNewId(): Id<T> = IxIntId(0)
+}

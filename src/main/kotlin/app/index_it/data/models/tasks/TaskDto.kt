@@ -26,7 +26,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Suppress("Unused")
 data class TaskDto(
-    @Contextual @SerialName("_id") val id: IxId<TaskDto>,
+    @Contextual val id: IxId<TaskDto>,
     @Contextual val userId: IxId<UserDto>,
     @Contextual val itemId: IxId<ItemDto>? = null,
     // @Contextual val categoryId: IxId<CategoryDto>? = null,

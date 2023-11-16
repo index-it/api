@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NameSuggestionsDto(
-    @Contextual @SerialName("_id") val id: IxIntId<NameSuggestionsDto>,
+    @Contextual val id: IxIntId<NameSuggestionsDto>,
     val description: String,
     val names: List<String>
 )

@@ -9,6 +9,7 @@ object ObjectMapper {
         serializersModule = IdKotlinXSerializationModule
         prettyPrint = true
         encodeDefaults = true
+        ignoreUnknownKeys = true
     }
 
     inline fun <reified T> encode(data: T): String {

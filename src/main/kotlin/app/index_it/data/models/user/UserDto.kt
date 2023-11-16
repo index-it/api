@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserDto(
-    @Contextual @SerialName("_id") val id: IxId<UserDto>,
+    @Contextual val id: IxId<UserDto>,
     val email: String, // Received either via email registration, or google / apple oauth
     val passwordHash: String?, // Null when the account gets created with an oauth provider (google, apple...)
     val emailVerified: Boolean, // Always true when user created with oauth, otherwise needs to be verified
@@ -30,7 +30,7 @@ data class UserDto(
 
     @Serializable
     data class UserResponseDto(
-        @Contextual @SerialName("_id") val id: IxId<UserDto>,
+        @Contextual val id: IxId<UserDto>,
         val email: String,
         val creationTimestamp: Long,
         val creationSource: CreationSource

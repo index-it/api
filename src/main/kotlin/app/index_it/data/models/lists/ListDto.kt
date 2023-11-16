@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ListDto(
-    @Contextual @SerialName("_id") val id: IxId<ListDto>,
+    @Contextual val id: IxId<ListDto>,
     @Contextual var userId: IxId<UserDto>,
     var name: String,
     var icon: String, // Single emoji at the moment
