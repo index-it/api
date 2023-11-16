@@ -55,12 +55,11 @@ object CategoryDao {
     suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
         val updated = CategoryDBIImpl.update(userId, categoryId, categoryUpdateRequestDto)
 
-        return if (updated) {
+        if (updated) {
             CategoryCM.delete(userId, listId, categoryId)
-            get(userId, listId, categoryId)
-        } else {
-            null
         }
+
+        return get(userId, listId, categoryId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>) {

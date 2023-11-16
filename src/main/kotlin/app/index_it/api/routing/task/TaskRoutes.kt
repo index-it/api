@@ -15,15 +15,15 @@ import kotlinx.serialization.Contextual
 
 @Resource("tasks")
 class TasksRoute(val completed: Boolean? = null) {
-    @Resource("linked")
-    class LinkedRoute(val parent: TasksRoute, @Contextual val itemId: IxId<ItemDto>) {}
+    @Resource("connection")
+    class CreateConnectedFromItem(val parent: TasksRoute, @Contextual val itemId: IxId<ItemDto>) {}
 
     @Resource("{taskId}")
     class TaskRoute(val parent: TasksRoute, @Contextual val taskId: IxId<TaskDto>) {
         @Resource("completion")
         class CompletionRoute(val parent: TaskRoute, val completed: Boolean) {}
 
-        @Resource("linking")
+        @Resource("connection")
         class ConnectionRoute(val parent: TaskRoute, @Contextual val itemId: IxId<ItemDto>?) {}
     }
 }

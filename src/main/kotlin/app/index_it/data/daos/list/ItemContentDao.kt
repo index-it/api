@@ -45,12 +45,11 @@ object ItemContentDao {
     suspend fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
         val updated = ItemContentDBIImpl.update(userId, itemId, itemContentCreateOrUpdateRequest)
 
-        return if (updated) {
+        if (updated) {
             ItemContentCM.delete(userId, itemId)
-            get(userId, itemId)
-        } else {
-            null
         }
+
+        return get(userId, itemId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, itemId: IxId<ItemDto>) {

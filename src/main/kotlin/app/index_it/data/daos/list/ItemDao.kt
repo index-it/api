@@ -91,12 +91,11 @@ object ItemDao {
     suspend fun setCompletion(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, completed: Boolean): ItemDto? {
         val updated = ItemDBIImpl.setCompletion(userId, itemId, completed)
 
-        return if (updated) {
+        if (updated) {
             ItemCM.delete(userId, listId, itemId)
-            get(userId, listId, itemId)
-        } else {
-            null
         }
+
+        return get(userId, listId, itemId)
     }
 
     suspend fun setTaskConnection(userId: IxId<UserDto>, listId: IxId<ListDto>, itemId: IxId<ItemDto>, taskId: IxId<TaskDto>?): ItemDto? {

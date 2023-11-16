@@ -92,23 +92,21 @@ object TaskDao {
         val updated = TaskDBIImpl.setCompletion(userId, taskId, completed)
 
         // This is done everywhere to make sure that cache is always in sync with the real data
-        return if (updated) {
+        if (updated) {
             TaskCM.delete(userId, taskId)
-            get(userId, taskId)
-        } else {
-            null
         }
+
+        return get(userId, taskId)
     }
 
     suspend fun setItemConnection(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): TaskDto? {
         val updated = TaskDBIImpl.setItemConnection(userId, taskId, itemId)
 
-        return if (updated) {
+        if (updated) {
             TaskCM.delete(userId, taskId)
-            get(userId, taskId)
-        } else {
-            null
         }
+
+        return get(userId, taskId)
     }
 
     /*
@@ -127,12 +125,11 @@ object TaskDao {
     suspend fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
         val updated = TaskDBIImpl.update(userId, taskId, taskUpdateRequestDto)
 
-        return if (updated) {
+        if (updated) {
             TaskCM.delete(userId, taskId)
-            get(userId, taskId)
-        } else {
-            null
         }
+
+        return get(userId, taskId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, taskId: IxId<TaskDto>) {

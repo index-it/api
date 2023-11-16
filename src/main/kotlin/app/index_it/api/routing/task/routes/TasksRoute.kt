@@ -69,7 +69,7 @@ fun Route.tasksRoute() {
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
 
-    post<TasksRoute.LinkedRoute>({
+    post<TasksRoute.CreateConnectedFromItem>({
         tags = listOf("tasks")
         operationId = "create-linked-task"
         summary = "creates a new task from an existing item (aka linked task)"

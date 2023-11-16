@@ -37,6 +37,7 @@ fun Route.taskConnectionRoute() {
             }
         }
     }) {
+        println("DUUUH")
         val userId = userIdFromSession()!!
         val taskId = it.parent.taskId
         val itemId = it.itemId
