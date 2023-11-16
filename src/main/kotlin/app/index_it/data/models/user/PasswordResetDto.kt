@@ -18,19 +18,19 @@ data class PasswordResetDto(
     val token: String,
     @Contextual val userId: IxId<UserDto>,
     @Contextual val expireAt: Long,
-    @Contextual val creationDate: Long = currentMillis() // TODO: Rename
+    @Contextual val createdAt: Long = currentMillis()
 )
 
 fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
     token = passwordResetDto.token
     user = passwordResetDto.userId.toEntityId(UserTable)
     expiresAt = passwordResetDto.expireAt
-    createdAt = passwordResetDto.creationDate
+    createdAt = passwordResetDto.createdAt
 }
 
 fun PasswordResetEntity.toDto() = PasswordResetDto(
     token = token,
     userId = user.toIxId(),
     expireAt = expiresAt,
-    creationDate = createdAt
+    createdAt = createdAt
 )

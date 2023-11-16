@@ -3,6 +3,7 @@ package app.index_it.core.logic.typedId.serialization
 import app.index_it.core.logic.typedId.Id
 import app.index_it.core.logic.typedId.IdGenerator
 import app.index_it.core.logic.typedId.impl.IxId
+import app.index_it.core.logic.typedId.impl.IxIntId
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -20,6 +21,7 @@ val IdKotlinXSerializationModule: SerializersModule by lazy {
     SerializersModule {
         contextual(Id::class, IdSerializer())
         contextual(IxId::class, IdSerializer())
+        contextual(IxIntId::class, IdSerializer())
         if (IdGenerator.defaultGenerator.idClass != IxId::class) {
             @Suppress("UNCHECKED_CAST")
             contextual(

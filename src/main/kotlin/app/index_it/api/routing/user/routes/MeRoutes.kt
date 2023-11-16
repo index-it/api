@@ -39,13 +39,6 @@ fun Route.meRoutes() {
         operationId = "delete-account"
         summary = "delete the logged in user account"
         description = "this deletes **all** the data of the logged in user from index systems, it's irreversible"
-        request {
-            body<RegistrationCredentials> {
-                description = "email and password, password requirements: 8-100 chars with at least an uppercase, lowercase and number character"
-                required = true
-                example("example-credentials", RegistrationCredentials("sample@mail.com", "verySecurePwd1234"))
-            }
-        }
         response {
             HttpStatusCode.OK to {
                 description = "user data deleted and session terminated"

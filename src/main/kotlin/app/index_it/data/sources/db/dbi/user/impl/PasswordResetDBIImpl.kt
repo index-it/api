@@ -17,14 +17,14 @@ object PasswordResetDBIImpl : PasswordResetDBI {
     private fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
         token = passwordResetDto.token
         user = passwordResetDto.userId.toEntityId(UserTable)
-        createdAt = passwordResetDto.creationDate
+        createdAt = passwordResetDto.createdAt
         expiresAt = passwordResetDto.expireAt
     }
 
     private fun PasswordResetEntity.toDto() = PasswordResetDto(
         token = token,
         userId = user.toIxId(),
-        creationDate = createdAt,
+        createdAt = createdAt,
         expireAt = expiresAt
     )
     

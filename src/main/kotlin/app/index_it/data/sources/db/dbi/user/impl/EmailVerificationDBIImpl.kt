@@ -17,6 +17,8 @@ object EmailVerificationDBIImpl : EmailVerificationDBI {
     private fun EmailVerificationEntity.fromDto(emailVerificationDto: EmailVerificationDto) {
         token = emailVerificationDto.token
         user = emailVerificationDto.userId.toEntityId(UserTable)
+        createdAt = emailVerificationDto.createdAt
+        expiresAt = emailVerificationDto.expireAt
     }
 
     private fun EmailVerificationEntity.toDto() = EmailVerificationDto(

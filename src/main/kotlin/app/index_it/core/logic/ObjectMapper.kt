@@ -8,6 +8,7 @@ object ObjectMapper {
     val json = Json {
         serializersModule = IdKotlinXSerializationModule
         prettyPrint = true
+        encodeDefaults = true
     }
 
     inline fun <reified T> encode(data: T): String {
