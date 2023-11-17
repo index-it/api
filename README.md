@@ -36,7 +36,7 @@ There is a pre-made `.env` file for development located in `/env/.env.developmen
 > put as the `Server` the name that you gave to the postgres container,
 > if using the `docker-compose-dev.yml` file it will be `index-postgres`.
 > 
-> The database by default is `IndexDev`
+> The database by default is `indexdevdb`
 
 ##### Swagger UI
 Swagger is available at [localhost:$PORT/swagger](http://localhost:8080/swagger)

@@ -43,7 +43,7 @@ object ColorTable : IntIdTable() {
         foreign = ColorSuggestionTable,
         onDelete = ReferenceOption.CASCADE
     )
-    val color = char("color", 9)
+    val color = varchar("color", 9)
 }
 
 /**

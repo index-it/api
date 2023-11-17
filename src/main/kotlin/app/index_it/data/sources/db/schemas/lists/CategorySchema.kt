@@ -32,7 +32,7 @@ object CategoryTable : UUIDTable() {
         onDelete = ReferenceOption.CASCADE
     ).index()
     val name = varchar("name", 50)
-    val color = char("color", 9)
+    val color = varchar("color", 9)
 }
 
 /**

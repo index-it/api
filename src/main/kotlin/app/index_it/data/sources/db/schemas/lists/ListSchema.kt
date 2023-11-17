@@ -33,7 +33,7 @@ object ListTable : UUIDTable() {
     ).index()
     val name = varchar("name", 100)
     val emoji = char("emoji")
-    val color = char("color", 9)
+    val color = varchar("color", 9)
     val createdAt = long("created_at")
     val editedAt = long("edited_at").nullable()
 }

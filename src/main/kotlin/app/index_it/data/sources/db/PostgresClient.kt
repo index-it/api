@@ -4,10 +4,7 @@ import app.index_it.Env
 import app.index_it.core.logic.typedId.toIxIntId
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionColorsDBIImpl
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionNamesDBIImpl
-import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionEntity
-import app.index_it.data.sources.db.schemas.suggestions.ColorTable
-import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionEntity
-import app.index_it.data.sources.db.schemas.suggestions.NameTable
+import app.index_it.data.sources.db.schemas.suggestions.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import org.flywaydb.core.Flyway
@@ -18,6 +15,45 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 private val log = KotlinLogging.logger {  }
+
+/*
+Script that generates the first migration for the database schema
+
+Results in /resources/db/migration/V1__create_db.sql
+
+fun main() {
+    Env.loadEnv()
+
+    val DB_DRIVER = "org.postgresql.Driver"
+    Database.connect(
+        url = Env.postgres_url,
+        driver = DB_DRIVER,
+        user = Env.postgres_user,
+        password = Env.postgres_password
+    )
+
+    val statements = transaction {
+        SchemaUtils.createStatements(
+            UserTable,
+            PasswordResetTable,
+            EmailVerificationTable,
+            ListTable,
+            CategoryTable,
+            ItemTable,
+            ItemContentTable,
+            TaskTable,
+            SubTaskTable,
+            NotifyTable,
+            ColorSuggestionTable,
+            ColorTable,
+            NameSuggestionTable,
+            NameTable
+        )
+    }
+
+    File("statements.txt").writeText(statements.joinToString("\n") { "$it;"} )
+}
+ */
 
 object PostgresClient {
     private const val DB_DRIVER = "org.postgresql.Driver"
