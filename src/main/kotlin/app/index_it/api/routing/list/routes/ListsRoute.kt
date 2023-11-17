@@ -3,9 +3,9 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.daos.list.ListDao
-import app.index_it.models.lists.ListDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.list.ListDao
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*

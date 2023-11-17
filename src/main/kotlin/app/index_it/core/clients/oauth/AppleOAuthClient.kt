@@ -1,8 +1,9 @@
 package app.index_it.core.clients.oauth
 
 import app.index_it.Env
-import app.index_it.models.oauth.apple.AppleIdTokenDto
-import app.index_it.models.oauth.apple.AppleOAuthTokenResponseDto
+import app.index_it.data.models.oauth.apple.AppleIdTokenDto
+import app.index_it.data.models.oauth.apple.AppleOAuthTokenResponseDto
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
@@ -14,7 +15,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val log = KotlinLogging.logger {  }
 

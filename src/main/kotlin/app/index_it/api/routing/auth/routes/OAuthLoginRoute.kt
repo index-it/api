@@ -7,9 +7,11 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.user.UserDto
+import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.newIxId
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.user.UserDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -18,7 +20,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import io.ktor.util.date.*
 
 /**
  * A user can register / sign-in with Google, Facebook and Apple
@@ -66,10 +67,11 @@ fun Route.oauthLoginRoutes() {
         if (userG == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
             userG = UserDto(
+                id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = getTimeMillis(),
+                creationTimestamp = currentMillis(),
                 creationSource = UserDto.CreationSource.GOOGLE
             )
 
@@ -125,10 +127,11 @@ fun Route.oauthLoginRoutes() {
         if (userA == null) {
             // Create the user in the db with a random id, the email gotten from Apple, email verified to true
             userA = UserDto(
+                id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = getTimeMillis(),
+                creationTimestamp = currentMillis(),
                 creationSource = UserDto.CreationSource.APPLE
             )
 
@@ -181,10 +184,11 @@ fun Route.oauthLoginRoutes() {
         if (userF == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
             userF = UserDto(
+                id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = getTimeMillis(),
+                creationTimestamp = currentMillis(),
                 creationSource = UserDto.CreationSource.FACEBOOK
             )
 

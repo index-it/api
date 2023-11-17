@@ -6,11 +6,11 @@ import app.index_it.api.routing.user.ResetPasswordRoute
 import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
-import app.index_it.daos.auth.PasswordResetDao
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.PasswordResetRequestBody
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.auth.PasswordResetDao
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.PasswordResetRequestBody
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*

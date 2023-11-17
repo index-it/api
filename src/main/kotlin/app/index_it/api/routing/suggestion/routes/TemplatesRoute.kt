@@ -1,11 +1,11 @@
 package app.index_it.api.routing.suggestion.routes
 
 import app.index_it.api.routing.suggestion.SuggestionRoutes
-import app.index_it.daos.suggestions.SuggestionsDao
-import app.index_it.models.lists.CategoryDto
-import app.index_it.models.lists.ItemDto
-import app.index_it.models.lists.ListDto
-import app.index_it.models.tasks.TaskDto
+import app.index_it.data.daos.suggestions.SuggestionsDao
+import app.index_it.data.models.lists.CategoryDto
+import app.index_it.data.models.lists.ItemDto
+import app.index_it.data.models.lists.ListDto
+import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*

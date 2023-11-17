@@ -8,12 +8,16 @@ slf4jApi="2.0.7"
 
 dotenv="6.4.1"
 
-kmongo="4.10.0"
+exposed="0.44.1"
+postgresql="42.6.0"
+flyway="10.0.0"
+# kmongo="4.10.0"
 jedis="4.4.3"
 amqpClient="5.18.0"
 
-ktor="2.3.4"
-ktorSwagger="2.5.0"
+ktor="2.3.6"
+ktorSwagger="2.7.1"
+jsonSchemaGenereator="4.32.0"
 konform="0.4.0"
 
 googleApiClient="2.2.0"
@@ -36,8 +40,15 @@ slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4jApi" 
 
 dotenv = { group = "io.github.cdimascio", name = "dotenv-kotlin", version.ref = "dotenv" }
 
-kmongo = { group = "org.litote.kmongo", name = "kmongo-serialization", version.ref = "kmongo" }
-kmongo-id = { group = "org.litote.kmongo", name = "kmongo-id-serialization", version.ref = "kmongo" }
+# kmongo = { group = "org.litote.kmongo", name = "kmongo-serialization", version.ref = "kmongo" }
+# kmongo-id = { group = "org.litote.kmongo", name = "kmongo-id-serialization", version.ref = "kmongo" }
+
+exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
+exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+flyway = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
+flyway-postgres = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
 jedis = { group = "redis.clients", name = "jedis", version.ref = "jedis" }
 amqp-client = { group = "com.rabbitmq", name = "amqp-client", version.ref = "amqpClient" }
 
@@ -57,6 +68,7 @@ ktor-server-request-validation = { group = "io.ktor", name = "ktor-server-reques
 ktor-server-websockets = { group = "io.ktor", name = "ktor-server-websockets", version.ref = "ktor" }
 ktor-server-rate-limit = { group = "io.ktor", name = "ktor-server-rate-limit", version.ref = "ktor" }
 ktor-swagger = { group = "io.github.smiley4", name = "ktor-swagger-ui", version.ref = "ktorSwagger" }
+json-schema-generator = { group = "com.github.victools", name = "jsonschema-generator", version.ref = "jsonSchemaGenereator" }
 
 konform = { group = "io.konform", name = "konform-jvm", version.ref = "konform" }
 
@@ -77,6 +89,15 @@ logging = [
     "logback"
 ]
 
+postgres = [
+    "postgresql",
+    "exposed-core",
+    "exposed-dao",
+    "exposed-jdbc",
+    "flyway",
+    "flyway-postgres"
+]
+
 ktor-server = [
     "ktor-server-core",
     "ktor-server-netty",
@@ -93,6 +114,7 @@ ktor-server = [
     "ktor-server-websockets",
     "ktor-server-rate-limit",
     "ktor-swagger",
+    "json-schema-generator",
     "konform"
 ]
 

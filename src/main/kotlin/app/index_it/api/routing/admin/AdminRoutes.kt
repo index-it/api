@@ -17,7 +17,7 @@ class AdminRoute {
 }
 
 fun Route.adminRoutes() {
-    authenticate(AuthenticationMethods.adminBearerAuth) {
+    authenticate(AuthenticationMethods.ADMIN_BEARER_AUTH) {
         usersRoute()
     }
 }

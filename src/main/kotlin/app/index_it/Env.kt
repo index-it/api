@@ -35,8 +35,9 @@ object Env {
 
     lateinit var sendinblue_api_key: String
 
-    lateinit var mongo_connection_string: String
-    lateinit var mongo_db_name: String
+    lateinit var postgres_url: String
+    lateinit var postgres_user: String
+    lateinit var postgres_password: String
 
     lateinit var redis_connection_string: String
 
@@ -62,11 +63,11 @@ object Env {
     lateinit var facebook_client_secret: String
     lateinit var facebook_redirect_uri: String
 
-    lateinit var suggestion_list_names_id: String
-    lateinit var suggestion_category_names_id: String
-    lateinit var suggestion_item_names_id: String
-    lateinit var suggestion_task_names_id: String
-    lateinit var suggestions_colors_id: String
+    var suggestion_list_names_id: Int = 0
+    var suggestion_category_names_id: Int = 1
+    var suggestion_item_names_id: Int = 2
+    var suggestion_task_names_id: Int = 3
+    var suggestions_colors_id: Int = 0
 
     /**
      * Loads all the env variables from the .env file or system properties
@@ -87,8 +88,9 @@ object Env {
         session_max_age_in_seconds = getLongFromEnv("session.max.age.in.seconds")
         admin_api_key = getStringFromEnv("admin.api.key")
         sendinblue_api_key = getStringFromEnv("sendinblue.api.key")
-        mongo_connection_string = getStringFromEnv("mongo.connection.string")
-        mongo_db_name = getStringFromEnv("mongo.db.name")
+        postgres_url = getStringFromEnv("postgres.url")
+        postgres_user = getStringFromEnv("postgres.user")
+        postgres_password = getStringFromEnv("postgres.password")
         redis_connection_string = getStringFromEnv("redis.connection.string")
 
         rabbitmq_connection_string = getStringFromEnv("rabbitmq.connection.string")
@@ -113,11 +115,11 @@ object Env {
         facebook_client_secret = getStringFromEnv("facebook.client.secret")
         facebook_redirect_uri = getStringFromEnv("facebook.redirect.uri")
 
-        suggestion_list_names_id = getStringFromEnv("suggestion.list.names.id")
-        suggestion_category_names_id = getStringFromEnv("suggestion.category.names.id")
-        suggestion_item_names_id = getStringFromEnv("suggestion.item.names.id")
-        suggestion_task_names_id = getStringFromEnv("suggestion.task.names.id")
-        suggestions_colors_id = getStringFromEnv("suggestion.colors.id")
+        suggestion_list_names_id = getIntFromEnv("suggestion.list.names.id")
+        suggestion_category_names_id = getIntFromEnv("suggestion.category.names.id")
+        suggestion_item_names_id = getIntFromEnv("suggestion.item.names.id")
+        suggestion_task_names_id = getIntFromEnv("suggestion.task.names.id")
+        suggestions_colors_id = getIntFromEnv("suggestion.colors.id")
 
         log.debug { "Environment variables loaded" }
     }

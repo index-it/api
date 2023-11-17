@@ -2,10 +2,9 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
-import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.tasks.SubTaskDto
-import app.index_it.models.tasks.TaskDto
+import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.tasks.SubTaskDto
+import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -36,7 +35,7 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        val task = TaskDao.get(userIdFromSession()!!,it.taskId.toObjectId())
+        val task = TaskDao.get(userIdFromSession()!!,it.taskId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(task)
@@ -88,12 +87,13 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        val updatedTask = call.receive<TaskDto.TaskUpdateRequestDto>()
+        val updateData = call.receive<TaskDto.TaskUpdateRequestDto>()
+        val userId = userIdFromSession()!!
 
-        val task = TaskDao.update(userIdFromSession()!!, it.taskId.toObjectId(), updatedTask)
+        val updatedTask = TaskDao.update(userId, it.taskId, updateData)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        call.respond(task)
+        call.respond(updatedTask)
 
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_UPDATED, item)
     }
@@ -115,7 +115,7 @@ fun Route.taskRoute() {
         }
     }) {
         // TODO: Delete related item too?
-        TaskDao.delete(userIdFromSession()!!, it.taskId.toObjectId())
+        TaskDao.delete(userIdFromSession()!!, it.taskId)
         call.respond(HttpStatusCode.OK)
 
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")

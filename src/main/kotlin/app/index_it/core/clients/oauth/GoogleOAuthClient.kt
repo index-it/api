@@ -1,7 +1,7 @@
 package app.index_it.core.clients.oauth
 
 import app.index_it.Env
-import app.index_it.models.oauth.google.GoogleUserInfoDto
+import app.index_it.data.models.oauth.google.GoogleUserInfoDto
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.apache.v2.ApacheHttpTransport

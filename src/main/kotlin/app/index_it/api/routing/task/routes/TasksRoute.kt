@@ -3,12 +3,9 @@ package app.index_it.api.routing.task.routes
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.lists.ItemDto
-import app.index_it.models.lists.ListDto
-import app.index_it.models.tasks.TaskDto
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -72,10 +69,10 @@ fun Route.tasksRoute() {
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
 
-    post<TasksRoute.LinkedRoute>({
+    post<TasksRoute.CreateConnectedFromItem>({
         tags = listOf("tasks")
-        operationId = "create-linked-task"
-        summary = "creates a new task from an existing item (aka linked task)"
+        operationId = "create-connected-task"
+        summary = "creates a new task from an existing item (aka connected task)"
         request {
             queryParameter<String>("listId") {
                 description = "id of the list"
@@ -88,7 +85,7 @@ fun Route.tasksRoute() {
         }
         response {
             HttpStatusCode.OK to {
-                description = "the linked task"
+                description = "the connected task"
                 body<TaskDto>()
             }
             HttpStatusCode.NotFound to {
@@ -96,16 +93,17 @@ fun Route.tasksRoute() {
             }
         }
     }) {
+        println("DUDUDUHHUSADH")
         val userId = userIdFromSession() ?: throw AuthenticationException()
-        val listId = it.listId.toObjectId<ListDto>()
-        val itemId = it.itemId.toObjectId<ItemDto>()
 
-        val item = ItemDao.get(userId, listId, itemId)
+        val item = ItemDao.get(userId, it.itemId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
+
+        println(item)
 
         val task = TaskDao.createLinked(userIdFromSession()!!, item)
 
-        ItemDao.setLinking(userId, listId, itemId, task.id)
+        ItemDao.setTaskConnection(userId, item.listId, item.id, task.id)
 
         call.respond(task)
 

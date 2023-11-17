@@ -9,10 +9,10 @@ import app.index_it.api.routing.task.taskRoutes
 import app.index_it.api.routing.user.userRoutes
 import app.index_it.api.routing.web.webRoutes
 import app.index_it.api.routing.websocket.websocketRoutes
+import app.index_it.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
-import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 fun Application.configureRouting() {
     // Needed for typed queries

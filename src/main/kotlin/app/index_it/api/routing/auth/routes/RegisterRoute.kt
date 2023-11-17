@@ -2,18 +2,19 @@ package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.RegisterRoute
 import app.index_it.core.logic.PasswordEncoder
+import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.typedId.newIxId
 import app.index_it.core.logic.usecases.UserAuthUseCase
-import app.index_it.daos.auth.EmailVerificationDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.RegistrationCredentials
-import app.index_it.models.user.UserDto
+import app.index_it.data.daos.auth.EmailVerificationDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.RegistrationCredentials
+import app.index_it.data.models.user.UserDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.date.*
 
 fun Route.registerRoute() {
     /**
@@ -60,10 +61,11 @@ fun Route.registerRoute() {
 
         val hashedPassword = PasswordEncoder.encode(signupData.password)
         val user = UserDto(
+            id = newIxId(),
             email = signupData.email,
             passwordHash = hashedPassword,
             emailVerified = false,
-            creationTimestamp = getTimeMillis(),
+            creationTimestamp = currentMillis(),
             creationSource = UserDto.CreationSource.NONE
         )
 

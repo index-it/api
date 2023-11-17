@@ -2,10 +2,9 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
-import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.tasks.TaskDto
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.models.tasks.TaskDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -39,13 +38,16 @@ fun Route.taskCompletionRoute() {
         }
     }) {
         val userId = userIdFromSession()!!
-        val task = TaskDao.setCompletion(userId, it.parent.taskId.toObjectId(), it.completed)
+        val updatedTask = TaskDao.setCompletion(userId, it.parent.taskId, it.completed)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (task.listId != null && task.itemId != null) {
-            ItemDao.setCompletion(userId, task.listId, task.itemId, it.completed)
+        if (updatedTask.itemId != null) {
+            ItemDao.get(userId, updatedTask.itemId)
+                ?.also { linkedItem ->
+                    ItemDao.setCompletion(userId, linkedItem.listId, linkedItem.id, it.completed)
+                }
         }
 
-        call.respond(task)
+        call.respond(updatedTask)
     }
 }

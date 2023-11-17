@@ -3,12 +3,10 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemContentDao
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.task.TaskDao
-import app.index_it.models.lists.ItemDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.core.logic.typedId.newIxId
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.models.lists.ItemDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -17,8 +15,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.bson.types.ObjectId
-import org.litote.kmongo.id.toId
 
 fun Route.itemRoute() {
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
@@ -45,7 +41,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        val item = ItemDao.get(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId())
+        val item = ItemDao.get(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -69,7 +65,7 @@ fun Route.itemRoute() {
                 description = "new item data"
                 example(
                     "sample-item-update",
-                    ItemDto.ItemUpdateRequestDto(ObjectId().toId(), "Milos 🧿")
+                    ItemDto.ItemUpdateRequestDto(newIxId(), "Milos 🧿")
                 )
             }
         }
@@ -87,16 +83,12 @@ fun Route.itemRoute() {
 
         val userId = userIdFromSession()!!
         
-        val item = ItemDao.update(userId, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId(), updatedItem)
+        val newItem = ItemDao.update(userId, it.parent.parent.listId, it.itemId, updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (item.taskId != null) {
-            TaskDao.setCategory(userId, item.taskId, item.categoryId)
-        }
+        call.respond(newItem)
 
-        call.respond(item)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_UPDATED, item)
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_UPDATED, newItem)
     }
 
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
@@ -120,8 +112,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        ItemDao.delete(userIdFromSession()!!, it.parent.parent.listId.toObjectId(), it.itemId.toObjectId())
-        ItemContentDao.delete(userIdFromSession()!!, it.itemId.toObjectId())
+        ItemDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
         call.respond(HttpStatusCode.OK)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")

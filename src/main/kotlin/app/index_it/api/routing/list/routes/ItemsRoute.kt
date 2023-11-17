@@ -3,10 +3,10 @@ package app.index_it.api.routing.list.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.list.ListsRoute
-import app.index_it.core.extentions.toObjectId
-import app.index_it.daos.list.ItemDao
-import app.index_it.models.lists.ItemDto
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.core.logic.typedId.newIxId
+import app.index_it.data.daos.list.ItemDao
+import app.index_it.data.models.lists.ItemDto
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -14,8 +14,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.bson.types.ObjectId
-import org.litote.kmongo.id.toId
 
 fun Route.itemsRoute() {
     get<ListsRoute.ListRoute.ItemsRoute>({
@@ -40,9 +38,9 @@ fun Route.itemsRoute() {
         }
     }) {
         val items = when (it.completed) {
-            true ->  ItemDao.getAllCompleted(userIdFromSession()!!, it.parent.listId.toObjectId())
-            false -> ItemDao.getAllUncompleted(userIdFromSession()!!, it.parent.listId.toObjectId())
-            null -> ItemDao.getAll(userIdFromSession()!!, it.parent.listId.toObjectId())
+            true ->  ItemDao.getAllCompleted(userIdFromSession()!!, it.parent.listId)
+            false -> ItemDao.getAllUncompleted(userIdFromSession()!!, it.parent.listId)
+            null -> ItemDao.getAll(userIdFromSession()!!, it.parent.listId)
         }
 
         call.respond(items)
@@ -60,7 +58,7 @@ fun Route.itemsRoute() {
             body<ItemDto.ItemCreateRequestDto> {
                 required = true
                 description = "item data"
-                example("sample-item", ItemDto.ItemCreateRequestDto(ObjectId().toId(), "Milos"))
+                example("sample-item", ItemDto.ItemCreateRequestDto(newIxId(), "Milos"))
             }
         }
         response {
@@ -72,7 +70,7 @@ fun Route.itemsRoute() {
     }) {
         val newItem = call.receive<ItemDto.ItemCreateRequestDto>()
 
-        val item = ItemDao.create(userIdFromSession()!!, it.parent.listId.toObjectId(), newItem)
+        val item = ItemDao.create(userIdFromSession()!!, it.parent.listId, newItem)
 
         call.respond(item)
 

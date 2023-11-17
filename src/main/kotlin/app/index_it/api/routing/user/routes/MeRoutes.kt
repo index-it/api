@@ -4,14 +4,10 @@ import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.user.MeRoute
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.daos.auth.UserSessionDao
-import app.index_it.daos.list.CategoryDao
-import app.index_it.daos.list.ItemDao
-import app.index_it.daos.list.ListDao
-import app.index_it.daos.user.UserDao
-import app.index_it.models.auth.RegistrationCredentials
-import app.index_it.models.auth.UserSessionCookie
-import app.index_it.models.websocket.RabbitMqWebsocketEventType
+import app.index_it.data.daos.auth.UserSessionDao
+import app.index_it.data.daos.user.UserDao
+import app.index_it.data.models.auth.UserSessionCookie
+import app.index_it.data.models.websocket.RabbitMqWebsocketEventType
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
@@ -42,13 +38,6 @@ fun Route.meRoutes() {
         operationId = "delete-account"
         summary = "delete the logged in user account"
         description = "this deletes **all** the data of the logged in user from index systems, it's irreversible"
-        request {
-            body<RegistrationCredentials> {
-                description = "email and password, password requirements: 8-100 chars with at least an uppercase, lowercase and number character"
-                required = true
-                example("example-credentials", RegistrationCredentials("sample@mail.com", "verySecurePwd1234"))
-            }
-        }
         response {
             HttpStatusCode.OK to {
                 description = "user data deleted and session terminated"
@@ -56,17 +45,13 @@ fun Route.meRoutes() {
         }
     }) {
         val userId = userIdFromSession()!!
-
         call.sessions.clear<UserSessionCookie>()
 
         UserDao.delete(userId)
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
         UserSessionDao.deleteAllSessionsOfUser(userId)
 
-        ListDao.deleteAll(userId)
-        CategoryDao.deleteAllOfUser(userId)
-        ItemDao.deleteAllOfUser(userId)
-        // TODO: Delete planner data
+        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
+
         call.respond(HttpStatusCode.OK)
     }
 }

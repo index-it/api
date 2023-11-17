@@ -1,9 +1,18 @@
 package app.index_it.api.plugins
 
 import app.index_it.Env
+import app.index_it.core.logic.ObjectMapper
+import app.index_it.core.logic.typedId.Id
+import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.data.AuthType
+import io.github.smiley4.ktorswaggerui.data.EncodingData
+import io.github.smiley4.ktorswaggerui.data.EncodingData.Companion.schemaGeneratorConfigBuilder
+import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
+import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
 import io.ktor.server.application.*
+import kotlinx.serialization.serializer
+
 
 fun Application.configureSwagger() {
     install(SwaggerUI) {
@@ -46,16 +55,27 @@ fun Application.configureSwagger() {
             }
         }
 
-        /*
         encoding {
-            schemaEncoder { type ->
-                when (type) {
-                    getSchemaType<Id<*>>() -> """{"type": "string"}"""  // custom "generator" for strings
-                    else -> EncodingConfig.encodeSchema(type) // use default generator for everything else
+            val configBuilder = schemaGeneratorConfigBuilder()
+
+            configBuilder
+                .forFields()
+                .withTargetTypeOverridesResolver { field ->
+                    if (field.type.erasedType.interfaces.any { it == Id::class.java }) {
+                        listOf(
+                            field.context.resolve(String::class.java)
+                        )
+                    } else {
+                        null
+                    }
                 }
+
+            EncodingData.DEFAULT_SCHEMA_GENERATOR = SchemaGenerator(configBuilder.build())
+
+            exampleEncoder { type, example ->
+                ObjectMapper.json.encodeToString(serializer(type!!), example)
             }
         }
-         */
 
         /**
          * BASIC INFO
@@ -101,15 +121,15 @@ fun Application.configureSwagger() {
          * SECURITY
          */
 
-        securityScheme(AuthenticationMethods.userSessionAuth) {
+        securityScheme(AuthenticationMethods.USER_SESSION_AUTH) {
             type = AuthType.HTTP
         }
 
-        securityScheme(AuthenticationMethods.adminBearerAuth) {
+        securityScheme(AuthenticationMethods.ADMIN_BEARER_AUTH) {
             type = AuthType.API_KEY
         }
 
-        defaultSecuritySchemeName = AuthenticationMethods.userSessionAuth
+        defaultSecuritySchemeName = AuthenticationMethods.USER_SESSION_AUTH
 
         defaultUnauthorizedResponse {
             description = "Invalid session"

@@ -6,10 +6,10 @@ import app.index_it.api.plugins.UserIdPrincipalForEmailVerificationAuth
 import app.index_it.api.routing.auth.IsEmailVerifiedRoute
 import app.index_it.api.routing.auth.SendVerificationEmailRoute
 import app.index_it.api.routing.auth.VerifyEmailRoute
-import app.index_it.daos.auth.EmailVerificationDao
-import app.index_it.daos.user.UserDao
-import io.github.smiley4.ktorswaggerui.dsl.resources.post
+import app.index_it.data.daos.auth.EmailVerificationDao
+import app.index_it.data.daos.user.UserDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -17,7 +17,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.emailVerificationRoutes() {
-    authenticate(AuthenticationMethods.emailVerificationFormAuth) {
+    authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
 
         /**
          * Sends an email to verify the user email

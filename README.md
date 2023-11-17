@@ -17,22 +17,26 @@ api
 
 ## Development
 This api requires the following services:
-- MongoDB
+- PostgreSQL
 - Redis
 - RabbitMq  
 
 A Docker compose file for development purposes is available in the root directory, named `docker-compose-dev.yml`  
 It creates all the required services and their web dashboards:  
 
-| Service | username | password | endpoint | web dashboard                           |    
-|---------|:----------:|:----------:|:----------|:----------------------------------------|    
-| MongoDB |   |   | localhost:27017 | [localhost:8081](http://localhost:8081) |    
-| Redis |   |   | localhost:6379 | [localhost:8082](http://localhost:8082) |    
-| RabbitMq | guest | guest | localhost:5672 | [localhost:8083](http://localhost:8083) |
+| Service    |   username   |     password     | endpoint | web dashboard                           |    
+|------------|:------------:|:----------------:|:----------|:----------------------------------------|    
+| PostgreSQL | IndexDevUser | IndexDevPassword | localhost:5432 | [localhost:8081](http://localhost:8081) |    
+| Redis      |              |                  | localhost:6379 | [localhost:8082](http://localhost:8082) |    
+| RabbitMq   |    guest     |      guest       | localhost:5672 | [localhost:8083](http://localhost:8083) |
 
 There is a pre-made `.env` file for development located in `/env/.env.development`, just copy it to the root directory and adjust it as needed
 
-> Important: editing documents with the MongoDB dashboard **is not recommended** as it tends to mess up data types!
+> To connect to the Postgres database via the web dashboard
+> put as the `Server` the name that you gave to the postgres container,
+> if using the `docker-compose-dev.yml` file it will be `index-postgres`.
+> 
+> The database by default is `IndexDev`
 
 ##### Swagger UI
 Swagger is available at [localhost:$PORT/swagger](http://localhost:8080/swagger)
