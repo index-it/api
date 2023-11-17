@@ -35,9 +35,6 @@ object Env {
 
     lateinit var sendinblue_api_key: String
 
-    lateinit var mongo_connection_string: String
-    lateinit var mongo_db_name: String
-
     lateinit var postgres_url: String
     lateinit var postgres_user: String
     lateinit var postgres_password: String
@@ -91,8 +88,6 @@ object Env {
         session_max_age_in_seconds = getLongFromEnv("session.max.age.in.seconds")
         admin_api_key = getStringFromEnv("admin.api.key")
         sendinblue_api_key = getStringFromEnv("sendinblue.api.key")
-        mongo_connection_string = getStringFromEnv("mongo.connection.string")
-        mongo_db_name = getStringFromEnv("mongo.db.name")
         postgres_url = getStringFromEnv("postgres.url")
         postgres_user = getStringFromEnv("postgres.user")
         postgres_password = getStringFromEnv("postgres.password")
