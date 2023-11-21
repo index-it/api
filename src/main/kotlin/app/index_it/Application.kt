@@ -41,7 +41,6 @@ fun main() {
      * Initialize objects
      * If objects aren't called they initialize lazily which can lead to a false positive ready state
      */
-    // MongoClient.init()
     runBlocking {
         PostgresClient.init()
     }
