@@ -3,14 +3,13 @@ package app.index_it.core.logic.typedId.serialization
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.core.logic.typedId.newIxIntId
-import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.models.user.UserDto
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class IdKotlinXSerializationModuleKtTest {

@@ -1,6 +1,6 @@
 package app.index_it.core.logic.websocket
 
-import app.index_it.Env
+import app.index_it.config.RabbitMQConfig
 import app.index_it.core.clients.RabbitMqClient
 import app.index_it.core.logic.ObjectMapper
 import app.index_it.core.logic.websocket.WebsocketsQueueManager.startListening
@@ -21,9 +21,9 @@ object WebsocketsQueueManager {
     private var websocketEventsChannel: Channel = RabbitMqClient.connection.createChannel(34)
 
     init {
-        websocketEventsChannel.exchangeDeclare(Env.rabbitmq_exchange_name, BuiltinExchangeType.DIRECT, false)
-        websocketEventsChannel.queueDeclare(Env.rabbitmq_websockets_queue_name, false, false, false, mapOf())
-        websocketEventsChannel.queueBind(Env.rabbitmq_websockets_queue_name, Env.rabbitmq_exchange_name, Env.rabbitmq_websockets_routing_key)
+        websocketEventsChannel.exchangeDeclare(RabbitMQConfig.exchangeName, BuiltinExchangeType.DIRECT, false)
+        websocketEventsChannel.queueDeclare(RabbitMQConfig.websocketsQueueName, false, false, false, mapOf())
+        websocketEventsChannel.queueBind(RabbitMQConfig.websocketsQueueName, RabbitMQConfig.exchangeName, RabbitMQConfig.websocketsRoutingKey)
     }
 
     fun startListening() {
@@ -46,7 +46,7 @@ object WebsocketsQueueManager {
         }
 
         websocketEventsChannel.basicConsume(
-            Env.rabbitmq_websockets_queue_name,
+            RabbitMQConfig.websocketsQueueName,
             true,
             websocketEventConsumer
         )
@@ -58,8 +58,8 @@ object WebsocketsQueueManager {
         log.debug { "Publishing RabbitMQ websocket event: $rabbitMqWebsocketEventDto" }
 
         websocketEventsChannel.basicPublish(
-            Env.rabbitmq_exchange_name,
-            Env.rabbitmq_websockets_routing_key,
+            RabbitMQConfig.exchangeName,
+            RabbitMQConfig.websocketsRoutingKey,
             AMQP.BasicProperties(),
             ObjectMapper.encodeToByteArray(rabbitMqWebsocketEventDto)
         )

@@ -1,6 +1,6 @@
 package app.index_it.api.plugins
 
-import app.index_it.Env
+import app.index_it.config.ApiConfig
 import app.index_it.core.logic.ObjectMapper
 import app.index_it.core.logic.typedId.Id
 import com.github.victools.jsonschema.generator.SchemaGenerator
@@ -112,7 +112,7 @@ fun Application.configureSwagger() {
         }
 
         server {
-            url = "http://localhost:${Env.port}"
+            url = "http://localhost:${ApiConfig.port}"
             description = "Local development server"
         }
 

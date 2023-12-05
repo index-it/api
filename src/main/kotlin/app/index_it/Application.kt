@@ -2,8 +2,12 @@ package app.index_it
 
 import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
+import app.index_it.config.ApiConfig
+import app.index_it.config.ApplicationConfig
+import app.index_it.config.core.ConfigurationInitializer
+import app.index_it.config.core.ConfigurationReader
+import app.index_it.core.clients.BrevoClient
 import app.index_it.core.clients.RabbitMqClient
-import app.index_it.core.clients.SendinblueClient
 import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
@@ -17,25 +21,26 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger { }
 
 fun main() {
     /**
-     * Load environment.
+     * Load configuration properties (environment)
      */
-    try {
-        Env.loadEnv()
-    } catch (e: NoSuchElementException) {
-        logger.error { e }
-        exitProcess(404)
-    }
+    val configInitializer = ConfigurationInitializer(
+        packageName = "app.index_it.config",
+        ConfigurationReader::read
+    )
+
+    configInitializer.initialize()
+
 
     /**
      * Configure logging
      */
-    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Env.log_level
+    (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = ApplicationConfig.logLevel
+
 
     /**
      * Initialize objects
@@ -52,7 +57,7 @@ fun main() {
     /**
      * Launch api server
      */
-    val apiServer = embeddedServer(Netty, port = Env.port, host = "0.0.0.0", module = Application::indexApplicationModule)
+    val apiServer = embeddedServer(Netty, port = ApiConfig.port, host = "0.0.0.0", module = Application::indexApplicationModule)
 
     // Add shutdown hook to api server
     apiServer.addShutdownHook {
@@ -72,7 +77,7 @@ fun main() {
 
             logger.info { "[1/7] Api server shutdown" }
 
-            SendinblueClient.close()
+            BrevoClient.close()
             logger.info { "[2/7] SendinblueClient client shutdown" }
 
             AppleOAuthClient.close()

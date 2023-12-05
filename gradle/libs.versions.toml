@@ -1,6 +1,7 @@
 [versions]
 kotlin="1.9.0"
 kotlinxCoroutines="1.7.3"
+reflections="0.10.2"
 
 kotlinLogging="5.1.0"
 logback="1.4.11"
@@ -10,8 +11,7 @@ dotenv="6.4.1"
 
 exposed="0.44.1"
 postgresql="42.6.0"
-flyway="9.22.3" # "10.0.2"
-# kmongo="4.10.0"
+flyway="10.1.0"
 jedis="4.4.3"
 amqpClient="5.18.0"
 
@@ -33,6 +33,7 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 
 [libraries]
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+reflections = { group = "org.reflections", name = "reflections", version.ref  = "reflections" }
 
 kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
 logback = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
@@ -48,7 +49,7 @@ exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.r
 exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 flyway = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
-# flyway-postgres = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
+flyway-postgres = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
 jedis = { group = "redis.clients", name = "jedis", version.ref = "jedis" }
 amqp-client = { group = "com.rabbitmq", name = "amqp-client", version.ref = "amqpClient" }
 
@@ -94,8 +95,8 @@ postgres = [
     "exposed-core",
     "exposed-dao",
     "exposed-jdbc",
-    "flyway"
-    # "flyway-postgres"
+    "flyway",
+    "flyway-postgres"
 ]
 
 ktor-server = [

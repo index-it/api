@@ -1,6 +1,6 @@
 package app.index_it.data.daos.auth
 
-import app.index_it.core.clients.SendinblueClient
+import app.index_it.core.clients.BrevoClient
 import app.index_it.core.logic.TokenGenerator
 import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
@@ -32,7 +32,7 @@ object EmailVerificationDao {
         )
 
         save(emailVerificationDto)
-        return SendinblueClient.sendEmailVerificationEmail(user.email, token)
+        return BrevoClient.sendEmailVerificationEmail(user.email, token)
     }
 
     /**

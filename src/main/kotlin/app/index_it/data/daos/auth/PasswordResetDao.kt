@@ -1,6 +1,6 @@
 package app.index_it.data.daos.auth
 
-import app.index_it.core.clients.SendinblueClient
+import app.index_it.core.clients.BrevoClient
 import app.index_it.core.logic.TokenGenerator
 import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
@@ -29,7 +29,7 @@ object PasswordResetDao {
         )
 
         save(passwordResetDto)
-        return SendinblueClient.sendPasswordResetEmail(user.email, token)
+        return BrevoClient.sendPasswordResetEmail(user.email, token)
     }
 
     /**

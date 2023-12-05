@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     implementation(libs.bundles.logging)
+    implementation(libs.reflections)
     api(libs.slf4j.api)
 
     implementation(libs.bundles.ktor.server)
@@ -27,8 +28,6 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines)
     implementation(libs.dotenv)
-    // implementation(libs.kmongo)
-    // implementation(libs.kmongo.id)
     implementation(libs.jedis)
     implementation(libs.amqp.client)
     implementation(libs.google.api.client)

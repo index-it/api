@@ -1,6 +1,6 @@
 package app.index_it.core.clients.oauth
 
-import app.index_it.Env
+import app.index_it.config.OAuthConfig
 import app.index_it.data.models.oauth.apple.AppleIdTokenDto
 import app.index_it.data.models.oauth.apple.AppleOAuthTokenResponseDto
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -39,9 +39,9 @@ object AppleOAuthClient {
             val response = client.submitForm(
                 url = "https://appleid.apple.com/auth/token",
                 formParameters = Parameters.build {
-                    append("client_id", Env.apple_client_id)
-                    append("client_secret", Env.apple_client_secret)
-                    append("redirect_uri", Env.apple_redirect_uri)
+                    append("client_id", OAuthConfig.appleClientId)
+                    append("client_secret", OAuthConfig.appleClientSecret)
+                    append("redirect_uri", OAuthConfig.appleRedirectUri)
                     append("grant_type", "authorization_code")
                     append("code", code)
                 }

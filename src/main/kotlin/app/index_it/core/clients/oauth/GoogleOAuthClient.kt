@@ -1,6 +1,6 @@
 package app.index_it.core.clients.oauth
 
-import app.index_it.Env
+import app.index_it.config.OAuthConfig
 import app.index_it.data.models.oauth.google.GoogleUserInfoDto
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.HttpTransport
@@ -13,7 +13,7 @@ object GoogleOAuthClient {
     private val jsonFactory: JsonFactory = GsonFactory()
 
     private val verifier = GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-        .setAudience(listOf(Env.google_client_id))
+        .setAudience(listOf(OAuthConfig.googleClientId))
         .build()
 
     fun getUserInfoFromIdTokenIfValid(token: String): GoogleUserInfoDto? {

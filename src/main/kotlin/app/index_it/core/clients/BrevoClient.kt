@@ -1,6 +1,6 @@
 package app.index_it.core.clients
 
-import app.index_it.Env
+import app.index_it.config.BrevoConfig
 import app.index_it.data.models.email.SendinblueCodeOperationRequestBody
 import app.index_it.data.models.email.SendinblueGenericRequestBody
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -17,7 +17,8 @@ import kotlinx.serialization.json.Json
 import java.net.URLEncoder
 
 private val log = KotlinLogging.logger { }
-object SendinblueClient {
+
+object BrevoClient {
     private val client = HttpClient(Apache) {
         install(Logging)
         install(ContentNegotiation) {
@@ -31,7 +32,7 @@ object SendinblueClient {
             url("https://api.sendinblue.com/v3/")
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
-            header("api-key", Env.sendinblue_api_key)
+            header("api-key", BrevoConfig.apiKey)
         }
     }
 
@@ -45,7 +46,7 @@ object SendinblueClient {
                 ),
                 templateId = 2,
                 params = SendinblueCodeOperationRequestBody.Params(
-                    url = "${Env.email_verification_url}?email=${
+                    url = "${BrevoConfig.emailVerificationUrl}?email=${
                         URLEncoder.encode(
                             email,
                             "utf-8"
@@ -79,7 +80,7 @@ object SendinblueClient {
                 ),
                 templateId = 1,
                 params = SendinblueCodeOperationRequestBody.Params(
-                    url = "${Env.reset_password_url}?token=${token}"
+                    url = "${BrevoConfig.passwordResetUrl}?token=${token}"
                 )
             ))
         }

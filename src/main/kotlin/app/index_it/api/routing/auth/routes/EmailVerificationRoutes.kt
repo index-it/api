@@ -1,11 +1,11 @@
 package app.index_it.api.routing.auth.routes
 
-import app.index_it.Env
 import app.index_it.api.plugins.AuthenticationMethods
 import app.index_it.api.plugins.UserIdPrincipalForEmailVerificationAuth
 import app.index_it.api.routing.auth.IsEmailVerifiedRoute
 import app.index_it.api.routing.auth.SendVerificationEmailRoute
 import app.index_it.api.routing.auth.VerifyEmailRoute
+import app.index_it.config.BrevoConfig
 import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.daos.user.UserDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -123,17 +123,17 @@ fun Route.emailVerificationRoutes() {
         }
     }) { request ->
         val emailVerificationDto = EmailVerificationDao.get(request.token)
-            ?: return@get call.respondRedirect(Env.email_verification_error_url)
+            ?: return@get call.respondRedirect(BrevoConfig.emailVerificationErrorUrl)
 
         val userDto = UserDao.get(emailVerificationDto.userId)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
         if (userDto.emailVerified)
-            return@get call.respondRedirect(Env.email_verification_success_url)
+            return@get call.respondRedirect(BrevoConfig.emailVerificationSuccessUrl)
 
         UserDao.verifyEmail(userDto.id)
         EmailVerificationDao.deleteAll(userDto.id)
-        call.respondRedirect(Env.email_verification_success_url)
+        call.respondRedirect(BrevoConfig.emailVerificationSuccessUrl)
     }
 }

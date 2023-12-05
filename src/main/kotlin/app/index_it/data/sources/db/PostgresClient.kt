@@ -1,10 +1,13 @@
 package app.index_it.data.sources.db
 
-import app.index_it.Env
+import app.index_it.config.PostgresConfig
 import app.index_it.core.logic.typedId.toIxIntId
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionColorsDBIImpl
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionNamesDBIImpl
-import app.index_it.data.sources.db.schemas.suggestions.*
+import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionEntity
+import app.index_it.data.sources.db.schemas.suggestions.ColorTable
+import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionEntity
+import app.index_it.data.sources.db.schemas.suggestions.NameTable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import org.flywaydb.core.Flyway
@@ -58,10 +61,10 @@ fun main() {
 object PostgresClient {
     private const val DB_DRIVER = "org.postgresql.Driver"
     private val database = Database.connect(
-        url = Env.postgres_url,
+        url = PostgresConfig.url,
         driver = DB_DRIVER,
-        user = Env.postgres_user,
-        password = Env.postgres_password
+        user = PostgresConfig.user,
+        password = PostgresConfig.password
     )
 
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
@@ -89,7 +92,7 @@ object PostgresClient {
         val flyway = Flyway
             .configure()
             .driver(DB_DRIVER)
-            .dataSource(Env.postgres_url, Env.postgres_user, Env.postgres_password)
+            .dataSource(PostgresConfig.url, PostgresConfig.user, PostgresConfig.password)
             .load()
         try {
             flyway.info()

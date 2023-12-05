@@ -3,7 +3,7 @@ package app.index_it.api.routing.user.routes
 import app.index_it.api.plugins.emitRabbitMqWebsocketEvent
 import app.index_it.api.routing.user.PasswordForgottenRoute
 import app.index_it.api.routing.user.ResetPasswordRoute
-import app.index_it.core.clients.SendinblueClient
+import app.index_it.core.clients.BrevoClient
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.websocket.WebsocketConnectionsManager
 import app.index_it.data.daos.auth.PasswordResetDao
@@ -108,7 +108,7 @@ fun Route.passwordOperationRoutes() {
         UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
 
         // Send notification email
-        SendinblueClient.sendPasswordResetSuccessEmail(user.email)
+        BrevoClient.sendPasswordResetSuccessEmail(user.email)
 
         call.respond(HttpStatusCode.OK)
     }

@@ -1,6 +1,6 @@
 package app.index_it.data.daos.suggestions
 
-import app.index_it.Env
+import app.index_it.config.SuggestionConfig
 import app.index_it.core.logic.typedId.impl.IxIntId
 import app.index_it.core.logic.typedId.toIxIntId
 import app.index_it.data.models.suggestions.ColorSuggestionsDto
@@ -13,12 +13,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 private val logger = KotlinLogging.logger {  }
 
 object SuggestionsDao {
-    private val listNameSuggestionsId: IxIntId<NameSuggestionsDto> = Env.suggestion_list_names_id.toIxIntId()
-    private val categoryNameSuggestionsId: IxIntId<NameSuggestionsDto> = Env.suggestion_category_names_id.toIxIntId()
-    private val itemNameSuggestionsId: IxIntId<NameSuggestionsDto> = Env.suggestion_item_names_id.toIxIntId()
-    private val taskNameSuggestionsId: IxIntId<NameSuggestionsDto> = Env.suggestion_task_names_id.toIxIntId()
+    private val listNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionListNamesId.toIxIntId()
+    private val categoryNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionCategoryNamesId.toIxIntId()
+    private val itemNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionItemNamesId.toIxIntId()
+    private val taskNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionTaskNamesId.toIxIntId()
 
-    private val colorSuggestionsId: IxIntId<ColorSuggestionsDto> = Env.suggestions_colors_id.toIxIntId()
+    private val colorSuggestionsId: IxIntId<ColorSuggestionsDto> = SuggestionConfig.suggestionColorsId.toIxIntId()
 
     fun getRandomNameSuggestion(nameSuggestionsDto: NameSuggestionsDto?): String {
         return nameSuggestionsDto?.names?.randomOrNull() ?: run {

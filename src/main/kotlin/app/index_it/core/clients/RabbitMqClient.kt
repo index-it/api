@@ -1,6 +1,6 @@
 package app.index_it.core.clients
 
-import app.index_it.Env
+import app.index_it.config.RabbitMQConfig
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 
@@ -9,7 +9,7 @@ object RabbitMqClient {
 
     init {
         val factory = ConnectionFactory()
-        factory.setUri(Env.rabbitmq_connection_string)
+        factory.setUri(RabbitMQConfig.connectionString)
 
         connection = factory.newConnection()
     }

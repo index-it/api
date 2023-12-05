@@ -1,6 +1,6 @@
 package app.index_it.api.plugins
 
-import app.index_it.Env
+import app.index_it.config.ApiConfig
 import app.index_it.core.logic.PasswordEncoder
 import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
@@ -43,8 +43,8 @@ fun Application.configureSecurity() {
     install(Sessions) {
         cookie<UserSessionCookie>("user_session_id") {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = Env.session_max_age_in_seconds
-            cookie.secure = Env.cookie_secure
+            cookie.maxAgeInSeconds = ApiConfig.sessionMaxAgeInSeconds
+            cookie.secure = ApiConfig.cookieSecure
             cookie.httpOnly = true
 
             serializer = KotlinxSessionSerializer(Json {
@@ -78,7 +78,7 @@ fun Application.configureSecurity() {
                 val session = UserSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
 
                 // If there is no session or if it has expired (session expires after 7 days)
-                if (session == null || (currentMillis() - session.iat) >= (Env.session_max_age_in_seconds*1000))
+                if (session == null || (currentMillis() - session.iat) >= (ApiConfig.sessionMaxAgeInSeconds*1000))
                     null
                 else
                     session
@@ -90,7 +90,7 @@ fun Application.configureSecurity() {
 
         bearer(AuthenticationMethods.ADMIN_BEARER_AUTH) {
             authenticate { tokenCredential ->
-                if (tokenCredential.token == Env.admin_api_key) {
+                if (tokenCredential.token == ApiConfig.adminKey) {
                     UserIdPrincipal("admin")
                 } else {
                     null
