@@ -10,7 +10,7 @@ object SuggestionColorsDBIImpl : SuggestionColorsDBI {
     private fun ColorSuggestionEntity.toDto() = ColorSuggestionsDto(
         id = id.toIxIntId(),
         description = description,
-        colors = colors.map { it.color }
+        colors = colors.toList()
     )
 
     override suspend fun get(id: IxIntId<ColorSuggestionsDto>): ColorSuggestionsDto? = dbQuery {

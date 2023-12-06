@@ -10,7 +10,7 @@ object SuggestionNamesDBIImpl : SuggestionNamesDBI {
     private fun NameSuggestionEntity.toDto() = NameSuggestionsDto(
         id = id.toIxIntId(),
         description = description,
-        names = names.map { it.name }
+        names = names.toList()
     )
 
     override suspend fun get(id: IxIntId<NameSuggestionsDto>): NameSuggestionsDto? = dbQuery {

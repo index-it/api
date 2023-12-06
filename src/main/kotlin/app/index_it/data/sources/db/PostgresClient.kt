@@ -5,20 +5,16 @@ import app.index_it.core.logic.typedId.toIxIntId
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionColorsDBIImpl
 import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionNamesDBIImpl
 import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionEntity
-import app.index_it.data.sources.db.schemas.suggestions.ColorTable
 import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionEntity
-import app.index_it.data.sources.db.schemas.suggestions.NameTable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 private val log = KotlinLogging.logger {  }
 
+// TODO: Redo
 /*
 Script that generates the first migration for the database schema
 
@@ -107,13 +103,7 @@ object PostgresClient {
     private suspend fun setupColorSuggestions() {
         dbQuery {
             if (SuggestionColorsDBIImpl.get(DEFAULT_COLOR_SUGGESTIONS_ID.toIxIntId()) == null) {
-                ColorSuggestionEntity.new(DEFAULT_COLOR_SUGGESTIONS_ID) {
-                    description = "Default colors"
-                }
-
-                ColorTable.deleteWhere { ColorTable.suggestion eq DEFAULT_COLOR_SUGGESTIONS_ID }
-
-                val defaultColors = listOf(
+                val defaultColors = arrayOf(
                     "#FB9079",
                     "#14704A",
                     "#B64B9E",
@@ -131,9 +121,9 @@ object PostgresClient {
                     "#FFFFFF"
                 )
 
-                ColorTable.batchInsert(defaultColors) {
-                    this[ColorTable.suggestion] = DEFAULT_COLOR_SUGGESTIONS_ID
-                    this[ColorTable.color] = it
+                ColorSuggestionEntity.new(DEFAULT_COLOR_SUGGESTIONS_ID) {
+                    description = "Default colors"
+                    colors = defaultColors
                 }
             }
         }
@@ -142,13 +132,7 @@ object PostgresClient {
     private suspend fun setupListNameSuggestions() {
         dbQuery {
             if (SuggestionNamesDBIImpl.get(DEFAULT_LIST_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-                NameSuggestionEntity.new(DEFAULT_LIST_NAME_SUGGESTIONS_ID) {
-                    description = "Default list names"
-                }
-
-                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_LIST_NAME_SUGGESTIONS_ID }
-
-                val defaultNames = listOf(
+                val defaultNames = arrayOf(
                     "Movie Mania",
                     "Pop Culture",
                     "Wanderlust Wonders",
@@ -171,9 +155,9 @@ object PostgresClient {
                     "Lyrical Laughter"
                 )
 
-                NameTable.batchInsert(defaultNames) {
-                    this[NameTable.suggestion] = DEFAULT_LIST_NAME_SUGGESTIONS_ID
-                    this[NameTable.name] = it
+                NameSuggestionEntity.new(DEFAULT_LIST_NAME_SUGGESTIONS_ID) {
+                    description = "Default list names"
+                    names = defaultNames
                 }
             }
         }
@@ -182,13 +166,7 @@ object PostgresClient {
     private suspend fun setupCategoryNameSuggestions() {
         dbQuery {
             if (SuggestionNamesDBIImpl.get(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-                NameSuggestionEntity.new(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID) {
-                    description = "Default category names"
-                }
-
-                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID }
-
-                val defaultNames = listOf(
+                val defaultNames = arrayOf(
                     "Completed Conquests",
                     "To-Do Treasures",
                     "In Progress Pioneers",
@@ -211,9 +189,9 @@ object PostgresClient {
                     "Tasks on Hold"
                 )
 
-                NameTable.batchInsert(defaultNames) {
-                    this[NameTable.suggestion] = DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID
-                    this[NameTable.name] = it
+                NameSuggestionEntity.new(DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID) {
+                    description = "Default category names"
+                    names = defaultNames
                 }
             }
         }
@@ -222,13 +200,7 @@ object PostgresClient {
     private suspend fun setupItemNameSuggestions() {
         dbQuery {
             if (SuggestionNamesDBIImpl.get(DEFAULT_ITEM_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-                NameSuggestionEntity.new(DEFAULT_ITEM_NAME_SUGGESTIONS_ID) {
-                    description = "Default item names"
-                }
-
-                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_ITEM_NAME_SUGGESTIONS_ID }
-
-                val defaultNames = listOf(
+                val defaultNames = arrayOf(
                     "Skydiving Over Peaks",
                     "Royal Castle Tour",
                     "Desert Star Camping",
@@ -251,9 +223,9 @@ object PostgresClient {
                     "Ballroom Masquerade"
                 )
 
-                NameTable.batchInsert(defaultNames) {
-                    this[NameTable.suggestion] = DEFAULT_ITEM_NAME_SUGGESTIONS_ID
-                    this[NameTable.name] = it
+                NameSuggestionEntity.new(DEFAULT_ITEM_NAME_SUGGESTIONS_ID) {
+                    description = "Default item names"
+                    names = defaultNames
                 }
             }
         }
@@ -262,13 +234,7 @@ object PostgresClient {
     private suspend fun setupTaskNameSuggestions() {
         dbQuery {
             if (SuggestionNamesDBIImpl.get(DEFAULT_TASK_NAME_SUGGESTIONS_ID.toIxIntId()) == null) {
-                NameSuggestionEntity.new(DEFAULT_TASK_NAME_SUGGESTIONS_ID) {
-                    description = "Default task names"
-                }
-
-                NameTable.deleteWhere { NameTable.suggestion eq DEFAULT_TASK_NAME_SUGGESTIONS_ID }
-
-                val defaultNames = listOf(
+                val defaultNames = arrayOf(
                     "Cave exploration",
                     "Hot air ballooning",
                     "Food truck hopping",
@@ -301,9 +267,9 @@ object PostgresClient {
                     "Bookstore crawl"
                 )
 
-                NameTable.batchInsert(defaultNames) {
-                    this[NameTable.suggestion] = DEFAULT_TASK_NAME_SUGGESTIONS_ID
-                    this[NameTable.name] = it
+                NameSuggestionEntity.new(DEFAULT_TASK_NAME_SUGGESTIONS_ID) {
+                    description = "Default task names"
+                    names = defaultNames
                 }
             }
         }
