@@ -46,7 +46,7 @@ tasks.test {
 
 tasks {
     shadowJar {
-        archiveBaseName.set("index-api.jar")
+        archiveFileName.set("index-api.jar")
         mergeServiceFiles()
     }
 }
