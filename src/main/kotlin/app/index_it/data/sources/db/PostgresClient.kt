@@ -49,6 +49,7 @@ object PostgresClient {
             .configure()
             .driver(DB_DRIVER)
             .dataSource(PostgresConfig.url, PostgresConfig.user, PostgresConfig.password)
+            .validateMigrationNaming(true)
             .load()
         try {
             flyway.info()
