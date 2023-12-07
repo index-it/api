@@ -166,7 +166,7 @@ class ConfigurationManager(
         val type: String
     ) {
         override fun toString(): String {
-            return "$key=${defaultValue ?: ""}    # $type"
+            return "${if (type != "String") "# $type\n" else "" }$key=${defaultValue ?: ""}"
         }
     }
 }
