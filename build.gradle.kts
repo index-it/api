@@ -1,6 +1,7 @@
 plugins {
     application
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.shadow)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
 }
@@ -43,8 +44,9 @@ tasks.test {
     useJUnitPlatform()
 }
 
-ktor {
-    fatJar {
-        archiveFileName.set("index-api.jar")
+tasks {
+    shadowJar {
+        archiveBaseName.set("index-api.jar")
+        mergeServiceFiles()
     }
 }
