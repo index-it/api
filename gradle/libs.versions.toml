@@ -24,6 +24,8 @@ googleApiClient="2.2.0"
 springSecurityCrypto="6.1.3"
 springLogging="1.2"
 
+micrometerRegistryPrometheus="1.12.0"
+
 junit="5.9.2"
 
 [plugins]
@@ -68,6 +70,8 @@ ktor-server-resources = { group = "io.ktor", name = "ktor-server-resources", ver
 ktor-server-request-validation = { group = "io.ktor", name = "ktor-server-request-validation", version.ref = "ktor" }
 ktor-server-websockets = { group = "io.ktor", name = "ktor-server-websockets", version.ref = "ktor" }
 ktor-server-rate-limit = { group = "io.ktor", name = "ktor-server-rate-limit", version.ref = "ktor" }
+ktor-micrometer = { group = "io.ktor", name = "ktor-server-metrics-micrometer", version.ref = "ktor" }
+micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometerRegistryPrometheus" }
 ktor-swagger = { group = "io.github.smiley4", name = "ktor-swagger-ui", version.ref = "ktorSwagger" }
 json-schema-generator = { group = "com.github.victools", name = "jsonschema-generator", version.ref = "jsonSchemaGenereator" }
 
@@ -130,4 +134,9 @@ ktor-client = [
 spring-security = [
     "spring-security-crypto",
     "spring-logging"
+]
+
+monitoring = [
+    "ktor-micrometer",
+    "micrometer-registry-prometheus"
 ]

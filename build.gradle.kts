@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.bundles.ktor.server)
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.spring.security)
+    implementation(libs.bundles.monitoring)
 
     implementation(libs.bundles.postgres)
 
@@ -31,6 +32,8 @@ dependencies {
     implementation(libs.jedis)
     implementation(libs.amqp.client)
     implementation(libs.google.api.client)
+    implementation("io.ktor:ktor-server-core-jvm:2.3.6")
+    implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.3.6")
 
     testImplementation(libs.junit)
     testImplementation(kotlin("test"))

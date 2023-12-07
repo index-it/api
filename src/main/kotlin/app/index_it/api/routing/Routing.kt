@@ -4,6 +4,7 @@ import app.index_it.api.routing.admin.adminRoutes
 import app.index_it.api.routing.auth.authRoutes
 import app.index_it.api.routing.kube.kubeRoutes
 import app.index_it.api.routing.list.listRoutes
+import app.index_it.api.routing.monitoring.monitoringRoutes
 import app.index_it.api.routing.suggestion.suggestionRoutes
 import app.index_it.api.routing.task.taskRoutes
 import app.index_it.api.routing.user.userRoutes
@@ -22,6 +23,7 @@ fun Application.configureRouting() {
 
     routing {
         kubeRoutes()
+        monitoringRoutes()
         adminRoutes()
         webRoutes()
         authRoutes()

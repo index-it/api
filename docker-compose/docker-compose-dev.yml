@@ -46,13 +46,34 @@ services:
     ports:
       - "5672:5672"
       - "8083:15672"
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - "../prometheus/prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - monitor-net
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - monitor-net
+
 volumes:
-  redis:
-  pgdata:
-  rabbit:
+  redis: {}
+  pgdata: {}
+  rabbit: {}
+  grafana-storage: {}
 
 networks:
   redis-network:
     name: redis-network
   postgres-network:
     name: postgres-network
+  monitor-net:
+    name: monitor-net
