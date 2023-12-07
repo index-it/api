@@ -14,46 +14,6 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 private val log = KotlinLogging.logger {  }
 
-// TODO: Redo
-/*
-Script that generates the first migration for the database schema
-
-Results in /resources/db/migration/V1__create_db.sql
-
-fun main() {
-    Env.loadEnv()
-
-    val DB_DRIVER = "org.postgresql.Driver"
-    Database.connect(
-        url = Env.postgres_url,
-        driver = DB_DRIVER,
-        user = Env.postgres_user,
-        password = Env.postgres_password
-    )
-
-    val statements = transaction {
-        SchemaUtils.createStatements(
-            UserTable,
-            PasswordResetTable,
-            EmailVerificationTable,
-            ListTable,
-            CategoryTable,
-            ItemTable,
-            ItemContentTable,
-            TaskTable,
-            SubTaskTable,
-            NotifyTable,
-            ColorSuggestionTable,
-            ColorTable,
-            NameSuggestionTable,
-            NameTable
-        )
-    }
-
-    File("statements.txt").writeText(statements.joinToString("\n") { "$it;"} )
-}
- */
-
 object PostgresClient {
     private const val DB_DRIVER = "org.postgresql.Driver"
     private val database = Database.connect(

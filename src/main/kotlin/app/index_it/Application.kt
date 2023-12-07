@@ -4,7 +4,7 @@ import app.index_it.api.plugins.*
 import app.index_it.api.routing.configureRouting
 import app.index_it.config.ApiConfig
 import app.index_it.config.ApplicationConfig
-import app.index_it.config.core.ConfigurationInitializer
+import app.index_it.config.core.ConfigurationManager
 import app.index_it.config.core.ConfigurationReader
 import app.index_it.core.clients.BrevoClient
 import app.index_it.core.clients.RabbitMqClient
@@ -28,7 +28,7 @@ fun main() {
     /**
      * Load configuration properties (environment)
      */
-    val configInitializer = ConfigurationInitializer(
+    val configInitializer = ConfigurationManager(
         packageName = "app.index_it.config",
         ConfigurationReader::read
     )
