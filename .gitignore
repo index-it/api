@@ -40,6 +40,9 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+### SCRIPT OUTPUTS ###
+script-outputs
+
 ### SECRETS ###
 **.env
 app-engine/app.yaml

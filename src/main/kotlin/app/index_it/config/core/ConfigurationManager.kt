@@ -13,11 +13,13 @@ class ConfigurationManager(
 ) {
     companion object {
         private val log = KotlinLogging.logger {  }
+
+        const val DEFAULT_CONFIG_PACKAGE = "app.index_it.config"
     }
 
     @Suppress("UNUSED")
-    fun printTemplateEnvFile() {
-        val envFileContent = StringBuilder()
+    fun listConfigurations(): List<ConfigurationData> {
+        val configurations = mutableListOf<ConfigurationData>()
 
         // Read all objects via reflection
         val reflections = Reflections(packageName)
@@ -64,11 +66,16 @@ class ConfigurationManager(
                     val defaultValue = try {
                         configProperty.getter.call(obj.objectInstance)
                     } catch (e: Exception) { null }
-                    envFileContent.append("$key=${defaultValue ?: ""}    # ${clazz.simpleName}\n")
+
+                    configurations.add(ConfigurationData(
+                        key = key,
+                        defaultValue = defaultValue,
+                        type = clazz.simpleName ?: "Unknown type"
+                    ))
                 }
         }
 
-        println(envFileContent.toString())
+        return configurations
     }
 
     /**
@@ -152,4 +159,14 @@ class ConfigurationManager(
     }
 
     private fun formatKeySeparators(key: String) = key.replace(".", "_")
+
+    data class ConfigurationData(
+        val key: String,
+        val defaultValue: Any?,
+        val type: String
+    ) {
+        override fun toString(): String {
+            return "$key=${defaultValue ?: ""}    # $type"
+        }
+    }
 }

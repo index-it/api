@@ -29,7 +29,7 @@ fun main() {
      * Load configuration properties (environment)
      */
     val configInitializer = ConfigurationManager(
-        packageName = "app.index_it.config",
+        packageName = ConfigurationManager.DEFAULT_CONFIG_PACKAGE,
         ConfigurationReader::read
     )
 
