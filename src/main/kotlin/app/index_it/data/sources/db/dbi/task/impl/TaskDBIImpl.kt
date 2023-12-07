@@ -12,7 +12,7 @@ import app.index_it.data.sources.db.schemas.tasks.SubTaskEntity
 import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
 import app.index_it.data.sources.db.schemas.tasks.TaskEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.*
@@ -20,7 +20,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object TaskDBIImpl : TaskDBI {
     private fun TaskEntity.fromDto(taskDto: TaskDto) {
-        user = taskDto.userId.toEntityId(UserTable)
+        user = taskDto.userId.toEntityId(UsersTable)
         item = taskDto.itemId?.toEntityId(ItemTable)
         name = taskDto.name
         description = taskDto.description
@@ -59,7 +59,7 @@ object TaskDBIImpl : TaskDBI {
         completed = completed
     )
 
-    private fun userAndTaskFilter(userId: IxId<UserDto>, taskId: IxId<TaskDto>) = Op.build { (TaskTable.user eq userId.toEntityId(UserTable)) and (TaskTable.id eq taskId.toEntityId(TaskTable)) }
+    private fun userAndTaskFilter(userId: IxId<UserDto>, taskId: IxId<TaskDto>) = Op.build { (TaskTable.user eq userId.toEntityId(UsersTable)) and (TaskTable.id eq taskId.toEntityId(TaskTable)) }
 
     override suspend fun exists(userId: IxId<UserDto>, taskId: IxId<TaskDto>): Boolean {
         return get(userId, taskId) != null
@@ -81,7 +81,7 @@ object TaskDBIImpl : TaskDBI {
 
     override suspend fun get(userId: IxId<UserDto>): List<TaskDto> = dbQuery {
         TaskEntity
-            .find { TaskTable.user eq userId.toEntityId(UserTable) }
+            .find { TaskTable.user eq userId.toEntityId(UsersTable) }
             .map { it.toDto() }
     }
 

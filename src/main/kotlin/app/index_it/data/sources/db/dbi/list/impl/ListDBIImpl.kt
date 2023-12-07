@@ -7,7 +7,7 @@ import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.list.ListDBI
 import app.index_it.data.sources.db.schemas.lists.ListEntity
 import app.index_it.data.sources.db.schemas.lists.ListTable
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.Op
@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.update
 
 object ListDBIImpl : ListDBI {
     private fun ListEntity.fromDto(listDto: ListDto) {
-        user = listDto.userId.toEntityId(UserTable)
+        user = listDto.userId.toEntityId(UsersTable)
         name = listDto.name
         emoji = listDto.icon.first()
         color = listDto.color
@@ -35,7 +35,7 @@ object ListDBIImpl : ListDBI {
         editedAt = editedAt
     )
 
-    private fun userAndListFilter(userId: IxId<UserDto>, listId: IxId<ListDto>) = Op.build { (ListTable.id eq listId.toEntityId(ListTable)) and (ListTable.user eq userId.toEntityId(UserTable)) }
+    private fun userAndListFilter(userId: IxId<UserDto>, listId: IxId<ListDto>) = Op.build { (ListTable.id eq listId.toEntityId(ListTable)) and (ListTable.user eq userId.toEntityId(UsersTable)) }
 
     override suspend fun create(listDto: ListDto) {
         dbQuery {
@@ -47,7 +47,7 @@ object ListDBIImpl : ListDBI {
 
     override suspend fun get(id: IxId<UserDto>): List<ListDto> = dbQuery {
         ListEntity
-            .find { ListTable.user eq id.toEntityId(UserTable) }
+            .find { ListTable.user eq id.toEntityId(UsersTable) }
             .map { it.toDto() }
     }
 

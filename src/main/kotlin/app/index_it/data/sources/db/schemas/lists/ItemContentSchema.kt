@@ -5,7 +5,7 @@ import app.index_it.data.sources.db.schemas.lists.ItemContentTable.id
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable.item
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -21,16 +21,16 @@ import java.util.*
  */
 object ItemContentTable : UUIDTable() {
     val user = reference(
-        name = "user",
-        foreign = UserTable,
+        name = "id_user",
+        foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
     val item = reference(
-        name = "item",
+        name = "id_item",
         foreign = ItemTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
-    val content = text("content", eagerLoading = true)
+    val content = text("ix_content", eagerLoading = true)
 }
 
 /**

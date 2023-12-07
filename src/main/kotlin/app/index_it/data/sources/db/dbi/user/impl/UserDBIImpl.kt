@@ -4,7 +4,7 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.UserDBI
 import app.index_it.data.sources.db.schemas.user.UserEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -43,7 +43,7 @@ object UserDBIImpl : UserDBI {
 
     override suspend fun get(email: String): UserDto? = dbQuery {
         UserEntity
-            .find { UserTable.email eq email }
+            .find { UsersTable.email eq email }
             .limit(1)
             .firstOrNull()
             ?.toDto()
@@ -51,7 +51,7 @@ object UserDBIImpl : UserDBI {
 
     override suspend fun verifyEmail(id: IxId<UserDto>) {
         dbQuery {
-            UserTable.update({ UserTable.id eq id.toEntityId(UserTable) }) {
+            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
                 it[emailVerified] = true
             }
         }
@@ -59,7 +59,7 @@ object UserDBIImpl : UserDBI {
 
     override suspend fun resetPassword(id: IxId<UserDto>, newPasswordHashed: String, verifyEmail: Boolean) {
         dbQuery {
-            UserTable.update({ UserTable.id eq id.toEntityId(UserTable) }) {
+            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
                 if (verifyEmail) {
                     it[emailVerified] = true
                 }
@@ -70,7 +70,7 @@ object UserDBIImpl : UserDBI {
 
     override suspend fun delete(id: IxId<UserDto>) {
         dbQuery {
-            UserTable.deleteWhere { UserTable.id eq id.toEntityId(UserTable) }
+            UsersTable.deleteWhere { UsersTable.id eq id.toEntityId(UsersTable) }
         }
     }
 

@@ -8,7 +8,7 @@ import app.index_it.data.sources.db.dbi.list.CategoryDBI
 import app.index_it.data.sources.db.schemas.lists.CategoryEntity
 import app.index_it.data.sources.db.schemas.lists.CategoryTable
 import app.index_it.data.sources.db.schemas.lists.ListTable
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.Op
@@ -18,7 +18,7 @@ import org.jetbrains.exposed.sql.update
 
 object CategoryDBIImpl : CategoryDBI {
     private fun CategoryEntity.fromDto(categoryDto: CategoryDto) {
-        user = categoryDto.userId.toEntityId(UserTable)
+        user = categoryDto.userId.toEntityId(UsersTable)
         list = categoryDto.listId.toEntityId(ListTable)
         name = categoryDto.name
         color = categoryDto.color
@@ -32,7 +32,7 @@ object CategoryDBIImpl : CategoryDBI {
         color = color
     )
 
-    private fun userAndCategoryFilter(userId: IxId<UserDto>, categoryId: IxId<CategoryDto>) = Op.build { (CategoryTable.id eq categoryId.toEntityId(CategoryTable)) and (CategoryTable.user eq userId.toEntityId(UserTable)) }
+    private fun userAndCategoryFilter(userId: IxId<UserDto>, categoryId: IxId<CategoryDto>) = Op.build { (CategoryTable.id eq categoryId.toEntityId(CategoryTable)) and (CategoryTable.user eq userId.toEntityId(UsersTable)) }
 
     override suspend fun create(categoryDto: CategoryDto) {
         dbQuery {
@@ -52,7 +52,7 @@ object CategoryDBIImpl : CategoryDBI {
     override suspend fun getOfList(userId: IxId<UserDto>, listId: IxId<ListDto>): List<CategoryDto> = dbQuery {
         CategoryEntity
             .find {
-                (CategoryTable.list eq listId.toEntityId(ListTable)) and (CategoryTable.user eq userId.toEntityId(UserTable))
+                (CategoryTable.list eq listId.toEntityId(ListTable)) and (CategoryTable.user eq userId.toEntityId(UsersTable))
             }
             .map { it.toDto() }
     }

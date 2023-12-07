@@ -13,7 +13,7 @@ import app.index_it.data.sources.db.schemas.lists.ItemEntity
 import app.index_it.data.sources.db.schemas.lists.ItemTable
 import app.index_it.data.sources.db.schemas.lists.ListTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.Op
@@ -23,7 +23,7 @@ import org.jetbrains.exposed.sql.update
 
 object ItemDBIImpl : ItemDBI {
     private fun ItemEntity.fromDto(itemDto: ItemDto) {
-        user = itemDto.userId.toEntityId(UserTable)
+        user = itemDto.userId.toEntityId(UsersTable)
         list = itemDto.listId.toEntityId(ListTable)
         category = itemDto.categoryId.toEntityId(CategoryTable)
         task = itemDto.taskId?.toEntityId(TaskTable)
@@ -47,7 +47,7 @@ object ItemDBIImpl : ItemDBI {
         completedAt = completedAt
     )
 
-    private fun userFilter(userId: IxId<UserDto>) = Op.build { ItemTable.user eq userId.toEntityId(UserTable) }
+    private fun userFilter(userId: IxId<UserDto>) = Op.build { ItemTable.user eq userId.toEntityId(UsersTable) }
     private fun userAndItemFilter(userId: IxId<UserDto>, itemId: IxId<ItemDto>) = Op.build { (ItemTable.id eq itemId.toEntityId(ItemTable)) and userFilter(userId) }
 
     override suspend fun create(itemDto: ItemDto) {

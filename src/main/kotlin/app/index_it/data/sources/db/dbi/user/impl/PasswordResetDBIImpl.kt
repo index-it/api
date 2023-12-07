@@ -7,7 +7,7 @@ import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.PasswordResetDBI
 import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 object PasswordResetDBIImpl : PasswordResetDBI {
     private fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
         token = passwordResetDto.token
-        user = passwordResetDto.userId.toEntityId(UserTable)
+        user = passwordResetDto.userId.toEntityId(UsersTable)
         createdAt = passwordResetDto.createdAt
         expiresAt = passwordResetDto.expireAt
     }
@@ -29,7 +29,7 @@ object PasswordResetDBIImpl : PasswordResetDBI {
     )
     
     override suspend fun count(id: IxId<UserDto>): Long = dbQuery {
-        PasswordResetEntity.count(PasswordResetTable.user eq id.toEntityId(UserTable))
+        PasswordResetEntity.count(PasswordResetTable.user eq id.toEntityId(UsersTable))
     }
 
     override suspend fun save(passwordResetDto: PasswordResetDto) {
@@ -50,7 +50,7 @@ object PasswordResetDBIImpl : PasswordResetDBI {
 
     override suspend fun deleteAll(id: IxId<UserDto>) {
         dbQuery {
-            PasswordResetTable.deleteWhere { user eq id.toEntityId(UserTable) }
+            PasswordResetTable.deleteWhere { user eq id.toEntityId(UsersTable) }
         }
     }
 

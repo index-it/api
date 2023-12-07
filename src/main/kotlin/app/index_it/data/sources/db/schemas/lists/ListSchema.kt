@@ -8,7 +8,7 @@ import app.index_it.data.sources.db.schemas.lists.ListTable.id
 import app.index_it.data.sources.db.schemas.lists.ListTable.name
 import app.index_it.data.sources.db.schemas.lists.ListTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -27,11 +27,11 @@ import java.util.*
  */
 object ListTable : UUIDTable() {
     val user = reference(
-        name = "user",
-        foreign = UserTable,
+        name = "id_user",
+        foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
-    val name = varchar("name", 100)
+    val name = varchar("ix_name", 100)
     val emoji = char("emoji")
     val color = varchar("color", 9)
     val createdAt = long("created_at")

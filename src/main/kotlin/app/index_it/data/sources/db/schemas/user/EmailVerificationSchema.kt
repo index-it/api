@@ -21,8 +21,8 @@ import org.jetbrains.exposed.sql.ReferenceOption
 object EmailVerificationTable : IntIdTable() {
     val token = varchar("token", 100).uniqueIndex()
     val user = reference(
-        name = "user",
-        foreign = UserTable,
+        name = "id_user",
+        foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
     val createdAt = long("created_at")

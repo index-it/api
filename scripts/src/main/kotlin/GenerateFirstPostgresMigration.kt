@@ -11,8 +11,8 @@ import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable
-import app.index_it.data.sources.db.schemas.user.UserTable
-import app.index_it.data.sources.db.schemas.web.NotifyTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.schemas.web.ReleaseNotifyTable
 import core.createScriptOutputsFolderIfNotExisting
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -37,7 +37,7 @@ fun main() {
 
     val statements = transaction {
         SchemaUtils.createStatements(
-            UserTable,
+            UsersTable,
             PasswordResetTable,
             EmailVerificationTable,
             ListTable,
@@ -46,7 +46,7 @@ fun main() {
             ItemContentTable,
             TaskTable,
             SubTaskTable,
-            NotifyTable,
+            ReleaseNotifyTable,
             ColorSuggestionTable,
             NameSuggestionTable,
         )

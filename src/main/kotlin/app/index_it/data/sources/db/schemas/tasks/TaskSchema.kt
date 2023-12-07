@@ -14,7 +14,7 @@ import app.index_it.data.sources.db.schemas.tasks.TaskTable.name
 import app.index_it.data.sources.db.schemas.tasks.TaskTable.priority
 import app.index_it.data.sources.db.schemas.tasks.TaskTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -37,16 +37,16 @@ import java.util.*
  */
 object TaskTable : UUIDTable() {
     val user = reference(
-        name = "user",
-        foreign = UserTable,
+        name = "id_user",
+        foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     )
     val item = reference(
-        name = "item",
+        name = "id_item",
         foreign = ItemTable,
         onDelete = ReferenceOption.SET_NULL
     ).nullable()
-    val name = varchar("name", 150)
+    val name = varchar("ix_name", 150)
     val description = varchar("description", 500).nullable()
     // subtasks
     val dueDate = long("due_date").nullable()

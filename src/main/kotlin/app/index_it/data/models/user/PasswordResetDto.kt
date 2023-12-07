@@ -3,7 +3,7 @@ package app.index_it.data.models.user
 import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import kotlinx.serialization.Contextual
@@ -23,7 +23,7 @@ data class PasswordResetDto(
 
 fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
     token = passwordResetDto.token
-    user = passwordResetDto.userId.toEntityId(UserTable)
+    user = passwordResetDto.userId.toEntityId(UsersTable)
     expiresAt = passwordResetDto.expireAt
     createdAt = passwordResetDto.createdAt
 }

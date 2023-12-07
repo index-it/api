@@ -12,7 +12,7 @@ import app.index_it.data.sources.db.schemas.lists.ItemTable.task
 import app.index_it.data.sources.db.schemas.tasks.TaskEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.UserEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -33,26 +33,26 @@ import java.util.*
  */
 object ItemTable : UUIDTable() {
     val user = reference(
-        name = "user",
-        foreign = UserTable,
+        name = "id_user",
+        foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
     val list = reference(
-        name = "list",
+        name = "id_list",
         foreign = ListTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
     val category = reference(
-        name = "category",
+        name = "id_category",
         foreign = CategoryTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
     val task = reference(
-        name = "task",
+        name = "id_task",
         foreign = TaskTable,
         onDelete = ReferenceOption.SET_NULL
     ).nullable()
-    val name = varchar("name", 150)
+    val name = varchar("ix_name", 150)
     val completed = bool("completed")
     val createdAt = long("created_at")
     val editedAt = long("edited_at").nullable()

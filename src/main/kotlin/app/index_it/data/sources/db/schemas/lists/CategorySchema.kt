@@ -5,7 +5,7 @@ import app.index_it.data.sources.db.schemas.lists.CategoryTable.id
 import app.index_it.data.sources.db.schemas.lists.CategoryTable.list
 import app.index_it.data.sources.db.schemas.lists.CategoryTable.name
 import app.index_it.data.sources.db.schemas.user.UserEntity
-import app.index_it.data.sources.db.schemas.user.UserTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -22,16 +22,16 @@ import java.util.*
  */
 object CategoryTable : UUIDTable() {
     val user = reference(
-        name = "user",
-        foreign = UserTable,
+        name = "id_user",
+        foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
     val list = reference(
-        name = "list",
+        name = "id_list",
         foreign = ListTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
-    val name = varchar("name", 50)
+    val name = varchar("ix_name", 50)
     val color = varchar("color", 9)
 }
 

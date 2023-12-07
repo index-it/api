@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.VarCharColumnType
  */
 object NameSuggestionTable : IntIdTable() {
     val description = varchar("description", 100)
-    val names = array<String>("names", VarCharColumnType(150))
+    val names = array<String>("ix_names", VarCharColumnType(150))
 }
 
 /**

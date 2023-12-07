@@ -1,7 +1,7 @@
 package app.index_it.data.sources.db.schemas.web
 
-import app.index_it.data.sources.db.schemas.web.NotifyTable.email
-import app.index_it.data.sources.db.schemas.web.NotifyTable.id
+import app.index_it.data.sources.db.schemas.web.ReleaseNotifyTable.email
+import app.index_it.data.sources.db.schemas.web.ReleaseNotifyTable.id
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -11,7 +11,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
  * @property id
  * @property email
  */
-object NotifyTable : IntIdTable() {
+object ReleaseNotifyTable : IntIdTable() {
     val email = varchar("email", 150).uniqueIndex()
 }
 
@@ -20,7 +20,7 @@ object NotifyTable : IntIdTable() {
  * @property email
  */
 class NotifyEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<NotifyEntity>(NotifyTable)
+    companion object : IntEntityClass<NotifyEntity>(ReleaseNotifyTable)
 
-    var email by NotifyTable.email
+    var email by ReleaseNotifyTable.email
 }

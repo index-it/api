@@ -46,7 +46,7 @@ services:
     ports:
       - "5672:5672"
       - "8083:15672"
-  prometheus:
+  index-prometheus:
     image: prom/prometheus
     ports:
       - "9090:9090"
@@ -54,7 +54,7 @@ services:
       - "../prometheus/prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
     networks:
       - monitor-net
-  grafana:
+  index-grafana:
     image: grafana/grafana
     restart: unless-stopped
     ports:
