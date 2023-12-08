@@ -1,6 +1,6 @@
 package app.index_it.data.sources.db.dbi.list.impl
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.user.UserDto
@@ -64,7 +64,7 @@ object ListDBIImpl : ListDBI {
             it[name] = listUpdateRequestDto.name
             it[emoji] = listUpdateRequestDto.icon.first()
             it[color] = listUpdateRequestDto.color
-            it[editedAt] = currentMillis()
+            it[editedAt] = DatetimeUtils.currentMillis()
         } > 0
     }
 

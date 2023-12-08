@@ -1,6 +1,6 @@
 package app.index_it.data.sources.db.dbi.list.impl
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.models.lists.ItemDto
@@ -85,7 +85,7 @@ object ItemDBIImpl : ItemDBI {
     override suspend fun setCompletion(userId: IxId<UserDto>, itemId: IxId<ItemDto>, completed: Boolean): Boolean = dbQuery {
         ItemTable.update({ userAndItemFilter(userId, itemId) }) {
             it[this.completed] = completed
-            it[this.completedAt] = if (completed) currentMillis() else null
+            it[this.completedAt] = if (completed) DatetimeUtils.currentMillis() else null
         } > 0
     }
 
@@ -99,7 +99,7 @@ object ItemDBIImpl : ItemDBI {
         ItemTable.update({ userAndItemFilter(userId, itemId) }) {
             it[name] = itemUpdateRequestDto.name
             it[category] = itemUpdateRequestDto.categoryId.toEntityId(CategoryTable)
-            it[editedAt] = currentMillis()
+            it[editedAt] = DatetimeUtils.currentMillis()
         } > 0
     }
 

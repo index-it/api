@@ -1,6 +1,6 @@
 package app.index_it.data.daos.list
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.models.lists.CategoryDto
@@ -77,7 +77,7 @@ object ItemDao {
             taskId = null,
             name = itemCreateRequestDto.name,
             completed = false,
-            createdAt = currentMillis(),
+            createdAt = DatetimeUtils.currentMillis(),
             editedAt = null,
             completedAt = null
         )

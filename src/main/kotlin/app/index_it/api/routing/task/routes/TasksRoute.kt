@@ -50,7 +50,7 @@ fun Route.tasksRoute() {
             body<TaskDto.TaskCreateRequestDto> {
                 description = "task data"
                 required = true
-                example("sample-task", TaskDto.TaskCreateRequestDto("find skis", "find some skis for this winter", null, mutableListOf()))
+                example("sample-task", TaskDto.TaskCreateRequestDto("find skis", "find some skis for this winter", null, null, emptyList()))
             }
         }
         response {

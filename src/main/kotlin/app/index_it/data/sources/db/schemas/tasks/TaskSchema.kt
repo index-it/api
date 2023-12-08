@@ -29,6 +29,7 @@ import java.util.*
  * @property name
  * @property description
  * @property dueDate
+ * @property rrule
  * @property completed
  * @property priority
  * @property createdAt
@@ -48,8 +49,9 @@ object TaskTable : UUIDTable() {
     ).nullable()
     val name = varchar("ix_name", 150)
     val description = varchar("description", 500).nullable()
-    // subtasks
     val dueDate = long("due_date").nullable()
+    val rrule = varchar("rrule", 200).nullable()
+    // TODO: Remove as prob not needed val rruleEndDate = long("rrule_end_date").nullable()
     val completed = bool("completed")
     val priority = integer("priority").nullable()
     val createdAt = long("created_at")
@@ -80,6 +82,7 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by TaskTable.name
     var description by TaskTable.description
     var dueDate by TaskTable.dueDate
+    var rrule by TaskTable.rrule
     var completed by TaskTable.completed
     var priority by TaskTable.priority
     var createdAt by TaskTable.createdAt

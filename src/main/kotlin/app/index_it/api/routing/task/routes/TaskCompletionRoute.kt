@@ -35,6 +35,9 @@ fun Route.taskCompletionRoute() {
             HttpStatusCode.NotFound to {
                 description = "task not found"
             }
+            HttpStatusCode.MethodNotAllowed to {
+                description = "cannot un-complete a recurring task"
+            }
         }
     }) {
         val userId = userIdFromSession()!!
@@ -46,6 +49,16 @@ fun Route.taskCompletionRoute() {
                 ?.also { linkedItem ->
                     ItemDao.setCompletion(userId, linkedItem.listId, linkedItem.id, it.completed)
                 }
+        }
+
+        if (it.completed) {
+            TaskDao.calculateNextOccurrenceDueDateAndRRule(updatedTask)
+                ?.also { (dueDate, rrule) ->
+                    TaskDao.createNextOccurrence(updatedTask, dueDate, rrule)
+                    // TODO: WS
+                }
+        } else if (updatedTask.rrule != null) {
+            call.respond(HttpStatusCode.MethodNotAllowed)
         }
 
         call.respond(updatedTask)

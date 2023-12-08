@@ -19,7 +19,7 @@ class TasksRoute(val completed: Boolean? = null) {
     class CreateConnectedFromItem(val parent: TasksRoute, @Contextual val itemId: IxId<ItemDto>) {}
 
     @Resource("{taskId}")
-    class TaskRoute(val parent: TasksRoute, @Contextual val taskId: IxId<TaskDto>) {
+    class TaskRoute(val parent: TasksRoute, @Contextual val taskId: IxId<TaskDto>, val all: Boolean = true) {
         @Resource("connection")
         class ConnectionRoute(val parent: TaskRoute, @Contextual val itemId: IxId<ItemDto>? = null) {}
 

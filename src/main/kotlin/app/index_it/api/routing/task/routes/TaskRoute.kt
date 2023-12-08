@@ -107,6 +107,10 @@ fun Route.taskRoute() {
                 required = true
                 description = "the id of the task"
             }
+            queryParameter<Boolean>("all") {
+                required = false
+                description = "only useful when a task is recurrent: true for deleting all occurrences, false to keep recurrent tasks"
+            }
         }
         response {
             HttpStatusCode.OK to {
@@ -115,9 +119,22 @@ fun Route.taskRoute() {
         }
     }) {
         // TODO: Delete related item too?
-        TaskDao.delete(userIdFromSession()!!, it.taskId)
-        call.respond(HttpStatusCode.OK)
+        val userId = userIdFromSession()!!
 
+        if (!it.all) {
+           TaskDao.get(userId, it.taskId)
+               ?.also { task ->
+                   TaskDao.calculateNextOccurrenceDueDateAndRRule(task)
+                       ?.also { (dueDate, rrule) ->
+                           TaskDao.createNextOccurrence(task, dueDate, rrule)
+                           // TODO: WS
+                       }
+               }
+        }
+
+        TaskDao.delete(userId, it.taskId)
+
+        call.respond(HttpStatusCode.OK)
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")
     }
 }

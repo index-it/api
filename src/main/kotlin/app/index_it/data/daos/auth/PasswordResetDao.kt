@@ -1,8 +1,8 @@
 package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.BrevoClient
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.TokenGenerator
-import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
@@ -25,7 +25,7 @@ object PasswordResetDao {
         val passwordResetDto = PasswordResetDto(
             token = hashedToken,
             userId = user.id,
-            expireAt = currentMillis() + 3600000
+            expireAt = DatetimeUtils.currentMillis() + 3600000
         )
 
         save(passwordResetDto)

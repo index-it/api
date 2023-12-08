@@ -1,8 +1,8 @@
 package app.index_it.api.routing.auth.routes
 
 import app.index_it.api.routing.auth.RegisterRoute
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.PasswordEncoder
-import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.core.logic.usecases.UserAuthUseCase
 import app.index_it.data.daos.auth.EmailVerificationDao
@@ -65,7 +65,7 @@ fun Route.registerRoute() {
             email = signupData.email,
             passwordHash = hashedPassword,
             emailVerified = false,
-            creationTimestamp = currentMillis(),
+            creationTimestamp = DatetimeUtils.currentMillis(),
             creationSource = UserDto.CreationSource.NONE
         )
 

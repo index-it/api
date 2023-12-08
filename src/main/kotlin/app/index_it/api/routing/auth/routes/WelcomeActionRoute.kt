@@ -53,6 +53,8 @@ fun Route.welcomeActionRoute() {
     }) { request ->
         val userDto = UserDao.getFromEmail(request.email)
 
+        println(userDto)
+
         val action = if (userDto == null || UserAuthUseCase.isIncompleteAccountOutdated(userDto))
             WelcomeAction.REGISTER
         else

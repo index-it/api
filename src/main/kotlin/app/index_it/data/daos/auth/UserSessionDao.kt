@@ -1,6 +1,6 @@
 package app.index_it.data.daos.auth
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.models.auth.UserAuthSessionDto
@@ -18,7 +18,7 @@ object UserSessionDao {
             UserAuthSessionDto(
                 id = userSessionCookie.sessionId,
                 userId = userId,
-                iat = currentMillis(),
+                iat = DatetimeUtils.currentMillis(),
                 deviceName = device,
                 ip = ip
             )

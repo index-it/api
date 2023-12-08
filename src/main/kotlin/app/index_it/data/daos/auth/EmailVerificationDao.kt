@@ -1,8 +1,8 @@
 package app.index_it.data.daos.auth
 
 import app.index_it.core.clients.BrevoClient
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.TokenGenerator
-import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.models.user.UserDto
@@ -27,8 +27,8 @@ object EmailVerificationDao {
         val emailVerificationDto = EmailVerificationDto(
             token = hashedToken,
             userId = user.id,
-            expireAt = currentMillis() + 3600000,
-            createdAt = currentMillis()
+            expireAt = DatetimeUtils.currentMillis() + 3600000,
+            createdAt = DatetimeUtils.currentMillis()
         )
 
         save(emailVerificationDto)

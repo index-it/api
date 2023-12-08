@@ -1,3 +1,13 @@
 package app.index_it.core.logic
 
-fun currentMillis() = System.currentTimeMillis()
+import java.time.ZoneOffset
+import java.util.TimeZone
+
+object DatetimeUtils {
+    val utcTimeZone = TimeZone.getTimeZone(ZoneOffset.UTC)
+
+    val oneDayMillis = 24 * 60 * 60 * 1000
+
+    fun currentMillis() = System.currentTimeMillis()
+}
+

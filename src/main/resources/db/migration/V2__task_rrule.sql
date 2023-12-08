@@ -1,0 +1,1 @@
+ALTER TABLE task ADD rrule VARCHAR(200) NULL;

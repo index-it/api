@@ -7,7 +7,7 @@ import app.index_it.core.clients.oauth.AppleOAuthClient
 import app.index_it.core.clients.oauth.FacebookOAuthClient
 import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
@@ -71,7 +71,7 @@ fun Route.oauthLoginRoutes() {
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = currentMillis(),
+                creationTimestamp = DatetimeUtils.currentMillis(),
                 creationSource = UserDto.CreationSource.GOOGLE
             )
 
@@ -131,7 +131,7 @@ fun Route.oauthLoginRoutes() {
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = currentMillis(),
+                creationTimestamp = DatetimeUtils.currentMillis(),
                 creationSource = UserDto.CreationSource.APPLE
             )
 
@@ -188,7 +188,7 @@ fun Route.oauthLoginRoutes() {
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
-                creationTimestamp = currentMillis(),
+                creationTimestamp = DatetimeUtils.currentMillis(),
                 creationSource = UserDto.CreationSource.FACEBOOK
             )
 

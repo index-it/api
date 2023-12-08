@@ -1,6 +1,6 @@
 package app.index_it.data.daos.list
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.models.lists.ListDto
@@ -19,7 +19,7 @@ object ListDao {
             name = listCreateRequestDto.name,
             icon = listCreateRequestDto.icon,
             color = listCreateRequestDto.color,
-            createdAt = currentMillis(),
+            createdAt = DatetimeUtils.currentMillis(),
             editedAt = null
         )
         ListDBIImpl.create(listDto)

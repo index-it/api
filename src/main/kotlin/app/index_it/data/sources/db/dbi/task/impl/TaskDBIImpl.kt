@@ -1,6 +1,6 @@
 package app.index_it.data.sources.db.dbi.task.impl
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.tasks.SubTaskDto
@@ -25,6 +25,7 @@ object TaskDBIImpl : TaskDBI {
         name = taskDto.name
         description = taskDto.description
         dueDate = taskDto.dueDate
+        rrule = taskDto.rrule
         completed = taskDto.completed
         priority = taskDto.priority
         createdAt = taskDto.createdAt
@@ -39,6 +40,7 @@ object TaskDBIImpl : TaskDBI {
         name = name,
         description = description,
         dueDate = dueDate,
+        rrule = rrule,
         completed = completed,
         priority = priority,
         createdAt = createdAt,
@@ -96,7 +98,7 @@ object TaskDBIImpl : TaskDBI {
     override suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): Boolean = dbQuery {
         TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
             it[this.completed] = completed
-            it[this.completedAt] = if (completed) currentMillis() else null
+            it[this.completedAt] = if (completed) DatetimeUtils.currentMillis() else null
         } > 0
     }
 
@@ -119,8 +121,9 @@ object TaskDBIImpl : TaskDBI {
             it[name] = taskUpdateRequestDto.name
             it[description] = taskUpdateRequestDto.description
             it[dueDate] = taskUpdateRequestDto.dueDate
+            it[rrule] = taskUpdateRequestDto.rrule
             it[priority] = taskUpdateRequestDto.priority
-            it[editedAt] = currentMillis()
+            it[editedAt] = DatetimeUtils.currentMillis()
         } > 0
     }
 

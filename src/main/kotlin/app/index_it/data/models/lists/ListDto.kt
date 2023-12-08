@@ -1,7 +1,7 @@
 package app.index_it.data.models.lists
 
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.RegexPatterns
-import app.index_it.core.logic.currentMillis
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
 import app.index_it.data.models.user.UserDto
@@ -24,7 +24,7 @@ data class ListDto(
     var icon: String, // Single emoji at the moment
     var color: String, // Represented as #RRGGBB hex color
     @SerialName("created_at")
-    val createdAt: Long = currentMillis(),
+    val createdAt: Long = DatetimeUtils.currentMillis(),
     @SerialName("edited_at")
     val editedAt: Long? = null
 ) {

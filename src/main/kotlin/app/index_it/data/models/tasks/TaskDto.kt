@@ -1,6 +1,6 @@
 package app.index_it.data.models.tasks
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
 import app.index_it.data.models.lists.ItemDto
@@ -35,10 +35,11 @@ data class TaskDto(
     val description: String? = null,
     val subTasks: List<SubTaskDto> = emptyList(),
     val dueDate: Long? = null,
+    val rrule: String? = null,
     val completed: Boolean = false,
     val priority: Int? = null,
     @SerialName("created_at")
-    val createdAt: Long = currentMillis(),
+    val createdAt: Long = DatetimeUtils.currentMillis(),
     @SerialName("edited_at")
     val editedAt: Long? = null,
     @SerialName("completed_at")
@@ -49,6 +50,7 @@ data class TaskDto(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
+        val rrule: String? = null,
         val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null
     ): Validatable<TaskCreateRequestDto> {
@@ -69,6 +71,7 @@ data class TaskDto(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
+        val rrule: String? = null,
         val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null,
     ): Validatable<TaskUpdateRequestDto> {
@@ -93,5 +96,5 @@ data class TaskDto(
 @Serializable
 data class SubTaskDto(
     val name: String,
-    val completed: Boolean
+    var completed: Boolean
 )

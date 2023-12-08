@@ -1,6 +1,6 @@
 package app.index_it.data.daos.task
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.models.lists.ItemDto
@@ -8,22 +8,54 @@ import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.tasks.TaskCM
 import app.index_it.data.sources.db.dbi.task.impl.TaskDBIImpl
+import org.dmfs.rfc5545.recur.RecurrenceRule
+import kotlin.math.max
 
 object TaskDao {
+
+    /**
+     * If a task is recurring, this calculates the next occurrence date and the updated rrule in case `COUNT` was used as the end clause
+     *
+     * @return Null if this task isn't recurring or if it reached the end clause, a [Pair] with the next occurrence timestamp and updated rrule otherwise
+     */
+    fun calculateNextOccurrenceDueDateAndRRule(task: TaskDto): Pair<Long, String>? {
+        if (task.dueDate == null || task.rrule == null)
+            return null
+
+        val rrule = RecurrenceRule(task.rrule)
+
+        if (rrule.count != null) {
+            rrule.count -= 1
+
+            if (rrule.count < 1)
+                return null
+        }
+
+        return rrule
+            .iterator(max(task.createdAt, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
+            .apply {
+                try { skip(1) } catch (_: Exception) {}
+            }
+            .takeIf { it.hasNext() }
+            ?.nextMillis()
+            ?.let {
+                Pair(it, rrule.toString())
+            }
+    }
+
     suspend fun create(userId: IxId<UserDto>, taskCreateRequestDto: TaskDto.TaskCreateRequestDto): TaskDto {
         val taskDto = TaskDto(
             id = newIxId(),
             userId = userId,
-            // listId = null,
-            // categoryId = null,
             itemId = null,
             name = taskCreateRequestDto.name,
             description = taskCreateRequestDto.description,
             dueDate = taskCreateRequestDto.dueDate,
+            rrule = taskCreateRequestDto.rrule,
             subTasks = taskCreateRequestDto.subTasks,
             completed = false,
             priority = taskCreateRequestDto.priority,
-            createdAt = currentMillis(),
+            createdAt = DatetimeUtils.currentMillis(),
             editedAt = null,
             completedAt = null,
         )
@@ -37,16 +69,36 @@ object TaskDao {
         val taskDto = TaskDto(
             id = newIxId(),
             userId = userId,
-            // listId = item.listId,
-            // categoryId = item.categoryId,
             itemId = item.id,
             name = item.name,
             description = null,
             dueDate = null,
+            rrule = null,
             subTasks = mutableListOf(), // maybe enhance this in the future by scraping the item content and getting to-do lists from it
             completed = false, // handle this differently perhaps?
-            createdAt = currentMillis(),
+            createdAt = DatetimeUtils.currentMillis(),
             editedAt = null,
+            completedAt = null,
+        )
+        TaskDBIImpl.create(taskDto)
+        TaskCM.cache(taskDto.userId, taskDto)
+
+        return taskDto
+    }
+
+    suspend fun createNextOccurrence(task: TaskDto, dueDate: Long, rrule: String): TaskDto {
+        val taskDto = TaskDto(
+            id = newIxId(),
+            userId = task.userId,
+            itemId = task.itemId,
+            name = task.name,
+            description = task.description,
+            dueDate = dueDate,
+            rrule = rrule,
+            subTasks = task.subTasks.map { it.apply { completed = false } },
+            completed = false,
+            createdAt = DatetimeUtils.currentMillis(),
+            editedAt = task.editedAt,
             completedAt = null,
         )
         TaskDBIImpl.create(taskDto)
@@ -91,8 +143,8 @@ object TaskDao {
     suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): TaskDto? {
         val updated = TaskDBIImpl.setCompletion(userId, taskId, completed)
 
-        // This is done everywhere to make sure that cache is always in sync with the real data
         if (updated) {
+            // This is done everywhere to make sure that cache is always in sync with the real data
             TaskCM.delete(userId, taskId)
         }
 

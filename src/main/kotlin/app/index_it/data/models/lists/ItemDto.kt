@@ -1,6 +1,6 @@
 package app.index_it.data.models.lists
 
-import app.index_it.core.logic.currentMillis
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.Validatable
 import app.index_it.data.models.tasks.TaskDto
@@ -25,7 +25,7 @@ data class ItemDto(
     val name: String,
     val completed: Boolean = false,
     @SerialName("created_at")
-    val createdAt: Long = currentMillis(),
+    val createdAt: Long = DatetimeUtils.currentMillis(),
     @SerialName("edited_at")
     val editedAt: Long? = null,
     @SerialName("completed_at")

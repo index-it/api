@@ -17,10 +17,11 @@ flyway="10.1.0"
 jedis="4.4.3"
 amqpClient="5.18.0"
 
-ktor="2.3.6"
+ktor="2.3.7"
 ktorSwagger="2.7.1"
 jsonSchemaGenereator="4.32.0"
 konform="0.4.0"
+libRecur="0.15.0"
 
 googleApiClient="2.2.0"
 springSecurityCrypto="6.1.3"
@@ -45,9 +46,6 @@ logback = { group = "ch.qos.logback", name = "logback-classic", version.ref = "l
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4jApi" }
 
 dotenv = { group = "io.github.cdimascio", name = "dotenv-kotlin", version.ref = "dotenv" }
-
-# kmongo = { group = "org.litote.kmongo", name = "kmongo-serialization", version.ref = "kmongo" }
-# kmongo-id = { group = "org.litote.kmongo", name = "kmongo-id-serialization", version.ref = "kmongo" }
 
 exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
 exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
@@ -79,6 +77,8 @@ ktor-swagger = { group = "io.github.smiley4", name = "ktor-swagger-ui", version.
 json-schema-generator = { group = "com.github.victools", name = "jsonschema-generator", version.ref = "jsonSchemaGenereator" }
 
 konform = { group = "io.konform", name = "konform-jvm", version.ref = "konform" }
+
+librecur = { group = "org.dmfs", name = "lib-recur", version.ref = "libRecur" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-apache = { group = "io.ktor", name = "ktor-client-apache", version.ref = "ktor" }
