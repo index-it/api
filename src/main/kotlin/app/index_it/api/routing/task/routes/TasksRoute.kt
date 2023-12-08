@@ -33,13 +33,13 @@ fun Route.tasksRoute() {
             }
         }
     }) {
-        val items = when (it.completed) {
+        val tasks = when (it.completed) {
             true ->  TaskDao.getAllCompleted(userIdFromSession()!!)
             false -> TaskDao.getAllUncompleted(userIdFromSession()!!)
             null -> TaskDao.getAll(userIdFromSession()!!)
         }
 
-        call.respond(items)
+        call.respond(tasks)
     }
 
     post<TasksRoute>({
