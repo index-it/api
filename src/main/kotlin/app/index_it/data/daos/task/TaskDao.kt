@@ -32,7 +32,7 @@ object TaskDao {
         }
 
         return rrule
-            .iterator(max(task.createdAt, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
+            .iterator(max(task.dueDate, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
             .apply {
                 try { skip(1) } catch (_: Exception) {}
             }

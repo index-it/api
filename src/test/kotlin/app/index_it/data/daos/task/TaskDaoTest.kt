@@ -45,7 +45,7 @@ class TaskDaoTest {
             rrule = rrule,
             subTasks = task.subTasks.map { it.apply { completed = false } },
             completed = false,
-            createdAt = nextDueDate,
+            createdAt = DatetimeUtils.currentMillis(),
             editedAt = task.editedAt,
             completedAt = null,
         )
