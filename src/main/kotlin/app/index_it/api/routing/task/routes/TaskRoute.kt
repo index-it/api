@@ -85,10 +85,19 @@ fun Route.taskRoute() {
             HttpStatusCode.NotFound to {
                 description = "task not found"
             }
+            HttpStatusCode.MethodNotAllowed to {
+                description = "cannot set an rrule for a task connected to an item (cannot make task recurrent if connected to an item)"
+            }
         }
     }) {
         val updateData = call.receive<TaskDto.TaskUpdateRequestDto>()
         val userId = userIdFromSession()!!
+
+        val task = TaskDao.get(userId, it.taskId)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
+
+        if (task.itemId != null && updateData.rrule != null)
+            return@put call.respond(HttpStatusCode.MethodNotAllowed)
 
         val updatedTask = TaskDao.update(userId, it.taskId, updateData)
             ?: return@put call.respond(HttpStatusCode.NotFound)

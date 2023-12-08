@@ -58,7 +58,7 @@ fun Route.taskCompletionRoute() {
                     // TODO: WS
                 }
         } else if (updatedTask.rrule != null) {
-            call.respond(HttpStatusCode.MethodNotAllowed)
+            return@put call.respond(HttpStatusCode.MethodNotAllowed)
         }
 
         call.respond(updatedTask)

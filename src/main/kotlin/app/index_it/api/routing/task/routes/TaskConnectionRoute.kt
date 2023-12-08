@@ -35,15 +35,20 @@ fun Route.taskConnectionRoute() {
             HttpStatusCode.NotFound to {
                 description = "task or connected item not found"
             }
+            HttpStatusCode.MethodNotAllowed to {
+                description = "cannot manage connection on recurring task"
+            }
         }
     }) {
-        println("DUUUH")
         val userId = userIdFromSession()!!
         val taskId = it.parent.taskId
         val itemId = it.itemId
 
         val task = TaskDao.get(userId, taskId)
             ?: return@put call.respond(HttpStatusCode.NotFound)
+
+        if (task.rrule != null)
+            return@put call.respond(HttpStatusCode.MethodNotAllowed)
 
         // if statement for small performance check
         // checks if an update is actually needed, if the values are equal it doesn't perform the if code
