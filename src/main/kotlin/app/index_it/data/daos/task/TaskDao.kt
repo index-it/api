@@ -47,7 +47,7 @@ object TaskDao {
         val taskDto = TaskDto(
             id = newIxId(),
             userId = userId,
-            itemId = null,
+            itemId = taskCreateRequestDto.itemId,
             name = taskCreateRequestDto.name,
             description = taskCreateRequestDto.description,
             dueDate = taskCreateRequestDto.dueDate,
@@ -65,7 +65,8 @@ object TaskDao {
         return taskDto
     }
 
-    suspend fun createLinked(userId: IxId<UserDto>, item: ItemDto): TaskDto {
+    /*
+    suspend fun createConnected(userId: IxId<UserDto>, item: ItemDto): TaskDto {
         val taskDto = TaskDto(
             id = newIxId(),
             userId = userId,
@@ -85,12 +86,13 @@ object TaskDao {
 
         return taskDto
     }
+     */
 
     suspend fun createNextOccurrence(task: TaskDto, dueDate: Long, rrule: String): TaskDto {
         val taskDto = TaskDto(
             id = newIxId(),
             userId = task.userId,
-            itemId = task.itemId,
+            itemId = null, // Cannot have connected recurring tasks
             name = task.name,
             description = task.description,
             dueDate = dueDate,

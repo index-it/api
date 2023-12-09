@@ -52,7 +52,8 @@ data class TaskDto(
         val dueDate: Long? = null,
         val rrule: String? = null,
         val subTasks: List<SubTaskDto> = emptyList(),
-        val priority: Int? = null
+        val priority: Int? = null,
+        @Contextual val itemId: IxId<ItemDto>? = null
     ): Validatable<TaskCreateRequestDto> {
         override fun validate() = Validation {
             TaskCreateRequestDto::name {
@@ -74,6 +75,7 @@ data class TaskDto(
         val rrule: String? = null,
         val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null,
+        @Contextual val itemId: IxId<ItemDto>? = null
     ): Validatable<TaskUpdateRequestDto> {
         override fun validate() = Validation {
             TaskUpdateRequestDto::name {

@@ -2,6 +2,7 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
 import app.index_it.data.models.tasks.SubTaskDto
 import app.index_it.data.models.tasks.TaskDto
@@ -83,7 +84,7 @@ fun Route.taskRoute() {
                 body<TaskDto>()
             }
             HttpStatusCode.NotFound to {
-                description = "task not found"
+                description = "task or item to connect not found"
             }
             HttpStatusCode.MethodNotAllowed to {
                 description = "cannot set an rrule for a task connected to an item (cannot make task recurrent if connected to an item)"
@@ -92,12 +93,32 @@ fun Route.taskRoute() {
     }) {
         val updateData = call.receive<TaskDto.TaskUpdateRequestDto>()
         val userId = userIdFromSession()!!
+        val taskId = it.taskId
+        val newItemIdToConnect = updateData.itemId
 
         val task = TaskDao.get(userId, it.taskId)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (task.itemId != null && updateData.rrule != null)
             return@put call.respond(HttpStatusCode.MethodNotAllowed)
+
+        if (task.itemId != newItemIdToConnect) {
+            val originalConnectedItem = task.itemId?.let { originalItemId -> ItemDao.get(userId, originalItemId) }
+
+            // un-connects the old item if existing
+            if (originalConnectedItem != null) {
+                ItemDao.setTaskConnection(userId, originalConnectedItem.listId, originalConnectedItem.id, null)
+            }
+
+            // connects the new item if required
+            if (newItemIdToConnect != null) {
+                val newConnectedItem = ItemDao.get(userId, newItemIdToConnect)
+                    ?: return@put call.respond(HttpStatusCode.NotFound)
+
+                ItemDao.setTaskConnection(userId, newConnectedItem.listId, newConnectedItem.id, taskId)
+                    ?: return@put call.respond(HttpStatusCode.NotFound)
+            }
+        }
 
         val updatedTask = TaskDao.update(userId, it.taskId, updateData)
             ?: return@put call.respond(HttpStatusCode.NotFound)
@@ -127,7 +148,6 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        // TODO: Delete related item too?
         val userId = userIdFromSession()!!
 
         if (!it.all) {

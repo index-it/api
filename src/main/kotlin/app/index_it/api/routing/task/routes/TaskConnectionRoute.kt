@@ -1,5 +1,5 @@
 package app.index_it.api.routing.task.routes
-
+/*
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
 import app.index_it.data.daos.list.ItemDao
@@ -10,7 +10,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-
 
 fun Route.taskConnectionRoute() {
     put<TasksRoute.TaskRoute.ConnectionRoute>({
@@ -40,6 +39,7 @@ fun Route.taskConnectionRoute() {
             }
         }
     }) {
+        // TODO: Move to simple update route?
         val userId = userIdFromSession()!!
         val taskId = it.parent.taskId
         val itemId = it.itemId
@@ -76,3 +76,4 @@ fun Route.taskConnectionRoute() {
         call.respond(updatedTask)
     }
 }
+ */

@@ -2,7 +2,6 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
-import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
 import app.index_it.data.models.tasks.TaskDto
@@ -58,17 +57,42 @@ fun Route.tasksRoute() {
                 description = "the task"
                 body<TaskDto>()
             }
+            HttpStatusCode.BadRequest to {
+                description = "cannot create recurring task connected to a list item (cannot set both rrule and item)"
+            }
+            HttpStatusCode.NotFound to {
+                description = "did not find the item provided for connection with this new task"
+            }
         }
     }) {
+        val userId = userIdFromSession()!!
         val newTask = call.receive<TaskDto.TaskCreateRequestDto>()
+        val itemIdToConnect = newTask.itemId
 
-        val task = TaskDao.create(userIdFromSession()!!, newTask)
+        if (itemIdToConnect != null && newTask.rrule != null) {
+            return@post call.respond(HttpStatusCode.BadRequest)
+        }
+
+        val task = if (itemIdToConnect != null) {
+            val itemToConnect = ItemDao.get(userId, itemIdToConnect)
+                ?: return@post call.respond(HttpStatusCode.NotFound)
+
+            val task = TaskDao.create(userIdFromSession()!!, newTask)
+
+            ItemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
+                ?: return@post call.respond(HttpStatusCode.NotFound)
+
+            task
+        } else {
+            TaskDao.create(userIdFromSession()!!, newTask)
+        }
 
         call.respond(task)
 
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
 
+    /*
     post<TasksRoute.CreateConnectedFromItem>({
         tags = listOf("tasks")
         operationId = "create-connected-task"
@@ -93,15 +117,12 @@ fun Route.tasksRoute() {
             }
         }
     }) {
-        println("DUDUDUHHUSADH")
-        val userId = userIdFromSession() ?: throw AuthenticationException()
+        val userId = userIdFromSession()!!
 
         val item = ItemDao.get(userId, it.itemId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        println(item)
-
-        val task = TaskDao.createLinked(userIdFromSession()!!, item)
+        val task = TaskDao.createConnected(userIdFromSession()!!, item)
 
         ItemDao.setTaskConnection(userId, item.listId, item.id, task.id)
 
@@ -109,4 +130,5 @@ fun Route.tasksRoute() {
 
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
+     */
 }

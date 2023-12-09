@@ -51,7 +51,6 @@ object TaskTable : UUIDTable() {
     val description = varchar("description", 500).nullable()
     val dueDate = long("due_date").nullable()
     val rrule = varchar("rrule", 200).nullable()
-    // TODO: Remove as prob not needed val rruleEndDate = long("rrule_end_date").nullable()
     val completed = bool("completed")
     val priority = integer("priority").nullable()
     val createdAt = long("created_at")

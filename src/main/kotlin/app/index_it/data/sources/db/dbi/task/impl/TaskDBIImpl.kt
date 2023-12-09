@@ -124,6 +124,7 @@ object TaskDBIImpl : TaskDBI {
             it[rrule] = taskUpdateRequestDto.rrule
             it[priority] = taskUpdateRequestDto.priority
             it[editedAt] = DatetimeUtils.currentMillis()
+            it[item] = taskUpdateRequestDto.itemId?.toEntityId(ItemTable)
         } > 0
     }
 
