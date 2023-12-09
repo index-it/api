@@ -30,6 +30,7 @@ import java.util.*
  * @property description
  * @property dueDate
  * @property rrule
+ * @property dueDateReminder
  * @property completed
  * @property priority
  * @property createdAt
@@ -51,6 +52,7 @@ object TaskTable : UUIDTable() {
     val description = varchar("description", 500).nullable()
     val dueDate = long("due_date").nullable()
     val rrule = varchar("rrule", 200).nullable()
+    val onDayReminder = long("due_date_reminder").nullable()
     val completed = bool("completed")
     val priority = integer("priority").nullable()
     val createdAt = long("created_at")
@@ -82,6 +84,7 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var description by TaskTable.description
     var dueDate by TaskTable.dueDate
     var rrule by TaskTable.rrule
+    var onDayReminder by TaskTable.onDayReminder
     var completed by TaskTable.completed
     var priority by TaskTable.priority
     var createdAt by TaskTable.createdAt

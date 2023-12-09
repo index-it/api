@@ -8,40 +8,8 @@ import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.tasks.TaskCM
 import app.index_it.data.sources.db.dbi.task.impl.TaskDBIImpl
-import org.dmfs.rfc5545.recur.RecurrenceRule
-import kotlin.math.max
 
 object TaskDao {
-
-    /**
-     * If a task is recurring, this calculates the next occurrence date and the updated rrule in case `COUNT` was used as the end clause
-     *
-     * @return Null if this task isn't recurring or if it reached the end clause, a [Pair] with the next occurrence timestamp and updated rrule otherwise
-     */
-    fun calculateNextOccurrenceDueDateAndRRule(task: TaskDto): Pair<Long, String>? {
-        if (task.dueDate == null || task.rrule == null)
-            return null
-
-        val rrule = RecurrenceRule(task.rrule)
-
-        if (rrule.count != null) {
-            rrule.count -= 1
-
-            if (rrule.count < 1)
-                return null
-        }
-
-        return rrule
-            .iterator(max(task.dueDate, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
-            .apply {
-                try { skip(1) } catch (_: Exception) {}
-            }
-            .takeIf { it.hasNext() }
-            ?.nextMillis()
-            ?.let {
-                Pair(it, rrule.toString())
-            }
-    }
 
     suspend fun create(userId: IxId<UserDto>, taskCreateRequestDto: TaskDto.TaskCreateRequestDto): TaskDto {
         val taskDto = TaskDto(
@@ -153,6 +121,7 @@ object TaskDao {
         return get(userId, taskId)
     }
 
+    /* TODO: Remove?
     suspend fun setItemConnection(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): TaskDto? {
         val updated = TaskDBIImpl.setItemConnection(userId, taskId, itemId)
 
@@ -162,6 +131,7 @@ object TaskDao {
 
         return get(userId, taskId)
     }
+     */
 
     /*
     fun setCategory(userId: IxId<UserDto>, taskId: IxId<TaskDto>, categoryId: IxId<CategoryDto>): TaskDto? {

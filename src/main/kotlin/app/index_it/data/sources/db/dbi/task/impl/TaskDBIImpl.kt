@@ -26,6 +26,7 @@ object TaskDBIImpl : TaskDBI {
         description = taskDto.description
         dueDate = taskDto.dueDate
         rrule = taskDto.rrule
+        onDayReminder = taskDto.onDayReminder
         completed = taskDto.completed
         priority = taskDto.priority
         createdAt = taskDto.createdAt
@@ -41,6 +42,7 @@ object TaskDBIImpl : TaskDBI {
         description = description,
         dueDate = dueDate,
         rrule = rrule,
+        onDayReminder = onDayReminder,
         completed = completed,
         priority = priority,
         createdAt = createdAt,
@@ -122,6 +124,7 @@ object TaskDBIImpl : TaskDBI {
             it[description] = taskUpdateRequestDto.description
             it[dueDate] = taskUpdateRequestDto.dueDate
             it[rrule] = taskUpdateRequestDto.rrule
+            it[onDayReminder] = taskUpdateRequestDto.onDayReminder
             it[priority] = taskUpdateRequestDto.priority
             it[editedAt] = DatetimeUtils.currentMillis()
             it[item] = taskUpdateRequestDto.itemId?.toEntityId(ItemTable)

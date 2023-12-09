@@ -20,8 +20,15 @@ import kotlinx.serialization.Serializable
  * @param itemId id of the item to which this task is linked - when the task gets completed, the item also gets completed and vice-versa
  * @param name
  * @param description
- * @param subTasks a list of sub tasks
+ * @param subTasks a list of sub-tasks
+ * @param dueDate Due date **UTC** timestamp
+ * @param rrule Recurrence rule for the task
+ * @param onDayReminder Day time, **UTC**, of the due date expressed in milliseconds representing when the reminder should be sent
+ * @param completed
  * @param priority task priority indicated as an int: 0 --> very low, 1 --> low, 2 --> medium, 3 --> high
+ * @param createdAt
+ * @param editedAt
+ * @param completedAt
  */
 @Serializable
 @Suppress("Unused")
@@ -36,6 +43,7 @@ data class TaskDto(
     val subTasks: List<SubTaskDto> = emptyList(),
     val dueDate: Long? = null,
     val rrule: String? = null,
+    val onDayReminder: Long? = null,
     val completed: Boolean = false,
     val priority: Int? = null,
     @SerialName("created_at")
@@ -51,6 +59,7 @@ data class TaskDto(
         val description: String? = null,
         val dueDate: Long? = null,
         val rrule: String? = null,
+        val onDayReminder: Long? = null,
         val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null,
         @Contextual val itemId: IxId<ItemDto>? = null
@@ -73,6 +82,7 @@ data class TaskDto(
         val description: String? = null,
         val dueDate: Long? = null,
         val rrule: String? = null,
+        val onDayReminder: Long? = null,
         val subTasks: List<SubTaskDto> = emptyList(),
         val priority: Int? = null,
         @Contextual val itemId: IxId<ItemDto>? = null

@@ -2,6 +2,7 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.core.logic.usecases.TaskUseCase
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
 import app.index_it.data.models.tasks.TaskDto
@@ -52,7 +53,7 @@ fun Route.taskCompletionRoute() {
         }
 
         if (it.completed) {
-            TaskDao.calculateNextOccurrenceDueDateAndRRule(updatedTask)
+            TaskUseCase.calculateNextOccurrenceDueDateAndRRule(updatedTask)
                 ?.also { (dueDate, rrule) ->
                     TaskDao.createNextOccurrence(updatedTask, dueDate, rrule)
                     // TODO: WS

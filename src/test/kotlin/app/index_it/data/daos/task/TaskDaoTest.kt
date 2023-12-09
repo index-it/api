@@ -2,6 +2,7 @@ package app.index_it.data.daos.task
 
 import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.newIxId
+import app.index_it.core.logic.usecases.TaskUseCase
 import app.index_it.data.models.tasks.TaskDto
 import org.junit.jupiter.api.Test
 
@@ -27,7 +28,7 @@ class TaskDaoTest {
             rrule = rrule
         )
 
-        val (nextDueDate, _) = TaskDao.calculateNextOccurrenceDueDateAndRRule(task)
+        val (nextDueDate, _) = TaskUseCase.calculateNextOccurrenceDueDateAndRRule(task)
             ?: fail("Didn't recognize task next occurrence with rrule `$rrule`!")
 
         assertEquals((expectedNewDueDate) / 10000, nextDueDate / 10000)
@@ -50,7 +51,7 @@ class TaskDaoTest {
             completedAt = null,
         )
 
-        val thirdOccurrence = TaskDao.calculateNextOccurrenceDueDateAndRRule(newOccurrence)
+        val thirdOccurrence = TaskUseCase.calculateNextOccurrenceDueDateAndRRule(newOccurrence)
             ?: fail("Didn't recognize task next occurrence with rrule `$rrule`!")
 
         assertEquals((expectedNewDueDate) / 10000, thirdOccurrence.first / 10000)

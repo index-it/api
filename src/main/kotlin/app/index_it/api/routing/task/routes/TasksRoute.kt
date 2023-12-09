@@ -2,6 +2,7 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.core.logic.usecases.TaskUseCase
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
 import app.index_it.data.models.tasks.TaskDto
@@ -49,7 +50,7 @@ fun Route.tasksRoute() {
             body<TaskDto.TaskCreateRequestDto> {
                 description = "task data"
                 required = true
-                example("sample-task", TaskDto.TaskCreateRequestDto("find skis", "find some skis for this winter", null, null, emptyList()))
+                example("sample-task", TaskDto.TaskCreateRequestDto("find skis", "find some skis for this winter", null, null, null, emptyList()))
             }
         }
         response {
@@ -58,7 +59,7 @@ fun Route.tasksRoute() {
                 body<TaskDto>()
             }
             HttpStatusCode.BadRequest to {
-                description = "cannot create recurring task connected to a list item (cannot set both rrule and item)"
+                description = "invalid parameters, see error message"
             }
             HttpStatusCode.NotFound to {
                 description = "did not find the item provided for connection with this new task"
@@ -69,11 +70,39 @@ fun Route.tasksRoute() {
         val newTask = call.receive<TaskDto.TaskCreateRequestDto>()
         val itemIdToConnect = newTask.itemId
 
+
+        //////////////////
+        /// VALIDATION ///
+        //////////////////
+        // TODO: Move to validate library
         if (itemIdToConnect != null && newTask.rrule != null) {
-            return@post call.respond(HttpStatusCode.BadRequest)
+            return@post call.respond(HttpStatusCode.BadRequest, "cannot create recurring connected task")
         }
 
+        if (newTask.onDayReminder != null && newTask.dueDate == null) {
+            return@post call.respond(HttpStatusCode.BadRequest, "cannot add on day reminder for task without due date")
+        }
+
+
+        ///////////////////////
+        /// ON DAY REMINDER ///
+        ///////////////////////
+
+        val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(newTask.dueDate, newTask.onDayReminder)
+
+        if (onDayReminderTimestamp != null) {
+
+        }
+
+
+        /////////////////////
+        /// TASK CREATION ///
+        /////////////////////
+
         val task = if (itemIdToConnect != null) {
+            ////////////////////
+            /// CONNECT ITEM ///
+            ////////////////////
             val itemToConnect = ItemDao.get(userId, itemIdToConnect)
                 ?: return@post call.respond(HttpStatusCode.NotFound)
 

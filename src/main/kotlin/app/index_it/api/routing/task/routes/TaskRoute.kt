@@ -2,6 +2,7 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.core.logic.usecases.TaskUseCase
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
 import app.index_it.data.models.tasks.SubTaskDto
@@ -70,7 +71,7 @@ fun Route.taskRoute() {
                                 false
                             ),
                             SubTaskDto(
-                                "mask",
+                                "goggles",
                                 false
                             )
                         ),
@@ -153,7 +154,7 @@ fun Route.taskRoute() {
         if (!it.all) {
            TaskDao.get(userId, it.taskId)
                ?.also { task ->
-                   TaskDao.calculateNextOccurrenceDueDateAndRRule(task)
+                   TaskUseCase.calculateNextOccurrenceDueDateAndRRule(task)
                        ?.also { (dueDate, rrule) ->
                            TaskDao.createNextOccurrence(task, dueDate, rrule)
                            // TODO: WS
