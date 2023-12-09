@@ -4,6 +4,7 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.tasks.TaskReminderJobDto
 import app.index_it.data.sources.db.dbi.task.TaskReminderJobDBI
+import app.index_it.data.sources.db.dbi.task.impl.TaskDBIImpl.toDto
 import app.index_it.data.sources.db.schemas.tasks.TaskReminderJobEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskReminderJobTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
@@ -13,19 +14,32 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 
 object TaskReminderJobDBIImpl : TaskReminderJobDBI {
-    private fun TaskReminderJobEntity.fromDto(taskReminderJobDto: TaskReminderJobDto) {
-        task = taskReminderJobDto.taskId.toEntityId(TaskTable)
-    }
 
     private fun TaskReminderJobEntity.toDto() = TaskReminderJobDto(
         id = id.toIxId(),
-        taskId = task.toIxId()
+        task = taskEntity.toDto()
     )
 
-    override suspend fun create(taskReminderJob: TaskReminderJobDto) {
+    override suspend fun create(jobId: IxId<TaskReminderJobDto>, taskId: IxId<TaskDto>) {
         dbQuery {
-            TaskReminderJobEntity.new(taskReminderJob.id.id) {
-                fromDto(taskReminderJob)
+            TaskReminderJobEntity.new(jobId.id) {
+                task = taskId.toEntityId(TaskTable)
+            }
+        }
+    }
+
+    override suspend fun get(jobId: IxId<TaskReminderJobDto>): TaskReminderJobDto? = dbQuery {
+        TaskReminderJobEntity
+            .find { TaskReminderJobTable.id eq jobId.toEntityId(TaskReminderJobTable) }
+            .limit(1)
+            .firstOrNull()
+            ?.toDto()
+    }
+
+    override suspend fun delete(jobId: IxId<TaskReminderJobDto>) {
+        dbQuery {
+            TaskReminderJobTable.deleteWhere {
+                id eq jobId.toEntityId(TaskReminderJobTable)
             }
         }
     }
@@ -33,7 +47,7 @@ object TaskReminderJobDBIImpl : TaskReminderJobDBI {
     override suspend fun deleteAllOfTask(taskId: IxId<TaskDto>) {
         dbQuery {
             TaskReminderJobTable.deleteWhere {
-                TaskReminderJobTable.task eq taskId.toEntityId(TaskTable)
+                task eq taskId.toEntityId(TaskTable)
             }
         }
     }

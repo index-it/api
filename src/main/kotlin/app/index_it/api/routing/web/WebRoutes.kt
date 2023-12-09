@@ -1,36 +1,23 @@
 package app.index_it.api.routing.web
 
-import app.index_it.data.models.web.NotifyDto
-import app.index_it.data.sources.db.dbi.user.impl.NotifyDBIImpl
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.ktor.http.*
+import app.index_it.api.routing.web.routes.notifyRoute
+import app.index_it.api.routing.web.routes.webhookRoute
+import app.index_it.core.logic.typedId.impl.IxId
+import app.index_it.data.models.tasks.TaskReminderJobDto
 import io.ktor.resources.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.Contextual
 
 @Resource("/notify/{email}")
 class NotifyRoute(val email: String)
 
-fun Route.webRoutes() {
-    get<NotifyRoute>({
-        tags = listOf("web")
-        operationId = "subscribe-user-to-newsletter"
-        summary = "adds the user email to the newsletter for the alpha release"
-        request {
-            pathParameter<String>("email") {
-                description = "email of the user"
-                required = true
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "subscribed"
-            }
-        }
-    }) {
-        NotifyDBIImpl.save(NotifyDto(it.email))
+@Resource("/webhook")
+class WebhookRoute() {
+    @Resource("/task-reminder-job/{id}")
+    class TaskReminderJobRoute(val parent: WebhookRoute, @Contextual val id: IxId<TaskReminderJobDto>)
+}
 
-        call.respond(HttpStatusCode.OK)
-    }
+fun Route.webRoutes() {
+    notifyRoute()
+    webhookRoute()
 }

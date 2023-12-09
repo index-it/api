@@ -34,7 +34,7 @@ object TaskDBIImpl : TaskDBI {
         completedAt = taskDto.completedAt
     }
 
-    private fun TaskEntity.toDto() = TaskDto(
+    fun TaskEntity.toDto() = TaskDto(
         id = id.toIxId(),
         userId = user.toIxId(),
         itemId = item?.toIxId(),

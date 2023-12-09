@@ -36,9 +36,9 @@ object GoogleCloudSchedulerClient {
     fun createTaskReminderJob(taskReminderJob: TaskReminderJobDto, reminderTimestamp: Long) {
         val jobId = taskReminderJob.id
 
-        val webhookUrl = "${WebhookConfig.taskReminderJob}?id=${jobId}"
+        val webhookUrl = "${WebhookConfig.taskReminder}/${jobId}"
         val httpTarget = HttpTarget.newBuilder()
-            .setHttpMethod(HttpMethod.POST)
+            .setHttpMethod(HttpMethod.GET)
             .setUri(webhookUrl)
 
         val parent = LocationName.of(GoogleCloudSchedulerConfig.project, GoogleCloudSchedulerConfig.location).toString()
