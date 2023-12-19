@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.amqp.client)
     implementation(libs.google.api.client)
     implementation(libs.google.cloud.scheduler)
+    implementation(libs.firebase.admin)
     implementation(libs.librecur)
 
     testImplementation(libs.junit)

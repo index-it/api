@@ -3,11 +3,13 @@ package app.index_it.data.sources.db.dbi.task.impl
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.tasks.TaskReminderJobDto
+import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.task.TaskReminderJobDBI
 import app.index_it.data.sources.db.dbi.task.impl.TaskDBIImpl.toDto
 import app.index_it.data.sources.db.schemas.tasks.TaskReminderJobEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskReminderJobTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -17,13 +19,15 @@ object TaskReminderJobDBIImpl : TaskReminderJobDBI {
 
     private fun TaskReminderJobEntity.toDto() = TaskReminderJobDto(
         id = id.toIxId(),
-        task = taskEntity.toDto()
+        task = taskEntity.toDto(),
+        userId = user.toIxId()
     )
 
-    override suspend fun create(jobId: IxId<TaskReminderJobDto>, taskId: IxId<TaskDto>) {
+    override suspend fun create(jobId: IxId<TaskReminderJobDto>, taskId: IxId<TaskDto>, userId: IxId<UserDto>) {
         dbQuery {
             TaskReminderJobEntity.new(jobId.id) {
                 task = taskId.toEntityId(TaskTable)
+                user = userId.toEntityId(UsersTable)
             }
         }
     }

@@ -26,7 +26,7 @@ fun Route.notifyRoute() {
             }
         }
     }) {
-        NotifyDBIImpl.save(NotifyDto(it.email))
+        NotifyDBIImpl.create(NotifyDto(it.email))
 
         call.respond(HttpStatusCode.OK)
     }

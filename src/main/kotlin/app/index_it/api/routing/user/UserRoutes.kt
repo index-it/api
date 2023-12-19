@@ -1,8 +1,9 @@
 package app.index_it.api.routing.user
 
 import app.index_it.api.plugins.AuthenticationMethods
-import app.index_it.api.routing.user.routes.logoutRoute
+import app.index_it.api.routing.user.routes.logoutRoutes
 import app.index_it.api.routing.user.routes.meRoutes
+import app.index_it.api.routing.user.routes.fcmRoutes
 import app.index_it.api.routing.user.routes.passwordOperationRoutes
 import io.ktor.resources.*
 import io.ktor.server.auth.*
@@ -18,13 +19,21 @@ class PasswordForgottenRoute(val email: String)
 class ResetPasswordRoute(val token: String)
 
 @Resource("/me")
-class MeRoute
+class MeRoute {
+
+    @Resource("notifications")
+    class Notifications {
+        @Resource("registration")
+        class Registration
+    }
+}
 
 fun Route.userRoutes() {
     passwordOperationRoutes()
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
-        logoutRoute()
+        logoutRoutes()
         meRoutes()
+        fcmRoutes()
     }
 }

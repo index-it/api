@@ -10,7 +10,7 @@ import app.index_it.data.sources.db.dbi.user.impl.PasswordResetDBIImpl
 
 object PasswordResetDao {
     private suspend fun save(passwordResetDto: PasswordResetDto) =
-        PasswordResetDBIImpl.save(passwordResetDto)
+        PasswordResetDBIImpl.create(passwordResetDto)
 
     suspend fun get(token: String): PasswordResetDto? =
         PasswordResetDBIImpl.get(token)

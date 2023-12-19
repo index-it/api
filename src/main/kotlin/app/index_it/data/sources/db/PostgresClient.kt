@@ -45,6 +45,9 @@ object PostgresClient {
     }
 
     private fun runMigrations() {
+        // TODO: Recurring + Reminder stuff
+        // TODO: device registration table
+        // TODO: web links
         val flyway = Flyway
             .configure()
             .driver(DB_DRIVER)

@@ -7,7 +7,7 @@ import app.index_it.data.sources.db.dbi.DBI
 
 interface PasswordResetDBI : DBI {
     suspend fun count(id: IxId<UserDto>): Long
-    suspend fun save(passwordResetDto: PasswordResetDto)
+    suspend fun create(passwordResetDto: PasswordResetDto)
     suspend fun get(token: String): PasswordResetDto?
     suspend fun deleteAll(id: IxId<UserDto>)
 }

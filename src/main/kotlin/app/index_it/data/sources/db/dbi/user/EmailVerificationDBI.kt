@@ -7,7 +7,7 @@ import app.index_it.data.sources.db.dbi.DBI
 
 interface EmailVerificationDBI : DBI {
     suspend fun count(id: IxId<UserDto>): Long
-    suspend fun save(emailVerificationDto: EmailVerificationDto)
+    suspend fun create(emailVerificationDto: EmailVerificationDto)
     suspend fun get(token: String): EmailVerificationDto?
     suspend fun deleteAll(id: IxId<UserDto>)
 }

@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 
-fun Route.logoutRoute() {
+fun Route.logoutRoutes() {
     get<LogoutRoute>({
         tags = listOf("auth")
         operationId = "logout"

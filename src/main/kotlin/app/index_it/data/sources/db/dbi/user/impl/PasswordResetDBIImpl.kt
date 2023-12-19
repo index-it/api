@@ -32,7 +32,7 @@ object PasswordResetDBIImpl : PasswordResetDBI {
         PasswordResetEntity.count(PasswordResetTable.user eq id.toEntityId(UsersTable))
     }
 
-    override suspend fun save(passwordResetDto: PasswordResetDto) {
+    override suspend fun create(passwordResetDto: PasswordResetDto) {
         dbQuery {
             PasswordResetEntity.new {
                 fromDto(passwordResetDto)

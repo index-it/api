@@ -25,7 +25,7 @@ fun Route.webhookRoute() {
             }
         }
     }) {
-        val (jobId, task) = TaskReminderJobDao.get(it.id)
+        val (jobId, task, userId) = TaskReminderJobDao.get(it.id)
             ?: return@get call.respond(HttpStatusCode.OK)
 
         TaskReminderJobDao.delete(jobId)

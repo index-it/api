@@ -10,7 +10,7 @@ import app.index_it.data.sources.db.dbi.user.impl.EmailVerificationDBIImpl
 
 object EmailVerificationDao {
     private suspend fun save(emailVerificationDto: EmailVerificationDto) =
-        EmailVerificationDBIImpl.save(emailVerificationDto)
+        EmailVerificationDBIImpl.create(emailVerificationDto)
 
 
     suspend fun get(token: String): EmailVerificationDto? {

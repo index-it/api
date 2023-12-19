@@ -32,7 +32,7 @@ object EmailVerificationDBIImpl : EmailVerificationDBI {
         EmailVerificationEntity.count(EmailVerificationTable.user eq id.toEntityId(UsersTable))
     }
 
-    override suspend fun save(emailVerificationDto: EmailVerificationDto) {
+    override suspend fun create(emailVerificationDto: EmailVerificationDto) {
         dbQuery {
             EmailVerificationEntity.new {
                 fromDto(emailVerificationDto)

@@ -1,5 +1,7 @@
 package app.index_it.data.sources.db.schemas.tasks
 
+import app.index_it.data.sources.db.schemas.user.UserEntity
+import app.index_it.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -19,12 +21,19 @@ object TaskReminderJobTable : UUIDTable() {
         foreign = TaskTable,
         onDelete = ReferenceOption.CASCADE
     ).index()
+    val user = reference(
+        name = "id_user",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE
+    ).index()
 }
 
 class TaskReminderJobEntity(id: EntityID<UUID>): UUIDEntity(id) {
     companion object : UUIDEntityClass<TaskReminderJobEntity>(TaskReminderJobTable)
 
     var task by TaskReminderJobTable.task
+    var user by TaskReminderJobTable.user
 
     val taskEntity by TaskEntity referencedOn TaskReminderJobTable.task
+    val userEntity by UserEntity referencedOn TaskReminderJobTable.user
 }
