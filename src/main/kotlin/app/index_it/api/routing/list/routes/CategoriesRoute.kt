@@ -13,8 +13,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.categoriesRoute() {
+    val categoryDao by inject<CategoryDao>()
+
     get<ListsRoute.ListRoute.CategoriesRoute>({
         tags = listOf("categories")
         operationId = "get-categories"
@@ -32,7 +35,7 @@ fun Route.categoriesRoute() {
             }
         }
     }) {
-        val categories = CategoryDao.getAll(userIdFromSession()!!, it.parent.listId)
+        val categories = categoryDao.getAll(userIdFromSession()!!, it.parent.listId)
 
         call.respond(categories)
     }
@@ -61,7 +64,7 @@ fun Route.categoriesRoute() {
     }) {
         val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
 
-        val category = CategoryDao.create(userIdFromSession()!!, it.parent.listId, newCategory)
+        val category = categoryDao.create(userIdFromSession()!!, it.parent.listId, newCategory)
 
         call.respond(category)
 

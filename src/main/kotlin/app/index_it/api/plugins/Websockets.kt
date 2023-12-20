@@ -14,12 +14,14 @@ import java.time.Duration
 private val logger = KotlinLogging.logger {}
 
 suspend fun PipelineContext<Unit, ApplicationCall>.emitRabbitMqWebsocketEvent(eventType: RabbitMqWebsocketEventType, eventData: Any?) {
+    /*
     try {
         val websocketEventDto = WebsocketEventManager.rabbitMqWebsocketEventDtoFromRestCall(this, eventType, eventData)
         WebsocketEventManager.emit(websocketEventDto)
     } catch (e: Exception) {
         logger.error(e) { "Error emitting websocket event (event type $eventType, event data $eventData)" }
     }
+     */
 }
 
 fun Application.configureWebsockets() {

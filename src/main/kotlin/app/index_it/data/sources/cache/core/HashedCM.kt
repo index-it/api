@@ -1,7 +1,7 @@
 package app.index_it.data.sources.cache.core
 
 import app.index_it.core.logic.ObjectMapper
-import app.index_it.data.sources.cache.RedisClient
+import app.index_it.core.clients.RedisClient
 
 /**
  * Hashed cache manager
@@ -18,16 +18,18 @@ import app.index_it.data.sources.cache.RedisClient
  * @param keyName Name of the hash key
  */
 abstract class HashedCM(
-    val keyName: String
+    val keyName: String,
+    val redisClient: RedisClient,
+    val objectMapper: ObjectMapper
 ) {
 
     /**
      * Get a single field from the hash
      */
     protected inline fun <reified T> get(field: String): T? {
-        RedisClient.jedisPool.resource.use {
+        redisClient.jedisPool.resource.use {
             val json = it.hget(keyName, field)
-            return if (json != null) ObjectMapper.decode(json) else null
+            return if (json != null) objectMapper.decode(json) else null
         }
     }
 
@@ -38,8 +40,8 @@ abstract class HashedCM(
      * @param data Data to cache
      */
     protected inline fun <reified T> cache(field: String, data: T) {
-        RedisClient.jedisPool.resource.use {
-            val json = ObjectMapper.encode(data)
+        redisClient.jedisPool.resource.use {
+            val json = objectMapper.encode(data)
             it.hset(keyName, field, json)
         }
     }
@@ -48,7 +50,7 @@ abstract class HashedCM(
      * Delete a field from the hash
      */
     protected fun delete(field: String) {
-        RedisClient.jedisPool.resource.use {
+        redisClient.jedisPool.resource.use {
             it.hdel(keyName, field)
         }
     }

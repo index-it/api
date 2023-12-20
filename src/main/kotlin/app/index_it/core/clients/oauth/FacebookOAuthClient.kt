@@ -1,35 +1,20 @@
 package app.index_it.core.clients.oauth
 
 import app.index_it.data.models.oauth.facebook.FacebookUserInfoDto
+import app.index_it.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Single
 
 private val log = KotlinLogging.logger {  }
 
-object FacebookOAuthClient {
-    private val client = HttpClient(Apache) {
-        install(Logging)
-        install(ContentNegotiation) {
-            json(Json)
-        }
-        install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 3)
-            exponentialDelay()
-        }
-        defaultRequest {
-            contentType(ContentType.Application.Json)
-            accept(ContentType.Application.Json)
-        }
-    }
+@Single(createdAtStart = true)
+class FacebookOAuthClient(
+    private val httpClient: HttpClient
+) : IClosableComponent {
 
     /*
     suspend fun exchangeCodeForToken(code: String): String? {
@@ -61,7 +46,7 @@ object FacebookOAuthClient {
 
     suspend fun getUserInfo(token: String): FacebookUserInfoDto? {
         return try {
-            val response = client.get("https://graph.facebook.com/me") {
+            val response = httpClient.get("https://graph.facebook.com/me") {
                 url {
                     parameters.append("access_token", token)
                     parameters.append("fields", "email")
@@ -82,7 +67,7 @@ object FacebookOAuthClient {
         }
     }
 
-    fun close() {
-        client.close()
+    override fun close() {
+        httpClient.close()
     }
 }

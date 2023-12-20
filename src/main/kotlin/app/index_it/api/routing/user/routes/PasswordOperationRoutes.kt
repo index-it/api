@@ -18,8 +18,15 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.passwordOperationRoutes() {
+    val userDao by inject<UserDao>()
+    val userSessionDao by inject<UserSessionDao>()
+    val passwordResetDao by inject<PasswordResetDao>()
+    val passwordEncoder by inject<PasswordEncoder>()
+    val brevoClient by inject<BrevoClient>()
+
     get<PasswordForgottenRoute>({
         tags = listOf("auth")
         operationId = "password-forgotten"
@@ -47,13 +54,13 @@ fun Route.passwordOperationRoutes() {
             }
         }
     }) { request ->
-        val user = UserDao.getFromEmail(request.email)
+        val user = userDao.getFromEmail(request.email)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
-        if (PasswordResetDao.isRateLimited(user.id))
+        if (passwordResetDao.isRateLimited(user.id))
             return@get call.respond(HttpStatusCode.TooManyRequests)
 
-        val sentEmail = PasswordResetDao.createAndSend(user)
+        val sentEmail = passwordResetDao.createAndSend(user)
 
         if (sentEmail)
             call.respond(HttpStatusCode.OK)
@@ -88,27 +95,27 @@ fun Route.passwordOperationRoutes() {
             }
         }
     }) { request ->
-        val passwordResetDto = PasswordResetDao.get(request.token)
+        val passwordResetDto = passwordResetDao.get(request.token)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
-        val user = UserDao.get(passwordResetDto.userId)
+        val user = userDao.get(passwordResetDto.userId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val newPassword = call.receive<PasswordResetRequestBody>().password
-        val newPasswordHashed = PasswordEncoder.encode(newPassword)
+        val newPasswordHashed = passwordEncoder.encode(newPassword)
 
         // If the user email wasn't verified before, now it can be considered verified
-        UserDao.resetPassword(passwordResetDto.userId, newPasswordHashed, !user.emailVerified)
+        userDao.resetPassword(passwordResetDto.userId, newPasswordHashed, !user.emailVerified)
 
         // Invalidate all other user websocket connections
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
-        WebsocketConnectionsManager.closeAllSessionsOfUser(passwordResetDto.userId)
+        // WebsocketConnectionsManager.closeAllSessionsOfUser(passwordResetDto.userId)
 
         // Invalidate all other user active sessions
-        UserSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
+        userSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
 
         // Send notification email
-        BrevoClient.sendPasswordResetSuccessEmail(user.email)
+        brevoClient.sendPasswordResetSuccessEmail(user.email)
 
         call.respond(HttpStatusCode.OK)
     }

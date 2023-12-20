@@ -15,8 +15,13 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.registerRoute() {
+    val userDao by inject<UserDao>()
+    val passwordEncoder by inject<PasswordEncoder>()
+    val emailVerificationDao by inject<EmailVerificationDao>()
+
     /**
      * When a user registers, he needs to set an email and password,
      * and he will be able to log in into his account only once he has verified the email
@@ -48,18 +53,18 @@ fun Route.registerRoute() {
     }) {
         val signupData = call.receive<RegistrationCredentials>()
 
-        val existingUser = UserDao.getFromEmail(signupData.email)
+        val existingUser = userDao.getFromEmail(signupData.email)
 
         if (existingUser != null) {
             if (UserAuthUseCase.isIncompleteAccountOutdated(existingUser)) {
-                UserDao.delete(existingUser.id)
+                userDao.delete(existingUser.id)
             } else {
                 call.respond(HttpStatusCode.Forbidden)
                 return@post
             }
         }
 
-        val hashedPassword = PasswordEncoder.encode(signupData.password)
+        val hashedPassword = passwordEncoder.encode(signupData.password)
         val user = UserDto(
             id = newIxId(),
             email = signupData.email,
@@ -69,9 +74,9 @@ fun Route.registerRoute() {
             creationSource = UserDto.CreationSource.NONE
         )
 
-        UserDao.create(user)
+        userDao.create(user)
 
-        val emailSent = EmailVerificationDao.createAndSend(user)
+        val emailSent = emailVerificationDao.createAndSend(user)
 
         if (emailSent)
         // User will need to verify its email

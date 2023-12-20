@@ -1,10 +1,13 @@
 package app.index_it.data.sources.db.schemas.user
 
+import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable.createdAt
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable.expiresAt
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable.id
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable.token
 import app.index_it.data.sources.db.schemas.user.PasswordResetTable.user
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -48,3 +51,17 @@ class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val userEntity by UserEntity referencedOn PasswordResetTable.user
 }
+
+fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
+    token = passwordResetDto.token
+    user = passwordResetDto.userId.toEntityId(UsersTable)
+    createdAt = passwordResetDto.createdAt
+    expiresAt = passwordResetDto.expireAt
+}
+
+fun PasswordResetEntity.toDto() = PasswordResetDto(
+    token = token,
+    userId = user.toIxId(),
+    createdAt = createdAt,
+    expireAt = expiresAt
+)

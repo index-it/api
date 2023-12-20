@@ -6,12 +6,20 @@ import app.index_it.data.models.lists.ItemContentDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.lists.ItemContentCM
+import app.index_it.data.sources.cache.cm.lists.impl.ItemContentCMImpl
+import app.index_it.data.sources.db.dbi.list.ItemContentDBI
 import app.index_it.data.sources.db.dbi.list.impl.ItemContentDBIImpl
+import org.koin.core.annotation.Single
 
-object ItemContentDao {
+@Single(createdAtStart = true)
+class ItemContentDao(
+    private val itemDao: ItemDao,
+    private val itemContentDBI: ItemContentDBI,
+    private val itemContentCM: ItemContentCM
+) {
     suspend fun create(userId: IxId<UserDto>, itemId: IxId<ItemDto>): ItemContentDto? {
-        if (!ItemDao.exists(userId, itemId)) {
-            return  null
+        if (!itemDao.exists(userId, itemId)) {
+            return null
         }
 
         val itemContentDto = ItemContentDto(
@@ -21,19 +29,19 @@ object ItemContentDao {
             content = ""
         )
 
-        ItemContentDBIImpl.create(itemContentDto)
-        ItemContentCM.cache(userId, itemContentDto)
+        itemContentDBI.create(itemContentDto)
+        itemContentCM.cache(userId, itemContentDto)
 
         return itemContentDto
     }
 
     suspend fun get(userId: IxId<UserDto>, itemId: IxId<ItemDto>): ItemContentDto? {
-        var content = ItemContentCM.get(userId, itemId)
+        var content = itemContentCM.get(userId, itemId)
 
         if (content == null) {
-            content = ItemContentDBIImpl.get(userId, itemId)
+            content = itemContentDBI.get(userId, itemId)
                 ?: return null
-            ItemContentCM.cache(userId, content)
+            itemContentCM.cache(userId, content)
         }
 
         return content
@@ -43,29 +51,17 @@ object ItemContentDao {
         get(userId, itemId) ?: create(userId, itemId)
 
     suspend fun update(userId: IxId<UserDto>, itemId: IxId<ItemDto>, itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest): ItemContentDto? {
-        val updated = ItemContentDBIImpl.update(userId, itemId, itemContentCreateOrUpdateRequest)
+        val updated = itemContentDBI.update(userId, itemId, itemContentCreateOrUpdateRequest)
 
         if (updated) {
-            ItemContentCM.delete(userId, itemId)
+            itemContentCM.delete(userId, itemId)
         }
 
         return get(userId, itemId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, itemId: IxId<ItemDto>) {
-        ItemContentCM.delete(userId, itemId)
-        ItemContentDBIImpl.delete(userId, itemId)
+        itemContentCM.delete(userId, itemId)
+        itemContentDBI.delete(userId, itemId)
     }
-
-    /*
-    fun deleteAllOfItems(userId: IxId<UserDto>, itemIds: List<Id<ItemDto>>) {
-        ItemContentCM.deleteMultiple(userId, itemIds)
-        ItemContentDBIImpl.deleteAllOfItems(userId, itemIds)
-    }
-
-    fun deleteAllOfUser(userId: IxId<UserDto>) {
-        ItemContentCM.deleteAllOfUser(userId)
-        ItemContentDBM.deleteAllOfUser(userId)
-    }
-     */
 }

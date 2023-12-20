@@ -3,6 +3,7 @@ package app.index_it.api.routing.auth.routes
 import app.index_it.api.routing.auth.LoginRoute
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.PasswordEncoder
+import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.auth.LoginCredentials
@@ -14,8 +15,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import org.koin.ktor.ext.inject
 
 fun Route.loginRoute() {
+    val userDao by inject<UserDao>()
+    val userSessionDao by inject<UserSessionDao>()
+    val passwordEncoder by inject<PasswordEncoder>()
+
     /**
      * Logs in a user using email and password
      */
@@ -47,20 +53,20 @@ fun Route.loginRoute() {
         }
     }) {
         val loginData = call.receive<LoginCredentials>()
-        val user = UserDao.getFromEmail(loginData.email)
+        val user = userDao.getFromEmail(loginData.email)
             ?: throw AuthenticationException()
 
         if (user.passwordHash == null)
             throw AuthenticationException()
 
-        if (!PasswordEncoder.matches(loginData.password, user.passwordHash))
+        if (!passwordEncoder.matches(loginData.password, user.passwordHash))
             throw AuthenticationException()
 
         // User email must be verified
         if (!user.emailVerified)
             return@post call.respond(HttpStatusCode.MethodNotAllowed)
 
-        val userSessionId = UserSessionDao.create(user.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val userSessionId = userSessionDao.create(user.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(userSessionId)
         call.respond(HttpStatusCode.OK)

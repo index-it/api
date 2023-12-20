@@ -2,6 +2,7 @@ package app.index_it.core.logic.typedId.impl
 
 import app.index_it.core.logic.typedId.Id
 import app.index_it.core.logic.typedId.IdGenerator
+import org.koin.core.annotation.Factory
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -9,7 +10,8 @@ import kotlin.reflect.KClass
 /**
  * Generator of [IxId] based on [UUID].
  */
-object IxIdGenerator : IdGenerator {
+@Factory
+class IxIdGenerator : IdGenerator {
 
     override val idClass: KClass<out Id<*>> = IxId::class
 

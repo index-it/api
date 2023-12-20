@@ -17,4 +17,6 @@ interface FCMRegistrationTokenDBI : DBI {
     suspend fun update(fcmRegistrationToken: FCMRegistrationTokenDto)
 
     suspend fun delete(tokenToDelete: String)
+
+    suspend fun deleteExpired()
 }

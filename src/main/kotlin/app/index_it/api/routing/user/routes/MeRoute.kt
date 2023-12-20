@@ -15,8 +15,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import org.koin.ktor.ext.inject
 
 fun Route.meRoutes() {
+    val userDao by inject<UserDao>()
+    val userSessionDao by inject<UserSessionDao>()
+
     get<MeRoute>({
         tags = listOf("user")
         operationId = "me"
@@ -27,7 +31,7 @@ fun Route.meRoutes() {
             }
         }
     }) {
-        val user = UserDao.get(userIdFromSession()!!)
+        val user = userDao.get(userIdFromSession()!!)
             ?: throw AuthenticationException()
 
         call.respond(user.getResponseDto())
@@ -47,8 +51,8 @@ fun Route.meRoutes() {
         val userId = userIdFromSession()!!
         call.sessions.clear<UserSessionCookie>()
 
-        UserDao.delete(userId)
-        UserSessionDao.deleteAllSessionsOfUser(userId)
+        userDao.delete(userId)
+        userSessionDao.deleteAllSessionsOfUser(userId)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS, null)
 

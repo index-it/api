@@ -3,6 +3,7 @@ package app.index_it.core.clients
 import app.index_it.config.BrevoConfig
 import app.index_it.data.models.email.SendinblueCodeOperationRequestBody
 import app.index_it.data.models.email.SendinblueGenericRequestBody
+import app.index_it.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
@@ -14,12 +15,16 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Single
 import java.net.URLEncoder
 
 private val log = KotlinLogging.logger { }
 
-object BrevoClient {
-    private val client = HttpClient(Apache) {
+@Single(createdAtStart = true)
+class BrevoClient : IClosableComponent {
+    // Can't configure further if injected with DI
+
+    private val httpClient = HttpClient(Apache) {
         install(Logging)
         install(ContentNegotiation) {
             json(Json)
@@ -37,7 +42,7 @@ object BrevoClient {
     }
 
     suspend fun sendEmailVerificationEmail(email: String, token: String): Boolean {
-        val response: HttpResponse = client.post("smtp/email") {
+        val response: HttpResponse = httpClient.post("smtp/email") {
             setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
                     SendinblueGenericRequestBody.To(
@@ -71,7 +76,7 @@ object BrevoClient {
     }
 
     suspend fun sendPasswordResetEmail(email: String, token: String): Boolean {
-        val response: HttpResponse = client.post("smtp/email") {
+        val response: HttpResponse = httpClient.post("smtp/email") {
             setBody(SendinblueCodeOperationRequestBody(
                 to = listOf(
                     SendinblueGenericRequestBody.To(
@@ -95,7 +100,7 @@ object BrevoClient {
     }
 
     suspend fun sendPasswordResetSuccessEmail(email: String): Boolean {
-        val response: HttpResponse = client.post("smtp/email") {
+        val response: HttpResponse = httpClient.post("smtp/email") {
             setBody(SendinblueGenericRequestBody(
                 to = listOf(
                     SendinblueGenericRequestBody.To(
@@ -115,7 +120,7 @@ object BrevoClient {
         return response.status.isSuccess()
     }
 
-    fun close() {
-        client.close()
+    override fun close() {
+        httpClient.close()
     }
 }

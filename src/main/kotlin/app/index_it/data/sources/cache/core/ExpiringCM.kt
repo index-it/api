@@ -1,7 +1,7 @@
 package app.index_it.data.sources.cache.core
 
 import app.index_it.core.logic.ObjectMapper
-import app.index_it.data.sources.cache.RedisClient
+import app.index_it.core.clients.RedisClient
 
 /**
  * Cache manager that allows to set an expiration time for each key.
@@ -13,7 +13,9 @@ import app.index_it.data.sources.cache.RedisClient
  */
 abstract class ExpiringCM(
     private val keyBase: String,
-    val expirationInSeconds: Long
+    val expirationInSeconds: Long,
+    val redisClient: RedisClient,
+    val objectMapper: ObjectMapper
 ) {
     /**
      * Constructs a key from the base + dynamic
@@ -24,9 +26,9 @@ abstract class ExpiringCM(
      * Get data from a key
      */
     protected inline fun <reified T> get(keyValue: String): T? {
-        RedisClient.jedisPool.resource.use {
+        redisClient.jedisPool.resource.use {
             val json = it.get(keyName(keyValue))
-            return if (json != null) ObjectMapper.decode(json) else null
+            return if (json != null) objectMapper.decode(json) else null
         }
     }
 
@@ -34,8 +36,8 @@ abstract class ExpiringCM(
      * Cache data in a key
      */
     protected inline fun <reified T> cache(keyValue: String, data: T) {
-        RedisClient.jedisPool.resource.use {
-            val json = ObjectMapper.encode(data)
+        redisClient.jedisPool.resource.use {
+            val json = objectMapper.encode(data)
             it.setex(keyName(keyValue), expirationInSeconds, json)
         }
     }
@@ -44,7 +46,7 @@ abstract class ExpiringCM(
      * Delete a key
      */
     protected fun delete(keyValue: String) {
-        RedisClient.jedisPool.resource.use {
+        redisClient.jedisPool.resource.use {
             it.del(keyName(keyValue))
         }
     }

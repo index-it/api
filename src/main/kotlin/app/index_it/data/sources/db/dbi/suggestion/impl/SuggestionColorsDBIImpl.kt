@@ -5,8 +5,10 @@ import app.index_it.data.models.suggestions.ColorSuggestionsDto
 import app.index_it.data.sources.db.dbi.suggestion.SuggestionColorsDBI
 import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionEntity
 import app.index_it.data.sources.db.toIxIntId
+import org.koin.core.annotation.Single
 
-object SuggestionColorsDBIImpl : SuggestionColorsDBI {
+@Single(createdAtStart = true)
+class SuggestionColorsDBIImpl : SuggestionColorsDBI {
     private fun ColorSuggestionEntity.toDto() = ColorSuggestionsDto(
         id = id.toIxIntId(),
         description = description,

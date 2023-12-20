@@ -6,13 +6,24 @@ import app.index_it.core.logic.typedId.toIxIntId
 import app.index_it.data.models.suggestions.ColorSuggestionsDto
 import app.index_it.data.models.suggestions.NameSuggestionsDto
 import app.index_it.data.sources.cache.cm.suggestions.*
-import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionColorsDBIImpl
-import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionNamesDBIImpl
+import app.index_it.data.sources.db.dbi.suggestion.SuggestionColorsDBI
+import app.index_it.data.sources.db.dbi.suggestion.SuggestionNamesDBI
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.koin.core.annotation.Single
 
 private val logger = KotlinLogging.logger {  }
 
-object SuggestionsDao {
+@Single(createdAtStart = true)
+class SuggestionsDao(
+    private val suggestionNamesDBI: SuggestionNamesDBI,
+    private val suggestionColorsDBI: SuggestionColorsDBI,
+    private val suggestionListNamesCM: SuggestionListNamesCM,
+    private val suggestionCategoryNamesCM: SuggestionCategoryNamesCM,
+    private val suggestionItemNamesCM: SuggestionItemNamesCM,
+    private val suggestionTaskNamesCM: SuggestionItemNamesCM,
+    private val suggestionColorsCM: SuggestionColorsCM,
+    
+) {
     private val listNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionListNamesId.toIxIntId()
     private val categoryNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionCategoryNamesId.toIxIntId()
     private val itemNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionItemNamesId.toIxIntId()
@@ -37,80 +48,80 @@ object SuggestionsDao {
     }
 
     suspend fun getListNames() : NameSuggestionsDto? {
-        var names = SuggestionListNamesCM.get(listNameSuggestionsId)
+        var names = suggestionListNamesCM.get(listNameSuggestionsId)
 
         if (names == null) {
-            names = SuggestionNamesDBIImpl.get(listNameSuggestionsId)
+            names = suggestionNamesDBI.get(listNameSuggestionsId)
                 ?: run {
                     logger.warn { "No template for list names found with id $listNameSuggestionsId" }
                     return null
                 }
 
-            SuggestionListNamesCM.cache(names)
+            suggestionListNamesCM.cache(names)
         }
 
         return names
     }
 
     suspend fun getCategoryNames() : NameSuggestionsDto? {
-        var names = SuggestionCategoryNamesCM.get(categoryNameSuggestionsId)
+        var names = suggestionCategoryNamesCM.get(categoryNameSuggestionsId)
 
         if (names == null) {
-            names = SuggestionNamesDBIImpl.get(categoryNameSuggestionsId)
+            names = suggestionNamesDBI.get(categoryNameSuggestionsId)
                 ?: run {
                     logger.warn { "No template for category names found with id $categoryNameSuggestionsId" }
                     return null
                 }
 
-            SuggestionCategoryNamesCM.cache(names)
+            suggestionCategoryNamesCM.cache(names)
         }
 
         return names
     }
 
     suspend fun getItemNames() : NameSuggestionsDto? {
-        var names = SuggestionItemNamesCM.get(itemNameSuggestionsId)
+        var names = suggestionItemNamesCM.get(itemNameSuggestionsId)
 
         if (names == null) {
-            names = SuggestionNamesDBIImpl.get(itemNameSuggestionsId)
+            names = suggestionNamesDBI.get(itemNameSuggestionsId)
                 ?: run {
                     logger.warn { "No template for item names found with id $itemNameSuggestionsId" }
                     return null
                 }
 
-            SuggestionItemNamesCM.cache(names)
+            suggestionItemNamesCM.cache(names)
         }
 
         return names
     }
 
     suspend fun getTaskNames() : NameSuggestionsDto? {
-        var names = SuggestionTaskNamesCM.get(taskNameSuggestionsId)
+        var names = suggestionTaskNamesCM.get(taskNameSuggestionsId)
 
         if (names == null) {
-            names = SuggestionNamesDBIImpl.get(taskNameSuggestionsId)
+            names = suggestionNamesDBI.get(taskNameSuggestionsId)
                     ?: run {
                         logger.warn { "No template for task names found with id $taskNameSuggestionsId" }
                         return null
                     }
 
-            SuggestionTaskNamesCM.cache(names)
+            suggestionTaskNamesCM.cache(names)
         }
 
         return names
     }
 
     suspend fun getColors() : ColorSuggestionsDto? {
-        var colors = SuggestionColorsCM.get(colorSuggestionsId)
+        var colors = suggestionColorsCM.get(colorSuggestionsId)
 
         if (colors == null) {
-            colors = SuggestionColorsDBIImpl.get(colorSuggestionsId)
+            colors = suggestionColorsDBI.get(colorSuggestionsId)
                 ?: run {
                     logger.warn { "No template for list colors found with id $colorSuggestionsId" }
                     return null
                 }
 
-            SuggestionColorsCM.cache(colors)
+            suggestionColorsCM.cache(colors)
         }
 
         return colors

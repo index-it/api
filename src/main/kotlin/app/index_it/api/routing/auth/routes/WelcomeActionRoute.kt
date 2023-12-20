@@ -10,8 +10,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.welcomeActionRoute() {
+    val userDao by inject<UserDao>()
+
     /**
      * The auth flow starts by determining the welcome action.
      * Depending on the email, a user can either register if there is no account associated with that email
@@ -51,9 +54,7 @@ fun Route.welcomeActionRoute() {
             }
         }
     }) { request ->
-        val userDto = UserDao.getFromEmail(request.email)
-
-        println(userDto)
+        val userDto = userDao.getFromEmail(request.email)
 
         val action = if (userDto == null || UserAuthUseCase.isIncompleteAccountOutdated(userDto))
             WelcomeAction.REGISTER

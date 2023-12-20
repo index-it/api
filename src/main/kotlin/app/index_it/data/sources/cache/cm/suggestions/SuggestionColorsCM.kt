@@ -2,10 +2,9 @@ package app.index_it.data.sources.cache.cm.suggestions
 
 import app.index_it.core.logic.typedId.impl.IxIntId
 import app.index_it.data.models.suggestions.ColorSuggestionsDto
-import app.index_it.data.sources.cache.core.HashedCM
 
-object SuggestionColorsCM : HashedCM("suggestion_colors") {
-    fun cache(colorSuggestionsDto: ColorSuggestionsDto) = cache(colorSuggestionsDto.id.toString(), colorSuggestionsDto)
+interface SuggestionColorsCM {
+    fun cache(colorSuggestionsDto: ColorSuggestionsDto)
 
-    fun get(id: IxIntId<ColorSuggestionsDto>) : ColorSuggestionsDto? = get(id.toString())
+    fun get(id: IxIntId<ColorSuggestionsDto>) : ColorSuggestionsDto?
 }

@@ -10,6 +10,7 @@ import java.util.*
 
 private val log = KotlinLogging.logger {  }
 object WebsocketConnectionsManager {
+    /*
     private val connections = Collections.synchronizedSet<WebsocketConnection>(LinkedHashSet())
 
     fun handleConnection(websocketConnection: WebsocketConnection) {
@@ -56,4 +57,6 @@ object WebsocketConnectionsManager {
         connections.clear()
         log.debug { "Closed all websocket sessions" }
     }
+
+     */
 }

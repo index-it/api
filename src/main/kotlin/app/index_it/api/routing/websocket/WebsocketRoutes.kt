@@ -19,9 +19,12 @@ fun Route.websocketRoutes() {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Not authenticated via session auth"))
             } else {
                 // Save the ws connection
+                /*
                 WebsocketConnectionsManager.handleConnection(
                     WebsocketConnection(session.id, session.userId, this)
                 )
+                 */
+
             }
         }
     }

@@ -1,5 +1,7 @@
 package app.index_it.data.sources.db.schemas.tasks
 
+import app.index_it.data.models.tasks.SubTaskDto
+import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.sources.db.schemas.lists.ItemEntity
 import app.index_it.data.sources.db.schemas.lists.ItemTable
 import app.index_it.data.sources.db.schemas.tasks.TaskTable.completed
@@ -15,6 +17,8 @@ import app.index_it.data.sources.db.schemas.tasks.TaskTable.priority
 import app.index_it.data.sources.db.schemas.tasks.TaskTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -95,3 +99,40 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val userEntity by UserEntity referencedOn TaskTable.user
     val itemEntity by ItemEntity optionalReferencedOn TaskTable.item
 }
+
+fun TaskEntity.fromDto(taskDto: TaskDto) {
+    user = taskDto.userId.toEntityId(UsersTable)
+    item = taskDto.itemId?.toEntityId(ItemTable)
+    name = taskDto.name
+    description = taskDto.description
+    dueDate = taskDto.dueDate
+    rrule = taskDto.rrule
+    onDayReminder = taskDto.onDayReminder
+    completed = taskDto.completed
+    priority = taskDto.priority
+    createdAt = taskDto.createdAt
+    editedAt = taskDto.editedAt
+    completedAt = taskDto.completedAt
+}
+
+fun TaskEntity.toDto() = TaskDto(
+    id = id.toIxId(),
+    userId = user.toIxId(),
+    itemId = item?.toIxId(),
+    name = name,
+    description = description,
+    dueDate = dueDate,
+    rrule = rrule,
+    onDayReminder = onDayReminder,
+    completed = completed,
+    priority = priority,
+    createdAt = createdAt,
+    editedAt = editedAt,
+    completedAt = completedAt,
+    subTasks = subTasks.map { it.toDto() }
+)
+
+fun SubTaskEntity.toDto() = SubTaskDto(
+    name = name,
+    completed = completed
+)

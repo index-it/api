@@ -6,15 +6,22 @@ import app.index_it.core.logic.TokenGenerator
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.db.dbi.user.EmailVerificationDBI
 import app.index_it.data.sources.db.dbi.user.impl.EmailVerificationDBIImpl
+import org.koin.core.annotation.Single
 
-object EmailVerificationDao {
+@Single(createdAtStart = true)
+class EmailVerificationDao(
+    private val emailVerificationDBI: EmailVerificationDBI,
+    private val tokenGenerator: TokenGenerator,
+    private val brevoClient: BrevoClient
+) {
     private suspend fun save(emailVerificationDto: EmailVerificationDto) =
-        EmailVerificationDBIImpl.create(emailVerificationDto)
+        emailVerificationDBI.create(emailVerificationDto)
 
 
     suspend fun get(token: String): EmailVerificationDto? {
-        return EmailVerificationDBIImpl.get(token)
+        return emailVerificationDBI.get(token)
     }
 
     /**
@@ -22,7 +29,7 @@ object EmailVerificationDao {
      * and returns true if the email was sent successfully, false otherwise
      */
     suspend fun createAndSend(user: UserDto): Boolean {
-        val (token, hashedToken) = TokenGenerator.generate()
+        val (token, hashedToken) = tokenGenerator.generate()
 
         val emailVerificationDto = EmailVerificationDto(
             token = hashedToken,
@@ -32,16 +39,16 @@ object EmailVerificationDao {
         )
 
         save(emailVerificationDto)
-        return BrevoClient.sendEmailVerificationEmail(user.email, token)
+        return brevoClient.sendEmailVerificationEmail(user.email, token)
     }
 
     /**
      * Deletes all email verification tokens of a specific email.
      */
-    suspend fun deleteAll(id: IxId<UserDto>) = EmailVerificationDBIImpl.deleteAll(id)
+    suspend fun deleteAll(id: IxId<UserDto>) = emailVerificationDBI.deleteAll(id)
 
     suspend fun isRateLimited(id: IxId<UserDto>): Boolean {
-        val sent = EmailVerificationDBIImpl.count(id)
+        val sent = emailVerificationDBI.count(id)
         return sent >= 5
     }
 }

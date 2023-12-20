@@ -8,30 +8,41 @@ import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.lists.CategoryCM
 import app.index_it.data.sources.cache.cm.lists.ItemCM
 import app.index_it.data.sources.cache.cm.lists.ItemContentCM
+import app.index_it.data.sources.cache.cm.lists.impl.CategoryCMImpl
+import app.index_it.data.sources.cache.cm.lists.impl.ItemCMImpl
+import app.index_it.data.sources.cache.cm.lists.impl.ItemContentCMImpl
+import app.index_it.data.sources.db.dbi.list.CategoryDBI
 import app.index_it.data.sources.db.dbi.list.impl.CategoryDBIImpl
+import org.koin.core.annotation.Single
 
-object CategoryDao {
+@Single(createdAtStart = true)
+class CategoryDao(
+    private val categoryDBI: CategoryDBI,
+    private val categoryCM: CategoryCM,
+    private val itemCM: ItemCM,
+    private val itemContentCM: ItemContentCM
+) {
     suspend fun getAll(userId: IxId<UserDto>, listId: IxId<ListDto>): List<CategoryDto> {
         // TODO: Query db instead?
-        var categories = CategoryCM.getAll(userId, listId)
+        var categories = categoryCM.getAll(userId, listId)
 
         if (categories.isEmpty()) {
-            categories = CategoryDBIImpl.getOfList(userId, listId)
+            categories = categoryDBI.getOfList(userId, listId)
 
             if (categories.isNotEmpty())
-                CategoryCM.cacheAll(userId, listId, categories)
+                categoryCM.cacheAll(userId, listId, categories)
         }
 
         return categories
     }
 
     suspend fun get(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>): CategoryDto? {
-        var category = CategoryCM.get(userId, listId, categoryId)
+        var category = categoryCM.get(userId, listId, categoryId)
 
         if (category == null) {
-            category = CategoryDBIImpl.get(userId, categoryId)
+            category = categoryDBI.get(userId, categoryId)
                 ?: return null
-            CategoryCM.cache(userId, listId, category)
+            categoryCM.cache(userId, listId, category)
         }
 
         return category
@@ -46,42 +57,30 @@ object CategoryDao {
             color = categoryCreateRequestDto.color
         )
 
-        CategoryDBIImpl.create(categoryDto)
-        CategoryCM.cache(userId, listId, categoryDto)
+        categoryDBI.create(categoryDto)
+        categoryCM.cache(userId, listId, categoryDto)
 
         return categoryDto
     }
 
     suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>, categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto): CategoryDto? {
-        val updated = CategoryDBIImpl.update(userId, categoryId, categoryUpdateRequestDto)
+        val updated = categoryDBI.update(userId, categoryId, categoryUpdateRequestDto)
 
         if (updated) {
-            CategoryCM.delete(userId, listId, categoryId)
+            categoryCM.delete(userId, listId, categoryId)
         }
 
         return get(userId, listId, categoryId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>, categoryId: IxId<CategoryDto>) {
-        CategoryDBIImpl.delete(userId, categoryId)
-        CategoryCM.delete(userId, listId, categoryId)
+        categoryDBI.delete(userId, categoryId)
+        categoryCM.delete(userId, listId, categoryId)
 
-        val itemIdsOfCategory = ItemCM.getAll(userId, listId)
+        val itemIdsOfCategory = itemCM.getAll(userId, listId)
             .filter { it.categoryId == categoryId }
             .map { item -> item.id }
-        ItemContentCM.deleteMultiple(userId, itemIdsOfCategory)
-        ItemCM.deleteMultiple(userId, listId, itemIdsOfCategory)
+        itemContentCM.deleteMultiple(userId, itemIdsOfCategory)
+        itemCM.deleteMultiple(userId, listId, itemIdsOfCategory)
     }
-
-    /*
-    fun deleteAllOfUser(userId: IxId<UserDto>) {
-        CategoryDBIImpl.deleteAllOfUser(userId)
-        CategoryCM.deleteAllOfUser(userId)
-    }
-
-    fun deleteAllOfList(userId: IxId<UserDto>, listId: IxId<ListDto>) {
-        CategoryDBM.deleteAllOfList(userId, listId)
-        CategoryCM.deleteAllOfList(userId, listId)
-    }
-     */
 }

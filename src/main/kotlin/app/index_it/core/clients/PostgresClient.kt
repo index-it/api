@@ -1,21 +1,25 @@
-package app.index_it.data.sources.db
+package app.index_it.core.clients
 
 import app.index_it.config.PostgresConfig
-import app.index_it.core.logic.typedId.toIxIntId
-import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionColorsDBIImpl
-import app.index_it.data.sources.db.dbi.suggestion.impl.SuggestionNamesDBIImpl
-import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionEntity
-import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionEntity
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.koin.core.annotation.Single
+
+private const val DB_DRIVER = "org.postgresql.Driver"
+
+private const val DEFAULT_COLOR_SUGGESTIONS_ID = 1
+private const val DEFAULT_LIST_NAME_SUGGESTIONS_ID = 1
+private const val DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID = 2
+private const val DEFAULT_ITEM_NAME_SUGGESTIONS_ID = 3
+private const val DEFAULT_TASK_NAME_SUGGESTIONS_ID = 4
 
 private val log = KotlinLogging.logger {  }
 
-object PostgresClient {
-    private const val DB_DRIVER = "org.postgresql.Driver"
+@Single(createdAtStart = true)
+class PostgresClient {
     private val database = Database.connect(
         url = PostgresConfig.url,
         driver = DB_DRIVER,
@@ -28,28 +32,16 @@ object PostgresClient {
             context = Dispatchers.IO,
         ) { block() }
 
-    private const val DEFAULT_COLOR_SUGGESTIONS_ID = 1
-
-    private const val DEFAULT_LIST_NAME_SUGGESTIONS_ID = 1
-    private const val DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID = 2
-    private const val DEFAULT_ITEM_NAME_SUGGESTIONS_ID = 3
-    private const val DEFAULT_TASK_NAME_SUGGESTIONS_ID = 4
-
-    suspend fun init() {
+    init {
         runMigrations()
-        setupColorSuggestions()
-        setupListNameSuggestions()
-        setupCategoryNameSuggestions()
-        setupItemNameSuggestions()
-        setupTaskNameSuggestions()
     }
 
     private fun runMigrations() {
         // TODO: Recurring + Reminder stuff
         // TODO: device registration table
+        // TODO: Suggestion
         // TODO: web links
-        val flyway = Flyway
-            .configure()
+        val flyway = Flyway.configure()
             .driver(DB_DRIVER)
             .dataSource(PostgresConfig.url, PostgresConfig.user, PostgresConfig.password)
             .validateMigrationNaming(true)
@@ -64,6 +56,7 @@ object PostgresClient {
         }
     }
 
+    /*
     private suspend fun setupColorSuggestions() {
         dbQuery {
             if (SuggestionColorsDBIImpl.get(DEFAULT_COLOR_SUGGESTIONS_ID.toIxIntId()) == null) {
@@ -238,7 +231,5 @@ object PostgresClient {
             }
         }
     }
-
-    @Suppress("UNUSED")
-    fun getDb() = database
+     */
 }

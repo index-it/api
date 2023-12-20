@@ -3,22 +3,31 @@ package app.index_it.data.daos.user
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.FCMRegistrationTokenDto
 import app.index_it.data.models.user.UserDto
+import app.index_it.data.sources.db.dbi.user.FCMRegistrationTokenDBI
 import app.index_it.data.sources.db.dbi.user.impl.FCMRegistrationTokenDBIImpl
+import org.koin.core.annotation.Single
 
-object FCMRegistrationTokenDao {
+@Single(createdAtStart = true)
+class FCMRegistrationTokenDao(
+    private val fcmRegistrationTokenDBI: FCMRegistrationTokenDBI
+) {
     suspend fun createOrUpdate(fcmRegistrationTokenDto: FCMRegistrationTokenDto) {
-        if (FCMRegistrationTokenDBIImpl.exists(fcmRegistrationTokenDto.token)) {
-            FCMRegistrationTokenDBIImpl.update(fcmRegistrationTokenDto)
+        if (fcmRegistrationTokenDBI.exists(fcmRegistrationTokenDto.token)) {
+            fcmRegistrationTokenDBI.update(fcmRegistrationTokenDto)
         } else {
-            FCMRegistrationTokenDBIImpl.create(fcmRegistrationTokenDto)
+            fcmRegistrationTokenDBI.create(fcmRegistrationTokenDto)
         }
     }
 
     suspend fun getOfUser(id: IxId<UserDto>): List<FCMRegistrationTokenDto> {
-        return FCMRegistrationTokenDBIImpl.getOfUser(id)
+        return fcmRegistrationTokenDBI.getOfUser(id)
     }
 
     suspend fun delete(token: String) {
-        FCMRegistrationTokenDBIImpl.delete(token)
+        fcmRegistrationTokenDBI.delete(token)
+    }
+
+    suspend fun deleteExpired() {
+        fcmRegistrationTokenDBI.deleteExpired()
     }
 }

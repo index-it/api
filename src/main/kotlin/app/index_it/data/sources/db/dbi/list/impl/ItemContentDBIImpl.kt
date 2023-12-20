@@ -5,9 +5,7 @@ import app.index_it.data.models.lists.ItemContentDto
 import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.list.ItemContentDBI
-import app.index_it.data.sources.db.schemas.lists.ItemContentEntity
-import app.index_it.data.sources.db.schemas.lists.ItemContentTable
-import app.index_it.data.sources.db.schemas.lists.ItemTable
+import app.index_it.data.sources.db.schemas.lists.*
 import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
@@ -15,21 +13,10 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
+import org.koin.core.annotation.Single
 
-object ItemContentDBIImpl : ItemContentDBI {
-    private fun ItemContentEntity.fromDto(itemContentDto: ItemContentDto) {
-        user = itemContentDto.userId.toEntityId(UsersTable)
-        item = itemContentDto.itemId.toEntityId(ItemTable)
-        content = itemContentDto.content
-    }
-
-    private fun ItemContentEntity.toDto() = ItemContentDto(
-        id = id.toIxId(),
-        userId = user.toIxId(),
-        itemId = item.toIxId(),
-        content = content
-    )
-
+@Single(createdAtStart = true)
+class ItemContentDBIImpl : ItemContentDBI {
     private fun userAndItemFilter(userId: IxId<UserDto>, itemId: IxId<ItemDto>) = Op.build { (ItemContentTable.item eq itemId.toEntityId(ItemTable)) and (ItemContentTable.user eq userId.toEntityId(UsersTable)) }
 
     override suspend fun create(itemContentDto: ItemContentDto) {

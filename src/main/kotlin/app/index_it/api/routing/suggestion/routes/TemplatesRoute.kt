@@ -11,8 +11,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.templatesRoute() {
+    val suggestionsDao by inject<SuggestionsDao>()
+
     get<SuggestionRoutes.TemplateRoute.ListRoute>({
         tags = listOf("templates")
         operationId = "list-template"
@@ -24,8 +27,8 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = SuggestionsDao.getRandomNameSuggestion(SuggestionsDao.getListNames())
-        val color = SuggestionsDao.getRandomColor()
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getListNames())
+        val color = suggestionsDao.getRandomColor()
 
         call.respond(ListDto.ListTemplateResponseDto(name, color))
     }
@@ -41,8 +44,8 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = SuggestionsDao.getRandomNameSuggestion(SuggestionsDao.getCategoryNames())
-        val color = SuggestionsDao.getRandomColor()
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getCategoryNames())
+        val color = suggestionsDao.getRandomColor()
 
         call.respond(CategoryDto.CategoryTemplateResponseDto(name, color))
     }
@@ -58,7 +61,7 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = SuggestionsDao.getRandomNameSuggestion(SuggestionsDao.getItemNames())
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getItemNames())
 
         call.respond(ItemDto.ItemTemplateResponseDto(name))
     }
@@ -74,7 +77,7 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = SuggestionsDao.getRandomNameSuggestion(SuggestionsDao.getTaskNames())
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getTaskNames())
 
         call.respond(TaskDto.TaskTemplateResponseDto(name))
     }

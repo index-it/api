@@ -11,8 +11,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.itemContentRoute() {
+    val itemContentDao by inject<ItemContentDao>()
+
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute>({
         tags = listOf("item-contents")
         operationId = "get item content"
@@ -38,7 +41,7 @@ fun Route.itemContentRoute() {
             }
         }
     }) {
-        val content = ItemContentDao.getOrCreate(userIdFromSession()!!, it.parent.itemId)
+        val content = itemContentDao.getOrCreate(userIdFromSession()!!, it.parent.itemId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(content)
@@ -75,7 +78,7 @@ fun Route.itemContentRoute() {
         val updatedItemContent = call.receive<ItemContentDto.ItemContentCreateOrUpdateRequest>()
         val userId = userIdFromSession()!!
 
-        val newContent = ItemContentDao.update(userId, it.parent.itemId, updatedItemContent)
+        val newContent = itemContentDao.update(userId, it.parent.itemId, updatedItemContent)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newContent)

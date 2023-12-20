@@ -18,6 +18,7 @@ import io.ktor.server.sessions.*
 import io.ktor.server.sessions.serialization.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
+import org.koin.ktor.ext.inject
 
 /**
  * Available authentication methods for api routes
@@ -39,6 +40,9 @@ data class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserDto>) : Prin
 fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserDto>? = call.principal<UserAuthSessionDto>()?.userId
 
 fun Application.configureSecurity() {
+    val userDao by inject<UserDao>()
+    val userSessionDao by inject<UserSessionDao>()
+    val passwordEncoder by inject<PasswordEncoder>()
 
     install(Sessions) {
         cookie<UserSessionCookie>("user_session_id") {
@@ -59,10 +63,10 @@ fun Application.configureSecurity() {
             userParamName = "email"
             passwordParamName = "password"
             validate {  credentials ->
-                UserDao.getFromEmail(credentials.name)?.let {
+                userDao.getFromEmail(credentials.name)?.let {
                     if (it.passwordHash == null)
                         null
-                    else if (PasswordEncoder.matches(credentials.password, it.passwordHash))
+                    else if (passwordEncoder.matches(credentials.password, it.passwordHash))
                         UserIdPrincipalForEmailVerificationAuth(it.id)
                     else
                         null
@@ -75,7 +79,7 @@ fun Application.configureSecurity() {
 
         session<UserSessionCookie>(AuthenticationMethods.USER_SESSION_AUTH) {
             validate { userSessionCookie ->
-                val session = UserSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
+                val session = userSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
 
                 // If there is no session or if it has expired (session expires after 7 days)
                 if (session == null || (DatetimeUtils.currentMillis() - session.iat) >= (ApiConfig.sessionMaxAgeInSeconds*1000))

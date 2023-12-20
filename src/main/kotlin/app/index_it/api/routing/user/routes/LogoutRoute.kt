@@ -10,8 +10,11 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import org.koin.ktor.ext.inject
 
 fun Route.logoutRoutes() {
+    val userSessionDao by inject<UserSessionDao>()
+
     get<LogoutRoute>({
         tags = listOf("auth")
         operationId = "logout"
@@ -24,9 +27,9 @@ fun Route.logoutRoutes() {
     }) {
         val session = call.sessions.get<UserSessionCookie>()!!
 
-        UserSessionDao.delete(session.userId, session.sessionId)
+        userSessionDao.delete(session.userId, session.sessionId)
 
-        WebsocketConnectionsManager.closeConnection(session.sessionId)
+        // WebsocketConnectionsManager.closeConnection(session.sessionId)
         call.sessions.clear<UserSessionCookie>()
         call.respond(HttpStatusCode.OK)
     }

@@ -5,30 +5,17 @@ import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.UserDBI
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.schemas.user.fromDto
+import app.index_it.data.sources.db.schemas.user.toDto
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
+import org.koin.core.annotation.Single
 
-object UserDBIImpl : UserDBI {
-    private fun UserEntity.fromDto(userDto: UserDto) {
-        email = userDto.email
-        passwordHash = userDto.passwordHash
-        emailVerified = userDto.emailVerified
-        createdAt = userDto.creationTimestamp
-        creationSource = userDto.creationSource
-    }
-
-    private fun UserEntity.toDto() = UserDto(
-        id = id.toIxId(),
-        email = email,
-        passwordHash = passwordHash,
-        emailVerified = emailVerified,
-        creationTimestamp = createdAt,
-        creationSource = creationSource
-    )
-
+@Single(createdAtStart = true)
+class UserDBIImpl : UserDBI {
     override suspend fun create(userDto: UserDto) {
         dbQuery {
             UserEntity.new(userDto.id.id) {

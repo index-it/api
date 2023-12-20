@@ -15,8 +15,12 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.emailVerificationRoutes() {
+    val userDao by inject<UserDao>()
+    val emailVerificationDao by inject<EmailVerificationDao>()
+
     authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
 
         /**
@@ -44,16 +48,16 @@ fun Route.emailVerificationRoutes() {
             }
         }) {
             val userDto = call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
-                UserDao.get(it)
+                userDao.get(it)
             } ?: return@post call.respond(HttpStatusCode.Forbidden)
 
             if (userDto.emailVerified)
                 return@post call.respond(HttpStatusCode.OK)
 
-            if (EmailVerificationDao.isRateLimited(userDto.id))
+            if (emailVerificationDao.isRateLimited(userDto.id))
                 return@post call.respond(HttpStatusCode.TooManyRequests)
 
-            val emailSent = EmailVerificationDao.createAndSend(userDto)
+            val emailSent = emailVerificationDao.createAndSend(userDto)
             if (emailSent)
                 call.respond(HttpStatusCode.Created)
             else
@@ -87,7 +91,7 @@ fun Route.emailVerificationRoutes() {
             }
         }) {
             val userDto = call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
-                UserDao.get(it)
+                userDao.get(it)
             } ?: return@post call.respond(HttpStatusCode.Forbidden)
 
             if (userDto.emailVerified)
@@ -122,18 +126,18 @@ fun Route.emailVerificationRoutes() {
             }
         }
     }) { request ->
-        val emailVerificationDto = EmailVerificationDao.get(request.token)
+        val emailVerificationDto = emailVerificationDao.get(request.token)
             ?: return@get call.respondRedirect(BrevoConfig.emailVerificationErrorUrl)
 
-        val userDto = UserDao.get(emailVerificationDto.userId)
+        val userDto = userDao.get(emailVerificationDto.userId)
             ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
         if (userDto.emailVerified)
             return@get call.respondRedirect(BrevoConfig.emailVerificationSuccessUrl)
 
-        UserDao.verifyEmail(userDto.id)
-        EmailVerificationDao.deleteAll(userDto.id)
+        userDao.verifyEmail(userDto.id)
+        emailVerificationDao.deleteAll(userDto.id)
         call.respondRedirect(BrevoConfig.emailVerificationSuccessUrl)
     }
 }

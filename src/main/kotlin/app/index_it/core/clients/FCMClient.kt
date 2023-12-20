@@ -8,13 +8,13 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
 import io.github.oshai.kotlinlogging.KotlinLogging
-
-private val log = KotlinLogging.logger {  }
+import org.koin.core.annotation.Single
 
 /**
  * Firebase cloud messaging client
  */
-object FCMClient {
+@Single(createdAtStart = true)
+class FCMClient {
     private val firebaseOptions = FirebaseOptions.builder()
         .setCredentials(GoogleCredentials.getApplicationDefault())
         .build()
@@ -22,8 +22,7 @@ object FCMClient {
     private val firebaseApp = FirebaseApp.initializeApp(firebaseOptions)
     private val firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp)
 
-    private const val TASK_REMINDER_ANALYTICS_LABEL = "task-reminder"
-
+    private val taskReminderAnalyticsLabel = "task-reminder"
 
     fun sendTaskReminderNotification(taskName: String, registrationToken: List<String>) {
         val message = MulticastMessage.builder()
@@ -34,7 +33,7 @@ object FCMClient {
                     .setBody(taskName)
                     .build()
             )
-            .setFcmOptions(FcmOptions.withAnalyticsLabel(TASK_REMINDER_ANALYTICS_LABEL))
+            .setFcmOptions(FcmOptions.withAnalyticsLabel(taskReminderAnalyticsLabel))
             .build()
 
         firebaseMessaging.sendEachForMulticast(message)

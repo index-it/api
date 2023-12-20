@@ -5,13 +5,21 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
 import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.user.UserDto
-import app.index_it.data.sources.cache.cm.lists.CategoryCM
 import app.index_it.data.sources.cache.cm.lists.ItemCM
 import app.index_it.data.sources.cache.cm.lists.ItemContentCM
 import app.index_it.data.sources.cache.cm.lists.ListCM
-import app.index_it.data.sources.db.dbi.list.impl.ListDBIImpl
+import app.index_it.data.sources.cache.cm.lists.impl.CategoryCMImpl
+import app.index_it.data.sources.db.dbi.list.ListDBI
+import org.koin.core.annotation.Single
 
-object ListDao {
+@Single(createdAtStart = true)
+class ListDao(
+    private val listDBI: ListDBI,
+    private val listCM: ListCM,
+    private val categoryCMImpl: CategoryCMImpl,
+    private val itemCM: ItemCM,
+    private val itemContentCM: ItemContentCM
+) {
     suspend fun create(userId: IxId<UserDto>, listCreateRequestDto: ListDto.ListCreateRequestDto): ListDto {
         val listDto = ListDto(
             id = newIxId(),
@@ -22,63 +30,63 @@ object ListDao {
             createdAt = DatetimeUtils.currentMillis(),
             editedAt = null
         )
-        ListDBIImpl.create(listDto)
-        ListCM.cache(listDto.userId, listDto)
+        listDBI.create(listDto)
+        listCM.cache(listDto.userId, listDto)
 
         return listDto
     }
 
     suspend fun getAll(userId: IxId<UserDto>): List<ListDto> {
         // TODO: Decide whether to fetch from cache or db in this case (probably fetch from db directly or not?)
-        var lists = ListCM.getAll(userId)
+        var lists = listCM.getAll(userId)
 
         if (lists.isEmpty()) {
-            lists = ListDBIImpl.get(userId)
+            lists = listDBI.get(userId)
             if (lists.isNotEmpty())
-                ListCM.cacheAll(userId, lists)
+                listCM.cacheAll(userId, lists)
         }
 
         return lists
     }
 
     suspend fun get(userId: IxId<UserDto>, listId: IxId<ListDto>): ListDto? {
-        var list = ListCM.get(userId, listId)
+        var list = listCM.get(userId, listId)
 
         if (list == null) {
-            list = ListDBIImpl.get(userId, listId)
+            list = listDBI.get(userId, listId)
                 ?: return null
-            ListCM.cache(userId, list)
+            listCM.cache(userId, list)
         }
 
         return list
     }
 
     suspend fun update(userId: IxId<UserDto>, listId: IxId<ListDto>, listUpdateRequestDto: ListDto.ListUpdateRequestDto): ListDto? {
-        val updated = ListDBIImpl.update(userId, listId, listUpdateRequestDto)
+        val updated = listDBI.update(userId, listId, listUpdateRequestDto)
 
         if (updated) {
-            ListCM.delete(userId, listId)
+            listCM.delete(userId, listId)
         }
 
         return get(userId, listId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, listId: IxId<ListDto>) {
-        ListDBIImpl.delete(userId, listId)
-        ListCM.delete(userId, listId)
+        listDBI.delete(userId, listId)
+        listCM.delete(userId, listId)
 
         // Update cache as it doesn't have cascade events like sql does
-        CategoryCM.deleteAllOfList(userId, listId)
+        categoryCMImpl.deleteAllOfList(userId, listId)
 
-        val itemsOfDeletedList = ItemCM.getAll(userId, listId)
-        ItemContentCM.deleteMultiple(userId, itemsOfDeletedList.map { it.id })
+        val itemsOfDeletedList = itemCM.getAll(userId, listId)
+        itemContentCM.deleteMultiple(userId, itemsOfDeletedList.map { it.id })
 
-        ItemCM.deleteAllOfList(userId, listId)
+        itemCM.deleteAllOfList(userId, listId)
     }
 
     /*
     fun deleteAll(userId: IxId<UserDto>) {
-        ListDBIImpl.deleteAll(userId)
+        listDBI.deleteAll(userId)
         ListCM.deleteAll(userId)
     }
      */

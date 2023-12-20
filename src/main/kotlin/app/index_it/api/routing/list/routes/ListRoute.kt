@@ -14,8 +14,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.listRoute() {
+    val listDao by inject<ListDao>()
+
     get<ListsRoute.ListRoute>({
         tags = listOf("lists")
         operationId = "get-list"
@@ -36,7 +39,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        val list = ListDao.get(userIdFromSession()!!, it.listId)
+        val list = listDao.get(userIdFromSession()!!, it.listId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)
@@ -72,7 +75,7 @@ fun Route.listRoute() {
         val updatedList = call.receive<ListDto.ListUpdateRequestDto>()
         val userId = userIdFromSession()!!
 
-        val newList = ListDao.update(userId, it.listId, updatedList)
+        val newList = listDao.update(userId, it.listId, updatedList)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newList)
@@ -97,7 +100,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        ListDao.delete(userIdFromSession()!!, it.listId)
+        listDao.delete(userIdFromSession()!!, it.listId)
 
         call.respond(HttpStatusCode.OK)
 

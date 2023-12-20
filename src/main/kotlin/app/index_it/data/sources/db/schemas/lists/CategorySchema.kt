@@ -1,11 +1,14 @@
 package app.index_it.data.sources.db.schemas.lists
 
+import app.index_it.data.models.lists.CategoryDto
 import app.index_it.data.sources.db.schemas.lists.CategoryTable.color
 import app.index_it.data.sources.db.schemas.lists.CategoryTable.id
 import app.index_it.data.sources.db.schemas.lists.CategoryTable.list
 import app.index_it.data.sources.db.schemas.lists.CategoryTable.name
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -54,3 +57,18 @@ class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val userEntity by UserEntity referencedOn CategoryTable.user
     var listEntity by ListEntity referencedOn CategoryTable.list
 }
+
+fun CategoryEntity.fromDto(categoryDto: CategoryDto) {
+    user = categoryDto.userId.toEntityId(UsersTable)
+    list = categoryDto.listId.toEntityId(ListTable)
+    name = categoryDto.name
+    color = categoryDto.color
+}
+
+fun CategoryEntity.toDto() = CategoryDto(
+    id = id.toIxId(),
+    userId = user.toIxId(),
+    listId = list.toIxId(),
+    name = name,
+    color = color
+)

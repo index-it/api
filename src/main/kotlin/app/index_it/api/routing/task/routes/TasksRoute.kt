@@ -2,10 +2,14 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.core.clients.GoogleCloudSchedulerClient
+import app.index_it.core.logic.typedId.newIxId
 import app.index_it.core.logic.usecases.TaskUseCase
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.daos.task.TaskReminderJobDao
 import app.index_it.data.models.tasks.TaskDto
+import app.index_it.data.models.tasks.TaskReminderJobDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -13,8 +17,14 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.tasksRoute() {
+    val taskDao by inject<TaskDao>()
+    val taskReminderJobDao by inject<TaskReminderJobDao>()
+    val itemDao by inject<ItemDao>()
+    val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
+
     get<TasksRoute>({
         tags = listOf("tasks")
         operationId = "get-tasks"
@@ -34,9 +44,9 @@ fun Route.tasksRoute() {
         }
     }) {
         val tasks = when (it.completed) {
-            true ->  TaskDao.getAllCompleted(userIdFromSession()!!)
-            false -> TaskDao.getAllUncompleted(userIdFromSession()!!)
-            null -> TaskDao.getAll(userIdFromSession()!!)
+            true ->  taskDao.getAllCompleted(userIdFromSession()!!)
+            false -> taskDao.getAllUncompleted(userIdFromSession()!!)
+            null -> taskDao.getAll(userIdFromSession()!!)
         }
 
         call.respond(tasks)
@@ -84,17 +94,6 @@ fun Route.tasksRoute() {
         }
 
 
-        ///////////////////////
-        /// ON DAY REMINDER ///
-        ///////////////////////
-
-        val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(newTask.dueDate, newTask.onDayReminder)
-
-        if (onDayReminderTimestamp != null) {
-
-        }
-
-
         /////////////////////
         /// TASK CREATION ///
         /////////////////////
@@ -103,61 +102,39 @@ fun Route.tasksRoute() {
             ////////////////////
             /// CONNECT ITEM ///
             ////////////////////
-            val itemToConnect = ItemDao.get(userId, itemIdToConnect)
+            val itemToConnect = itemDao.get(userId, itemIdToConnect)
                 ?: return@post call.respond(HttpStatusCode.NotFound)
 
-            val task = TaskDao.create(userIdFromSession()!!, newTask)
+            val task = taskDao.create(userIdFromSession()!!, newTask)
 
-            ItemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
+            itemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
                 ?: return@post call.respond(HttpStatusCode.NotFound)
 
             task
         } else {
-            TaskDao.create(userIdFromSession()!!, newTask)
+            taskDao.create(userIdFromSession()!!, newTask)
+        }
+
+        ///////////////////////
+        /// ON DAY REMINDER ///
+        ///////////////////////
+
+        val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(newTask.dueDate, newTask.onDayReminder)
+
+        if (onDayReminderTimestamp != null) {
+            val jobId = newIxId<TaskReminderJobDto>()
+
+            taskReminderJobDao.create(
+                jobId = jobId,
+                taskId = task.id,
+                userId = userId
+            )
+
+            googleCloudSchedulerClient.createTaskReminderJob(jobId, onDayReminderTimestamp)
         }
 
         call.respond(task)
 
         // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
-
-    /*
-    post<TasksRoute.CreateConnectedFromItem>({
-        tags = listOf("tasks")
-        operationId = "create-connected-task"
-        summary = "creates a new task from an existing item (aka connected task)"
-        request {
-            queryParameter<String>("listId") {
-                description = "id of the list"
-                required = true
-            }
-            queryParameter<String>("itemId") {
-                description = "id of the item from which the task will get created"
-                required = true
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the connected task"
-                body<TaskDto>()
-            }
-            HttpStatusCode.NotFound to {
-                description = "item not found"
-            }
-        }
-    }) {
-        val userId = userIdFromSession()!!
-
-        val item = ItemDao.get(userId, it.itemId)
-            ?: return@post call.respond(HttpStatusCode.NotFound)
-
-        val task = TaskDao.createConnected(userIdFromSession()!!, item)
-
-        ItemDao.setTaskConnection(userId, item.listId, item.id, task.id)
-
-        call.respond(task)
-
-        // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
-    }
-     */
 }

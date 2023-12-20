@@ -3,13 +3,17 @@ package app.index_it.data.daos.task
 import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.core.logic.typedId.newIxId
-import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.tasks.TaskCM
-import app.index_it.data.sources.db.dbi.task.impl.TaskDBIImpl
+import app.index_it.data.sources.db.dbi.task.TaskDBI
+import org.koin.core.annotation.Single
 
-object TaskDao {
+@Single(createdAtStart = true)
+class TaskDao(
+    private val taskDBI: TaskDBI,
+    private val taskCM: TaskCM
+) {
 
     suspend fun create(userId: IxId<UserDto>, taskCreateRequestDto: TaskDto.TaskCreateRequestDto): TaskDto {
         val taskDto = TaskDto(
@@ -27,34 +31,11 @@ object TaskDao {
             editedAt = null,
             completedAt = null,
         )
-        TaskDBIImpl.create(taskDto)
-        TaskCM.cache(taskDto.userId, taskDto)
+        taskDBI.create(taskDto)
+        taskCM.cache(taskDto.userId, taskDto)
 
         return taskDto
     }
-
-    /*
-    suspend fun createConnected(userId: IxId<UserDto>, item: ItemDto): TaskDto {
-        val taskDto = TaskDto(
-            id = newIxId(),
-            userId = userId,
-            itemId = item.id,
-            name = item.name,
-            description = null,
-            dueDate = null,
-            rrule = null,
-            subTasks = mutableListOf(), // maybe enhance this in the future by scraping the item content and getting to-do lists from it
-            completed = false, // handle this differently perhaps?
-            createdAt = DatetimeUtils.currentMillis(),
-            editedAt = null,
-            completedAt = null,
-        )
-        TaskDBIImpl.create(taskDto)
-        TaskCM.cache(taskDto.userId, taskDto)
-
-        return taskDto
-    }
-     */
 
     suspend fun createNextOccurrence(task: TaskDto, dueDate: Long, rrule: String): TaskDto {
         val taskDto = TaskDto(
@@ -71,20 +52,20 @@ object TaskDao {
             editedAt = task.editedAt,
             completedAt = null,
         )
-        TaskDBIImpl.create(taskDto)
-        TaskCM.cache(taskDto.userId, taskDto)
+        taskDBI.create(taskDto)
+        taskCM.cache(taskDto.userId, taskDto)
 
         return taskDto
     }
 
     suspend fun getAll(userId: IxId<UserDto>): List<TaskDto> {
         // TODO: Decide whether to fetch from cache or db in this case (probably fetch from db directly or not?)
-        var tasks = TaskCM.getAll(userId)
+        var tasks = taskCM.getAll(userId)
 
         if (tasks.isEmpty()) {
-            tasks = TaskDBIImpl.get(userId)
+            tasks = taskDBI.get(userId)
             if (tasks.isNotEmpty())
-                TaskCM.cacheAll(userId, tasks)
+                taskCM.cacheAll(userId, tasks)
         }
 
         return tasks
@@ -99,65 +80,40 @@ object TaskDao {
             .filter { it.completed }
 
     suspend fun get(userId: IxId<UserDto>, taskId: IxId<TaskDto>): TaskDto? {
-        var task = TaskCM.get(userId, taskId)
+        var task = taskCM.get(userId, taskId)
 
         if (task == null) {
-            task = TaskDBIImpl.get(userId, taskId)
+            task = taskDBI.get(userId, taskId)
                 ?: return null
-            TaskCM.cache(userId, task)
+            taskCM.cache(userId, task)
         }
 
         return task
     }
 
     suspend fun setCompletion(userId: IxId<UserDto>, taskId: IxId<TaskDto>, completed: Boolean): TaskDto? {
-        val updated = TaskDBIImpl.setCompletion(userId, taskId, completed)
+        val updated = taskDBI.setCompletion(userId, taskId, completed)
 
         if (updated) {
             // This is done everywhere to make sure that cache is always in sync with the real data
-            TaskCM.delete(userId, taskId)
+            taskCM.delete(userId, taskId)
         }
 
         return get(userId, taskId)
     }
-
-    /* TODO: Remove?
-    suspend fun setItemConnection(userId: IxId<UserDto>, taskId: IxId<TaskDto>, itemId: IxId<ItemDto>?): TaskDto? {
-        val updated = TaskDBIImpl.setItemConnection(userId, taskId, itemId)
-
-        if (updated) {
-            TaskCM.delete(userId, taskId)
-        }
-
-        return get(userId, taskId)
-    }
-     */
-
-    /*
-    fun setCategory(userId: IxId<UserDto>, taskId: IxId<TaskDto>, categoryId: IxId<CategoryDto>): TaskDto? {
-        val taskDto = TaskDBM.setCategory(userId, taskId, categoryId)
-
-        if (taskDto != null)
-            TaskCM.update(userId, taskDto)
-        else
-            TaskCM.delete(userId, taskId)
-
-        return taskDto
-    }
-     */
 
     suspend fun update(userId: IxId<UserDto>, taskId: IxId<TaskDto>, taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto): TaskDto? {
-        val updated = TaskDBIImpl.update(userId, taskId, taskUpdateRequestDto)
+        val updated = taskDBI.update(userId, taskId, taskUpdateRequestDto)
 
         if (updated) {
-            TaskCM.delete(userId, taskId)
+            taskCM.delete(userId, taskId)
         }
 
         return get(userId, taskId)
     }
 
     suspend fun delete(userId: IxId<UserDto>, taskId: IxId<TaskDto>) {
-        TaskDBIImpl.delete(userId, taskId)
-        TaskCM.delete(userId, taskId)
+        taskDBI.delete(userId, taskId)
+        taskCM.delete(userId, taskId)
     }
 }

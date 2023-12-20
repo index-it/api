@@ -1,5 +1,8 @@
 package app.index_it.data.sources.db.schemas.user
 
+import app.index_it.data.models.user.FCMRegistrationTokenDto
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
@@ -32,3 +35,15 @@ class FCMRegistrationTokenEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val userEntity by UserEntity referencedOn FCMRegistrationTokenTable.user
 }
+
+fun FCMRegistrationTokenEntity.fromDto(fcmRegistrationTokenDto: FCMRegistrationTokenDto) {
+    token = fcmRegistrationTokenDto.token
+    user = fcmRegistrationTokenDto.userId.toEntityId(UsersTable)
+    createdAt = fcmRegistrationTokenDto.createdAt
+}
+
+fun FCMRegistrationTokenEntity.toDto() = FCMRegistrationTokenDto(
+    token = token,
+    userId = user.toIxId(),
+    createdAt = createdAt,
+)

@@ -15,6 +15,7 @@ import io.ktor.util.pipeline.*
 private val log = KotlinLogging.logger{}
 
 object WebsocketEventManager {
+    /*
     fun rabbitMqWebsocketEventDtoFromRestCall(context: PipelineContext<Unit, ApplicationCall>, eventType: RabbitMqWebsocketEventType, eventData: Any?): RabbitMqWebsocketEventDto {
         val sessionId = context.call.principal<UserAuthSessionDto>()?.id
             ?: throw IllegalArgumentException("Session ID missing when trying to construct websocket event")
@@ -83,4 +84,6 @@ object WebsocketEventManager {
     private suspend fun consumeCloseAllUserWebsocketConnectionsEvent(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
         WebsocketConnectionsManager.closeAllSessionsOfUser(rabbitMqWebsocketEventDto.fromUserId)
     }
+
+     */
 }

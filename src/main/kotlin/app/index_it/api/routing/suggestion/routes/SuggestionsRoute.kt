@@ -10,8 +10,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.suggestionsRoute() {
+    val suggestionDao by inject<SuggestionsDao>()
+
     get<SuggestionRoutes.ColorsRoute>({
         tags = listOf("suggestions")
         operationId = "colors-suggestion"
@@ -23,7 +26,7 @@ fun Route.suggestionsRoute() {
             }
         }
     }) {
-        val colors = SuggestionsDao.getColors()
+        val colors = suggestionDao.getColors()
             ?: ColorSuggestionsDto(
                 id = newIxIntId(),
                 description = "colors are missing",
@@ -44,7 +47,7 @@ fun Route.suggestionsRoute() {
             }
         }
     }) {
-        val names = SuggestionsDao.getListNames()
+        val names = suggestionDao.getListNames()
             ?: NameSuggestionsDto(
                 id = newIxIntId(),
                 description = "names are missing",
@@ -65,7 +68,7 @@ fun Route.suggestionsRoute() {
             }
         }
     }) {
-        val names = SuggestionsDao.getCategoryNames()
+        val names = suggestionDao.getCategoryNames()
             ?: NameSuggestionsDto(
                 id = newIxIntId(),
                 description = "names are missing",
@@ -86,7 +89,7 @@ fun Route.suggestionsRoute() {
             }
         }
     }) {
-        val names = SuggestionsDao.getItemNames()
+        val names = suggestionDao.getItemNames()
             ?: NameSuggestionsDto(
                 id = newIxIntId(),
                 description = "names are missing",
@@ -107,7 +110,7 @@ fun Route.suggestionsRoute() {
             }
         }
     }) {
-        val names = SuggestionsDao.getTaskNames()
+        val names = suggestionDao.getTaskNames()
                 ?: NameSuggestionsDto(
                     id = newIxIntId(),
                     description = "names are missing",

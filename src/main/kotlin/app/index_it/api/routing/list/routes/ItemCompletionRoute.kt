@@ -10,8 +10,12 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.itemCompletionRoute() {
+    val itemDao by inject<ItemDao>()
+    val taskDao by inject<TaskDao>()
+
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.CompletionRoute>({
         tags = listOf("items")
         operationId = "item-completion"
@@ -42,11 +46,11 @@ fun Route.itemCompletionRoute() {
         }
     }) {
         val userId = userIdFromSession()!!
-        val updatedItem = ItemDao.setCompletion(userId, it.parent.parent.parent.listId, it.parent.itemId, it.completed)
+        val updatedItem = itemDao.setCompletion(userId, it.parent.parent.parent.listId, it.parent.itemId, it.completed)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (updatedItem.taskId != null) {
-            TaskDao.setCompletion(userId, updatedItem.taskId, it.completed)
+            taskDao.setCompletion(userId, updatedItem.taskId, it.completed)
         }
 
         call.respond(updatedItem)

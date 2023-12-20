@@ -3,12 +3,14 @@ package app.index_it.core.logic.typedId.impl
 import app.index_it.core.logic.typedId.Id
 import app.index_it.core.logic.typedId.IdGenerator
 import com.google.errorprone.annotations.DoNotCall
+import org.koin.core.annotation.Factory
 import kotlin.reflect.KClass
 
 /**
  * Generator of [IxIntId] based on [Int].
  */
-object IxIntIdGenerator : IdGenerator {
+@Factory
+class IxIntIdGenerator : IdGenerator {
     override val idClass: KClass<out Id<*>> = IxIntId::class
 
     override val wrappedIdClass: KClass<out Any> = Int::class

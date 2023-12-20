@@ -12,9 +12,12 @@ import kotlinx.serialization.Contextual
 class NotifyRoute(val email: String)
 
 @Resource("/webhook")
-class WebhookRoute() {
+class WebhookRoute {
     @Resource("/task-reminder-job/{id}")
     class TaskReminderJobRoute(val parent: WebhookRoute, @Contextual val id: IxId<TaskReminderJobDto>)
+
+    @Resource("/registration-token-expiration-job")
+    class FCMRegistrationTokenExpirationJobRoute(val parent: WebhookRoute)
 }
 
 fun Route.webRoutes() {

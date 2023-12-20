@@ -13,8 +13,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.listsRoute() {
+    val listDao by inject<ListDao>()
+
     get<ListsRoute>({
         tags = listOf("lists")
         operationId = "get-lists"
@@ -26,7 +29,7 @@ fun Route.listsRoute() {
             }
         }
     }) {
-        call.respond(ListDao.getAll(userIdFromSession()!!))
+        call.respond(listDao.getAll(userIdFromSession()!!))
     }
 
     post<ListsRoute>({
@@ -50,7 +53,7 @@ fun Route.listsRoute() {
     }) {
         val newList = call.receive<ListDto.ListCreateRequestDto>()
 
-        val created = ListDao.create(userIdFromSession()!!, newList)
+        val created = listDao.create(userIdFromSession()!!, newList)
 
         call.respond(created)
 

@@ -9,6 +9,7 @@ import app.index_it.core.clients.oauth.GoogleOAuthClient
 import app.index_it.core.exceptions.AuthenticationException
 import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.newIxId
+import app.index_it.data.daos.auth.EmailVerificationDao
 import app.index_it.data.daos.auth.UserSessionDao
 import app.index_it.data.daos.user.UserDao
 import app.index_it.data.models.user.UserDto
@@ -20,12 +21,18 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import org.koin.ktor.ext.inject
 
 /**
  * A user can register / sign-in with Google, Facebook and Apple
  * Different services where the user has the same email are all linked to the same account
  */
 fun Route.oauthLoginRoutes() {
+    val userDao by inject<UserDao>()
+    val userSessionDao by inject<UserSessionDao>()
+    val googleOAuthClient by inject<GoogleOAuthClient>()
+    val emailVerificationDao by inject<EmailVerificationDao>()
+
     get<LoginWithGoogle>({
         tags = listOf("auth")
         operationId = "login-with-google"
@@ -55,14 +62,14 @@ fun Route.oauthLoginRoutes() {
             }
         }
     }) {
-        val userInfo = GoogleOAuthClient.getUserInfoFromIdTokenIfValid(it.tokenId)
+        val userInfo = googleOAuthClient.getUserInfoFromIdTokenIfValid(it.tokenId)
             ?: throw AuthenticationException()
 
         if (!userInfo.verifiedEmail)
             return@get call.respond(HttpStatusCode.MethodNotAllowed)
 
         // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)
-        var userG = UserDao.getFromEmail(userInfo.email)
+        var userG = userDao.getFromEmail(userInfo.email)
 
         if (userG == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
@@ -75,18 +82,20 @@ fun Route.oauthLoginRoutes() {
                 creationSource = UserDto.CreationSource.GOOGLE
             )
 
-            UserDao.create(userG)
+            userDao.create(userG)
         } else if (!userG.emailVerified) {
-            UserDao.verifyEmail(userG.id)
+            userDao.verifyEmail(userG.id)
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = userSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
     }
 
+    /*
+    TODO
     get<LoginWithApple>({
         tags = listOf("auth")
         operationId = "login-with-apple"
@@ -203,4 +212,5 @@ fun Route.oauthLoginRoutes() {
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
     }
+     */
 }

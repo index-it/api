@@ -5,29 +5,17 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.EmailVerificationDBI
-import app.index_it.data.sources.db.schemas.user.EmailVerificationEntity
-import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
-import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.schemas.user.*
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+import org.koin.core.annotation.Single
 
-object EmailVerificationDBIImpl : EmailVerificationDBI {
-    private fun EmailVerificationEntity.fromDto(emailVerificationDto: EmailVerificationDto) {
-        token = emailVerificationDto.token
-        user = emailVerificationDto.userId.toEntityId(UsersTable)
-        createdAt = emailVerificationDto.createdAt
-        expiresAt = emailVerificationDto.expireAt
-    }
-
-    private fun EmailVerificationEntity.toDto() = EmailVerificationDto(
-        token = token,
-        userId = user.toIxId(),
-        expireAt = expiresAt,
-        createdAt = createdAt
-    )
-
+@Single(createdAtStart = true)
+class EmailVerificationDBIImpl(
+    private val tokenGenerator: TokenGenerator
+) : EmailVerificationDBI {
     override suspend fun count(id: IxId<UserDto>): Long = dbQuery {
         EmailVerificationEntity.count(EmailVerificationTable.user eq id.toEntityId(UsersTable))
     }
@@ -40,9 +28,9 @@ object EmailVerificationDBIImpl : EmailVerificationDBI {
         }
     }
 
-    override suspend fun get(token: String): EmailVerificationDto? = dbQuery {
+    override suspend fun get(token: String) = dbQuery {
         EmailVerificationEntity
-            .find { EmailVerificationTable.token eq TokenGenerator.hashToken(token) }
+            .find { EmailVerificationTable.token eq tokenGenerator.hashToken(token) }
             .limit(1)
             .firstOrNull()
             ?.toDto()

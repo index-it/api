@@ -7,9 +7,14 @@ import app.index_it.data.models.auth.UserAuthSessionDto
 import app.index_it.data.models.auth.UserSessionCookie
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.cache.cm.users.UserSessionCM
+import app.index_it.data.sources.cache.cm.users.impl.UserSessionCMImpl
+import org.koin.core.annotation.Single
 
-object UserSessionDao {
-    fun get(userId: IxId<UserDto>, sessionId: IxId<UserAuthSessionDto>) = UserSessionCM.get(userId, sessionId)
+@Single(createdAtStart = true)
+class UserSessionDao(
+    private val userSessionCM: UserSessionCM
+) {
+    fun get(userId: IxId<UserDto>, sessionId: IxId<UserAuthSessionDto>) = userSessionCM.get(userId, sessionId)
 
     fun create(userId: IxId<UserDto>, device: String?, ip: String): UserSessionCookie {
         val userSessionCookie = UserSessionCookie(newIxId(), userId)
@@ -27,9 +32,9 @@ object UserSessionDao {
         return userSessionCookie
     }
 
-    private fun save(userAuthSessionDto: UserAuthSessionDto) = UserSessionCM.cache(userAuthSessionDto)
+    private fun save(userAuthSessionDto: UserAuthSessionDto) = userSessionCM.cache(userAuthSessionDto)
 
-    fun delete(userId: IxId<UserDto>, sessionId: IxId<UserAuthSessionDto>) = UserSessionCM.delete(userId, sessionId)
+    fun delete(userId: IxId<UserDto>, sessionId: IxId<UserAuthSessionDto>) = userSessionCM.delete(userId, sessionId)
 
-    fun deleteAllSessionsOfUser(userId: IxId<UserDto>) = UserSessionCM.deleteAll(userId)
+    fun deleteAllSessionsOfUser(userId: IxId<UserDto>) = userSessionCM.deleteAll(userId)
 }

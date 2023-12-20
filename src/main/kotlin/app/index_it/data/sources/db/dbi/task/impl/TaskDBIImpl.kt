@@ -3,66 +3,19 @@ package app.index_it.data.sources.db.dbi.task.impl
 import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.lists.ItemDto
-import app.index_it.data.models.tasks.SubTaskDto
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.task.TaskDBI
 import app.index_it.data.sources.db.schemas.lists.ItemTable
-import app.index_it.data.sources.db.schemas.tasks.SubTaskEntity
-import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
-import app.index_it.data.sources.db.schemas.tasks.TaskEntity
-import app.index_it.data.sources.db.schemas.tasks.TaskTable
+import app.index_it.data.sources.db.schemas.tasks.*
 import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
-import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.koin.core.annotation.Single
 
-object TaskDBIImpl : TaskDBI {
-    private fun TaskEntity.fromDto(taskDto: TaskDto) {
-        user = taskDto.userId.toEntityId(UsersTable)
-        item = taskDto.itemId?.toEntityId(ItemTable)
-        name = taskDto.name
-        description = taskDto.description
-        dueDate = taskDto.dueDate
-        rrule = taskDto.rrule
-        onDayReminder = taskDto.onDayReminder
-        completed = taskDto.completed
-        priority = taskDto.priority
-        createdAt = taskDto.createdAt
-        editedAt = taskDto.editedAt
-        completedAt = taskDto.completedAt
-    }
-
-    fun TaskEntity.toDto() = TaskDto(
-        id = id.toIxId(),
-        userId = user.toIxId(),
-        itemId = item?.toIxId(),
-        name = name,
-        description = description,
-        dueDate = dueDate,
-        rrule = rrule,
-        onDayReminder = onDayReminder,
-        completed = completed,
-        priority = priority,
-        createdAt = createdAt,
-        editedAt = editedAt,
-        completedAt = completedAt,
-        subTasks = subTasks.map { it.toDto() }
-    )
-
-    /*
-    private fun SubTaskEntity.fromDto(subTaskDto: SubTaskDto) {
-        name = subTaskDto.name
-        completed = subTaskDto.completed
-    }
-     */
-
-    private fun SubTaskEntity.toDto() = SubTaskDto(
-        name = name,
-        completed = completed
-    )
-
+@Single(createdAtStart = true)
+class TaskDBIImpl : TaskDBI {
     private fun userAndTaskFilter(userId: IxId<UserDto>, taskId: IxId<TaskDto>) = Op.build { (TaskTable.user eq userId.toEntityId(UsersTable)) and (TaskTable.id eq taskId.toEntityId(TaskTable)) }
 
     override suspend fun exists(userId: IxId<UserDto>, taskId: IxId<TaskDto>): Boolean {

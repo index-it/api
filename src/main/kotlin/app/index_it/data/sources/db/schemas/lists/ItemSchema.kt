@@ -1,5 +1,6 @@
 package app.index_it.data.sources.db.schemas.lists
 
+import app.index_it.data.models.lists.ItemDto
 import app.index_it.data.sources.db.schemas.lists.ItemTable.category
 import app.index_it.data.sources.db.schemas.lists.ItemTable.completed
 import app.index_it.data.sources.db.schemas.lists.ItemTable.completedAt
@@ -13,6 +14,8 @@ import app.index_it.data.sources.db.schemas.tasks.TaskEntity
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -91,3 +94,28 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val categoryEntity by CategoryEntity referencedOn ItemTable.category
     val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
+
+fun ItemEntity.fromDto(itemDto: ItemDto) {
+    user = itemDto.userId.toEntityId(UsersTable)
+    list = itemDto.listId.toEntityId(ListTable)
+    category = itemDto.categoryId.toEntityId(CategoryTable)
+    task = itemDto.taskId?.toEntityId(TaskTable)
+    name = itemDto.name
+    completed = itemDto.completed
+    createdAt = itemDto.createdAt
+    editedAt = itemDto.editedAt
+    completedAt = itemDto.completedAt
+}
+
+fun ItemEntity.toDto() = ItemDto(
+    id = id.toIxId(),
+    userId = user.toIxId(),
+    listId = list.toIxId(),
+    categoryId = category.toIxId(),
+    taskId = task?.toIxId(),
+    name = name,
+    completed = completed,
+    createdAt = createdAt,
+    editedAt = editedAt,
+    completedAt = completedAt
+)

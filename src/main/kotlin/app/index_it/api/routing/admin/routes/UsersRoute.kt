@@ -8,8 +8,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.usersRoute() {
+    val userDao by inject<UserDao>()
+
     get<AdminRoute.UsersRoute.VerifyEmailRoute>({
         tags = listOf("admin")
         operationId = "verify-user-email"
@@ -33,8 +36,8 @@ fun Route.usersRoute() {
             }
         }
     }) {
-        UserDao.getFromEmail(it.email)?.let { user ->
-            UserDao.verifyEmail(user.id)
+        userDao.getFromEmail(it.email)?.let { user ->
+            userDao.verifyEmail(user.id)
         } ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(HttpStatusCode.OK)

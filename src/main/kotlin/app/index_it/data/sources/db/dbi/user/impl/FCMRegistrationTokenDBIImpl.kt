@@ -1,29 +1,20 @@
 package app.index_it.data.sources.db.dbi.user.impl
 
+import app.index_it.core.logic.DatetimeUtils
 import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.FCMRegistrationTokenDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.FCMRegistrationTokenDBI
 import app.index_it.data.sources.db.schemas.user.*
 import app.index_it.data.sources.db.toEntityId
-import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
+import org.koin.core.annotation.Single
 
-object FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
-    private fun FCMRegistrationTokenEntity.fromDto(fcmRegistrationTokenDto: FCMRegistrationTokenDto) {
-        token = fcmRegistrationTokenDto.token
-        user = fcmRegistrationTokenDto.userId.toEntityId(UsersTable)
-        createdAt = fcmRegistrationTokenDto.createdAt
-    }
-
-    private fun FCMRegistrationTokenEntity.toDto() = FCMRegistrationTokenDto(
-        token = token,
-        userId = user.toIxId(),
-        createdAt = createdAt,
-    )
-
+@Single(createdAtStart = true)
+class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
     override suspend fun exists(token: String): Boolean = dbQuery {
         FCMRegistrationTokenEntity.count(FCMRegistrationTokenTable.token eq token) > 0
     }
@@ -67,6 +58,16 @@ object FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
     override suspend fun delete(tokenToDelete: String) {
         dbQuery {
             FCMRegistrationTokenTable.deleteWhere { token eq tokenToDelete }
+        }
+    }
+
+    override suspend fun deleteExpired() {
+        dbQuery {
+            val maxAge = DatetimeUtils.currentMillis() - DatetimeUtils.ONE_DAY_MILLIS * 60
+
+            FCMRegistrationTokenTable.deleteWhere {
+                createdAt less maxAge
+            }
         }
     }
 }

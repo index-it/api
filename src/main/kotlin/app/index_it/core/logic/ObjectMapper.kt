@@ -3,8 +3,10 @@ package app.index_it.core.logic
 import app.index_it.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Factory
 
-object ObjectMapper {
+@Factory
+class ObjectMapper {
     val json = Json {
         serializersModule = IdKotlinXSerializationModule
         prettyPrint = true

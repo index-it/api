@@ -14,7 +14,7 @@ class TaskDaoTest {
     fun calculateNextOccurrenceDueDateAndRRule() {
         val rrule = "FREQ=DAILY;"
         val currentMillis = DatetimeUtils.currentMillis()
-        var expectedNewDueDate = currentMillis + DatetimeUtils.oneDayMillis
+        var expectedNewDueDate = currentMillis + DatetimeUtils.ONE_DAY_MILLIS
 
         // First occurrence
         val task = TaskDto(
@@ -34,7 +34,7 @@ class TaskDaoTest {
         assertEquals((expectedNewDueDate) / 10000, nextDueDate / 10000)
 
         // Second occurrence
-        expectedNewDueDate += DatetimeUtils.oneDayMillis
+        expectedNewDueDate += DatetimeUtils.ONE_DAY_MILLIS
 
         val newOccurrence = TaskDto(
             id = newIxId(),

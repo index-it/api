@@ -2,17 +2,27 @@ package app.index_it.api.routing.task.routes
 
 import app.index_it.api.plugins.userIdFromSession
 import app.index_it.api.routing.task.TasksRoute
+import app.index_it.core.clients.GoogleCloudSchedulerClient
+import app.index_it.core.logic.typedId.newIxId
 import app.index_it.core.logic.usecases.TaskUseCase
 import app.index_it.data.daos.list.ItemDao
 import app.index_it.data.daos.task.TaskDao
+import app.index_it.data.daos.task.TaskReminderJobDao
 import app.index_it.data.models.tasks.TaskDto
+import app.index_it.data.models.tasks.TaskReminderJobDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.taskCompletionRoute() {
+    val taskDao by inject<TaskDao>()
+    val taskReminderJobDao by inject<TaskReminderJobDao>()
+    val itemDao by inject<ItemDao>()
+    val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
+
     put<TasksRoute.TaskRoute.CompletionRoute>({
         tags = listOf("tasks")
         operationId = "task-completion"
@@ -42,20 +52,37 @@ fun Route.taskCompletionRoute() {
         }
     }) {
         val userId = userIdFromSession()!!
-        val updatedTask = TaskDao.setCompletion(userId, it.parent.taskId, it.completed)
+        val updatedTask = taskDao.setCompletion(userId, it.parent.taskId, it.completed)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (updatedTask.itemId != null) {
-            ItemDao.get(userId, updatedTask.itemId)
+            itemDao.get(userId, updatedTask.itemId)
                 ?.also { linkedItem ->
-                    ItemDao.setCompletion(userId, linkedItem.listId, linkedItem.id, it.completed)
+                    itemDao.setCompletion(userId, linkedItem.listId, linkedItem.id, it.completed)
                 }
         }
 
         if (it.completed) {
+            taskReminderJobDao.deleteAllOfTask(updatedTask.id)
+
             TaskUseCase.calculateNextOccurrenceDueDateAndRRule(updatedTask)
                 ?.also { (dueDate, rrule) ->
-                    TaskDao.createNextOccurrence(updatedTask, dueDate, rrule)
+                    val nextOccurrenceTask = taskDao.createNextOccurrence(updatedTask, dueDate, rrule)
+
+                    // TODO: Extract to some function or side effect in dao?
+                    val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(nextOccurrenceTask.dueDate, nextOccurrenceTask.onDayReminder)
+
+                    if (onDayReminderTimestamp != null) {
+                        val jobId = newIxId<TaskReminderJobDto>()
+
+                        taskReminderJobDao.create(
+                            jobId = jobId,
+                            taskId = nextOccurrenceTask.id,
+                            userId = userId
+                        )
+
+                        googleCloudSchedulerClient.createTaskReminderJob(jobId, onDayReminderTimestamp)
+                    }
                     // TODO: WS
                 }
         } else if (updatedTask.rrule != null) {

@@ -8,45 +8,18 @@ import app.index_it.data.models.lists.ListDto
 import app.index_it.data.models.tasks.TaskDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.list.ItemDBI
-import app.index_it.data.sources.db.schemas.lists.CategoryTable
-import app.index_it.data.sources.db.schemas.lists.ItemEntity
-import app.index_it.data.sources.db.schemas.lists.ItemTable
-import app.index_it.data.sources.db.schemas.lists.ListTable
+import app.index_it.data.sources.db.schemas.lists.*
 import app.index_it.data.sources.db.schemas.tasks.TaskTable
 import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
-import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
+import org.koin.core.annotation.Single
 
-object ItemDBIImpl : ItemDBI {
-    private fun ItemEntity.fromDto(itemDto: ItemDto) {
-        user = itemDto.userId.toEntityId(UsersTable)
-        list = itemDto.listId.toEntityId(ListTable)
-        category = itemDto.categoryId.toEntityId(CategoryTable)
-        task = itemDto.taskId?.toEntityId(TaskTable)
-        name = itemDto.name
-        completed = itemDto.completed
-        createdAt = itemDto.createdAt
-        editedAt = itemDto.editedAt
-        completedAt = itemDto.completedAt
-    }
-
-    private fun ItemEntity.toDto() = ItemDto(
-        id = id.toIxId(),
-        userId = user.toIxId(),
-        listId = list.toIxId(),
-        categoryId = category.toIxId(),
-        taskId = task?.toIxId(),
-        name = name,
-        completed = completed,
-        createdAt = createdAt,
-        editedAt = editedAt,
-        completedAt = completedAt
-    )
-
+@Single(createdAtStart = true)
+class ItemDBIImpl : ItemDBI {
     private fun userFilter(userId: IxId<UserDto>) = Op.build { ItemTable.user eq userId.toEntityId(UsersTable) }
     private fun userAndItemFilter(userId: IxId<UserDto>, itemId: IxId<ItemDto>) = Op.build { (ItemTable.id eq itemId.toEntityId(ItemTable)) and userFilter(userId) }
 

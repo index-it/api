@@ -1,11 +1,14 @@
 package app.index_it.data.sources.db.schemas.lists
 
+import app.index_it.data.models.lists.ItemContentDto
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable.content
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable.id
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable.item
 import app.index_it.data.sources.db.schemas.lists.ItemContentTable.user
 import app.index_it.data.sources.db.schemas.user.UserEntity
 import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -49,3 +52,16 @@ class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val userEntity by UserEntity referencedOn ItemContentTable.user
     val itemEntity by ItemEntity referencedOn ItemContentTable.item
 }
+
+fun ItemContentEntity.fromDto(itemContentDto: ItemContentDto) {
+    user = itemContentDto.userId.toEntityId(UsersTable)
+    item = itemContentDto.itemId.toEntityId(ItemTable)
+    content = itemContentDto.content
+}
+
+fun ItemContentEntity.toDto() = ItemContentDto(
+    id = id.toIxId(),
+    userId = user.toIxId(),
+    itemId = item.toIxId(),
+    content = content
+)

@@ -1,10 +1,13 @@
 package app.index_it.data.sources.db.schemas.user
 
+import app.index_it.data.models.email.EmailVerificationDto
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.createdAt
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.expiresAt
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.id
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.token
 import app.index_it.data.sources.db.schemas.user.EmailVerificationTable.user
+import app.index_it.data.sources.db.toEntityId
+import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -47,3 +50,17 @@ class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var userEntity by UserEntity referencedOn EmailVerificationTable.user
 }
+
+fun EmailVerificationEntity.fromDto(emailVerificationDto: EmailVerificationDto) {
+    token = emailVerificationDto.token
+    user = emailVerificationDto.userId.toEntityId(UsersTable)
+    createdAt = emailVerificationDto.createdAt
+    expiresAt = emailVerificationDto.expireAt
+}
+
+fun EmailVerificationEntity.toDto() = EmailVerificationDto(
+    token = token,
+    userId = user.toIxId(),
+    expireAt = expiresAt,
+    createdAt = createdAt
+)

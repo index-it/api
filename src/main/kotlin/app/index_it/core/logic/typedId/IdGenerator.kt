@@ -19,7 +19,7 @@ interface IdGenerator {
             }
 
         @Volatile
-        private var defaultIdGenerator: IdGenerator = IxIdGenerator
+        private var defaultIdGenerator: IdGenerator = IxIdGenerator()
     }
 
     /**

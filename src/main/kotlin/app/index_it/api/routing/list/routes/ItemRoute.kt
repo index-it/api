@@ -15,8 +15,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.itemRoute() {
+    val itemDao by inject<ItemDao>()
+
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
         tags = listOf("items")
         operationId = "get-item"
@@ -41,7 +44,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        val item = ItemDao.get(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
+        val item = itemDao.get(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -83,7 +86,7 @@ fun Route.itemRoute() {
 
         val userId = userIdFromSession()!!
         
-        val newItem = ItemDao.update(userId, it.parent.parent.listId, it.itemId, updatedItem)
+        val newItem = itemDao.update(userId, it.parent.parent.listId, it.itemId, updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newItem)
@@ -112,7 +115,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        ItemDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
+        itemDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
         call.respond(HttpStatusCode.OK)
 
         emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")

@@ -54,7 +54,7 @@ private class IxIdSerializer<T : IxId<*>> : KSerializer<T> {
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T =
-        IxIdGenerator.create(decoder.decodeString()) as T
+        IxIdGenerator().create(decoder.decodeString()) as T
 
     override fun serialize(encoder: Encoder, value: T) {
         encoder.encodeString(value.toString())
@@ -67,7 +67,7 @@ private class IxIntIdSerializer<T : IxIntId<*>> : KSerializer<T> {
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T =
-        IxIntIdGenerator.create(decoder.decodeString()) as T
+        IxIntIdGenerator().create(decoder.decodeString()) as T
 
     override fun serialize(encoder: Encoder, value: T) {
         encoder.encodeString(value.toString())

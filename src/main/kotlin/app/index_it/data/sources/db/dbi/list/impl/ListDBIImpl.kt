@@ -7,6 +7,8 @@ import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.list.ListDBI
 import app.index_it.data.sources.db.schemas.lists.ListEntity
 import app.index_it.data.sources.db.schemas.lists.ListTable
+import app.index_it.data.sources.db.schemas.lists.fromDto
+import app.index_it.data.sources.db.schemas.lists.toDto
 import app.index_it.data.sources.db.schemas.user.UsersTable
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
@@ -14,27 +16,10 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
+import org.koin.core.annotation.Single
 
-object ListDBIImpl : ListDBI {
-    private fun ListEntity.fromDto(listDto: ListDto) {
-        user = listDto.userId.toEntityId(UsersTable)
-        name = listDto.name
-        emoji = listDto.icon.first()
-        color = listDto.color
-        createdAt = listDto.createdAt
-        editedAt = listDto.editedAt
-    }
-
-    private fun ListEntity.toDto() = ListDto(
-        id = id.toIxId(),
-        userId = user.toIxId(),
-        name = name,
-        icon = emoji.toString(),
-        color = color,
-        createdAt = createdAt,
-        editedAt = editedAt
-    )
-
+@Single(createdAtStart = true)
+class ListDBIImpl : ListDBI {
     private fun userAndListFilter(userId: IxId<UserDto>, listId: IxId<ListDto>) = Op.build { (ListTable.id eq listId.toEntityId(ListTable)) and (ListTable.user eq userId.toEntityId(UsersTable)) }
 
     override suspend fun create(listDto: ListDto) {

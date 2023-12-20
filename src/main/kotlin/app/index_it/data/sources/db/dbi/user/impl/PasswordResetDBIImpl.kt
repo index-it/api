@@ -5,29 +5,17 @@ import app.index_it.core.logic.typedId.impl.IxId
 import app.index_it.data.models.user.PasswordResetDto
 import app.index_it.data.models.user.UserDto
 import app.index_it.data.sources.db.dbi.user.PasswordResetDBI
-import app.index_it.data.sources.db.schemas.user.PasswordResetEntity
-import app.index_it.data.sources.db.schemas.user.PasswordResetTable
-import app.index_it.data.sources.db.schemas.user.UsersTable
+import app.index_it.data.sources.db.schemas.user.*
 import app.index_it.data.sources.db.toEntityId
 import app.index_it.data.sources.db.toIxId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+import org.koin.core.annotation.Single
 
-object PasswordResetDBIImpl : PasswordResetDBI {
-    private fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
-        token = passwordResetDto.token
-        user = passwordResetDto.userId.toEntityId(UsersTable)
-        createdAt = passwordResetDto.createdAt
-        expiresAt = passwordResetDto.expireAt
-    }
-
-    private fun PasswordResetEntity.toDto() = PasswordResetDto(
-        token = token,
-        userId = user.toIxId(),
-        createdAt = createdAt,
-        expireAt = expiresAt
-    )
-    
+@Single(createdAtStart = true)
+class PasswordResetDBIImpl(
+    private val tokenGenerator: TokenGenerator
+) : PasswordResetDBI {
     override suspend fun count(id: IxId<UserDto>): Long = dbQuery {
         PasswordResetEntity.count(PasswordResetTable.user eq id.toEntityId(UsersTable))
     }
@@ -40,9 +28,9 @@ object PasswordResetDBIImpl : PasswordResetDBI {
         }
     }
 
-    override suspend fun get(token: String): PasswordResetDto? = dbQuery {
+    override suspend fun get(token: String) = dbQuery {
         PasswordResetEntity
-            .find { PasswordResetTable.token eq TokenGenerator.hashToken(token) }
+            .find { PasswordResetTable.token eq tokenGenerator.hashToken(token) }
             .limit(1)
             .firstOrNull()
             ?.toDto()
@@ -53,5 +41,4 @@ object PasswordResetDBIImpl : PasswordResetDBI {
             PasswordResetTable.deleteWhere { user eq id.toEntityId(UsersTable) }
         }
     }
-
 }

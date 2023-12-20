@@ -3,40 +3,23 @@ package app.index_it.core.clients.oauth
 import app.index_it.config.OAuthConfig
 import app.index_it.data.models.oauth.apple.AppleIdTokenDto
 import app.index_it.data.models.oauth.apple.AppleOAuthTokenResponseDto
+import app.index_it.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Single
 
 private val log = KotlinLogging.logger {  }
 
-object AppleOAuthClient {
-    private val client = HttpClient(Apache) {
-        install(Logging)
-        install(ContentNegotiation) {
-            json(Json)
-        }
-        install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 3)
-            exponentialDelay()
-        }
-        defaultRequest {
-            contentType(ContentType.Application.Json)
-            accept(ContentType.Application.Json)
-        }
-    }
-
+@Single(createdAtStart = true)
+class AppleOAuthClient(
+    private val httpClient: HttpClient
+) : IClosableComponent {
     suspend fun exchangeCodeAndGetUserInfo(code: String): AppleIdTokenDto? {
         return try {
-            val response = client.submitForm(
+            val response = httpClient.submitForm(
                 url = "https://appleid.apple.com/auth/token",
                 formParameters = Parameters.build {
                     append("client_id", OAuthConfig.appleClientId)
@@ -62,7 +45,7 @@ object AppleOAuthClient {
         }
     }
 
-    fun close() {
-        client.close()
+    override fun close() {
+        httpClient.close()
     }
 }

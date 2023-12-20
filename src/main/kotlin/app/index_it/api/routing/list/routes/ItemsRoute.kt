@@ -14,8 +14,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.itemsRoute() {
+    val itemDao by inject<ItemDao>()
+
     get<ListsRoute.ListRoute.ItemsRoute>({
         tags = listOf("items")
         operationId = "get list items"
@@ -38,9 +41,9 @@ fun Route.itemsRoute() {
         }
     }) {
         val items = when (it.completed) {
-            true ->  ItemDao.getAllCompleted(userIdFromSession()!!, it.parent.listId)
-            false -> ItemDao.getAllUncompleted(userIdFromSession()!!, it.parent.listId)
-            null -> ItemDao.getAll(userIdFromSession()!!, it.parent.listId)
+            true ->  itemDao.getAllCompleted(userIdFromSession()!!, it.parent.listId)
+            false -> itemDao.getAllUncompleted(userIdFromSession()!!, it.parent.listId)
+            null -> itemDao.getAll(userIdFromSession()!!, it.parent.listId)
         }
 
         call.respond(items)
@@ -70,7 +73,7 @@ fun Route.itemsRoute() {
     }) {
         val newItem = call.receive<ItemDto.ItemCreateRequestDto>()
 
-        val item = ItemDao.create(userIdFromSession()!!, it.parent.listId, newItem)
+        val item = itemDao.create(userIdFromSession()!!, it.parent.listId, newItem)
 
         call.respond(item)
 

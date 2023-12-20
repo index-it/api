@@ -14,8 +14,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Route.categoryRoute() {
+    val categoryDao by inject<CategoryDao>()
+
     get<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
         tags = listOf("categories")
         operationId = "get-category"
@@ -40,7 +43,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val category = CategoryDao.get(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
+        val category = categoryDao.get(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -80,7 +83,7 @@ fun Route.categoryRoute() {
         val updatedCategory = call.receive<CategoryDto.CategoryUpdateRequestDto>()
         val userId = userIdFromSession()!!
 
-        val newCategory = CategoryDao.update(userId, it.parent.parent.listId, it.categoryId, updatedCategory)
+        val newCategory = categoryDao.update(userId, it.parent.parent.listId, it.categoryId, updatedCategory)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newCategory)
@@ -109,7 +112,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val list = CategoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
+        val list = categoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
 
         call.respond(HttpStatusCode.OK)
 

@@ -3,7 +3,6 @@ package app.index_it.core.logic.websocket
 import app.index_it.config.RabbitMQConfig
 import app.index_it.core.clients.RabbitMqClient
 import app.index_it.core.logic.ObjectMapper
-import app.index_it.core.logic.websocket.WebsocketsQueueManager.startListening
 import app.index_it.data.models.websocket.RabbitMqWebsocketEventDto
 import com.rabbitmq.client.*
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -18,6 +17,7 @@ private val log = KotlinLogging.logger { }
  * **IMPORTANT**: call [startListening] to receive messages!
  */
 object WebsocketsQueueManager {
+    /*
     private var websocketEventsChannel: Channel = RabbitMqClient.connection.createChannel(34)
 
     init {
@@ -68,4 +68,5 @@ object WebsocketsQueueManager {
     fun close() {
         websocketEventsChannel.close()
     }
+     */
 }

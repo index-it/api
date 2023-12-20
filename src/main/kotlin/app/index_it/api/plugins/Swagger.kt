@@ -12,9 +12,12 @@ import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
 import io.ktor.server.application.*
 import kotlinx.serialization.serializer
+import org.koin.ktor.ext.inject
 
 
 fun Application.configureSwagger() {
+    val objectMapper by inject<ObjectMapper>()
+
     install(SwaggerUI) {
         /**
          * Swagger config
@@ -73,7 +76,7 @@ fun Application.configureSwagger() {
             EncodingData.DEFAULT_SCHEMA_GENERATOR = SchemaGenerator(configBuilder.build())
 
             exampleEncoder { type, example ->
-                ObjectMapper.json.encodeToString(serializer(type!!), example)
+                objectMapper.json.encodeToString(serializer(type!!), example)
             }
         }
 
