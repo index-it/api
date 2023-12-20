@@ -3,7 +3,7 @@ package app.index_it.data.models.auth
 import io.konform.validation.Valid
 import org.junit.jupiter.api.Test
 
-class RegistrationCredentialsTest {
+class TokenCredentialsTest {
 
     @Test
     fun validate() {

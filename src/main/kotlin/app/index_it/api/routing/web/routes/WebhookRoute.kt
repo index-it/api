@@ -1,7 +1,9 @@
 package app.index_it.api.routing.web.routes
 
 import app.index_it.api.routing.web.WebhookRoute
+import app.index_it.core.clients.FCMClient
 import app.index_it.data.daos.task.TaskReminderJobDao
+import app.index_it.data.daos.user.FCMRegistrationTokenDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -30,7 +32,11 @@ fun Route.webhookRoute() {
 
         TaskReminderJobDao.delete(jobId)
 
-        // TODO: Send to firebase cloud message
+        val notificationRegistrationTokens = FCMRegistrationTokenDao.getOfUser(userId).map { fcmRegistrationTokenDto ->
+            fcmRegistrationTokenDto.token
+        }
+
+        FCMClient.sendTaskReminderNotification(task.name, notificationRegistrationTokens)
 
         call.respond(HttpStatusCode.OK)
     }

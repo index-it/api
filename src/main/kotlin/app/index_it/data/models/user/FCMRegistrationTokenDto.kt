@@ -10,4 +10,9 @@ data class FCMRegistrationTokenDto(
     val token: String,
     @Contextual val userId: IxId<UserDto>,
     @Contextual val createdAt: Long = DatetimeUtils.currentMillis()
-)
+) {
+    @Serializable
+    data class FCMRegistrationTokenRequestBody(
+        val token: String
+    )
+}

@@ -1,6 +1,6 @@
 package app.index_it.core.clients
 
-import app.index_it.config.GoogleCloudSchedulerConfig
+import app.index_it.config.GoogleCloudConfig
 import app.index_it.config.WebhookConfig
 import app.index_it.core.clients.GoogleCloudSchedulerClient.createTaskReminderJob
 import app.index_it.core.logic.typedId.impl.IxId
@@ -21,8 +21,6 @@ object GoogleCloudSchedulerClient {
             .build()
     )
 
-    // TODO: Security - https://cloud.google.com/scheduler/docs/http-target-auth?hl=it#:~:text=To%20authenticate%20between%20Cloud%20Scheduler,using%20HTTPS%2C%20to%20the%20target.
-
     /**
      * Creates a job for the given [taskReminderJob]
      *
@@ -41,7 +39,7 @@ object GoogleCloudSchedulerClient {
             .setHttpMethod(HttpMethod.GET)
             .setUri(webhookUrl)
 
-        val parent = LocationName.of(GoogleCloudSchedulerConfig.project, GoogleCloudSchedulerConfig.location).toString()
+        val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
         val seconds = (reminderTimestamp / 1000) - 1
         val job = Job.newBuilder()
             .setName(jobId.toString())
@@ -65,7 +63,7 @@ object GoogleCloudSchedulerClient {
      * @throws Exception
      */
     fun deleteTaskReminderJob(id: IxId<TaskReminderJobDto>) {
-        val name = JobName.of(GoogleCloudSchedulerConfig.project, GoogleCloudSchedulerConfig.location, id.toString())
+        val name = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, id.toString())
         cloudSchedulerClient.deleteJob(name)
     }
 }

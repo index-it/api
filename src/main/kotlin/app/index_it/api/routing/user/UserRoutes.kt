@@ -24,7 +24,7 @@ class MeRoute {
     @Resource("notifications")
     class Notifications {
         @Resource("registration")
-        class Registration
+        class Token
     }
 }
 

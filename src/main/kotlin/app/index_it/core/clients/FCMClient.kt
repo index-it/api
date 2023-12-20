@@ -3,6 +3,13 @@ package app.index_it.core.clients
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.messaging.FcmOptions
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.MulticastMessage
+import com.google.firebase.messaging.Notification
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+private val log = KotlinLogging.logger {  }
 
 /**
  * Firebase cloud messaging client
@@ -13,11 +20,23 @@ object FCMClient {
         .build()
 
     private val firebaseApp = FirebaseApp.initializeApp(firebaseOptions)
+    private val firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp)
+
+    private const val TASK_REMINDER_ANALYTICS_LABEL = "task-reminder"
 
 
-    fun sendNotificationToDevices(message: String, vararg registrationId: String) {
-        for (id in registrationId) {
-            TODO()
-        }
+    fun sendTaskReminderNotification(taskName: String, registrationToken: List<String>) {
+        val message = MulticastMessage.builder()
+            .addAllTokens(registrationToken)
+            .setNotification(
+                Notification.builder()
+                    .setTitle("Task reminder")
+                    .setBody(taskName)
+                    .build()
+            )
+            .setFcmOptions(FcmOptions.withAnalyticsLabel(TASK_REMINDER_ANALYTICS_LABEL))
+            .build()
+
+        firebaseMessaging.sendEachForMulticast(message)
     }
 }
