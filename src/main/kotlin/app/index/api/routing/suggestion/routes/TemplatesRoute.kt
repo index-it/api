@@ -22,8 +22,8 @@ fun Route.templatesRoute() {
         summary = "gets a list template"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {
@@ -45,8 +45,8 @@ fun Route.templatesRoute() {
         summary = "gets a category template"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {
@@ -68,8 +68,8 @@ fun Route.templatesRoute() {
         summary = "gets an item template"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {
@@ -90,8 +90,8 @@ fun Route.templatesRoute() {
         summary = "gets a task template"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {

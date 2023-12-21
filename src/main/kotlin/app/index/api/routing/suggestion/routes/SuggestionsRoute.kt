@@ -42,8 +42,8 @@ fun Route.suggestionsRoute() {
         summary = "gets list name suggestions"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {
@@ -70,8 +70,8 @@ fun Route.suggestionsRoute() {
         summary = "gets category name suggestions"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {
@@ -98,8 +98,8 @@ fun Route.suggestionsRoute() {
         summary = "gets item name suggestions"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {
@@ -126,8 +126,8 @@ fun Route.suggestionsRoute() {
         summary = "gets task name suggestions"
         request {
             queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code"
-                required = true
+                description = "ISO 639 set 1 language code, `en` by default"
+                required = false
             }
         }
         response {

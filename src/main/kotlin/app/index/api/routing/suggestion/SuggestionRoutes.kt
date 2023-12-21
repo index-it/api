@@ -14,30 +14,30 @@ class SuggestionRoutes {
     class ColorsRoute(val parent: SuggestionRoutes = SuggestionRoutes())
 
     @Resource("list-names")
-    class ListNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
+    class ListNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String = "en")
 
     @Resource("category-names")
-    class CategoryNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
+    class CategoryNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String = "en")
 
     @Resource("item-names")
-    class ItemNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
+    class ItemNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String = "en")
 
     @Resource("task-names")
-    class TaskNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
+    class TaskNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String = "en")
 
     @Resource("templates")
     class TemplateRoute(val parent: SuggestionRoutes = SuggestionRoutes()) {
         @Resource("list")
-        class ListRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
+        class ListRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String = "en")
 
         @Resource("category")
-        class CategoryRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
+        class CategoryRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String = "en")
 
         @Resource("item")
-        class ItemRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
+        class ItemRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String = "en")
 
         @Resource("task")
-        class TaskRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
+        class TaskRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String = "en")
     }
 }
 
