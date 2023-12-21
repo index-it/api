@@ -3,7 +3,7 @@ package app.index.data.models.email
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SendinblueGenericRequestBody(
+data class BrevoGenericRequestBody(
     val to: List<To>,
     val templateId: Long,
 ) {

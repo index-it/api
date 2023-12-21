@@ -2,9 +2,10 @@ package app.index.data.models.lists
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.Validatable
+import app.index.data.validation.Validatable
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
+import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -39,8 +40,8 @@ data class ItemData(
         override fun validate() =
             Validation {
                 ItemCreateRequestData::name {
-                    minLength(1)
-                    maxLength(100)
+                    minLength(Validations.Item.MIN_NAME_LENGTH)
+                    maxLength(Validations.Item.MAX_NAME_LENGTH)
                 }
             }.invoke(this)
     }
@@ -53,8 +54,8 @@ data class ItemData(
         override fun validate() =
             Validation {
                 ItemUpdateRequestData::name {
-                    minLength(1)
-                    maxLength(100)
+                    minLength(Validations.Item.MIN_NAME_LENGTH)
+                    maxLength(Validations.Item.MAX_NAME_LENGTH)
                 }
             }.invoke(this)
     }

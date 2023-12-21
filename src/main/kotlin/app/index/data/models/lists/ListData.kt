@@ -3,8 +3,9 @@ package app.index.data.models.lists
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.RegexPatterns
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.Validatable
+import app.index.data.validation.Validatable
 import app.index.data.models.user.UserData
+import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -37,8 +38,8 @@ data class ListData(
         override fun validate() =
             Validation {
                 ListCreateRequestData::name {
-                    minLength(1)
-                    maxLength(50)
+                    minLength(Validations.List.MIN_NAME_LENGTH)
+                    maxLength(Validations.List.MAX_NAME_LENGTH)
                 }
                 ListCreateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
@@ -55,10 +56,9 @@ data class ListData(
         override fun validate() =
             Validation {
                 ListUpdateRequestData::name {
-                    minLength(1)
-                    maxLength(50)
+                    minLength(Validations.List.MIN_NAME_LENGTH)
+                    maxLength(Validations.List.MAX_NAME_LENGTH)
                 }
-                // TODO: Icon validation
                 ListUpdateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
                 }

@@ -1,8 +1,9 @@
 package app.index.data.models.lists
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.Validatable
+import app.index.data.validation.Validatable
 import app.index.data.models.user.UserData
+import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -23,8 +24,8 @@ data class ItemContentData(
         override fun validate() =
             Validation {
                 ItemContentCreateOrUpdateRequestData::content {
-                    minLength(1)
-                    maxLength(10000)
+                    minLength(Validations.ItemContent.MIN_CONTENT_LENGTH)
+                    maxLength(Validations.ItemContent.MAX_CONTENT_LENGTH)
                 }
             }.invoke(this)
     }

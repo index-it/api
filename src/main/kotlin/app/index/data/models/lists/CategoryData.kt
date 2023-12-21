@@ -2,8 +2,9 @@ package app.index.data.models.lists
 
 import app.index.core.logic.RegexPatterns
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.Validatable
+import app.index.data.validation.Validatable
 import app.index.data.models.user.UserData
+import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -31,8 +32,8 @@ data class CategoryData(
         override fun validate() =
             Validation {
                 CategoryCreateRequestData::name {
-                    minLength(1)
-                    maxLength(30)
+                    minLength(Validations.Category.MIN_NAME_LENGTH)
+                    maxLength(Validations.Category.MAX_NAME_LENGTH)
                 }
                 CategoryCreateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
@@ -48,8 +49,8 @@ data class CategoryData(
         override fun validate() =
             Validation {
                 CategoryUpdateRequestData::name {
-                    minLength(1)
-                    maxLength(30)
+                    minLength(Validations.Category.MIN_NAME_LENGTH)
+                    maxLength(Validations.Category.MAX_NAME_LENGTH)
                 }
                 CategoryUpdateRequestData::color {
                     pattern(RegexPatterns.colorPattern)

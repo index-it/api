@@ -1,8 +1,8 @@
 package app.index.core.clients
 
 import app.index.config.BrevoConfig
-import app.index.data.models.email.SendinblueCodeOperationRequestBody
-import app.index.data.models.email.SendinblueGenericRequestBody
+import app.index.data.models.email.BrevoOperationRequestBody
+import app.index.data.models.email.BrevoGenericRequestBody
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -54,16 +54,16 @@ class BrevoClient : IClosableComponent {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
                 setBody(
-                    SendinblueCodeOperationRequestBody(
+                    BrevoOperationRequestBody(
                         to =
                         listOf(
-                            SendinblueGenericRequestBody.To(
+                            BrevoGenericRequestBody.To(
                                 email = email,
                             ),
                         ),
                         templateId = BrevoConfig.emailVerificationTemplateId,
                         params =
-                        SendinblueCodeOperationRequestBody.Params(
+                        BrevoOperationRequestBody.Params(
                             url = "${BrevoConfig.emailVerificationUrl}?email=${
                                 URLEncoder.encode(
                                     email,
@@ -101,16 +101,16 @@ class BrevoClient : IClosableComponent {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
                 setBody(
-                    SendinblueCodeOperationRequestBody(
+                    BrevoOperationRequestBody(
                         to =
                         listOf(
-                            SendinblueGenericRequestBody.To(
+                            BrevoGenericRequestBody.To(
                                 email = email,
                             ),
                         ),
                         templateId = BrevoConfig.passwordResetTemplateId,
                         params =
-                        SendinblueCodeOperationRequestBody.Params(
+                        BrevoOperationRequestBody.Params(
                             url = "${BrevoConfig.passwordResetUrl}?token=$token",
                         ),
                     ),
@@ -135,10 +135,10 @@ class BrevoClient : IClosableComponent {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
                 setBody(
-                    SendinblueGenericRequestBody(
+                    BrevoGenericRequestBody(
                         to =
                         listOf(
-                            SendinblueGenericRequestBody.To(
+                            BrevoGenericRequestBody.To(
                                 email = email,
                             ),
                         ),

@@ -2,12 +2,12 @@ package app.index.data.models.tasks
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.Validatable
+import app.index.data.validation.Validatable
 import app.index.data.models.lists.ItemData
 import app.index.data.models.user.UserData
+import app.index.data.validation.Validations
 import io.konform.validation.Validation
-import io.konform.validation.jsonschema.maxLength
-import io.konform.validation.jsonschema.minLength
+import io.konform.validation.jsonschema.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -36,8 +36,6 @@ data class TaskData(
     @Contextual val id: IxId<TaskData>,
     @Contextual val userId: IxId<UserData>,
     @Contextual val itemId: IxId<ItemData>? = null,
-    // @Contextual val categoryId: IxId<CategoryDto>? = null,
-    // @Contextual val listId: IxId<ListDto>? = null,
     val name: String,
     val description: String? = null,
     val subTasks: List<SubTaskData> = emptyList(),
@@ -67,12 +65,19 @@ data class TaskData(
         override fun validate() =
             Validation {
                 TaskCreateRequestData::name {
-                    minLength(1)
-                    maxLength(100)
+                    minLength(Validations.Task.MIN_NAME_LENGTH)
+                    maxLength(Validations.Task.MAX_NAME_LENGTH)
                 }
                 TaskCreateRequestData::description ifPresent {
-                    minLength(1)
-                    maxLength(500)
+                    minLength(Validations.Task.MIN_DESCRIPTION_LENGTH)
+                    maxLength(Validations.Task.MAX_DESCRIPTION_LENGTH)
+                }
+                TaskCreateRequestData::subTasks {
+                    maxItems(Validations.Task.MAX_SUBTASK_COUNT)
+                }
+                TaskCreateRequestData::priority ifPresent {
+                    minimum(Validations.Task.MINIMUM_PRIORITY)
+                    maximum(Validations.Task.MAXIMUM_PRIORITY)
                 }
             }.invoke(this)
     }
@@ -91,12 +96,19 @@ data class TaskData(
         override fun validate() =
             Validation {
                 TaskUpdateRequestData::name {
-                    minLength(1)
-                    maxLength(100)
+                    minLength(Validations.Task.MIN_NAME_LENGTH)
+                    maxLength(Validations.Task.MAX_NAME_LENGTH)
                 }
                 TaskUpdateRequestData::description ifPresent {
-                    minLength(1)
-                    maxLength(500)
+                    minLength(Validations.Task.MIN_DESCRIPTION_LENGTH)
+                    maxLength(Validations.Task.MAX_DESCRIPTION_LENGTH)
+                }
+                TaskUpdateRequestData::subTasks {
+                    maxItems(Validations.Task.MAX_SUBTASK_COUNT)
+                }
+                TaskUpdateRequestData::priority ifPresent {
+                    minimum(Validations.Task.MINIMUM_PRIORITY)
+                    maximum(Validations.Task.MAXIMUM_PRIORITY)
                 }
             }.invoke(this)
     }
