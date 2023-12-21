@@ -1,50 +1,50 @@
 package app.index.data.sources.cache.cm.lists
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 
 interface ItemCM {
     fun getAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<ItemDto>
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData>
 
     fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemDto?
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
+    ): ItemData?
 
     fun cacheAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemsDto: List<ItemDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemsDto: List<ItemData>,
     )
 
     fun cache(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemDto: ItemDto,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemData: ItemData,
     )
 
     fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
     )
 
     fun deleteMultiple(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemIds: List<IxId<ItemDto>>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemIds: List<IxId<ItemData>>,
     )
 
-    fun deleteAllOfUser(userId: IxId<UserDto>)
+    fun deleteAllOfUser(userId: IxId<UserData>)
 
     fun deleteAllOfList(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     )
 }

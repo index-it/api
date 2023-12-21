@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.user
 
-import app.index.data.models.email.EmailVerificationDto
+import app.index.data.models.email.EmailVerificationData
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.createdAt
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.expiresAt
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.id
@@ -52,15 +52,15 @@ class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
     var userEntity by UserEntity referencedOn EmailVerificationTable.user
 }
 
-fun EmailVerificationEntity.fromDto(emailVerificationDto: EmailVerificationDto) {
-    token = emailVerificationDto.token
-    user = emailVerificationDto.userId.toEntityId(UsersTable)
-    createdAt = emailVerificationDto.createdAt
-    expiresAt = emailVerificationDto.expireAt
+fun EmailVerificationEntity.fromDto(emailVerificationData: EmailVerificationData) {
+    token = emailVerificationData.token
+    user = emailVerificationData.userId.toEntityId(UsersTable)
+    createdAt = emailVerificationData.createdAt
+    expiresAt = emailVerificationData.expireAt
 }
 
 fun EmailVerificationEntity.toDto() =
-    EmailVerificationDto(
+    EmailVerificationData(
         token = token,
         userId = user.toIxId(),
         expireAt = expiresAt,

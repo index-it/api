@@ -3,8 +3,8 @@ package app.index.core.logic.typedId.serialization
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.typedId.newIxIntId
-import app.index.data.models.email.EmailVerificationDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.email.EmailVerificationData
+import app.index.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -21,7 +21,7 @@ class IdKotlinXSerializationModuleKtTest {
 
     @Test
     fun idSerialization() {
-        val id = newIxId<UserDto>()
+        val id = newIxId<UserData>()
         val serialized =
             json.encodeToString(id).let {
                 it.substring(1, it.length - 1)
@@ -29,7 +29,7 @@ class IdKotlinXSerializationModuleKtTest {
 
         assertEquals(id.toString(), serialized)
 
-        val intId = newIxIntId<EmailVerificationDto>()
+        val intId = newIxIntId<EmailVerificationData>()
         val serializedInt =
             json.encodeToString(intId).let {
                 it.substring(1, it.length - 1)
@@ -42,7 +42,7 @@ class IdKotlinXSerializationModuleKtTest {
     fun objectWithIdSerialization() {
         @Serializable
         data class TestObject(
-            @Contextual val id: IxId<UserDto>,
+            @Contextual val id: IxId<UserData>,
             val name: String,
         )
 

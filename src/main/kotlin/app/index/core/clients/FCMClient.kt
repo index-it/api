@@ -28,6 +28,10 @@ class FCMClient {
         taskName: String,
         registrationToken: List<String>,
     ) {
+        if (registrationToken.isEmpty()) {
+            return
+        }
+
         val message =
             MulticastMessage.builder()
                 .addAllTokens(registrationToken)

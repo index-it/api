@@ -3,8 +3,8 @@ package app.index.data.daos.list
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.ItemCM
 import app.index.data.sources.cache.cm.lists.ItemContentCM
 import app.index.data.sources.cache.cm.lists.ListCM
@@ -21,27 +21,26 @@ class ListDao(
     private val itemContentCM: ItemContentCM,
 ) {
     suspend fun create(
-        userId: IxId<UserDto>,
-        listCreateRequestDto: ListDto.ListCreateRequestDto,
-    ): ListDto {
-        val listDto =
-            ListDto(
-                id = newIxId(),
-                userId = userId,
-                name = listCreateRequestDto.name,
-                icon = listCreateRequestDto.icon,
-                color = listCreateRequestDto.color,
-                createdAt = DatetimeUtils.currentMillis(),
-                editedAt = null,
-            )
-        listDBI.create(listDto)
-        listCM.cache(listDto.userId, listDto)
+        userId: IxId<UserData>,
+        listCreateRequestData: ListData.ListCreateRequestData,
+    ): ListData {
+        val listData = ListData(
+            id = newIxId(),
+            userId = userId,
+            name = listCreateRequestData.name,
+            icon = listCreateRequestData.icon,
+            color = listCreateRequestData.color,
+            createdAt = DatetimeUtils.currentMillis(),
+            editedAt = null,
+        )
 
-        return listDto
+        listDBI.create(listData)
+        listCM.cache(listData.userId, listData)
+
+        return listData
     }
 
-    suspend fun getAll(userId: IxId<UserDto>): List<ListDto> {
-        // TODO: Decide whether to fetch from cache or db in this case (probably fetch from db directly or not?)
+    suspend fun getAll(userId: IxId<UserData>): List<ListData> {
         var lists = listCM.getAll(userId)
 
         if (lists.isEmpty()) {
@@ -55,9 +54,9 @@ class ListDao(
     }
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): ListDto? {
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): ListData? {
         var list = listCM.get(userId, listId)
 
         if (list == null) {
@@ -70,11 +69,11 @@ class ListDao(
     }
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        listUpdateRequestDto: ListDto.ListUpdateRequestDto,
-    ): ListDto? {
-        val updated = listDBI.update(userId, listId, listUpdateRequestDto)
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        listUpdateRequestData: ListData.ListUpdateRequestData,
+    ): ListData? {
+        val updated = listDBI.update(userId, listId, listUpdateRequestData)
 
         if (updated) {
             listCM.delete(userId, listId)
@@ -84,8 +83,8 @@ class ListDao(
     }
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) {
         listDBI.delete(userId, listId)
         listCM.delete(userId, listId)
@@ -98,11 +97,4 @@ class ListDao(
 
         itemCM.deleteAllOfList(userId, listId)
     }
-
-    /*
-    fun deleteAll(userId: IxId<UserDto>) {
-        listDBI.deleteAll(userId)
-        ListCM.deleteAll(userId)
-    }
-     */
 }

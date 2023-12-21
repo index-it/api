@@ -1,10 +1,10 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
-import app.index.data.models.lists.ItemDto
+import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -38,17 +38,17 @@ fun Route.itemCompletionRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "item completed"
-                body<ItemDto>()
+                body<ItemData>()
             }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
-        val userId = userIdFromSession()!!
-        val updatedItem =
-            itemDao.setCompletion(userId, it.parent.parent.parent.listId, it.parent.itemId, it.completed)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val userId = userIdFromSessionOrThrow()
+
+        val updatedItem = itemDao.setCompletion(userId, it.parent.parent.parent.listId, it.parent.itemId, it.completed)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (updatedItem.taskId != null) {
             taskDao.setCompletion(userId, updatedItem.taskId, it.completed)

@@ -1,11 +1,10 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitRabbitMqWebsocketEvent
 import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.data.daos.list.CategoryDao
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.data.models.lists.CategoryData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -36,16 +35,15 @@ fun Route.categoryRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "category found"
-                body<CategoryDto>()
+                body<CategoryData>()
             }
             HttpStatusCode.NotFound to {
                 description = "category or list not found"
             }
         }
     }) {
-        val category =
-            categoryDao.get(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
-                ?: return@get call.respond(HttpStatusCode.NotFound)
+        val category = categoryDao.get(userIdFromSessionOrThrow(), it.parent.parent.listId, it.categoryId)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
     }
@@ -63,16 +61,16 @@ fun Route.categoryRoute() {
                 required = true
                 description = "the id of the category"
             }
-            body<CategoryDto.CategoryUpdateRequestDto> {
+            body<CategoryData.CategoryUpdateRequestData> {
                 required = true
                 description = "new data for the category"
-                example("sample-category-update", CategoryDto.CategoryUpdateRequestDto("loved places", "#228822"))
+                example("sample-category-update", CategoryData.CategoryUpdateRequestData("loved places", "#228822"))
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "category updated"
-                body<CategoryDto> {
+                body<CategoryData> {
                     description = "the new category data"
                 }
             }
@@ -81,16 +79,12 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val updatedCategory = call.receive<CategoryDto.CategoryUpdateRequestDto>()
-        val userId = userIdFromSession()!!
+        val updatedCategory = call.receive<CategoryData.CategoryUpdateRequestData>()
 
-        val newCategory =
-            categoryDao.update(userId, it.parent.parent.listId, it.categoryId, updatedCategory)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val newCategory = categoryDao.update(userIdFromSessionOrThrow(), it.parent.parent.listId, it.categoryId, updatedCategory)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newCategory)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_UPDATED, newCategory)
     }
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
@@ -114,10 +108,8 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val list = categoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
+        categoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
 
         call.respond(HttpStatusCode.OK)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_DELETED, list)
     }
 }

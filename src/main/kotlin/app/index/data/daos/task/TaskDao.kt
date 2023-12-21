@@ -3,8 +3,8 @@ package app.index.data.daos.task
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.tasks.TaskDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.tasks.TaskCM
 import app.index.data.sources.db.dbi.task.TaskDBI
 import org.koin.core.annotation.Single
@@ -15,38 +15,38 @@ class TaskDao(
     private val taskCM: TaskCM,
 ) {
     suspend fun create(
-        userId: IxId<UserDto>,
-        taskCreateRequestDto: TaskDto.TaskCreateRequestDto,
-    ): TaskDto {
-        val taskDto =
-            TaskDto(
-                id = newIxId(),
-                userId = userId,
-                itemId = taskCreateRequestDto.itemId,
-                name = taskCreateRequestDto.name,
-                description = taskCreateRequestDto.description,
-                dueDate = taskCreateRequestDto.dueDate,
-                rrule = taskCreateRequestDto.rrule,
-                subTasks = taskCreateRequestDto.subTasks,
-                completed = false,
-                priority = taskCreateRequestDto.priority,
-                createdAt = DatetimeUtils.currentMillis(),
-                editedAt = null,
-                completedAt = null,
-            )
-        taskDBI.create(taskDto)
-        taskCM.cache(taskDto.userId, taskDto)
+        userId: IxId<UserData>,
+        taskCreateRequestData: TaskData.TaskCreateRequestData,
+    ): TaskData {
+        val taskData = TaskData(
+            id = newIxId(),
+            userId = userId,
+            itemId = taskCreateRequestData.itemId,
+            name = taskCreateRequestData.name,
+            description = taskCreateRequestData.description,
+            dueDate = taskCreateRequestData.dueDate,
+            rrule = taskCreateRequestData.rrule,
+            subTasks = taskCreateRequestData.subTasks,
+            completed = false,
+            priority = taskCreateRequestData.priority,
+            createdAt = DatetimeUtils.currentMillis(),
+            editedAt = null,
+            completedAt = null,
+        )
 
-        return taskDto
+        taskDBI.create(taskData)
+        taskCM.cache(taskData.userId, taskData)
+
+        return taskData
     }
 
     suspend fun createNextOccurrence(
-        task: TaskDto,
+        task: TaskData,
         dueDate: Long,
         rrule: String,
-    ): TaskDto {
-        val taskDto =
-            TaskDto(
+    ): TaskData {
+        val taskData =
+            TaskData(
                 id = newIxId(),
                 userId = task.userId,
                 itemId = null, // Cannot have connected recurring tasks
@@ -60,14 +60,13 @@ class TaskDao(
                 editedAt = task.editedAt,
                 completedAt = null,
             )
-        taskDBI.create(taskDto)
-        taskCM.cache(taskDto.userId, taskDto)
+        taskDBI.create(taskData)
+        taskCM.cache(taskData.userId, taskData)
 
-        return taskDto
+        return taskData
     }
 
-    suspend fun getAll(userId: IxId<UserDto>): List<TaskDto> {
-        // TODO: Decide whether to fetch from cache or db in this case (probably fetch from db directly or not?)
+    suspend fun getAll(userId: IxId<UserData>): List<TaskData> {
         var tasks = taskCM.getAll(userId)
 
         if (tasks.isEmpty()) {
@@ -80,18 +79,18 @@ class TaskDao(
         return tasks
     }
 
-    suspend fun getAllUncompleted(userId: IxId<UserDto>) =
+    suspend fun getAllUncompleted(userId: IxId<UserData>) =
         getAll(userId)
             .filter { !it.completed }
 
-    suspend fun getAllCompleted(userId: IxId<UserDto>) =
+    suspend fun getAllCompleted(userId: IxId<UserData>) =
         getAll(userId)
             .filter { it.completed }
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-    ): TaskDto? {
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+    ): TaskData? {
         var task = taskCM.get(userId, taskId)
 
         if (task == null) {
@@ -104,10 +103,10 @@ class TaskDao(
     }
 
     suspend fun setCompletion(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
         completed: Boolean,
-    ): TaskDto? {
+    ): TaskData? {
         val updated = taskDBI.setCompletion(userId, taskId, completed)
 
         if (updated) {
@@ -119,11 +118,11 @@ class TaskDao(
     }
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-        taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto,
-    ): TaskDto? {
-        val updated = taskDBI.update(userId, taskId, taskUpdateRequestDto)
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+        taskUpdateRequestData: TaskData.TaskUpdateRequestData,
+    ): TaskData? {
+        val updated = taskDBI.update(userId, taskId, taskUpdateRequestData)
 
         if (updated) {
             taskCM.delete(userId, taskId)
@@ -133,8 +132,8 @@ class TaskDao(
     }
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     ) {
         taskDBI.delete(userId, taskId)
         taskCM.delete(userId, taskId)

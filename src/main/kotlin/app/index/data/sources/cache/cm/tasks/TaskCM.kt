@@ -1,36 +1,36 @@
 package app.index.data.sources.cache.cm.tasks
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.tasks.TaskDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 
 interface TaskCM {
-    fun getAll(userId: IxId<UserDto>): List<TaskDto>
+    fun getAll(userId: IxId<UserData>): List<TaskData>
 
     fun get(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-    ): TaskDto?
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+    ): TaskData?
 
     fun cacheAll(
-        userId: IxId<UserDto>,
-        tasksDto: List<TaskDto>,
+        userId: IxId<UserData>,
+        tasksDto: List<TaskData>,
     )
 
     fun cache(
-        userId: IxId<UserDto>,
-        taskDto: TaskDto,
+        userId: IxId<UserData>,
+        taskData: TaskData,
     )
 
     fun update(
-        userId: IxId<UserDto>,
-        taskDto: TaskDto,
+        userId: IxId<UserData>,
+        taskData: TaskData,
     )
 
     fun delete(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     )
 
-    fun deleteAll(userId: IxId<UserDto>)
+    fun deleteAllOfUser(userId: IxId<UserData>)
 }

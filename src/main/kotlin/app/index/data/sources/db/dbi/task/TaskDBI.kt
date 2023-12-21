@@ -1,46 +1,46 @@
 package app.index.data.sources.db.dbi.task
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.tasks.TaskDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ItemData
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.DBI
 
 interface TaskDBI : DBI {
-    suspend fun create(taskDto: TaskDto)
+    suspend fun create(taskData: TaskData)
 
-    suspend fun get(userId: IxId<UserDto>): List<TaskDto>
+    suspend fun get(userId: IxId<UserData>): List<TaskData>
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-    ): TaskDto?
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+    ): TaskData?
 
     suspend fun exists(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     ): Boolean
 
     suspend fun setCompletion(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
         completed: Boolean,
     ): Boolean
 
     suspend fun setItemConnection(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-        itemId: IxId<ItemDto>?,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+        itemId: IxId<ItemData>?,
     ): Boolean
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-        taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+        taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): Boolean
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     )
 }

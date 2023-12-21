@@ -4,8 +4,8 @@ import app.index.config.ApiConfig
 import app.index.core.clients.RedisClient
 import app.index.core.logic.ObjectMapper
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.auth.UserAuthSessionDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.auth.UserAuthSessionData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.users.UserSessionCM
 import app.index.data.sources.cache.core.ExpiringCM
 import org.koin.core.annotation.Single
@@ -22,14 +22,14 @@ class UserSessionCMImpl(
         objectMapper,
     ) {
     private fun keyValue(
-        userId: IxId<UserDto>,
-        sessionId: IxId<UserAuthSessionDto>,
+        userId: IxId<UserData>,
+        sessionId: IxId<UserAuthSessionData>,
     ) = "$userId:$sessionId"
 
     override fun get(
-        userId: IxId<UserDto>,
-        sessionId: IxId<UserAuthSessionDto>,
-    ): UserAuthSessionDto? =
+        userId: IxId<UserData>,
+        sessionId: IxId<UserAuthSessionData>,
+    ): UserAuthSessionData? =
         get(
             keyValue(
                 userId,
@@ -37,12 +37,12 @@ class UserSessionCMImpl(
             ),
         )
 
-    override fun cache(userAuthSessionDto: UserAuthSessionDto) =
-        cache(keyValue(userAuthSessionDto.userId, userAuthSessionDto.id), userAuthSessionDto)
+    override fun cache(userAuthSessionData: UserAuthSessionData) =
+        cache(keyValue(userAuthSessionData.userId, userAuthSessionData.id), userAuthSessionData)
 
     override fun delete(
-        userId: IxId<UserDto>,
-        sessionId: IxId<UserAuthSessionDto>,
+        userId: IxId<UserData>,
+        sessionId: IxId<UserAuthSessionData>,
     ) = delete(
         keyValue(
             userId,
@@ -50,5 +50,5 @@ class UserSessionCMImpl(
         ),
     )
 
-    override fun deleteAll(userId: IxId<UserDto>) = delete("$userId:*")
+    override fun deleteAll(userId: IxId<UserData>) = delete("$userId:*")
 }

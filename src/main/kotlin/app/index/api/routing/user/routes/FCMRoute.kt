@@ -1,10 +1,10 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.user.MeRoute
 import app.index.core.logic.DatetimeUtils
 import app.index.data.daos.user.FCMRegistrationTokenDao
-import app.index.data.models.user.FCMRegistrationTokenDto
+import app.index.data.models.user.FCMRegistrationTokenData
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -21,7 +21,7 @@ fun Route.fcmRoutes() {
         operationId = "notification-token"
         summary = "saves a user device notification token"
         request {
-            body<FCMRegistrationTokenDto.FCMRegistrationTokenRequestBody> {
+            body<FCMRegistrationTokenData.FCMRegistrationTokenRequestBody> {
                 description = "the new registration token"
             }
         }
@@ -31,14 +31,13 @@ fun Route.fcmRoutes() {
             }
         }
     }) {
-        val fcmRegistrationTokenDto =
-            FCMRegistrationTokenDto(
-                token = call.receive<FCMRegistrationTokenDto.FCMRegistrationTokenRequestBody>().token,
-                userId = userIdFromSession()!!,
-                createdAt = DatetimeUtils.currentMillis(),
-            )
+        val fcmRegistrationTokenData = FCMRegistrationTokenData(
+            token = call.receive<FCMRegistrationTokenData.FCMRegistrationTokenRequestBody>().token,
+            userId = userIdFromSessionOrThrow(),
+            createdAt = DatetimeUtils.currentMillis(),
+        )
 
-        fcmRegistrationTokenDao.createOrUpdate(fcmRegistrationTokenDto)
+        fcmRegistrationTokenDao.upsert(fcmRegistrationTokenData)
 
         call.respond(HttpStatusCode.OK)
     }

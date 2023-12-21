@@ -6,6 +6,7 @@ import app.index.api.routing.auth.IsEmailVerifiedRoute
 import app.index.api.routing.auth.SendVerificationEmailRoute
 import app.index.api.routing.auth.VerifyEmailRoute
 import app.index.config.BrevoConfig
+import app.index.core.logic.usecases.EmailVerificationUseCase
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.user.UserDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -22,9 +23,6 @@ fun Route.emailVerificationRoutes() {
     val emailVerificationDao by inject<EmailVerificationDao>()
 
     authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
-        /**
-         * Sends an email to verify the user email
-         */
         post<SendVerificationEmailRoute>({
             tags = listOf("auth")
             operationId = "send-verification-email"
@@ -46,20 +44,20 @@ fun Route.emailVerificationRoutes() {
                 }
             }
         }) {
-            val userDto =
-                call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
-                    userDao.get(it)
-                } ?: return@post call.respond(HttpStatusCode.Forbidden)
+            val userDto = call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
+                userDao.get(it)
+            } ?: return@post call.respond(HttpStatusCode.Forbidden)
 
             if (userDto.emailVerified) {
                 return@post call.respond(HttpStatusCode.OK)
             }
 
-            if (emailVerificationDao.isRateLimited(userDto.id)) {
+            if (emailVerificationDao.isUserRateLimited(userDto.id)) {
                 return@post call.respond(HttpStatusCode.TooManyRequests)
             }
 
-            val emailSent = emailVerificationDao.createAndSend(userDto)
+            val emailSent = EmailVerificationUseCase.createAndSend(userDto)
+
             if (emailSent) {
                 call.respond(HttpStatusCode.Created)
             } else {
@@ -67,9 +65,6 @@ fun Route.emailVerificationRoutes() {
             }
         }
 
-        /**
-         * Checks if an email has been verified
-         */
         post<IsEmailVerifiedRoute>({
             tags = listOf("auth")
             operationId = "is-email-verified"
@@ -106,9 +101,6 @@ fun Route.emailVerificationRoutes() {
         }
     }
 
-    /**
-     * Uses the code sent in the email inbox of the user to verify its email
-     */
     get<VerifyEmailRoute>({
         tags = listOf("auth")
         operationId = "verify-email"
@@ -127,17 +119,15 @@ fun Route.emailVerificationRoutes() {
                 description = "redirects to either a success or failure page"
             }
             HttpStatusCode.BadRequest to {
-                description = "token is expired likely"
+                description = "token is likely expired"
             }
         }
     }) { request ->
-        val emailVerificationDto =
-            emailVerificationDao.get(request.token)
-                ?: return@get call.respondRedirect(BrevoConfig.emailVerificationErrorUrl)
+        val emailVerificationDto = emailVerificationDao.get(request.token)
+            ?: return@get call.respondRedirect(BrevoConfig.emailVerificationErrorUrl)
 
-        val userDto =
-            userDao.get(emailVerificationDto.userId)
-                ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val userDto = userDao.get(emailVerificationDto.userId)
+            ?: return@get call.respond(HttpStatusCode.BadRequest)
 
         // Check if user is already verified
         if (userDto.emailVerified) {
@@ -145,7 +135,7 @@ fun Route.emailVerificationRoutes() {
         }
 
         userDao.verifyEmail(userDto.id)
-        emailVerificationDao.deleteAll(userDto.id)
+        emailVerificationDao.deleteAllOfUser(userDto.id)
         call.respondRedirect(BrevoConfig.emailVerificationSuccessUrl)
     }
 }

@@ -32,18 +32,20 @@ fun Route.webhookRoute() {
             }
         }
     }) {
-        val (jobId, task, userId) =
-            taskReminderJobDao.get(it.id)
-                ?: return@get call.respond(HttpStatusCode.OK)
+        // Get the job related data
+        val taskReminderJobDto = taskReminderJobDao.get(it.id)
+            ?: return@get call.respond(HttpStatusCode.OK)
 
-        taskReminderJobDao.delete(jobId)
+        // Get all the notification registration tokens associated with that user
+        val notificationRegistrationTokens = fcmRegistrationTokenDao.getOfUser(taskReminderJobDto.userId).map { fcmRegistrationTokenDto ->
+            fcmRegistrationTokenDto.token
+        }
 
-        val notificationRegistrationTokens =
-            fcmRegistrationTokenDao.getOfUser(userId).map { fcmRegistrationTokenDto ->
-                fcmRegistrationTokenDto.token
-            }
+        // Send the task reminder notification to all registration tokens found
+        fcmClient.sendTaskReminderNotification(taskReminderJobDto.task.name, notificationRegistrationTokens)
 
-        fcmClient.sendTaskReminderNotification(task.name, notificationRegistrationTokens)
+        // Delete the job as it has been fulfilled
+        taskReminderJobDao.delete(taskReminderJobDto.id)
 
         call.respond(HttpStatusCode.OK)
     }

@@ -1,15 +1,16 @@
 package app.index.api.plugins
 
 import app.index.config.ApiConfig
+import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.PasswordEncoder
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
-import app.index.data.models.auth.UserAuthSessionDto
+import app.index.data.models.auth.UserAuthSessionData
 import app.index.data.models.auth.UserSessionCookie
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -32,12 +33,22 @@ object AuthenticationMethods {
 /**
  * Used to store the Id in the email verification routes (that cannot use proper session authentication)
  */
-data class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserDto>) : Principal
+data class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserData>) : Principal
 
 /**
- * Gets the Id of a UserDto from the auth-user-session UserSessionDto
+ * Gets the [IxId] of the session authenticated [UserData]
  */
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserDto>? = call.principal<UserAuthSessionDto>()?.userId
+fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserData>? = call.principal<UserAuthSessionData>()?.userId
+
+/**
+ * Gets the [IxId] of the session authenticated [UserData]
+ *
+ * @throws AuthenticationException if not authenticated
+ */
+fun PipelineContext<Unit, ApplicationCall>.userIdFromSessionOrThrow(): IxId<UserData> {
+    return call.principal<UserAuthSessionData>()?.userId
+        ?: throw AuthenticationException()
+}
 
 fun Application.configureSecurity() {
     val userDao by inject<UserDao>()
@@ -85,7 +96,7 @@ fun Application.configureSecurity() {
             validate { userSessionCookie ->
                 val session = userSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
 
-                // If there is no session or if it has expired (session expires after 7 days)
+                // If there is no session or if it has expired
                 if (session == null || (DatetimeUtils.currentMillis() - session.iat) >= (ApiConfig.sessionMaxAgeInSeconds * 1000)) {
                     null
                 } else {

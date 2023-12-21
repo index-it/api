@@ -22,8 +22,8 @@ private val log = KotlinLogging.logger { }
 
 @Single(createdAtStart = true)
 class BrevoClient : IClosableComponent {
-    // Can't configure further if injected with DI
 
+    // Can't configure further if injected with DI
     private val httpClient =
         HttpClient(Apache) {
             install(Logging)
@@ -42,6 +42,11 @@ class BrevoClient : IClosableComponent {
             }
         }
 
+    /**
+     * Sends an email that includes instructions on how to verify the email address with the [token]
+     *
+     * Uses the [BrevoConfig.emailVerificationTemplateId] for the email template
+     */
     suspend fun sendEmailVerificationEmail(
         email: String,
         token: String,
@@ -56,7 +61,7 @@ class BrevoClient : IClosableComponent {
                                 email = email,
                             ),
                         ),
-                        templateId = 2,
+                        templateId = BrevoConfig.emailVerificationTemplateId,
                         params =
                         SendinblueCodeOperationRequestBody.Params(
                             url = "${BrevoConfig.emailVerificationUrl}?email=${
@@ -84,6 +89,11 @@ class BrevoClient : IClosableComponent {
         return response.status.isSuccess()
     }
 
+    /**
+     * Sends an email that includes instructions on how to reset the password with the [token]
+     *
+     * Uses the [BrevoConfig.passwordResetTemplateId] for the email template
+     */
     suspend fun sendPasswordResetEmail(
         email: String,
         token: String,
@@ -98,7 +108,7 @@ class BrevoClient : IClosableComponent {
                                 email = email,
                             ),
                         ),
-                        templateId = 1,
+                        templateId = BrevoConfig.passwordResetTemplateId,
                         params =
                         SendinblueCodeOperationRequestBody.Params(
                             url = "${BrevoConfig.passwordResetUrl}?token=$token",
@@ -116,6 +126,11 @@ class BrevoClient : IClosableComponent {
         return response.status.isSuccess()
     }
 
+    /**
+     * Sends an email that notifies the password has been changed successfully
+     *
+     * Uses the [BrevoConfig.passwordResetSuccessTemplateId] for the email template
+     */
     suspend fun sendPasswordResetSuccessEmail(email: String): Boolean {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
@@ -127,7 +142,7 @@ class BrevoClient : IClosableComponent {
                                 email = email,
                             ),
                         ),
-                        templateId = 3,
+                        templateId = BrevoConfig.passwordResetSuccessTemplateId,
                     ),
                 )
             }

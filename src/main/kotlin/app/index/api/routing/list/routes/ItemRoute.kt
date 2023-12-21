@@ -1,12 +1,10 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitRabbitMqWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
 import app.index.data.daos.list.ItemDao
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -37,16 +35,15 @@ fun Route.itemRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "item data"
-                body<ItemDto>()
+                body<ItemData>()
             }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
-        val item =
-            itemDao.get(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
-                ?: return@get call.respond(HttpStatusCode.NotFound)
+        val item = itemDao.get(userIdFromSessionOrThrow(), it.parent.parent.listId, it.itemId)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
     }
@@ -64,36 +61,31 @@ fun Route.itemRoute() {
                 required = true
                 description = "the id of the item"
             }
-            body<ItemDto.ItemUpdateRequestDto> {
+            body<ItemData.ItemUpdateRequestData> {
                 required = true
                 description = "new item data"
                 example(
                     "sample-item-update",
-                    ItemDto.ItemUpdateRequestDto(newIxId(), "Milos 🧿"),
+                    ItemData.ItemUpdateRequestData(newIxId(), "Milos 🧿"),
                 )
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "item data"
-                body<ItemDto>()
+                body<ItemData>()
             }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
-        val updatedItem = call.receive<ItemDto.ItemUpdateRequestDto>()
+        val updatedItem = call.receive<ItemData.ItemUpdateRequestData>()
 
-        val userId = userIdFromSession()!!
-
-        val newItem =
-            itemDao.update(userId, it.parent.parent.listId, it.itemId, updatedItem)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val newItem = itemDao.update(userIdFromSessionOrThrow(), it.parent.parent.listId, it.itemId, updatedItem)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newItem)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_UPDATED, newItem)
     }
 
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
@@ -117,9 +109,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        itemDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.itemId)
+        itemDao.delete(userIdFromSessionOrThrow(), it.parent.parent.listId, it.itemId)
         call.respond(HttpStatusCode.OK)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")
     }
 }

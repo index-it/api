@@ -1,56 +1,56 @@
 package app.index.data.sources.db.dbi.list
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.tasks.TaskDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.DBI
 
 interface ItemDBI : DBI {
     suspend fun exists(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
     ): Boolean
 
-    suspend fun create(itemDto: ItemDto)
+    suspend fun create(itemData: ItemData)
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemDto?
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): ItemData?
 
     suspend fun getOfCategory(
-        userId: IxId<UserDto>,
-        categoryId: IxId<CategoryDto>,
-    ): List<ItemDto>
+        userId: IxId<UserData>,
+        categoryId: IxId<CategoryData>,
+    ): List<ItemData>
 
     suspend fun getOfList(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<ItemDto>
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData>
 
     suspend fun setCompletion(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
         completed: Boolean,
     ): Boolean
 
     suspend fun setTaskConnection(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-        taskId: IxId<TaskDto>?,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+        taskId: IxId<TaskData>?,
     ): Boolean
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-        itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+        itemUpdateRequestData: ItemData.ItemUpdateRequestData,
     ): Boolean
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
     )
 }

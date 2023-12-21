@@ -3,7 +3,7 @@ package app.index.data.sources.cache.cm.users.impl
 import app.index.core.clients.RedisClient
 import app.index.core.logic.ObjectMapper
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.users.UserCM
 import app.index.data.sources.cache.core.HashedCM
 import org.koin.core.annotation.Single
@@ -18,9 +18,9 @@ class UserCMImpl(
         redisClient,
         objectMapper,
     ) {
-    override fun cache(userDto: UserDto) = cache(userDto.id.toString(), userDto)
+    override fun cache(userData: UserData) = cache(userData.id.toString(), userData)
 
-    override fun get(id: IxId<UserDto>): UserDto? = get(id.toString())
+    override fun get(id: IxId<UserData>): UserData? = get(id.toString())
 
-    override fun delete(id: IxId<UserDto>) = delete(id.toString())
+    override fun delete(id: IxId<UserData>) = delete(id.toString())
 }

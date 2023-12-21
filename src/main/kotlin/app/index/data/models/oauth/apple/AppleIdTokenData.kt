@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 // Docs: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/authenticating_users_with_sign_in_with_apple
 @Serializable
-data class AppleIdTokenDto(
+data class AppleIdTokenData(
     val email: String,
     @SerialName("verified_email")
     val verifiedEmail: Boolean,

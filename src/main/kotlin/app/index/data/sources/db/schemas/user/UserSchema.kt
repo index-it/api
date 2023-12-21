@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.user
 
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.schemas.user.UsersTable.createdAt
 import app.index.data.sources.db.schemas.user.UsersTable.creationSource
 import app.index.data.sources.db.schemas.user.UsersTable.email
@@ -28,7 +28,7 @@ object UsersTable : UUIDTable() {
     val passwordHash = varchar("password_hash", 100).nullable()
     val emailVerified = bool("email_verified")
     val createdAt = long("created_at")
-    val creationSource = enumerationByName<UserDto.CreationSource>("creation_source", 10)
+    val creationSource = enumerationByName<UserData.CreationSource>("creation_source", 10)
 }
 
 /**
@@ -49,16 +49,16 @@ class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var creationSource by UsersTable.creationSource
 }
 
-fun UserEntity.fromDto(userDto: UserDto) {
-    email = userDto.email
-    passwordHash = userDto.passwordHash
-    emailVerified = userDto.emailVerified
-    createdAt = userDto.creationTimestamp
-    creationSource = userDto.creationSource
+fun UserEntity.fromDto(userData: UserData) {
+    email = userData.email
+    passwordHash = userData.passwordHash
+    emailVerified = userData.emailVerified
+    createdAt = userData.creationTimestamp
+    creationSource = userData.creationSource
 }
 
 fun UserEntity.toDto() =
-    UserDto(
+    UserData(
         id = id.toIxId(),
         email = email,
         passwordHash = passwordHash,

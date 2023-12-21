@@ -2,8 +2,8 @@ package app.index.data.sources.db.dbi.user.impl
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.user.FCMRegistrationTokenDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.FCMRegistrationTokenData
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.user.FCMRegistrationTokenDBI
 import app.index.data.sources.db.schemas.user.*
 import app.index.data.sources.db.toEntityId
@@ -20,7 +20,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
             FCMRegistrationTokenEntity.count(FCMRegistrationTokenTable.token eq token) > 0
         }
 
-    override suspend fun create(fcmRegistrationToken: FCMRegistrationTokenDto) {
+    override suspend fun create(fcmRegistrationToken: FCMRegistrationTokenData) {
         dbQuery {
             FCMRegistrationTokenEntity.new {
                 fromDto(fcmRegistrationToken)
@@ -28,7 +28,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
         }
     }
 
-    override suspend fun get(token: String): FCMRegistrationTokenDto? {
+    override suspend fun get(token: String): FCMRegistrationTokenData? {
         return dbQuery {
             FCMRegistrationTokenEntity
                 .find { FCMRegistrationTokenTable.token eq token }
@@ -38,7 +38,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
         }
     }
 
-    override suspend fun getOfUser(id: IxId<UserDto>): List<FCMRegistrationTokenDto> {
+    override suspend fun getOfUser(id: IxId<UserData>): List<FCMRegistrationTokenData> {
         return dbQuery {
             FCMRegistrationTokenEntity
                 .find { FCMRegistrationTokenTable.user eq id.toEntityId(UsersTable) }
@@ -47,7 +47,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
         }
     }
 
-    override suspend fun update(fcmRegistrationToken: FCMRegistrationTokenDto) {
+    override suspend fun update(fcmRegistrationToken: FCMRegistrationTokenData) {
         dbQuery {
             FCMRegistrationTokenTable.update({ FCMRegistrationTokenTable.token eq fcmRegistrationToken.token }) {
                 it[user] = fcmRegistrationToken.userId.toEntityId(UsersTable)

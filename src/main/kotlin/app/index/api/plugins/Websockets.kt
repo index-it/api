@@ -12,6 +12,7 @@ import java.time.Duration
 
 private val logger = KotlinLogging.logger {}
 
+// TODO:
 suspend fun PipelineContext<Unit, ApplicationCall>.emitRabbitMqWebsocketEvent(
     eventType: RabbitMqWebsocketEventType,
     eventData: Any?,

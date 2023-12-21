@@ -1,8 +1,8 @@
 package app.index.data.models.websocket
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.auth.UserAuthSessionDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.auth.UserAuthSessionData
+import app.index.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -25,8 +25,8 @@ enum class RabbitMqWebsocketEventType(val realTimeDataKind: Boolean = true) {
 
 @Serializable
 data class RabbitMqWebsocketEventDto(
-    @Contextual val fromSessionId: IxId<UserAuthSessionDto>,
-    @Contextual val fromUserId: IxId<UserDto>,
+    @Contextual val fromSessionId: IxId<UserAuthSessionData>,
+    @Contextual val fromUserId: IxId<UserData>,
     val eventType: RabbitMqWebsocketEventType,
     // Serialized event data (already JSON encoded)
     val eventData: String?,

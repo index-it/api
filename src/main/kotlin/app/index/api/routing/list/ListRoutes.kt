@@ -3,9 +3,9 @@ package app.index.api.routing.list
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.routing.list.routes.*
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.lists.ListDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
 import io.ktor.resources.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
@@ -17,14 +17,14 @@ class ListsRoute {
     @Resource("{listId}")
     class ListRoute(
         val parent: ListsRoute = ListsRoute(),
-        @Contextual val listId: IxId<ListDto>,
+        @Contextual val listId: IxId<ListData>,
     ) {
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
             @Resource("{categoryId}")
             class CategoryRoute(
                 val parent: CategoriesRoute,
-                @Contextual val categoryId: IxId<CategoryDto>,
+                @Contextual val categoryId: IxId<CategoryData>,
             )
         }
 
@@ -33,7 +33,7 @@ class ListsRoute {
             @Resource("{itemId}")
             class ItemRoute(
                 val parent: ItemsRoute,
-                @Contextual val itemId: IxId<ItemDto>,
+                @Contextual val itemId: IxId<ItemData>,
             ) {
                 @Resource("content")
                 class ContentRoute(val parent: ItemRoute)

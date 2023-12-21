@@ -1,11 +1,9 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitRabbitMqWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.data.daos.list.ListDao
-import app.index.data.models.lists.ListDto
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -25,11 +23,11 @@ fun Route.listsRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "user lists"
-                body<List<ListDto>>()
+                body<List<ListData>>()
             }
         }
     }) {
-        call.respond(listDao.getAll(userIdFromSession()!!))
+        call.respond(listDao.getAll(userIdFromSessionOrThrow()))
     }
 
     post<ListsRoute>({
@@ -37,26 +35,24 @@ fun Route.listsRoute() {
         operationId = "create-list"
         summary = "create a new list"
         request {
-            body<ListDto.ListCreateRequestDto> {
+            body<ListData.ListCreateRequestData> {
                 required = true
-                example("sample-list", ListDto.ListCreateRequestDto("places", "🏝️", "#343322"))
+                example("sample-list", ListData.ListCreateRequestData("places", "🏝️", "#343322"))
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "list created"
-                body<ListDto> {
+                body<ListData> {
                     description = "the created list"
                 }
             }
         }
     }) {
-        val newList = call.receive<ListDto.ListCreateRequestDto>()
+        val newList = call.receive<ListData.ListCreateRequestData>()
 
-        val created = listDao.create(userIdFromSession()!!, newList)
+        val created = listDao.create(userIdFromSessionOrThrow(), newList)
 
         call.respond(created)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_CREATED, created)
     }
 }

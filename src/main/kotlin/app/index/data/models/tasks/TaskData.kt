@@ -3,8 +3,8 @@ package app.index.data.models.tasks
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.Validatable
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ItemData
+import app.index.data.models.user.UserData
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -32,15 +32,15 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @Suppress("Unused")
-data class TaskDto(
-    @Contextual val id: IxId<TaskDto>,
-    @Contextual val userId: IxId<UserDto>,
-    @Contextual val itemId: IxId<ItemDto>? = null,
+data class TaskData(
+    @Contextual val id: IxId<TaskData>,
+    @Contextual val userId: IxId<UserData>,
+    @Contextual val itemId: IxId<ItemData>? = null,
     // @Contextual val categoryId: IxId<CategoryDto>? = null,
     // @Contextual val listId: IxId<ListDto>? = null,
     val name: String,
     val description: String? = null,
-    val subTasks: List<SubTaskDto> = emptyList(),
+    val subTasks: List<SubTaskData> = emptyList(),
     val dueDate: Long? = null,
     val rrule: String? = null,
     val onDayReminder: Long? = null,
@@ -54,23 +54,23 @@ data class TaskDto(
     val completedAt: Long? = null,
 ) {
     @Serializable
-    data class TaskCreateRequestDto(
+    data class TaskCreateRequestData(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
         val rrule: String? = null,
         val onDayReminder: Long? = null,
-        val subTasks: List<SubTaskDto> = emptyList(),
+        val subTasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
-        @Contextual val itemId: IxId<ItemDto>? = null,
-    ) : Validatable<TaskCreateRequestDto> {
+        @Contextual val itemId: IxId<ItemData>? = null,
+    ) : Validatable<TaskCreateRequestData> {
         override fun validate() =
             Validation {
-                TaskCreateRequestDto::name {
+                TaskCreateRequestData::name {
                     minLength(1)
                     maxLength(100)
                 }
-                TaskCreateRequestDto::description ifPresent {
+                TaskCreateRequestData::description ifPresent {
                     minLength(1)
                     maxLength(500)
                 }
@@ -78,23 +78,23 @@ data class TaskDto(
     }
 
     @Serializable
-    data class TaskUpdateRequestDto(
+    data class TaskUpdateRequestData(
         val name: String,
         val description: String? = null,
         val dueDate: Long? = null,
         val rrule: String? = null,
         val onDayReminder: Long? = null,
-        val subTasks: List<SubTaskDto> = emptyList(),
+        val subTasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
-        @Contextual val itemId: IxId<ItemDto>? = null,
-    ) : Validatable<TaskUpdateRequestDto> {
+        @Contextual val itemId: IxId<ItemData>? = null,
+    ) : Validatable<TaskUpdateRequestData> {
         override fun validate() =
             Validation {
-                TaskUpdateRequestDto::name {
+                TaskUpdateRequestData::name {
                     minLength(1)
                     maxLength(100)
                 }
-                TaskUpdateRequestDto::description ifPresent {
+                TaskUpdateRequestData::description ifPresent {
                     minLength(1)
                     maxLength(500)
                 }
@@ -102,13 +102,13 @@ data class TaskDto(
     }
 
     @Serializable
-    data class TaskTemplateResponseDto(
+    data class TaskTemplateResponseData(
         val name: String,
     )
 }
 
 @Serializable
-data class SubTaskDto(
+data class SubTaskData(
     val name: String,
     var completed: Boolean,
 )

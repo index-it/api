@@ -1,12 +1,10 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitRabbitMqWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
 import app.index.data.daos.list.ItemDao
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -36,16 +34,17 @@ fun Route.itemsRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "list items"
-                body<List<ItemDto>>()
+                body<List<ItemData>>()
             }
         }
     }) {
-        val items =
-            when (it.completed) {
-                true -> itemDao.getAllCompleted(userIdFromSession()!!, it.parent.listId)
-                false -> itemDao.getAllUncompleted(userIdFromSession()!!, it.parent.listId)
-                null -> itemDao.getAll(userIdFromSession()!!, it.parent.listId)
-            }
+        val userId = userIdFromSessionOrThrow()
+
+        val items = when (it.completed) {
+            true -> itemDao.getAllCompleted(userId, it.parent.listId)
+            false -> itemDao.getAllUncompleted(userId, it.parent.listId)
+            null -> itemDao.getAll(userId, it.parent.listId)
+        }
 
         call.respond(items)
     }
@@ -59,25 +58,23 @@ fun Route.itemsRoute() {
                 required = true
                 description = "the id of the list"
             }
-            body<ItemDto.ItemCreateRequestDto> {
+            body<ItemData.ItemCreateRequestData> {
                 required = true
                 description = "item data"
-                example("sample-item", ItemDto.ItemCreateRequestDto(newIxId(), "Milos"))
+                example("sample-item", ItemData.ItemCreateRequestData(newIxId(), "Milos"))
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "item created"
-                body<ItemDto>()
+                body<ItemData>()
             }
         }
     }) {
-        val newItem = call.receive<ItemDto.ItemCreateRequestDto>()
+        val newItem = call.receive<ItemData.ItemCreateRequestData>()
 
-        val item = itemDao.create(userIdFromSession()!!, it.parent.listId, newItem)
+        val item = itemDao.create(userIdFromSessionOrThrow(), it.parent.listId, newItem)
 
         call.respond(item)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
 }

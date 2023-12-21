@@ -20,13 +20,12 @@ private val log = KotlinLogging.logger { }
 
 @Single(createdAtStart = true)
 class PostgresClient {
-    private val database =
-        Database.connect(
-            url = PostgresConfig.url,
-            driver = DB_DRIVER,
-            user = PostgresConfig.user,
-            password = PostgresConfig.password,
-        )
+    private val database = Database.connect(
+        url = PostgresConfig.url,
+        driver = DB_DRIVER,
+        user = PostgresConfig.user,
+        password = PostgresConfig.password,
+    )
 
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(
@@ -42,12 +41,11 @@ class PostgresClient {
         // TODO: device registration table
         // TODO: Suggestion
         // TODO: web links
-        val flyway =
-            Flyway.configure()
-                .driver(DB_DRIVER)
-                .dataSource(PostgresConfig.url, PostgresConfig.user, PostgresConfig.password)
-                .validateMigrationNaming(true)
-                .load()
+        val flyway = Flyway.configure()
+            .driver(DB_DRIVER)
+            .dataSource(PostgresConfig.url, PostgresConfig.user, PostgresConfig.password)
+            .validateMigrationNaming(true)
+            .load()
         try {
             flyway.info()
             flyway.migrate()

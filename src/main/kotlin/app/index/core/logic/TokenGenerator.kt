@@ -10,7 +10,7 @@ private val log = KotlinLogging.logger { }
 
 @Factory
 class TokenGenerator {
-    private val secureRandom: SecureRandom = SecureRandom() // threadsafe
+    private val secureRandom: SecureRandom = SecureRandom() // thread safe
     private val base64Encoder = Base64.getUrlEncoder()
     private val base64Decoder = Base64.getUrlDecoder()
 
@@ -29,11 +29,14 @@ class TokenGenerator {
         val messageDigest = MessageDigest.getInstance("SHA-256")
         val hashed = messageDigest.digest(plainBytes)
 
-        log.debug { "Generated token of $bytes bytes" }
-
         return Pair(base64Encoder.encodeToString(plainBytes), base64Encoder.encodeToString(hashed))
     }
 
+    /**
+     * @param token the base 64 non-hashed token
+     *
+     * @return the base64 url safe hashed token
+     */
     fun hashToken(token: String): String {
         val bytes = base64Decoder.decode(token)
 

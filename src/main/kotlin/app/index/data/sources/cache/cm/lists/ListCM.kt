@@ -1,36 +1,36 @@
 package app.index.data.sources.cache.cm.lists
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 
 interface ListCM {
-    fun getAll(userId: IxId<UserDto>): List<ListDto>
+    fun getAll(userId: IxId<UserData>): List<ListData>
 
     fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): ListDto?
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): ListData?
 
     fun cacheAll(
-        userId: IxId<UserDto>,
-        listsDto: List<ListDto>,
+        userId: IxId<UserData>,
+        listsDto: List<ListData>,
     )
 
     fun cache(
-        userId: IxId<UserDto>,
-        listDto: ListDto,
+        userId: IxId<UserData>,
+        listData: ListData,
     )
 
     fun update(
-        userId: IxId<UserDto>,
-        listDto: ListDto,
+        userId: IxId<UserData>,
+        listData: ListData,
     )
 
     fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     )
 
-    fun deleteAll(userId: IxId<UserDto>)
+    fun deleteAllOfUser(userId: IxId<UserData>)
 }

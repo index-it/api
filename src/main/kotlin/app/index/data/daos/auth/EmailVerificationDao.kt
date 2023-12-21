@@ -1,11 +1,10 @@
 package app.index.data.daos.auth
 
 import app.index.core.clients.BrevoClient
-import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.TokenGenerator
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.email.EmailVerificationDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.email.EmailVerificationData
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.user.EmailVerificationDBI
 import org.koin.core.annotation.Single
 
@@ -15,38 +14,22 @@ class EmailVerificationDao(
     private val tokenGenerator: TokenGenerator,
     private val brevoClient: BrevoClient,
 ) {
-    private suspend fun save(emailVerificationDto: EmailVerificationDto) = emailVerificationDBI.create(emailVerificationDto)
+    suspend fun create(emailVerificationData: EmailVerificationData) =
+        emailVerificationDBI.create(emailVerificationData)
 
-    suspend fun get(token: String): EmailVerificationDto? {
+    suspend fun get(token: String): EmailVerificationData? {
         return emailVerificationDBI.get(token)
-    }
-
-    /**
-     * Sends a verification email to the provided email
-     * and returns true if the email was sent successfully, false otherwise
-     */
-    suspend fun createAndSend(user: UserDto): Boolean {
-        val (token, hashedToken) = tokenGenerator.generate()
-
-        val emailVerificationDto =
-            EmailVerificationDto(
-                token = hashedToken,
-                userId = user.id,
-                expireAt = DatetimeUtils.currentMillis() + 3600000,
-                createdAt = DatetimeUtils.currentMillis(),
-            )
-
-        save(emailVerificationDto)
-        return brevoClient.sendEmailVerificationEmail(user.email, token)
     }
 
     /**
      * Deletes all email verification tokens of a specific email.
      */
-    suspend fun deleteAll(id: IxId<UserDto>) = emailVerificationDBI.deleteAll(id)
+    suspend fun deleteAllOfUser(id: IxId<UserData>) = emailVerificationDBI.deleteAll(id)
 
-    suspend fun isRateLimited(id: IxId<UserDto>): Boolean {
-        val sent = emailVerificationDBI.count(id)
-        return sent >= 5
+    /**
+     * Rate limited if the user has received at least 5 verification emails and didn't use any
+     */
+    suspend fun isUserRateLimited(id: IxId<UserData>): Boolean {
+        return emailVerificationDBI.count(id) >= 5
     }
 }

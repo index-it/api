@@ -1,16 +1,17 @@
 package app.index.api.routing.websocket
 
 import app.index.api.plugins.AuthenticationMethods
-import app.index.data.models.auth.UserAuthSessionDto
+import app.index.data.models.auth.UserAuthSessionData
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 
 fun Route.websocketRoutes() {
+    // TODO
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         webSocket("/ws") {
-            val session = call.principal<UserAuthSessionDto>()
+            val session = call.principal<UserAuthSessionData>()
 
             if (session == null) {
                 // Should never happen since the route is behind authentication

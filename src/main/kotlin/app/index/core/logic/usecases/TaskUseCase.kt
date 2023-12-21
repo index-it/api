@@ -1,17 +1,18 @@
 package app.index.core.logic.usecases
 
 import app.index.core.logic.DatetimeUtils
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.TaskData
 import org.dmfs.rfc5545.recur.RecurrenceRule
 import kotlin.math.max
 
 object TaskUseCase {
+
     /**
      * If a task is recurring, this calculates the next occurrence date and the updated rrule in case `COUNT` was used as the end clause
      *
      * @return Null if this task isn't recurring or if it reached the end clause, a [Pair] with the next occurrence timestamp and updated rrule otherwise
      */
-    fun calculateNextOccurrenceDueDateAndRRule(task: TaskDto): Pair<Long, String>? {
+    fun calculateNextOccurrenceDueDateAndRRule(task: TaskData): Pair<Long, String>? {
         if (task.dueDate == null || task.rrule == null) {
             return null
         }

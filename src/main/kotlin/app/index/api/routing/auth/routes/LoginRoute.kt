@@ -5,7 +5,7 @@ import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.PasswordEncoder
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
-import app.index.data.models.auth.LoginCredentials
+import app.index.data.models.auth.LoginCredentialsData
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -21,19 +21,16 @@ fun Route.loginRoute() {
     val userSessionDao by inject<UserSessionDao>()
     val passwordEncoder by inject<PasswordEncoder>()
 
-    /**
-     * Logs in a user using email and password
-     */
     post<LoginRoute>({
         tags = listOf("auth")
         operationId = "login"
         summary = "login and create a session"
         protected = false
         request {
-            body<LoginCredentials> {
+            body<LoginCredentialsData> {
                 description = "email and password credentials"
                 required = true
-                example("sample-credentials", LoginCredentials("sample@mail.com", "verySecurePwd1234"))
+                example("sample-credentials", LoginCredentialsData("sample@mail.com", "verySecurePwd1234"))
             }
         }
         response {
@@ -51,10 +48,9 @@ fun Route.loginRoute() {
             }
         }
     }) {
-        val loginData = call.receive<LoginCredentials>()
-        val user =
-            userDao.getFromEmail(loginData.email)
-                ?: throw AuthenticationException()
+        val loginData = call.receive<LoginCredentialsData>()
+        val user = userDao.getFromEmail(loginData.email)
+            ?: throw AuthenticationException()
 
         if (user.passwordHash == null) {
             throw AuthenticationException()
@@ -69,7 +65,11 @@ fun Route.loginRoute() {
             return@post call.respond(HttpStatusCode.MethodNotAllowed)
         }
 
-        val userSessionId = userSessionDao.create(user.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val userSessionId = userSessionDao.create(
+            userId = user.id,
+            device = call.request.userAgent(),
+            ip = call.request.origin.remoteAddress
+        )
 
         call.sessions.set(userSessionId)
         call.respond(HttpStatusCode.OK)

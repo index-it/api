@@ -8,7 +8,7 @@ import app.index.core.logic.usecases.TaskUseCase
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderJobDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
@@ -39,7 +39,7 @@ fun Route.tasksRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the tasks"
-                body<List<TaskDto>>()
+                body<List<TaskData>>()
             }
         }
     }) {
@@ -58,19 +58,19 @@ fun Route.tasksRoute() {
         operationId = "create-task"
         summary = "creates a new task"
         request {
-            body<TaskDto.TaskCreateRequestDto> {
+            body<TaskData.TaskCreateRequestData> {
                 description = "task data"
                 required = true
                 example(
                     "sample-task",
-                    TaskDto.TaskCreateRequestDto("find skis", "find some skis for this winter", null, null, null, emptyList()),
+                    TaskData.TaskCreateRequestData("find skis", "find some skis for this winter", null, null, null, emptyList()),
                 )
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "the task"
-                body<TaskDto>()
+                body<TaskData>()
             }
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters, see error message"
@@ -81,7 +81,7 @@ fun Route.tasksRoute() {
         }
     }) {
         val userId = userIdFromSession()!!
-        val newTask = call.receive<TaskDto.TaskCreateRequestDto>()
+        val newTask = call.receive<TaskData.TaskCreateRequestData>()
         val itemIdToConnect = newTask.itemId
 
         // ////////////////

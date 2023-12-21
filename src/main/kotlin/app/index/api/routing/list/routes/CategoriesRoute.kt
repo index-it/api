@@ -1,11 +1,9 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitRabbitMqWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.data.daos.list.CategoryDao
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.data.models.lists.CategoryData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -31,11 +29,11 @@ fun Route.categoriesRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "categories gotten"
-                body<List<CategoryDto>>()
+                body<List<CategoryData>>()
             }
         }
     }) {
-        val categories = categoryDao.getAll(userIdFromSession()!!, it.parent.listId)
+        val categories = categoryDao.getAll(userIdFromSessionOrThrow(), it.parent.listId)
 
         call.respond(categories)
     }
@@ -49,25 +47,23 @@ fun Route.categoriesRoute() {
                 required = true
                 description = "the id of the list"
             }
-            body<CategoryDto.CategoryCreateRequestDto> {
+            body<CategoryData.CategoryCreateRequestData> {
                 description = "category data"
                 required = true
-                example("sample-category", CategoryDto.CategoryCreateRequestDto("visited", "#228822"))
+                example("sample-category", CategoryData.CategoryCreateRequestData("visited", "#228822"))
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "category created"
-                body<CategoryDto>()
+                body<CategoryData>()
             }
         }
     }) {
-        val newCategory = call.receive<CategoryDto.CategoryCreateRequestDto>()
+        val newCategory = call.receive<CategoryData.CategoryCreateRequestData>()
 
-        val category = categoryDao.create(userIdFromSession()!!, it.parent.listId, newCategory)
+        val category = categoryDao.create(userIdFromSessionOrThrow(), it.parent.listId, newCategory)
 
         call.respond(category)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.CATEGORY_CREATED, category)
     }
 }

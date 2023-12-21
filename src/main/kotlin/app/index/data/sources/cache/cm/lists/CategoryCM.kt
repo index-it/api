@@ -1,51 +1,50 @@
 package app.index.data.sources.cache.cm.lists
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 
 interface CategoryCM {
     fun getAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<CategoryDto>
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<CategoryData>
 
     fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
-    ): CategoryDto?
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
+    ): CategoryData?
 
     fun cacheAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoriesDto: List<CategoryDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoriesDto: List<CategoryData>,
     )
 
     fun cache(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryDto: CategoryDto,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryData: CategoryData,
     )
 
     fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
     )
 
-    @Suppress("UNUSED")
     fun deleteMultiple(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryIds: List<IxId<CategoryDto>>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryIds: List<IxId<CategoryData>>,
     )
 
-    fun deleteAllOfUser(userId: IxId<UserDto>)
+    fun deleteAllOfUser(userId: IxId<UserData>)
 
     fun deleteAllOfList(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     )
 }

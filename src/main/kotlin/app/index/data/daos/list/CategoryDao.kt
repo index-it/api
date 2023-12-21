@@ -2,9 +2,9 @@ package app.index.data.daos.list
 
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.CategoryCM
 import app.index.data.sources.cache.cm.lists.ItemCM
 import app.index.data.sources.cache.cm.lists.ItemContentCM
@@ -19,10 +19,9 @@ class CategoryDao(
     private val itemContentCM: ItemContentCM,
 ) {
     suspend fun getAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<CategoryDto> {
-        // TODO: Query db instead?
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<CategoryData> {
         var categories = categoryCM.getAll(userId, listId)
 
         if (categories.isEmpty()) {
@@ -37,10 +36,10 @@ class CategoryDao(
     }
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
-    ): CategoryDto? {
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
+    ): CategoryData? {
         var category = categoryCM.get(userId, listId, categoryId)
 
         if (category == null) {
@@ -53,32 +52,31 @@ class CategoryDao(
     }
 
     suspend fun create(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryCreateRequestDto: CategoryDto.CategoryCreateRequestDto,
-    ): CategoryDto {
-        val categoryDto =
-            CategoryDto(
-                id = newIxId(),
-                userId = userId,
-                listId = listId,
-                name = categoryCreateRequestDto.name,
-                color = categoryCreateRequestDto.color,
-            )
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryCreateRequestData: CategoryData.CategoryCreateRequestData,
+    ): CategoryData {
+        val categoryData = CategoryData(
+            id = newIxId(),
+            userId = userId,
+            listId = listId,
+            name = categoryCreateRequestData.name,
+            color = categoryCreateRequestData.color,
+        )
 
-        categoryDBI.create(categoryDto)
-        categoryCM.cache(userId, listId, categoryDto)
+        categoryDBI.create(categoryData)
+        categoryCM.cache(userId, listId, categoryData)
 
-        return categoryDto
+        return categoryData
     }
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
-        categoryUpdateRequestDto: CategoryDto.CategoryUpdateRequestDto,
-    ): CategoryDto? {
-        val updated = categoryDBI.update(userId, categoryId, categoryUpdateRequestDto)
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
+        categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
+    ): CategoryData? {
+        val updated = categoryDBI.update(userId, categoryId, categoryUpdateRequestData)
 
         if (updated) {
             categoryCM.delete(userId, listId, categoryId)
@@ -88,17 +86,16 @@ class CategoryDao(
     }
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
     ) {
         categoryDBI.delete(userId, categoryId)
         categoryCM.delete(userId, listId, categoryId)
 
-        val itemIdsOfCategory =
-            itemCM.getAll(userId, listId)
-                .filter { it.categoryId == categoryId }
-                .map { item -> item.id }
+        val itemIdsOfCategory = itemCM.getAll(userId, listId)
+            .filter { it.categoryId == categoryId }
+            .map { item -> item.id }
         itemContentCM.deleteMultiple(userId, itemIdsOfCategory)
         itemCM.deleteMultiple(userId, listId, itemIdsOfCategory)
     }

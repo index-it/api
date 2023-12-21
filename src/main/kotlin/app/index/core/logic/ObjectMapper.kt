@@ -7,13 +7,12 @@ import org.koin.core.annotation.Factory
 
 @Factory
 class ObjectMapper {
-    val json =
-        Json {
-            serializersModule = IdKotlinXSerializationModule
-            prettyPrint = true
-            encodeDefaults = true
-            ignoreUnknownKeys = true
-        }
+    val json = Json {
+        serializersModule = IdKotlinXSerializationModule
+        prettyPrint = true
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }
 
     inline fun <reified T> encode(data: T): String {
         return json.encodeToString(data)

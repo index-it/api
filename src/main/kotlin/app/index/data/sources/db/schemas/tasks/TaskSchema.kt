@@ -1,7 +1,7 @@
 package app.index.data.sources.db.schemas.tasks
 
-import app.index.data.models.tasks.SubTaskDto
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.SubTaskData
+import app.index.data.models.tasks.TaskData
 import app.index.data.sources.db.schemas.lists.ItemEntity
 import app.index.data.sources.db.schemas.lists.ItemTable
 import app.index.data.sources.db.schemas.tasks.TaskTable.completed
@@ -102,23 +102,23 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val itemEntity by ItemEntity optionalReferencedOn TaskTable.item
 }
 
-fun TaskEntity.fromDto(taskDto: TaskDto) {
-    user = taskDto.userId.toEntityId(UsersTable)
-    item = taskDto.itemId?.toEntityId(ItemTable)
-    name = taskDto.name
-    description = taskDto.description
-    dueDate = taskDto.dueDate
-    rrule = taskDto.rrule
-    onDayReminder = taskDto.onDayReminder
-    completed = taskDto.completed
-    priority = taskDto.priority
-    createdAt = taskDto.createdAt
-    editedAt = taskDto.editedAt
-    completedAt = taskDto.completedAt
+fun TaskEntity.fromDto(taskData: TaskData) {
+    user = taskData.userId.toEntityId(UsersTable)
+    item = taskData.itemId?.toEntityId(ItemTable)
+    name = taskData.name
+    description = taskData.description
+    dueDate = taskData.dueDate
+    rrule = taskData.rrule
+    onDayReminder = taskData.onDayReminder
+    completed = taskData.completed
+    priority = taskData.priority
+    createdAt = taskData.createdAt
+    editedAt = taskData.editedAt
+    completedAt = taskData.completedAt
 }
 
 fun TaskEntity.toDto() =
-    TaskDto(
+    TaskData(
         id = id.toIxId(),
         userId = user.toIxId(),
         itemId = item?.toIxId(),
@@ -136,7 +136,7 @@ fun TaskEntity.toDto() =
     )
 
 fun SubTaskEntity.toDto() =
-    SubTaskDto(
+    SubTaskData(
         name = name,
         completed = completed,
     )

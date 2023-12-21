@@ -1,9 +1,9 @@
 package app.index.data.daos.task
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderJobDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskReminderJobDBI
 import org.koin.core.annotation.Single
 
@@ -13,8 +13,8 @@ class TaskReminderJobDao(
 ) {
     suspend fun create(
         jobId: IxId<TaskReminderJobDto>,
-        taskId: IxId<TaskDto>,
-        userId: IxId<UserDto>,
+        taskId: IxId<TaskData>,
+        userId: IxId<UserData>,
     ) {
         taskReminderJobDBI.create(jobId, taskId, userId)
     }
@@ -23,7 +23,7 @@ class TaskReminderJobDao(
         return taskReminderJobDBI.get(id)
     }
 
-    suspend fun getFromTask(taskId: IxId<TaskDto>): TaskReminderJobDto? {
+    suspend fun getOfTask(taskId: IxId<TaskData>): TaskReminderJobDto? {
         return taskReminderJobDBI.getFromTask(taskId)
     }
 
@@ -31,7 +31,7 @@ class TaskReminderJobDao(
         taskReminderJobDBI.delete(jobId)
     }
 
-    suspend fun deleteAllOfTask(taskId: IxId<TaskDto>) {
+    suspend fun deleteAllOfTask(taskId: IxId<TaskData>) {
         taskReminderJobDBI.deleteAllOfTask(taskId)
     }
 }

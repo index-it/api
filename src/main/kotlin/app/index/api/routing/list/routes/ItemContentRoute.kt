@@ -1,9 +1,9 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.data.daos.list.ItemContentDao
-import app.index.data.models.lists.ItemContentDto
+import app.index.data.models.lists.ItemContentData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
@@ -34,16 +34,15 @@ fun Route.itemContentRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "item content"
-                body<ItemContentDto>()
+                body<ItemContentData>()
             }
             HttpStatusCode.NotFound to {
                 description = "item not found"
             }
         }
     }) {
-        val content =
-            itemContentDao.getOrCreate(userIdFromSession()!!, it.parent.itemId)
-                ?: return@get call.respond(HttpStatusCode.NotFound)
+        val content = itemContentDao.getOrCreate(userIdFromSessionOrThrow(), it.parent.itemId)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(content)
     }
@@ -61,7 +60,7 @@ fun Route.itemContentRoute() {
                 required = true
                 description = "the id of the item"
             }
-            body<ItemContentDto.ItemContentCreateOrUpdateRequest> {
+            body<ItemContentData.ItemContentCreateOrUpdateRequestData> {
                 required = true
                 description = "the new item content"
             }
@@ -69,19 +68,17 @@ fun Route.itemContentRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "item content"
-                body<ItemContentDto>()
+                body<ItemContentData>()
             }
             HttpStatusCode.NotFound to {
                 description = "item not found"
             }
         }
     }) {
-        val updatedItemContent = call.receive<ItemContentDto.ItemContentCreateOrUpdateRequest>()
-        val userId = userIdFromSession()!!
+        val updatedItemContent = call.receive<ItemContentData.ItemContentCreateOrUpdateRequestData>()
 
-        val newContent =
-            itemContentDao.update(userId, it.parent.itemId, updatedItemContent)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val newContent = itemContentDao.update(userIdFromSessionOrThrow(), it.parent.itemId, updatedItemContent)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newContent)
     }

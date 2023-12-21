@@ -3,9 +3,9 @@ package app.index.data.sources.cache.cm.lists.impl
 import app.index.core.clients.RedisClient
 import app.index.core.logic.ObjectMapper
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.ItemCM
 import app.index.data.sources.cache.core.DoubleHashedCM
 import org.koin.core.annotation.Single
@@ -21,64 +21,64 @@ class ItemCMImpl(
         objectMapper,
     ) {
     private fun keyValue(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) = "$userId:$listId"
 
     override fun getAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<ItemDto> = getAll(keyValue(userId, listId))
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData> = getAll(keyValue(userId, listId))
 
     override fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemDto? =
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
+    ): ItemData? =
         get(
             keyValue(userId, listId),
             itemId.toString(),
         )
 
     override fun cacheAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemsDto: List<ItemDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemsDto: List<ItemData>,
     ) {
         cacheAll(keyValue(userId, listId), itemsDto.associateBy { it.id.toString() })
     }
 
     override fun cache(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemDto: ItemDto,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemData: ItemData,
     ) {
-        cache(keyValue(userId, listId), itemDto.id.toString(), itemDto)
+        cache(keyValue(userId, listId), itemData.id.toString(), itemData)
     }
 
     override fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
     ) {
         delete(keyValue(userId, listId), itemId.toString())
     }
 
     override fun deleteMultiple(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemIds: List<IxId<ItemDto>>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemIds: List<IxId<ItemData>>,
     ) {
         deleteMultiple(keyValue(userId, listId), *itemIds.map { it.toString() }.toTypedArray())
     }
 
-    override fun deleteAllOfUser(userId: IxId<UserDto>) {
+    override fun deleteAllOfUser(userId: IxId<UserData>) {
         deleteAll("${userId}_*")
     }
 
     override fun deleteAllOfList(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) {
         deleteAll(keyValue(userId, listId))
     }

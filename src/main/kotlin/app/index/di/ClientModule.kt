@@ -14,7 +14,7 @@ import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
 @Module(includes = [LogicModule::class])
-@ComponentScan("app.index_it.core.clients")
+@ComponentScan("app.index.core.clients")
 class ClientModule {
     @Factory
     fun httpClient(): HttpClient =

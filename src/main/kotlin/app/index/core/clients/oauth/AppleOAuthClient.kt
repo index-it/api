@@ -1,8 +1,8 @@
 package app.index.core.clients.oauth
 
 import app.index.config.OAuthConfig
-import app.index.data.models.oauth.apple.AppleIdTokenDto
-import app.index.data.models.oauth.apple.AppleOAuthTokenResponseDto
+import app.index.data.models.oauth.apple.AppleIdTokenData
+import app.index.data.models.oauth.apple.AppleOAuthTokenResponseData
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -17,7 +17,7 @@ private val log = KotlinLogging.logger { }
 class AppleOAuthClient(
     private val httpClient: HttpClient,
 ) : IClosableComponent {
-    suspend fun exchangeCodeAndGetUserInfo(code: String): AppleIdTokenDto? {
+    suspend fun exchangeCodeAndGetUserInfo(code: String): AppleIdTokenData? {
         return try {
             val response =
                 httpClient.submitForm(
@@ -33,7 +33,7 @@ class AppleOAuthClient(
                 )
 
             if (response.status.isSuccess()) {
-                response.body<AppleOAuthTokenResponseDto>().let {
+                response.body<AppleOAuthTokenResponseData>().let {
                     log.debug { "Exchanged code for id token with Apple OAuth\nData: $it" }
                     it.idToken
                 }

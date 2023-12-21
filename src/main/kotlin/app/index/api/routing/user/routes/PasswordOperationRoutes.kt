@@ -5,6 +5,7 @@ import app.index.api.routing.user.PasswordForgottenRoute
 import app.index.api.routing.user.ResetPasswordRoute
 import app.index.core.clients.BrevoClient
 import app.index.core.logic.PasswordEncoder
+import app.index.core.logic.usecases.PasswordResetUseCase
 import app.index.data.daos.auth.PasswordResetDao
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
@@ -57,11 +58,11 @@ fun Route.passwordOperationRoutes() {
             userDao.getFromEmail(request.email)
                 ?: return@get call.respond(HttpStatusCode.NotFound)
 
-        if (passwordResetDao.isRateLimited(user.id)) {
+        if (passwordResetDao.isUserRateLimited(user.id)) {
             return@get call.respond(HttpStatusCode.TooManyRequests)
         }
 
-        val sentEmail = passwordResetDao.createAndSend(user)
+        val sentEmail = PasswordResetUseCase.createAndSend(user)
 
         if (sentEmail) {
             call.respond(HttpStatusCode.OK)
@@ -116,7 +117,7 @@ fun Route.passwordOperationRoutes() {
         // WebsocketConnectionsManager.closeAllSessionsOfUser(passwordResetDto.userId)
 
         // Invalidate all other user active sessions
-        userSessionDao.deleteAllSessionsOfUser(passwordResetDto.userId)
+        userSessionDao.deleteAllOfUser(passwordResetDto.userId)
 
         // Send notification email
         brevoClient.sendPasswordResetSuccessEmail(user.email)

@@ -3,9 +3,9 @@ package app.index.data.daos.auth
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.auth.UserAuthSessionDto
+import app.index.data.models.auth.UserAuthSessionData
 import app.index.data.models.auth.UserSessionCookie
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.users.UserSessionCM
 import org.koin.core.annotation.Single
 
@@ -14,19 +14,19 @@ class UserSessionDao(
     private val userSessionCM: UserSessionCM,
 ) {
     fun get(
-        userId: IxId<UserDto>,
-        sessionId: IxId<UserAuthSessionDto>,
+        userId: IxId<UserData>,
+        sessionId: IxId<UserAuthSessionData>,
     ) = userSessionCM.get(userId, sessionId)
 
     fun create(
-        userId: IxId<UserDto>,
+        userId: IxId<UserData>,
         device: String?,
         ip: String,
     ): UserSessionCookie {
         val userSessionCookie = UserSessionCookie(newIxId(), userId)
 
-        save(
-            UserAuthSessionDto(
+        upsert(
+            UserAuthSessionData(
                 id = userSessionCookie.sessionId,
                 userId = userId,
                 iat = DatetimeUtils.currentMillis(),
@@ -38,12 +38,12 @@ class UserSessionDao(
         return userSessionCookie
     }
 
-    private fun save(userAuthSessionDto: UserAuthSessionDto) = userSessionCM.cache(userAuthSessionDto)
+    private fun upsert(userAuthSessionData: UserAuthSessionData) = userSessionCM.cache(userAuthSessionData)
 
     fun delete(
-        userId: IxId<UserDto>,
-        sessionId: IxId<UserAuthSessionDto>,
+        userId: IxId<UserData>,
+        sessionId: IxId<UserAuthSessionData>,
     ) = userSessionCM.delete(userId, sessionId)
 
-    fun deleteAllSessionsOfUser(userId: IxId<UserDto>) = userSessionCM.deleteAll(userId)
+    fun deleteAllOfUser(userId: IxId<UserData>) = userSessionCM.deleteAll(userId)
 }

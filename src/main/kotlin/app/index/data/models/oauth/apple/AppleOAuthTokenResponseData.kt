@@ -1,16 +1,17 @@
-package app.index.data.models.oauth.google
+package app.index.data.models.oauth.apple
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// Docs: https://developers.google.com/identity/protocols/oauth2/web-server#httprest
+// Docs: https://developer.apple.com/documentation/sign_in_with_apple/tokenresponse
 @Serializable
-data class GoogleOAuthTokenResponseDto(
+data class AppleOAuthTokenResponseData(
     @SerialName("access_token")
     val accessToken: String,
     @SerialName("refresh_token")
     val refreshToken: String?,
     @SerialName("expires_in")
     val expiresInSeconds: Long,
-    val scope: String,
+    @SerialName("id_token")
+    val idToken: AppleIdTokenData,
 )

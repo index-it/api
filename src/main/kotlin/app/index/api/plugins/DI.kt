@@ -5,6 +5,7 @@ import app.index.di.ClientModule
 import app.index.di.DataModule
 import app.index.di.IClosableComponent
 import app.index.di.LogicModule
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
 import org.koin.core.logger.Level
 import org.koin.ksp.generated.module
@@ -15,6 +16,11 @@ import org.koin.ktor.plugin.KoinApplicationStopPreparing
 import org.koin.ktor.plugin.KoinApplicationStopped
 import org.koin.logger.slf4jLogger
 
+private val logger = KotlinLogging.logger {  }
+
+/**
+ * Configures dependency injection and graceful shutdown
+ */
 fun Application.configureDI() {
     install(Koin) {
         slf4jLogger(Level.valueOf(ApplicationConfig.logLevel.levelStr))
@@ -25,11 +31,11 @@ fun Application.configureDI() {
     }
 
     environment.monitor.subscribe(KoinApplicationStarted) {
-        log.info("Koin application started")
+        logger.info { "Koin application started" }
     }
 
     environment.monitor.subscribe(KoinApplicationStopPreparing) {
-        log.info("Shutdown started")
+        logger.info { "Shutdown started" }
 
         val closableComponents by lazy {
             getKoin().getAll<IClosableComponent>()
@@ -41,6 +47,6 @@ fun Application.configureDI() {
     }
 
     environment.monitor.subscribe(KoinApplicationStopped) {
-        log.info("Shutdown completed gracefully")
+        logger.info { "Shutdown completed gracefully" }
     }
 }

@@ -1,11 +1,9 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitRabbitMqWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.data.daos.list.ListDao
-import app.index.data.models.lists.ListDto
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -32,16 +30,15 @@ fun Route.listRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the list"
-                body<ListDto>()
+                body<ListData>()
             }
             HttpStatusCode.NotFound to {
                 description = "list not found"
             }
         }
     }) {
-        val list =
-            listDao.get(userIdFromSession()!!, it.listId)
-                ?: return@get call.respond(HttpStatusCode.NotFound)
+        val list = listDao.get(userIdFromSessionOrThrow(), it.listId)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)
     }
@@ -55,16 +52,16 @@ fun Route.listRoute() {
                 required = true
                 description = "the id of the list"
             }
-            body<ListDto.ListUpdateRequestDto> {
+            body<ListData.ListUpdateRequestData> {
                 description = "the new values for the list"
                 required = true
-                example("sample-update", ListDto.ListUpdateRequestDto("locations", "📍", "#343322"))
+                example("sample-update", ListData.ListUpdateRequestData("locations", "📍", "#343322"))
             }
         }
         response {
             HttpStatusCode.OK to {
                 description = "list updated"
-                body<ListDto> {
+                body<ListData> {
                     description = "the updated list"
                 }
             }
@@ -73,16 +70,12 @@ fun Route.listRoute() {
             }
         }
     }) {
-        val updatedList = call.receive<ListDto.ListUpdateRequestDto>()
-        val userId = userIdFromSession()!!
+        val updatedList = call.receive<ListData.ListUpdateRequestData>()
 
-        val newList =
-            listDao.update(userId, it.listId, updatedList)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val newList = listDao.update(userIdFromSessionOrThrow(), it.listId, updatedList)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newList)
-
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_UPDATED, it.listId)
     }
 
     delete<ListsRoute.ListRoute>({
@@ -102,11 +95,8 @@ fun Route.listRoute() {
             }
         }
     }) {
-        listDao.delete(userIdFromSession()!!, it.listId)
+        listDao.delete(userIdFromSessionOrThrow(), it.listId)
 
         call.respond(HttpStatusCode.OK)
-
-        // TODO: Decide whether to wrap delete operations in classes (global class maybe? DeleteOperationEvent(id: String) that can be extended too)
-        emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.LIST_DELETED, it.listId)
     }
 }

@@ -2,10 +2,10 @@ package app.index.api.routing.suggestion.routes
 
 import app.index.api.routing.suggestion.SuggestionRoutes
 import app.index.data.daos.suggestions.SuggestionsDao
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
+import app.index.data.models.tasks.TaskData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -23,14 +23,14 @@ fun Route.templatesRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the list template"
-                body<ListDto.ListTemplateResponseDto>()
+                body<ListData.ListTemplateResponseData>()
             }
         }
     }) {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getListNames())
         val color = suggestionsDao.getRandomColor()
 
-        call.respond(ListDto.ListTemplateResponseDto(name, color))
+        call.respond(ListData.ListTemplateResponseData(name, color))
     }
 
     get<SuggestionRoutes.TemplateRoute.CategoryRoute>({
@@ -40,14 +40,14 @@ fun Route.templatesRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the category template"
-                body<CategoryDto.CategoryTemplateResponseDto>()
+                body<CategoryData.CategoryTemplateResponseData>()
             }
         }
     }) {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getCategoryNames())
         val color = suggestionsDao.getRandomColor()
 
-        call.respond(CategoryDto.CategoryTemplateResponseDto(name, color))
+        call.respond(CategoryData.CategoryTemplateResponseData(name, color))
     }
 
     get<SuggestionRoutes.TemplateRoute.ItemRoute>({
@@ -57,13 +57,13 @@ fun Route.templatesRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the item template"
-                body<ItemDto.ItemTemplateResponseDto>()
+                body<ItemData.ItemTemplateResponseData>()
             }
         }
     }) {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getItemNames())
 
-        call.respond(ItemDto.ItemTemplateResponseDto(name))
+        call.respond(ItemData.ItemTemplateResponseData(name))
     }
 
     get<SuggestionRoutes.TemplateRoute.TaskRoute>({
@@ -73,12 +73,12 @@ fun Route.templatesRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the task template"
-                body<TaskDto.TaskTemplateResponseDto>()
+                body<TaskData.TaskTemplateResponseData>()
             }
         }
     }) {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getTaskNames())
 
-        call.respond(TaskDto.TaskTemplateResponseDto(name))
+        call.respond(TaskData.TaskTemplateResponseData(name))
     }
 }

@@ -4,11 +4,12 @@ import app.index.api.routing.auth.RegisterRoute
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.PasswordEncoder
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.usecases.EmailVerificationUseCase
 import app.index.core.logic.usecases.UserAuthUseCase
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.RegistrationCredentials
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -65,19 +66,18 @@ fun Route.registerRoute() {
         }
 
         val hashedPassword = passwordEncoder.encode(signupData.password)
-        val user =
-            UserDto(
-                id = newIxId(),
-                email = signupData.email,
-                passwordHash = hashedPassword,
-                emailVerified = false,
-                creationTimestamp = DatetimeUtils.currentMillis(),
-                creationSource = UserDto.CreationSource.NONE,
-            )
+        val user = UserData(
+            id = newIxId(),
+            email = signupData.email,
+            passwordHash = hashedPassword,
+            emailVerified = false,
+            creationTimestamp = DatetimeUtils.currentMillis(),
+            creationSource = UserData.CreationSource.NONE,
+        )
 
         userDao.create(user)
 
-        val emailSent = emailVerificationDao.createAndSend(user)
+        val emailSent = EmailVerificationUseCase.createAndSend(user)
 
         if (emailSent) {
             // User will need to verify its email

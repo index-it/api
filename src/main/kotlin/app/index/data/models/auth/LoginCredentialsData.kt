@@ -3,7 +3,7 @@ package app.index.data.models.auth
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginCredentials(
+data class LoginCredentialsData(
     val email: String,
     val password: String,
 )

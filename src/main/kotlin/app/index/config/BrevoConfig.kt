@@ -8,6 +8,15 @@ object BrevoConfig {
     @ConfigurationProperty("api.key")
     lateinit var apiKey: String
 
+    @ConfigurationProperty("template.email.verification")
+    var emailVerificationTemplateId: Long = 2
+
+    @ConfigurationProperty("template.password.reset")
+    var passwordResetTemplateId: Long = 1
+
+    @ConfigurationProperty("template.password.reset.success")
+    var passwordResetSuccessTemplateId: Long = 3
+
     @ConfigurationProperty("email.verification.success.url")
     lateinit var emailVerificationSuccessUrl: String
 

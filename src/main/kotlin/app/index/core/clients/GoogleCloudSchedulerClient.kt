@@ -11,7 +11,8 @@ import org.koin.core.annotation.Single
 /**
  * Client to interact with Google Cloud Scheduler
  *
- * @see [createTaskReminderJob]
+ * @see createTaskReminderJob
+ * @see createFCMRegistrationTokenExpirationJobIfMissing
  */
 @Single(createdAtStart = true)
 class GoogleCloudSchedulerClient {
@@ -22,11 +23,15 @@ class GoogleCloudSchedulerClient {
                 .build(),
         )
 
+    init {
+        createFCMRegistrationTokenExpirationJobIfMissing()
+    }
+
     /**
      * Creates the job for sending a webhook once a day
      * to check expiration of Firebase Cloud Messaging registration tokens
      */
-    fun createFCMRegistrationTokenExpirationJobIfMissing() {
+    private fun createFCMRegistrationTokenExpirationJobIfMissing() {
         val jobExists =
             try {
                 cloudSchedulerClient.getJob(JobConfig.fcmRegistrationTokenExpirationJobId)
@@ -35,18 +40,16 @@ class GoogleCloudSchedulerClient {
             }.let { it != null }
 
         if (!jobExists) {
-            val httpTarget =
-                HttpTarget.newBuilder()
-                    .setHttpMethod(HttpMethod.GET)
-                    .setUri(JobConfig.fcmRegistrationTokenExpirationWebhookUrl)
+            val httpTarget = HttpTarget.newBuilder()
+                .setHttpMethod(HttpMethod.GET)
+                .setUri(JobConfig.fcmRegistrationTokenExpirationWebhookUrl)
 
             val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
-            val job =
-                Job.newBuilder()
-                    .setName(JobConfig.fcmRegistrationTokenExpirationJobId)
-                    .setHttpTarget(httpTarget)
-                    .setSchedule("0 0 * * *")
-                    .build()
+            val job = Job.newBuilder()
+                .setName(JobConfig.fcmRegistrationTokenExpirationJobId)
+                .setHttpTarget(httpTarget)
+                .setSchedule("0 0 * * *")
+                .build()
 
             cloudSchedulerClient.createJob(
                 CreateJobRequest.newBuilder()
@@ -58,33 +61,31 @@ class GoogleCloudSchedulerClient {
     }
 
     /**
-     * Creates a job for the given [taskReminderJob]
+     * Creates a job to schedule a task reminder webhook
      *
      * The scheduled job will run at [reminderTimestamp] - 1000 milliseconds (so one second before)
      *
-     * @param jobId
+     * @param id
      * @param reminderTimestamp
      *
      * @throws Exception failed to create job
      */
     fun createTaskReminderJob(
-        jobId: IxId<TaskReminderJobDto>,
+        id: IxId<TaskReminderJobDto>,
         reminderTimestamp: Long,
     ) {
-        val webhookUrl = "${JobConfig.taskReminderWebhookUrl}/$jobId"
-        val httpTarget =
-            HttpTarget.newBuilder()
-                .setHttpMethod(HttpMethod.GET)
-                .setUri(webhookUrl)
+        val webhookUrl = "${JobConfig.taskReminderWebhookUrl}/$id"
+        val httpTarget = HttpTarget.newBuilder()
+            .setHttpMethod(HttpMethod.GET)
+            .setUri(webhookUrl)
 
         val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
         val seconds = (reminderTimestamp / 1000) - 1
-        val job =
-            Job.newBuilder()
-                .setName(jobId.toString())
-                .setHttpTarget(httpTarget)
-                .setScheduleTime(Timestamp.newBuilder().setSeconds(seconds).build())
-                .build()
+        val job = Job.newBuilder()
+            .setName(id.toString())
+            .setHttpTarget(httpTarget)
+            .setScheduleTime(Timestamp.newBuilder().setSeconds(seconds).build())
+            .build()
 
         cloudSchedulerClient.createJob(
             CreateJobRequest.newBuilder()

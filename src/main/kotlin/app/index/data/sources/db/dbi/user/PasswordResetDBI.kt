@@ -1,16 +1,16 @@
 package app.index.data.sources.db.dbi.user
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.user.PasswordResetDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.PasswordResetData
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.DBI
 
 interface PasswordResetDBI : DBI {
-    suspend fun count(id: IxId<UserDto>): Long
+    suspend fun count(id: IxId<UserData>): Long
 
-    suspend fun create(passwordResetDto: PasswordResetDto)
+    suspend fun create(passwordResetData: PasswordResetData)
 
-    suspend fun get(token: String): PasswordResetDto?
+    suspend fun get(token: String): PasswordResetData?
 
-    suspend fun deleteAll(id: IxId<UserDto>)
+    suspend fun deleteAll(id: IxId<UserData>)
 }

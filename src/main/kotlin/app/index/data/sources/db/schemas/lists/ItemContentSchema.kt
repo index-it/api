@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.lists
 
-import app.index.data.models.lists.ItemContentDto
+import app.index.data.models.lists.ItemContentData
 import app.index.data.sources.db.schemas.lists.ItemContentTable.content
 import app.index.data.sources.db.schemas.lists.ItemContentTable.id
 import app.index.data.sources.db.schemas.lists.ItemContentTable.item
@@ -55,14 +55,14 @@ class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val itemEntity by ItemEntity referencedOn ItemContentTable.item
 }
 
-fun ItemContentEntity.fromDto(itemContentDto: ItemContentDto) {
-    user = itemContentDto.userId.toEntityId(UsersTable)
-    item = itemContentDto.itemId.toEntityId(ItemTable)
-    content = itemContentDto.content
+fun ItemContentEntity.fromDto(itemContentData: ItemContentData) {
+    user = itemContentData.userId.toEntityId(UsersTable)
+    item = itemContentData.itemId.toEntityId(ItemTable)
+    content = itemContentData.content
 }
 
 fun ItemContentEntity.toDto() =
-    ItemContentDto(
+    ItemContentData(
         id = id.toIxId(),
         userId = user.toIxId(),
         itemId = item.toIxId(),

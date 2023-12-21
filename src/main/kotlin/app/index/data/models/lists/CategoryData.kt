@@ -3,7 +3,7 @@ package app.index.data.models.lists
 import app.index.core.logic.RegexPatterns
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.Validatable
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -16,49 +16,49 @@ import kotlinx.serialization.Serializable
  * 'name' is the category ID
  */
 @Serializable
-data class CategoryDto(
-    @Contextual val id: IxId<CategoryDto>,
-    @Contextual val userId: IxId<UserDto>,
-    @Contextual val listId: IxId<ListDto>,
+data class CategoryData(
+    @Contextual val id: IxId<CategoryData>,
+    @Contextual val userId: IxId<UserData>,
+    @Contextual val listId: IxId<ListData>,
     var name: String,
     var color: String, // Represented as #010101 hex color
 ) {
     @Serializable
-    data class CategoryCreateRequestDto(
+    data class CategoryCreateRequestData(
         val name: String,
         val color: String,
-    ) : Validatable<CategoryCreateRequestDto> {
+    ) : Validatable<CategoryCreateRequestData> {
         override fun validate() =
             Validation {
-                CategoryCreateRequestDto::name {
+                CategoryCreateRequestData::name {
                     minLength(1)
                     maxLength(30)
                 }
-                CategoryCreateRequestDto::color {
+                CategoryCreateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
                 }
             }.invoke(this)
     }
 
     @Serializable
-    data class CategoryUpdateRequestDto(
+    data class CategoryUpdateRequestData(
         val name: String,
         val color: String,
-    ) : Validatable<CategoryUpdateRequestDto> {
+    ) : Validatable<CategoryUpdateRequestData> {
         override fun validate() =
             Validation {
-                CategoryUpdateRequestDto::name {
+                CategoryUpdateRequestData::name {
                     minLength(1)
                     maxLength(30)
                 }
-                CategoryUpdateRequestDto::color {
+                CategoryUpdateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
                 }
             }.invoke(this)
     }
 
     @Serializable
-    data class CategoryTemplateResponseDto(
+    data class CategoryTemplateResponseData(
         val name: String,
         val color: String,
     )

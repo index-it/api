@@ -3,7 +3,7 @@ package app.index.data.daos.task
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.TaskData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.junit5.JUnit5Asserter.fail
@@ -17,7 +17,7 @@ class TaskDaoTest {
 
         // First occurrence
         val task =
-            TaskDto(
+            TaskData(
                 id = newIxId(),
                 userId = newIxId(),
                 itemId = null,
@@ -38,7 +38,7 @@ class TaskDaoTest {
         expectedNewDueDate += DatetimeUtils.ONE_DAY_MILLIS
 
         val newOccurrence =
-            TaskDto(
+            TaskData(
                 id = newIxId(),
                 userId = task.userId,
                 itemId = task.itemId,

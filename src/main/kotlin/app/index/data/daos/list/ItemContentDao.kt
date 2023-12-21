@@ -2,9 +2,9 @@ package app.index.data.daos.list
 
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.lists.ItemContentDto
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ItemContentData
+import app.index.data.models.lists.ItemData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.ItemContentCM
 import app.index.data.sources.db.dbi.list.ItemContentDBI
 import org.koin.core.annotation.Single
@@ -16,31 +16,30 @@ class ItemContentDao(
     private val itemContentCM: ItemContentCM,
 ) {
     suspend fun create(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemContentDto? {
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): ItemContentData? {
         if (!itemDao.exists(userId, itemId)) {
             return null
         }
 
-        val itemContentDto =
-            ItemContentDto(
-                id = newIxId(),
-                userId = userId,
-                itemId = itemId,
-                content = "",
-            )
+        val itemContentData = ItemContentData(
+            id = newIxId(),
+            userId = userId,
+            itemId = itemId,
+            content = "",
+        )
 
-        itemContentDBI.create(itemContentDto)
-        itemContentCM.cache(userId, itemContentDto)
+        itemContentDBI.create(itemContentData)
+        itemContentCM.cache(userId, itemContentData)
 
-        return itemContentDto
+        return itemContentData
     }
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemContentDto? {
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): ItemContentData? {
         var content = itemContentCM.get(userId, itemId)
 
         if (content == null) {
@@ -53,16 +52,16 @@ class ItemContentDao(
     }
 
     suspend fun getOrCreate(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
     ) = get(userId, itemId) ?: create(userId, itemId)
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-        itemContentCreateOrUpdateRequest: ItemContentDto.ItemContentCreateOrUpdateRequest,
-    ): ItemContentDto? {
-        val updated = itemContentDBI.update(userId, itemId, itemContentCreateOrUpdateRequest)
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+        itemContentCreateOrUpdateRequestData: ItemContentData.ItemContentCreateOrUpdateRequestData,
+    ): ItemContentData? {
+        val updated = itemContentDBI.update(userId, itemId, itemContentCreateOrUpdateRequestData)
 
         if (updated) {
             itemContentCM.delete(userId, itemId)
@@ -72,8 +71,8 @@ class ItemContentDao(
     }
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
     ) {
         itemContentCM.delete(userId, itemId)
         itemContentDBI.delete(userId, itemId)

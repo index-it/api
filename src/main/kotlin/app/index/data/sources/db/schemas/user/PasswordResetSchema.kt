@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.user
 
-import app.index.data.models.user.PasswordResetDto
+import app.index.data.models.user.PasswordResetData
 import app.index.data.sources.db.schemas.user.PasswordResetTable.createdAt
 import app.index.data.sources.db.schemas.user.PasswordResetTable.expiresAt
 import app.index.data.sources.db.schemas.user.PasswordResetTable.id
@@ -54,15 +54,15 @@ class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
     val userEntity by UserEntity referencedOn PasswordResetTable.user
 }
 
-fun PasswordResetEntity.fromDto(passwordResetDto: PasswordResetDto) {
-    token = passwordResetDto.token
-    user = passwordResetDto.userId.toEntityId(UsersTable)
-    createdAt = passwordResetDto.createdAt
-    expiresAt = passwordResetDto.expireAt
+fun PasswordResetEntity.fromDto(passwordResetData: PasswordResetData) {
+    token = passwordResetData.token
+    user = passwordResetData.userId.toEntityId(UsersTable)
+    createdAt = passwordResetData.createdAt
+    expiresAt = passwordResetData.expireAt
 }
 
 fun PasswordResetEntity.toDto() =
-    PasswordResetDto(
+    PasswordResetData(
         token = token,
         userId = user.toIxId(),
         createdAt = createdAt,

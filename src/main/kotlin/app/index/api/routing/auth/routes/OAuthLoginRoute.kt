@@ -7,7 +7,7 @@ import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.newIxId
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -56,9 +56,8 @@ fun Route.oauthLoginRoutes() {
             }
         }
     }) {
-        val userInfo =
-            googleOAuthClient.getUserInfoFromIdTokenIfValid(it.tokenId)
-                ?: throw AuthenticationException()
+        val userInfo = googleOAuthClient.getUserInfoFromIdTokenIfValid(it.tokenId)
+            ?: throw AuthenticationException()
 
         if (!userInfo.verifiedEmail) {
             return@get call.respond(HttpStatusCode.MethodNotAllowed)
@@ -69,15 +68,14 @@ fun Route.oauthLoginRoutes() {
 
         if (userG == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
-            userG =
-                UserDto(
-                    id = newIxId(),
-                    email = userInfo.email,
-                    passwordHash = null,
-                    emailVerified = true,
-                    creationTimestamp = DatetimeUtils.currentMillis(),
-                    creationSource = UserDto.CreationSource.GOOGLE,
-                )
+            userG = UserData(
+                id = newIxId(),
+                email = userInfo.email,
+                passwordHash = null,
+                emailVerified = true,
+                creationTimestamp = DatetimeUtils.currentMillis(),
+                creationSource = UserData.CreationSource.GOOGLE,
+            )
 
             userDao.create(userG)
         } else if (!userG.emailVerified) {
@@ -85,7 +83,11 @@ fun Route.oauthLoginRoutes() {
         }
 
         // Create session
-        val sessionId = userSessionDao.create(userG.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = userSessionDao.create(
+            userId = userG.id,
+            device = call.request.userAgent(),
+            ip = call.request.origin.remoteAddress
+        )
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)

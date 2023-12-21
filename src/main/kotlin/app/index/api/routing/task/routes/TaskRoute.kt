@@ -8,8 +8,8 @@ import app.index.core.logic.usecases.TaskUseCase
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
-import app.index.data.models.tasks.SubTaskDto
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.SubTaskData
+import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderJobDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -40,7 +40,7 @@ fun Route.taskRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the task"
-                body<TaskDto>()
+                body<TaskData>()
             }
             HttpStatusCode.NotFound to {
                 description = "task not found"
@@ -63,27 +63,27 @@ fun Route.taskRoute() {
                 required = true
                 description = "the id of the task"
             }
-            body<TaskDto.TaskUpdateRequestDto> {
+            body<TaskData.TaskUpdateRequestData> {
                 description = "new task data"
                 required = true
                 example(
                     name = "sample-task-update",
                     value =
-                    TaskDto.TaskUpdateRequestDto(
+                    TaskData.TaskUpdateRequestData(
                         name = "ski equipment",
                         description = "find ski equipment for winter",
                         dueDate = 1703500710000,
                         subTasks =
                         mutableListOf(
-                            SubTaskDto(
+                            SubTaskData(
                                 "skis",
                                 true,
                             ),
-                            SubTaskDto(
+                            SubTaskData(
                                 "helmet",
                                 false,
                             ),
-                            SubTaskDto(
+                            SubTaskData(
                                 "goggles",
                                 false,
                             ),
@@ -95,7 +95,7 @@ fun Route.taskRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the updated task"
-                body<TaskDto>()
+                body<TaskData>()
             }
             HttpStatusCode.NotFound to {
                 description = "task or item to connect not found"
@@ -105,7 +105,7 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        val updateData = call.receive<TaskDto.TaskUpdateRequestDto>()
+        val updateData = call.receive<TaskData.TaskUpdateRequestData>()
         val userId = userIdFromSession()!!
         val taskId = it.taskId
         val newItemIdToConnect = updateData.itemId
@@ -148,7 +148,7 @@ fun Route.taskRoute() {
         val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(task.dueDate, task.onDayReminder)
 
         if (onDayReminderTimestamp != null) {
-            var jobId = taskReminderJobDao.getFromTask(taskId)?.id
+            var jobId = taskReminderJobDao.getOfTask(taskId)?.id
 
             if (jobId != null) {
                 googleCloudSchedulerClient.deleteTaskReminderJob(jobId)

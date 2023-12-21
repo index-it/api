@@ -11,8 +11,9 @@ class RabbitMqClient : IClosableComponent {
     val connection: Connection
 
     init {
-        val factory = ConnectionFactory()
-        factory.setUri(RabbitMQConfig.connectionString)
+        val factory = ConnectionFactory().apply {
+            setUri(RabbitMQConfig.connectionString)
+        }
 
         connection = factory.newConnection()
     }

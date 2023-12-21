@@ -1,5 +1,3 @@
-@file:Suppress("detekt:all")
-
 package app.index.config.core
 
 import ch.qos.logback.classic.Level

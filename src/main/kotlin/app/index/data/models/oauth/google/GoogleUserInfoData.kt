@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GoogleUserInfoDto(
+data class GoogleUserInfoData(
     val email: String,
     @SerialName("verified_email")
     val verifiedEmail: Boolean,

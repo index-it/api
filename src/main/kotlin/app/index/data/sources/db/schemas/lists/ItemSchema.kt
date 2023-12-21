@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.lists
 
-import app.index.data.models.lists.ItemDto
+import app.index.data.models.lists.ItemData
 import app.index.data.sources.db.schemas.lists.ItemTable.category
 import app.index.data.sources.db.schemas.lists.ItemTable.completed
 import app.index.data.sources.db.schemas.lists.ItemTable.completedAt
@@ -99,20 +99,20 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
 
-fun ItemEntity.fromDto(itemDto: ItemDto) {
-    user = itemDto.userId.toEntityId(UsersTable)
-    list = itemDto.listId.toEntityId(ListTable)
-    category = itemDto.categoryId.toEntityId(CategoryTable)
-    task = itemDto.taskId?.toEntityId(TaskTable)
-    name = itemDto.name
-    completed = itemDto.completed
-    createdAt = itemDto.createdAt
-    editedAt = itemDto.editedAt
-    completedAt = itemDto.completedAt
+fun ItemEntity.fromDto(itemData: ItemData) {
+    user = itemData.userId.toEntityId(UsersTable)
+    list = itemData.listId.toEntityId(ListTable)
+    category = itemData.categoryId.toEntityId(CategoryTable)
+    task = itemData.taskId?.toEntityId(TaskTable)
+    name = itemData.name
+    completed = itemData.completed
+    createdAt = itemData.createdAt
+    editedAt = itemData.editedAt
+    completedAt = itemData.completedAt
 }
 
 fun ItemEntity.toDto() =
-    ItemDto(
+    ItemData(
         id = id.toIxId(),
         userId = user.toIxId(),
         listId = list.toIxId(),

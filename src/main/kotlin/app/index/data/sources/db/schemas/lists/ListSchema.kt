@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.lists
 
-import app.index.data.models.lists.ListDto
+import app.index.data.models.lists.ListData
 import app.index.data.sources.db.schemas.lists.ListTable.color
 import app.index.data.sources.db.schemas.lists.ListTable.createdAt
 import app.index.data.sources.db.schemas.lists.ListTable.editedAt
@@ -65,17 +65,17 @@ class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val userEntity by UserEntity referencedOn ListTable.user
 }
 
-fun ListEntity.fromDto(listDto: ListDto) {
-    user = listDto.userId.toEntityId(UsersTable)
-    name = listDto.name
-    emoji = listDto.icon.first()
-    color = listDto.color
-    createdAt = listDto.createdAt
-    editedAt = listDto.editedAt
+fun ListEntity.fromDto(listData: ListData) {
+    user = listData.userId.toEntityId(UsersTable)
+    name = listData.name
+    emoji = listData.icon.first()
+    color = listData.color
+    createdAt = listData.createdAt
+    editedAt = listData.editedAt
 }
 
 fun ListEntity.toDto() =
-    ListDto(
+    ListData(
         id = id.toIxId(),
         userId = user.toIxId(),
         name = name,

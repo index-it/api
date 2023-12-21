@@ -3,9 +3,9 @@ package app.index.data.sources.cache.cm.lists.impl
 import app.index.core.clients.RedisClient
 import app.index.core.logic.ObjectMapper
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.CategoryCM
 import app.index.data.sources.cache.core.DoubleHashedCM
 import org.koin.core.annotation.Single
@@ -21,64 +21,64 @@ class CategoryCMImpl(
         objectMapper,
     ) {
     private fun keyValue(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) = "$userId:$listId"
 
     override fun getAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<CategoryDto> = getAll(keyValue(userId, listId))
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<CategoryData> = getAll(keyValue(userId, listId))
 
     override fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
-    ): CategoryDto? =
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
+    ): CategoryData? =
         get(
             keyValue(userId, listId),
             categoryId.toString(),
         )
 
     override fun cacheAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoriesDto: List<CategoryDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoriesDto: List<CategoryData>,
     ) {
         cacheAll(keyValue(userId, listId), categoriesDto.associateBy { it.id.toString() })
     }
 
     override fun cache(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryDto: CategoryDto,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryData: CategoryData,
     ) {
-        cache(keyValue(userId, listId), categoryDto.id.toString(), categoryDto)
+        cache(keyValue(userId, listId), categoryData.id.toString(), categoryData)
     }
 
     override fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
     ) {
         delete(keyValue(userId, listId), categoryId.toString())
     }
 
     override fun deleteMultiple(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryIds: List<IxId<CategoryDto>>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryIds: List<IxId<CategoryData>>,
     ) {
         deleteMultiple(keyValue(userId, listId), *categoryIds.map { it.toString() }.toTypedArray())
     }
 
-    override fun deleteAllOfUser(userId: IxId<UserDto>) {
+    override fun deleteAllOfUser(userId: IxId<UserData>) {
         deleteAll("${userId}_*")
     }
 
     override fun deleteAllOfList(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) {
         deleteAll(keyValue(userId, listId))
     }

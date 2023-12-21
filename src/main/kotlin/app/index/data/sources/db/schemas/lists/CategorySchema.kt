@@ -1,6 +1,6 @@
 package app.index.data.sources.db.schemas.lists
 
-import app.index.data.models.lists.CategoryDto
+import app.index.data.models.lists.CategoryData
 import app.index.data.sources.db.schemas.lists.CategoryTable.color
 import app.index.data.sources.db.schemas.lists.CategoryTable.id
 import app.index.data.sources.db.schemas.lists.CategoryTable.list
@@ -59,15 +59,15 @@ class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var listEntity by ListEntity referencedOn CategoryTable.list
 }
 
-fun CategoryEntity.fromDto(categoryDto: CategoryDto) {
-    user = categoryDto.userId.toEntityId(UsersTable)
-    list = categoryDto.listId.toEntityId(ListTable)
-    name = categoryDto.name
-    color = categoryDto.color
+fun CategoryEntity.fromDto(categoryData: CategoryData) {
+    user = categoryData.userId.toEntityId(UsersTable)
+    list = categoryData.listId.toEntityId(ListTable)
+    name = categoryData.name
+    color = categoryData.color
 }
 
 fun CategoryEntity.toDto() =
-    CategoryDto(
+    CategoryData(
         id = id.toIxId(),
         userId = user.toIxId(),
         listId = list.toIxId(),

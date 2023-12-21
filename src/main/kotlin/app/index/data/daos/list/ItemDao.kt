@@ -3,11 +3,11 @@ package app.index.data.daos.list
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.lists.CategoryDto
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.lists.ListDto
-import app.index.data.models.tasks.TaskDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.ItemCM
 import app.index.data.sources.cache.cm.lists.ItemContentCM
 import app.index.data.sources.db.dbi.list.ItemDBI
@@ -20,17 +20,16 @@ class ItemDao(
     private val itemContentCM: ItemContentCM,
 ) {
     suspend fun exists(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
     ): Boolean {
         return itemDBI.exists(userId, itemId)
     }
 
     suspend fun getAll(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-    ): List<ItemDto> {
-        // TODO: Query db instead?
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData> {
         var items = itemCM.getAll(userId, listId)
 
         if (items.isEmpty()) {
@@ -44,22 +43,22 @@ class ItemDao(
     }
 
     suspend fun getAllUncompleted(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) = getAll(userId, listId)
         .filter { !it.completed }
 
     suspend fun getAllCompleted(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
     ) = getAll(userId, listId)
         .filter { it.completed }
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemDto? {
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
+    ): ItemData? {
         var item = itemCM.get(userId, listId, itemId)
 
         if (item == null) {
@@ -72,19 +71,18 @@ class ItemDao(
     }
 
     suspend fun get(
-        userId: IxId<UserDto>,
-        itemId: IxId<ItemDto>,
-    ): ItemDto? {
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): ItemData? {
         // Might use also cache with * query for the listId
         return itemDBI.get(userId, itemId)
     }
 
     suspend fun getAllOfCategory(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        categoryId: IxId<CategoryDto>,
-    ): List<ItemDto> {
-        // TODO: Query db instead?
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        categoryId: IxId<CategoryData>,
+    ): List<ItemData> {
         var items = itemCM.getAll(userId, listId).filter { it.categoryId == categoryId }
 
         if (items.isEmpty()) {
@@ -98,36 +96,35 @@ class ItemDao(
     }
 
     suspend fun create(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemCreateRequestDto: ItemDto.ItemCreateRequestDto,
-    ): ItemDto {
-        val itemDto =
-            ItemDto(
-                id = newIxId(),
-                userId = userId,
-                listId = listId,
-                categoryId = itemCreateRequestDto.categoryId,
-                taskId = null,
-                name = itemCreateRequestDto.name,
-                completed = false,
-                createdAt = DatetimeUtils.currentMillis(),
-                editedAt = null,
-                completedAt = null,
-            )
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemCreateRequestData: ItemData.ItemCreateRequestData,
+    ): ItemData {
+        val itemData = ItemData(
+            id = newIxId(),
+            userId = userId,
+            listId = listId,
+            categoryId = itemCreateRequestData.categoryId,
+            taskId = null,
+            name = itemCreateRequestData.name,
+            completed = false,
+            createdAt = DatetimeUtils.currentMillis(),
+            editedAt = null,
+            completedAt = null,
+        )
 
-        itemDBI.create(itemDto)
-        itemCM.cache(userId, listId, itemDto)
+        itemDBI.create(itemData)
+        itemCM.cache(userId, listId, itemData)
 
-        return itemDto
+        return itemData
     }
 
     suspend fun setCompletion(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
         completed: Boolean,
-    ): ItemDto? {
+    ): ItemData? {
         val updated = itemDBI.setCompletion(userId, itemId, completed)
 
         if (updated) {
@@ -138,11 +135,11 @@ class ItemDao(
     }
 
     suspend fun setTaskConnection(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
-        taskId: IxId<TaskDto>?,
-    ): ItemDto? {
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
+        taskId: IxId<TaskData>?,
+    ): ItemData? {
         val updated = itemDBI.setTaskConnection(userId, itemId, taskId)
 
         if (updated) {
@@ -153,12 +150,12 @@ class ItemDao(
     }
 
     suspend fun update(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
-        itemUpdateRequestDto: ItemDto.ItemUpdateRequestDto,
-    ): ItemDto? {
-        val updated = itemDBI.update(userId, itemId, itemUpdateRequestDto)
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
+        itemUpdateRequestData: ItemData.ItemUpdateRequestData,
+    ): ItemData? {
+        val updated = itemDBI.update(userId, itemId, itemUpdateRequestData)
 
         if (updated) {
             itemCM.delete(userId, listId, itemId)
@@ -168,9 +165,9 @@ class ItemDao(
     }
 
     suspend fun delete(
-        userId: IxId<UserDto>,
-        listId: IxId<ListDto>,
-        itemId: IxId<ItemDto>,
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemId: IxId<ItemData>,
     ) {
         itemDBI.delete(userId, itemId)
         itemCM.delete(userId, listId, itemId)

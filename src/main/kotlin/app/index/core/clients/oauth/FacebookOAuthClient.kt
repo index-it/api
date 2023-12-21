@@ -1,6 +1,6 @@
 package app.index.core.clients.oauth
 
-import app.index.data.models.oauth.facebook.FacebookUserInfoDto
+import app.index.data.models.oauth.facebook.FacebookUserInfoData
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -43,7 +43,7 @@ class FacebookOAuthClient(
     }
      */
 
-    suspend fun getUserInfo(token: String): FacebookUserInfoDto? {
+    suspend fun getUserInfo(token: String): FacebookUserInfoData? {
         return try {
             val response =
                 httpClient.get("https://graph.facebook.com/me") {
@@ -54,7 +54,7 @@ class FacebookOAuthClient(
                 }
 
             if (response.status.isSuccess()) {
-                response.body<FacebookUserInfoDto>().also {
+                response.body<FacebookUserInfoData>().also {
                     log.debug { "Fetched Facebook user info\nData: $it" }
                 }
             } else {

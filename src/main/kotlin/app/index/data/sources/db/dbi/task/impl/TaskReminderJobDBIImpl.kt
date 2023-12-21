@@ -1,9 +1,9 @@
 package app.index.data.sources.db.dbi.task.impl
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderJobDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskReminderJobDBI
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobEntity
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable
@@ -19,8 +19,8 @@ import org.koin.core.annotation.Single
 class TaskReminderJobDBIImpl : TaskReminderJobDBI {
     override suspend fun create(
         jobId: IxId<TaskReminderJobDto>,
-        taskId: IxId<TaskDto>,
-        userId: IxId<UserDto>,
+        taskId: IxId<TaskData>,
+        userId: IxId<UserData>,
     ) {
         dbQuery {
             TaskReminderJobEntity.new(jobId.id) {
@@ -39,7 +39,7 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 ?.toDto()
         }
 
-    override suspend fun getFromTask(taskId: IxId<TaskDto>): TaskReminderJobDto? =
+    override suspend fun getFromTask(taskId: IxId<TaskData>): TaskReminderJobDto? =
         dbQuery {
             TaskReminderJobEntity
                 .find { TaskReminderJobTable.task eq taskId.toEntityId(TaskTable) }
@@ -56,7 +56,7 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
         }
     }
 
-    override suspend fun deleteAllOfTask(taskId: IxId<TaskDto>) {
+    override suspend fun deleteAllOfTask(taskId: IxId<TaskData>) {
         dbQuery {
             TaskReminderJobTable.deleteWhere {
                 task eq taskId.toEntityId(TaskTable)

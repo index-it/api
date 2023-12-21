@@ -8,7 +8,7 @@ import app.index.core.logic.usecases.TaskUseCase
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
-import app.index.data.models.tasks.TaskDto
+import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderJobDto
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
@@ -41,7 +41,7 @@ fun Route.taskCompletionRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "the updated task"
-                body<TaskDto>()
+                body<TaskData>()
             }
             HttpStatusCode.NotFound to {
                 description = "task not found"

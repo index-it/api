@@ -4,7 +4,7 @@ import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.RegexPatterns
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.Validatable
-import app.index.data.models.user.UserDto
+import app.index.data.models.user.UserData
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
@@ -17,9 +17,9 @@ import kotlinx.serialization.Serializable
  * Represents a single list, which can contain categories to organize list items in it
  */
 @Serializable
-data class ListDto(
-    @Contextual val id: IxId<ListDto>,
-    @Contextual var userId: IxId<UserDto>,
+data class ListData(
+    @Contextual val id: IxId<ListData>,
+    @Contextual var userId: IxId<UserData>,
     var name: String,
     var icon: String, // Single emoji at the moment
     var color: String, // Represented as #RRGGBB hex color
@@ -29,44 +29,44 @@ data class ListDto(
     val editedAt: Long? = null,
 ) {
     @Serializable
-    data class ListCreateRequestDto(
+    data class ListCreateRequestData(
         var name: String,
         var icon: String,
         var color: String,
-    ) : Validatable<ListCreateRequestDto> {
+    ) : Validatable<ListCreateRequestData> {
         override fun validate() =
             Validation {
-                ListCreateRequestDto::name {
+                ListCreateRequestData::name {
                     minLength(1)
                     maxLength(50)
                 }
-                ListCreateRequestDto::color {
+                ListCreateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
                 }
             }.invoke(this)
     }
 
     @Serializable
-    data class ListUpdateRequestDto(
+    data class ListUpdateRequestData(
         var name: String,
         var icon: String,
         var color: String,
-    ) : Validatable<ListUpdateRequestDto> {
+    ) : Validatable<ListUpdateRequestData> {
         override fun validate() =
             Validation {
-                ListUpdateRequestDto::name {
+                ListUpdateRequestData::name {
                     minLength(1)
                     maxLength(50)
                 }
                 // TODO: Icon validation
-                ListUpdateRequestDto::color {
+                ListUpdateRequestData::color {
                     pattern(RegexPatterns.colorPattern)
                 }
             }.invoke(this)
     }
 
     @Serializable
-    data class ListTemplateResponseDto(
+    data class ListTemplateResponseData(
         val name: String,
         val color: String,
     )

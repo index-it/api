@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 // Docs: https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow#exchangecode
 @Serializable
-data class FacebookOAuthTokenResponseDto(
+data class FacebookOAuthTokenResponseData(
     @SerialName("access_token")
     val accessToken: String,
     @SerialName("expires_in")

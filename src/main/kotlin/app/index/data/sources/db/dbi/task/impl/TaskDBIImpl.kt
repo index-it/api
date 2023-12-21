@@ -2,9 +2,9 @@ package app.index.data.sources.db.dbi.task.impl
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ItemDto
-import app.index.data.models.tasks.TaskDto
-import app.index.data.models.user.UserDto
+import app.index.data.models.lists.ItemData
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskDBI
 import app.index.data.sources.db.schemas.lists.ItemTable
 import app.index.data.sources.db.schemas.tasks.*
@@ -17,32 +17,32 @@ import org.koin.core.annotation.Single
 @Single(createdAtStart = true)
 class TaskDBIImpl : TaskDBI {
     private fun userAndTaskFilter(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     ) = Op.build { (TaskTable.user eq userId.toEntityId(UsersTable)) and (TaskTable.id eq taskId.toEntityId(TaskTable)) }
 
     override suspend fun exists(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     ): Boolean {
         return get(userId, taskId) != null
     }
 
-    override suspend fun create(taskDto: TaskDto) {
+    override suspend fun create(taskData: TaskData) {
         dbQuery {
-            TaskEntity.new(taskDto.id.id) {
-                fromDto(taskDto)
+            TaskEntity.new(taskData.id.id) {
+                fromDto(taskData)
             }
 
-            SubTaskTable.batchInsert(taskDto.subTasks) {
-                this[SubTaskTable.task] = taskDto.id.toEntityId(TaskTable)
+            SubTaskTable.batchInsert(taskData.subTasks) {
+                this[SubTaskTable.task] = taskData.id.toEntityId(TaskTable)
                 this[SubTaskTable.name] = it.name
                 this[SubTaskTable.completed] = it.completed
             }
         }
     }
 
-    override suspend fun get(userId: IxId<UserDto>): List<TaskDto> =
+    override suspend fun get(userId: IxId<UserData>): List<TaskData> =
         dbQuery {
             TaskEntity
                 .find { TaskTable.user eq userId.toEntityId(UsersTable) }
@@ -50,9 +50,9 @@ class TaskDBIImpl : TaskDBI {
         }
 
     override suspend fun get(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-    ): TaskDto? =
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+    ): TaskData? =
         dbQuery {
             TaskEntity
                 .find { userAndTaskFilter(userId, taskId) }
@@ -62,8 +62,8 @@ class TaskDBIImpl : TaskDBI {
         }
 
     override suspend fun setCompletion(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
         completed: Boolean,
     ): Boolean =
         dbQuery {
@@ -74,9 +74,9 @@ class TaskDBIImpl : TaskDBI {
         }
 
     override suspend fun setItemConnection(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-        itemId: IxId<ItemDto>?,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+        itemId: IxId<ItemData>?,
     ): Boolean =
         dbQuery {
             TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
@@ -85,33 +85,33 @@ class TaskDBIImpl : TaskDBI {
         }
 
     override suspend fun update(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
-        taskUpdateRequestDto: TaskDto.TaskUpdateRequestDto,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
+        taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): Boolean =
         dbQuery {
             SubTaskTable.deleteWhere { SubTaskTable.task eq taskId.toEntityId(TaskTable) }
-            SubTaskTable.batchInsert(taskUpdateRequestDto.subTasks) {
+            SubTaskTable.batchInsert(taskUpdateRequestData.subTasks) {
                 this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
                 this[SubTaskTable.name] = it.name
                 this[SubTaskTable.completed] = it.completed
             }
 
             TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
-                it[name] = taskUpdateRequestDto.name
-                it[description] = taskUpdateRequestDto.description
-                it[dueDate] = taskUpdateRequestDto.dueDate
-                it[rrule] = taskUpdateRequestDto.rrule
-                it[onDayReminder] = taskUpdateRequestDto.onDayReminder
-                it[priority] = taskUpdateRequestDto.priority
+                it[name] = taskUpdateRequestData.name
+                it[description] = taskUpdateRequestData.description
+                it[dueDate] = taskUpdateRequestData.dueDate
+                it[rrule] = taskUpdateRequestData.rrule
+                it[onDayReminder] = taskUpdateRequestData.onDayReminder
+                it[priority] = taskUpdateRequestData.priority
                 it[editedAt] = DatetimeUtils.currentMillis()
-                it[item] = taskUpdateRequestDto.itemId?.toEntityId(ItemTable)
+                it[item] = taskUpdateRequestData.itemId?.toEntityId(ItemTable)
             } > 0
         }
 
     override suspend fun delete(
-        userId: IxId<UserDto>,
-        taskId: IxId<TaskDto>,
+        userId: IxId<UserData>,
+        taskId: IxId<TaskData>,
     ) {
         dbQuery {
             TaskTable.deleteWhere { userAndTaskFilter(userId, taskId) }
