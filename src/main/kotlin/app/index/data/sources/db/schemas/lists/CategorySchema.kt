@@ -46,6 +46,7 @@ object CategoryTable : UUIDTable() {
  * @property color
  *
  * @property listEntity
+ * @property userEntity
  */
 class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<CategoryEntity>(CategoryTable)
@@ -55,7 +56,9 @@ class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by CategoryTable.name
     var color by CategoryTable.color
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn CategoryTable.user
+    @Suppress("MemberVisibilityCanBePrivate")
     var listEntity by ListEntity referencedOn CategoryTable.list
 }
 

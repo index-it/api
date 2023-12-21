@@ -28,6 +28,13 @@ object FCMRegistrationTokenTable : IntIdTable() {
     val createdAt = long("created_at")
 }
 
+/**
+ * @property token
+ * @property user
+ * @property createdAt
+ *
+ * @property userEntity
+ */
 class FCMRegistrationTokenEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<FCMRegistrationTokenEntity>(FCMRegistrationTokenTable)
 
@@ -35,6 +42,7 @@ class FCMRegistrationTokenEntity(id: EntityID<Int>) : IntEntity(id) {
     var user by FCMRegistrationTokenTable.user
     var createdAt by FCMRegistrationTokenTable.createdAt
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn FCMRegistrationTokenTable.user
 }
 

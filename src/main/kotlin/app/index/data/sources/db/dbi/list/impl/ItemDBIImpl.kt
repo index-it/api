@@ -57,16 +57,6 @@ class ItemDBIImpl : ItemDBI {
             get(userId, itemId) != null
         }
 
-    override suspend fun getOfCategory(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ): List<ItemData> =
-        dbQuery {
-            ItemEntity
-                .find { userFilter(userId) and (ItemTable.category eq categoryId.toEntityId(CategoryTable)) }
-                .map { it.toData() }
-        }
-
     override suspend fun getOfList(
         userId: IxId<UserData>,
         listId: IxId<ListData>,

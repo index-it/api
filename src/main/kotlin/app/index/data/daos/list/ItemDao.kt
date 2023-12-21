@@ -78,23 +78,6 @@ class ItemDao(
         return itemDBI.get(userId, itemId)
     }
 
-    suspend fun getAllOfCategory(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-        categoryId: IxId<CategoryData>,
-    ): List<ItemData> {
-        var items = itemCM.getAll(userId, listId).filter { it.categoryId == categoryId }
-
-        if (items.isEmpty()) {
-            items = itemDBI.getOfCategory(userId, categoryId)
-            if (items.isNotEmpty()) {
-                itemCM.cacheAll(userId, listId, items)
-            }
-        }
-
-        return items
-    }
-
     suspend fun create(
         userId: IxId<UserData>,
         listId: IxId<ListData>,

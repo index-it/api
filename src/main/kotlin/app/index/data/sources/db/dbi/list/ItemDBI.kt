@@ -21,11 +21,6 @@ interface ItemDBI : DBI {
         itemId: IxId<ItemData>,
     ): ItemData?
 
-    suspend fun getOfCategory(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ): List<ItemData>
-
     suspend fun getOfList(
         userId: IxId<UserData>,
         listId: IxId<ListData>,

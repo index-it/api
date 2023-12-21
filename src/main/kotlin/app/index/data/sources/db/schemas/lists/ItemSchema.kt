@@ -76,6 +76,8 @@ object ItemTable : UUIDTable() {
  * @property createdAt
  * @property editedAt
  * @property completedAt
+ *
+ * @property userEntity
  * @property listEntity
  * @property categoryEntity
  * @property taskEntity
@@ -93,9 +95,13 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var editedAt by ItemTable.editedAt
     var completedAt by ItemTable.completedAt
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn ItemTable.user
+    @Suppress("MemberVisibilityCanBePrivate")
     val listEntity by ListEntity referencedOn ItemTable.list
+    @Suppress("MemberVisibilityCanBePrivate")
     val categoryEntity by CategoryEntity referencedOn ItemTable.category
+    @Suppress("MemberVisibilityCanBePrivate")
     val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
 

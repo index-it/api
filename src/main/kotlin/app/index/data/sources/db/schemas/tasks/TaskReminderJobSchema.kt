@@ -34,6 +34,12 @@ object TaskReminderJobTable : UUIDTable() {
         ).index()
 }
 
+/**
+ * @property task
+ * @property user
+ * @property taskEntity
+ * @property userEntity
+ */
 class TaskReminderJobEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<TaskReminderJobEntity>(TaskReminderJobTable)
 
@@ -41,6 +47,7 @@ class TaskReminderJobEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var user by TaskReminderJobTable.user
 
     val taskEntity by TaskEntity referencedOn TaskReminderJobTable.task
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn TaskReminderJobTable.user
 }
 

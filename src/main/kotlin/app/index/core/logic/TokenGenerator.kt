@@ -1,12 +1,9 @@
 package app.index.core.logic
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Factory
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.*
-
-private val log = KotlinLogging.logger { }
 
 @Factory
 class TokenGenerator {

@@ -78,7 +78,7 @@ class TaskDBIImpl : TaskDBI {
         taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): Boolean =
         dbQuery {
-            SubTaskTable.deleteWhere { SubTaskTable.task eq taskId.toEntityId(TaskTable) }
+            SubTaskTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
             SubTaskTable.batchInsert(taskUpdateRequestData.subTasks) {
                 this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
                 this[SubTaskTable.name] = it.name

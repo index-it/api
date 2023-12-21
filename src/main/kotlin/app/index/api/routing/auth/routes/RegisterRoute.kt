@@ -21,7 +21,6 @@ import org.koin.ktor.ext.inject
 fun Route.registerRoute() {
     val userDao by inject<UserDao>()
     val passwordEncoder by inject<PasswordEncoder>()
-    val emailVerificationDao by inject<EmailVerificationDao>()
 
     /**
      * When a user registers, he needs to set an email and password,

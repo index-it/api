@@ -42,6 +42,8 @@ object ItemContentTable : UUIDTable() {
  * @property id
  * @property item
  * @property content
+ *
+ * @property userEntity
  * @property itemEntity
  */
 class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -51,7 +53,9 @@ class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var item by ItemContentTable.item
     var content by ItemContentTable.content
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn ItemContentTable.user
+    @Suppress("MemberVisibilityCanBePrivate")
     val itemEntity by ItemEntity referencedOn ItemContentTable.item
 }
 

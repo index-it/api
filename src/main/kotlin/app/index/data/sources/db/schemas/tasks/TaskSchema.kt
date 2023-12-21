@@ -34,7 +34,7 @@ import java.util.*
  * @property description
  * @property dueDate
  * @property rrule
- * @property dueDateReminder
+ * @property onDayReminder
  * @property completed
  * @property priority
  * @property createdAt
@@ -98,7 +98,9 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var completedAt by TaskTable.completedAt
 
     val subTasks by SubTaskEntity referrersOn SubTaskTable.task
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn TaskTable.user
+    @Suppress("MemberVisibilityCanBePrivate")
     val itemEntity by ItemEntity optionalReferencedOn TaskTable.item
 }
 
