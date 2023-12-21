@@ -4,11 +4,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class TokenGeneratorTest {
+    private val tokenGenerator = TokenGenerator()
 
     @Test
     fun hashToken() {
-        val (token, hashed) = TokenGenerator.generate()
+        val (token, hashed) = tokenGenerator.generate()
 
-        assertEquals(hashed, TokenGenerator.hashToken(token))
+        assertEquals(hashed, tokenGenerator.hashToken(token))
     }
 }
