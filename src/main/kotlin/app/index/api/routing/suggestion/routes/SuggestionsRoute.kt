@@ -1,0 +1,127 @@
+package app.index.api.routing.suggestion.routes
+
+import app.index.api.routing.suggestion.SuggestionRoutes
+import app.index.core.logic.typedId.newIxIntId
+import app.index.data.daos.suggestions.SuggestionsDao
+import app.index.data.models.suggestions.ColorSuggestionsDto
+import app.index.data.models.suggestions.NameSuggestionsDto
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
+
+fun Route.suggestionsRoute() {
+    val suggestionDao by inject<SuggestionsDao>()
+
+    get<SuggestionRoutes.ColorsRoute>({
+        tags = listOf("suggestions")
+        operationId = "colors-suggestion"
+        summary = "gets color suggestions"
+        response {
+            HttpStatusCode.OK to {
+                description = "suggested colors"
+                body<ColorSuggestionsDto>()
+            }
+        }
+    }) {
+        val colors =
+            suggestionDao.getColors()
+                ?: ColorSuggestionsDto(
+                    id = newIxIntId(),
+                    description = "colors are missing",
+                    colors = listOf("#000000", "#FFFFFF"),
+                )
+
+        call.respond(colors)
+    }
+
+    get<SuggestionRoutes.ListNamesRoute>({
+        tags = listOf("suggestions")
+        operationId = "list-names-suggestion"
+        summary = "gets list name suggestions"
+        response {
+            HttpStatusCode.OK to {
+                description = "suggested list names"
+                body<NameSuggestionsDto>()
+            }
+        }
+    }) {
+        val names =
+            suggestionDao.getListNames()
+                ?: NameSuggestionsDto(
+                    id = newIxIntId(),
+                    description = "names are missing",
+                    names = listOf("Vacations"),
+                )
+
+        call.respond(names)
+    }
+
+    get<SuggestionRoutes.CategoryNamesRoute>({
+        tags = listOf("suggestions")
+        operationId = "category-names-suggestion"
+        summary = "gets category name suggestions"
+        response {
+            HttpStatusCode.OK to {
+                description = "suggested category names"
+                body<NameSuggestionsDto>()
+            }
+        }
+    }) {
+        val names =
+            suggestionDao.getCategoryNames()
+                ?: NameSuggestionsDto(
+                    id = newIxIntId(),
+                    description = "names are missing",
+                    names = listOf("Planned", "In progress", "Completed"),
+                )
+
+        call.respond(names)
+    }
+
+    get<SuggestionRoutes.ItemNamesRoute>({
+        tags = listOf("suggestions")
+        operationId = "item-names-suggestion"
+        summary = "gets item name suggestions"
+        response {
+            HttpStatusCode.OK to {
+                description = "suggested item names"
+                body<NameSuggestionsDto>()
+            }
+        }
+    }) {
+        val names =
+            suggestionDao.getItemNames()
+                ?: NameSuggestionsDto(
+                    id = newIxIntId(),
+                    description = "names are missing",
+                    names = listOf("Bungee jumping", "Visit Prague"),
+                )
+
+        call.respond(names)
+    }
+
+    get<SuggestionRoutes.TaskNamesRoute>({
+        tags = listOf("suggestions")
+        operationId = "task-names-suggestion"
+        summary = "gets task name suggestions"
+        response {
+            HttpStatusCode.OK to {
+                description = "suggested task names"
+                body<NameSuggestionsDto>()
+            }
+        }
+    }) {
+        val names =
+            suggestionDao.getTaskNames()
+                ?: NameSuggestionsDto(
+                    id = newIxIntId(),
+                    description = "names are missing",
+                    names = listOf("Bungee jumping", "Visit Prague"),
+                )
+
+        call.respond(names)
+    }
+}
