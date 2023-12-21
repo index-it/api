@@ -54,14 +54,14 @@ class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
     val userEntity by UserEntity referencedOn PasswordResetTable.user
 }
 
-fun PasswordResetEntity.fromDto(passwordResetData: PasswordResetData) {
+fun PasswordResetEntity.fromData(passwordResetData: PasswordResetData) {
     token = passwordResetData.token
     user = passwordResetData.userId.toEntityId(UsersTable)
     createdAt = passwordResetData.createdAt
     expiresAt = passwordResetData.expireAt
 }
 
-fun PasswordResetEntity.toDto() =
+fun PasswordResetEntity.toData() =
     PasswordResetData(
         token = token,
         userId = user.toIxId(),

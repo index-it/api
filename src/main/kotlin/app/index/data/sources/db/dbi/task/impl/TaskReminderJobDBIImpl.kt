@@ -8,7 +8,7 @@ import app.index.data.sources.db.dbi.task.TaskReminderJobDBI
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobEntity
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable
 import app.index.data.sources.db.schemas.tasks.TaskTable
-import app.index.data.sources.db.schemas.tasks.toDto
+import app.index.data.sources.db.schemas.tasks.toData
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -36,16 +36,16 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 .find { TaskReminderJobTable.id eq jobId.toEntityId(TaskReminderJobTable) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
-    override suspend fun getFromTask(taskId: IxId<TaskData>): TaskReminderJobDto? =
+    override suspend fun getOfTask(taskId: IxId<TaskData>): TaskReminderJobDto? =
         dbQuery {
             TaskReminderJobEntity
                 .find { TaskReminderJobTable.task eq taskId.toEntityId(TaskTable) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun delete(jobId: IxId<TaskReminderJobDto>) {

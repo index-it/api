@@ -17,5 +17,5 @@ interface UserSessionCM {
         sessionId: IxId<UserAuthSessionData>,
     )
 
-    fun deleteAll(userId: IxId<UserData>)
+    fun deleteAllOfUser(userId: IxId<UserData>)
 }

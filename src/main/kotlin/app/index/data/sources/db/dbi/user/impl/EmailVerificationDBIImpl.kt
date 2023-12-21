@@ -10,6 +10,7 @@ import app.index.data.sources.db.schemas.user.*
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.koin.core.annotation.Single
@@ -31,7 +32,7 @@ class EmailVerificationDBIImpl(
     override suspend fun create(emailVerificationData: EmailVerificationData) {
         dbQuery {
             EmailVerificationEntity.new {
-                fromDto(emailVerificationData)
+                fromData(emailVerificationData)
             }
         }
     }
@@ -42,12 +43,22 @@ class EmailVerificationDBIImpl(
                 .find { EmailVerificationTable.token eq tokenGenerator.hashToken(token) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun deleteAll(id: IxId<UserData>) {
         dbQuery {
             EmailVerificationTable.deleteWhere { user eq id.toEntityId(UsersTable) }
+        }
+    }
+
+    override suspend fun deleteExpired() {
+        dbQuery {
+            val currentMillis = DatetimeUtils.currentMillis()
+
+            EmailVerificationTable.deleteWhere {
+                expiresAt less currentMillis
+            }
         }
     }
 }

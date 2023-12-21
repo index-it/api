@@ -1,17 +1,11 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.plugins.userIdFromSession
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.user.MeRoute
 import app.index.core.exceptions.AuthenticationException
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.UserSessionCookie
-import app.index.data.sources.cache.cm.lists.CategoryCM
-import app.index.data.sources.cache.cm.lists.ItemCM
-import app.index.data.sources.cache.cm.lists.ItemContentCM
-import app.index.data.sources.cache.cm.lists.ListCM
-import app.index.data.sources.cache.cm.tasks.TaskCM
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*

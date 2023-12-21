@@ -1,7 +1,5 @@
 package app.index.data.daos.auth
 
-import app.index.core.clients.BrevoClient
-import app.index.core.logic.TokenGenerator
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.email.EmailVerificationData
 import app.index.data.models.user.UserData
@@ -10,9 +8,7 @@ import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class EmailVerificationDao(
-    private val emailVerificationDBI: EmailVerificationDBI,
-    private val tokenGenerator: TokenGenerator,
-    private val brevoClient: BrevoClient,
+    private val emailVerificationDBI: EmailVerificationDBI
 ) {
     suspend fun create(emailVerificationData: EmailVerificationData) =
         emailVerificationDBI.create(emailVerificationData)
@@ -32,4 +28,6 @@ class EmailVerificationDao(
     suspend fun isUserRateLimited(id: IxId<UserData>): Boolean {
         return emailVerificationDBI.count(id) >= 5
     }
+
+    suspend fun deleteExpired() = emailVerificationDBI.deleteExpired()
 }

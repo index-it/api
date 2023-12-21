@@ -7,13 +7,10 @@ import app.index.config.ApplicationConfig
 import app.index.config.core.ConfigurationManager
 import app.index.config.core.ConfigurationReader
 import ch.qos.logback.classic.Logger
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.slf4j.LoggerFactory
-
-private val logger = KotlinLogging.logger { }
 
 fun main() {
     /**

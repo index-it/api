@@ -1,7 +1,6 @@
 package app.index.data.sources.db.dbi.task
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ItemData
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.DBI
@@ -25,12 +24,6 @@ interface TaskDBI : DBI {
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
         completed: Boolean,
-    ): Boolean
-
-    suspend fun setItemConnection(
-        userId: IxId<UserData>,
-        taskId: IxId<TaskData>,
-        itemId: IxId<ItemData>?,
     ): Boolean
 
     suspend fun update(

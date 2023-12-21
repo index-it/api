@@ -1,7 +1,5 @@
 package app.index.data.daos.auth
 
-import app.index.core.clients.BrevoClient
-import app.index.core.logic.TokenGenerator
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.user.PasswordResetData
 import app.index.data.models.user.UserData
@@ -10,9 +8,7 @@ import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class PasswordResetDao(
-    private val passwordResetDBI: PasswordResetDBI,
-    private val tokenGenerator: TokenGenerator,
-    private val brevoClient: BrevoClient,
+    private val passwordResetDBI: PasswordResetDBI
 ) {
     suspend fun create(passwordResetData: PasswordResetData) = passwordResetDBI.create(passwordResetData)
 
@@ -24,4 +20,6 @@ class PasswordResetDao(
     suspend fun isUserRateLimited(id: IxId<UserData>): Boolean {
         return passwordResetDBI.count(id) >= 7
     }
+
+    suspend fun deleteExpired() = passwordResetDBI.deleteExpired()
 }

@@ -5,7 +5,10 @@ import io.ktor.util.reflect.*
 import org.reflections.Reflections
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.*
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.isSubclassOf
 
 class ConfigurationManager(
     private val packageName: String,

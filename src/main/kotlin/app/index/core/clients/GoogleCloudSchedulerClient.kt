@@ -12,7 +12,7 @@ import org.koin.core.annotation.Single
  * Client to interact with Google Cloud Scheduler
  *
  * @see createTaskReminderJob
- * @see createFCMRegistrationTokenExpirationJobIfMissing
+ * @see createDailyJobIfMissing
  */
 @Single(createdAtStart = true)
 class GoogleCloudSchedulerClient {
@@ -24,17 +24,16 @@ class GoogleCloudSchedulerClient {
         )
 
     init {
-        createFCMRegistrationTokenExpirationJobIfMissing()
+        createDailyJobIfMissing()
     }
 
     /**
-     * Creates the job for sending a webhook once a day
-     * to check expiration of Firebase Cloud Messaging registration tokens
+     * Creates the daily job that notifies the backend to perform certain actions daily
      */
-    private fun createFCMRegistrationTokenExpirationJobIfMissing() {
+    private fun createDailyJobIfMissing() {
         val jobExists =
             try {
-                cloudSchedulerClient.getJob(JobConfig.fcmRegistrationTokenExpirationJobId)
+                cloudSchedulerClient.getJob(JobConfig.dailyJobId)
             } catch (_: Exception) {
                 null
             }.let { it != null }
@@ -42,11 +41,11 @@ class GoogleCloudSchedulerClient {
         if (!jobExists) {
             val httpTarget = HttpTarget.newBuilder()
                 .setHttpMethod(HttpMethod.GET)
-                .setUri(JobConfig.fcmRegistrationTokenExpirationWebhookUrl)
+                .setUri(JobConfig.dailyJobWebhookUrl)
 
             val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
             val job = Job.newBuilder()
-                .setName(JobConfig.fcmRegistrationTokenExpirationJobId)
+                .setName(JobConfig.dailyJobId)
                 .setHttpTarget(httpTarget)
                 .setSchedule("0 0 * * *")
                 .build()
@@ -74,7 +73,7 @@ class GoogleCloudSchedulerClient {
         id: IxId<TaskReminderJobDto>,
         reminderTimestamp: Long,
     ) {
-        val webhookUrl = "${JobConfig.taskReminderWebhookUrl}/$id"
+        val webhookUrl = "${JobConfig.taskReminderJobWebhookUrl}/$id"
         val httpTarget = HttpTarget.newBuilder()
             .setHttpMethod(HttpMethod.GET)
             .setUri(webhookUrl)

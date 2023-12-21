@@ -1,6 +1,7 @@
 package app.index.data.sources.db.schemas.suggestions
 
 import app.index.data.sources.db.core.array
+import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable.colors
 import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable.description
 import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable.id
 import org.jetbrains.exposed.dao.IntEntity

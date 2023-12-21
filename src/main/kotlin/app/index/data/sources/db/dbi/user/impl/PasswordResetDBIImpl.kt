@@ -32,7 +32,7 @@ class PasswordResetDBIImpl(
     override suspend fun create(passwordResetData: PasswordResetData) {
         dbQuery {
             PasswordResetEntity.new {
-                fromDto(passwordResetData)
+                fromData(passwordResetData)
             }
         }
     }
@@ -43,12 +43,22 @@ class PasswordResetDBIImpl(
                 .find { PasswordResetTable.token eq tokenGenerator.hashToken(token) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun deleteAll(id: IxId<UserData>) {
         dbQuery {
             PasswordResetTable.deleteWhere { user eq id.toEntityId(UsersTable) }
+        }
+    }
+
+    override suspend fun deleteExpired() {
+        dbQuery {
+            val currentMillis = DatetimeUtils.currentMillis()
+
+            PasswordResetTable.deleteWhere {
+                expiresAt less currentMillis
+            }
         }
     }
 }

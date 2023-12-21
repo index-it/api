@@ -24,7 +24,7 @@ class CategoryDBIImpl : CategoryDBI {
     override suspend fun create(categoryData: CategoryData) {
         dbQuery {
             CategoryEntity.new(categoryData.id.id) {
-                fromDto(categoryData)
+                fromData(categoryData)
             }
         }
     }
@@ -37,7 +37,7 @@ class CategoryDBIImpl : CategoryDBI {
             CategoryEntity.find { userAndCategoryFilter(userId, categoryId) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun getOfList(
@@ -49,7 +49,7 @@ class CategoryDBIImpl : CategoryDBI {
                 .find {
                     (CategoryTable.list eq listId.toEntityId(ListTable)) and (CategoryTable.user eq userId.toEntityId(UsersTable))
                 }
-                .map { it.toDto() }
+                .map { it.toData() }
         }
 
     override suspend fun update(

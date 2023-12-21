@@ -52,14 +52,14 @@ class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
     var userEntity by UserEntity referencedOn EmailVerificationTable.user
 }
 
-fun EmailVerificationEntity.fromDto(emailVerificationData: EmailVerificationData) {
+fun EmailVerificationEntity.fromData(emailVerificationData: EmailVerificationData) {
     token = emailVerificationData.token
     user = emailVerificationData.userId.toEntityId(UsersTable)
     createdAt = emailVerificationData.createdAt
     expiresAt = emailVerificationData.expireAt
 }
 
-fun EmailVerificationEntity.toDto() =
+fun EmailVerificationEntity.toData() =
     EmailVerificationData(
         token = token,
         userId = user.toIxId(),

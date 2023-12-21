@@ -13,4 +13,6 @@ interface PasswordResetDBI : DBI {
     suspend fun get(token: String): PasswordResetData?
 
     suspend fun deleteAll(id: IxId<UserData>)
+
+    suspend fun deleteExpired()
 }

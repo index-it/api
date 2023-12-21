@@ -24,7 +24,7 @@ class TaskReminderJobDao(
     }
 
     suspend fun getOfTask(taskId: IxId<TaskData>): TaskReminderJobDto? {
-        return taskReminderJobDBI.getFromTask(taskId)
+        return taskReminderJobDBI.getOfTask(taskId)
     }
 
     suspend fun delete(jobId: IxId<TaskReminderJobDto>) {

@@ -24,7 +24,7 @@ class ItemContentDBIImpl : ItemContentDBI {
     override suspend fun create(itemContentData: ItemContentData) {
         dbQuery {
             ItemContentEntity.new(itemContentData.id.id) {
-                fromDto(itemContentData)
+                fromData(itemContentData)
             }
         }
     }
@@ -38,7 +38,7 @@ class ItemContentDBIImpl : ItemContentDBI {
                 .find { userAndItemFilter(userId, itemId) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun update(

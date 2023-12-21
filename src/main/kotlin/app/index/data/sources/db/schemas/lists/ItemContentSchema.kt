@@ -55,13 +55,13 @@ class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val itemEntity by ItemEntity referencedOn ItemContentTable.item
 }
 
-fun ItemContentEntity.fromDto(itemContentData: ItemContentData) {
+fun ItemContentEntity.fromData(itemContentData: ItemContentData) {
     user = itemContentData.userId.toEntityId(UsersTable)
     item = itemContentData.itemId.toEntityId(ItemTable)
     content = itemContentData.content
 }
 
-fun ItemContentEntity.toDto() =
+fun ItemContentEntity.toData() =
     ItemContentData(
         id = id.toIxId(),
         userId = user.toIxId(),

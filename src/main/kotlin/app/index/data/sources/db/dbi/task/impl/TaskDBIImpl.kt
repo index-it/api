@@ -2,7 +2,6 @@ package app.index.data.sources.db.dbi.task.impl
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.ItemData
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskDBI
@@ -31,7 +30,7 @@ class TaskDBIImpl : TaskDBI {
     override suspend fun create(taskData: TaskData) {
         dbQuery {
             TaskEntity.new(taskData.id.id) {
-                fromDto(taskData)
+                fromData(taskData)
             }
 
             SubTaskTable.batchInsert(taskData.subTasks) {
@@ -46,7 +45,7 @@ class TaskDBIImpl : TaskDBI {
         dbQuery {
             TaskEntity
                 .find { TaskTable.user eq userId.toEntityId(UsersTable) }
-                .map { it.toDto() }
+                .map { it.toData() }
         }
 
     override suspend fun get(
@@ -58,7 +57,7 @@ class TaskDBIImpl : TaskDBI {
                 .find { userAndTaskFilter(userId, taskId) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun setCompletion(
@@ -70,17 +69,6 @@ class TaskDBIImpl : TaskDBI {
             TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[this.completed] = completed
                 it[this.completedAt] = if (completed) DatetimeUtils.currentMillis() else null
-            } > 0
-        }
-
-    override suspend fun setItemConnection(
-        userId: IxId<UserData>,
-        taskId: IxId<TaskData>,
-        itemId: IxId<ItemData>?,
-    ): Boolean =
-        dbQuery {
-            TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
-                it[this.item] = itemId?.toEntityId(ItemTable)
             } > 0
         }
 

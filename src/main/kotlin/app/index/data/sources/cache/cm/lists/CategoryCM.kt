@@ -34,13 +34,7 @@ interface CategoryCM {
         listId: IxId<ListData>,
         categoryId: IxId<CategoryData>,
     )
-
-    fun deleteMultiple(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-        categoryIds: List<IxId<CategoryData>>,
-    )
-
+    
     fun deleteAllOfUser(userId: IxId<UserData>)
 
     fun deleteAllOfList(

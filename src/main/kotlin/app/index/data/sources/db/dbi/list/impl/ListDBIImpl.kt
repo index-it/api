@@ -7,8 +7,8 @@ import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.list.ListDBI
 import app.index.data.sources.db.schemas.lists.ListEntity
 import app.index.data.sources.db.schemas.lists.ListTable
-import app.index.data.sources.db.schemas.lists.fromDto
-import app.index.data.sources.db.schemas.lists.toDto
+import app.index.data.sources.db.schemas.lists.fromData
+import app.index.data.sources.db.schemas.lists.toData
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.Op
@@ -27,7 +27,7 @@ class ListDBIImpl : ListDBI {
     override suspend fun create(listData: ListData) {
         dbQuery {
             ListEntity.new(listData.id.id) {
-                fromDto(listData)
+                fromData(listData)
             }
         }
     }
@@ -36,7 +36,7 @@ class ListDBIImpl : ListDBI {
         dbQuery {
             ListEntity
                 .find { ListTable.user eq id.toEntityId(UsersTable) }
-                .map { it.toDto() }
+                .map { it.toData() }
         }
 
     override suspend fun get(
@@ -48,7 +48,7 @@ class ListDBIImpl : ListDBI {
                 .find { userAndListFilter(userId, listId) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun update(

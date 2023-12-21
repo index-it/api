@@ -13,4 +13,6 @@ interface EmailVerificationDBI : DBI {
     suspend fun get(token: String): EmailVerificationData?
 
     suspend fun deleteAll(id: IxId<UserData>)
+
+    suspend fun deleteExpired()
 }

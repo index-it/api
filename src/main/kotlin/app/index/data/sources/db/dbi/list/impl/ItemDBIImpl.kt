@@ -32,7 +32,7 @@ class ItemDBIImpl : ItemDBI {
     override suspend fun create(itemData: ItemData) {
         dbQuery {
             ItemEntity.new(itemData.id.id) {
-                fromDto(itemData)
+                fromData(itemData)
             }
         }
     }
@@ -46,7 +46,7 @@ class ItemDBIImpl : ItemDBI {
                 .find { userAndItemFilter(userId, itemId) }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun exists(
@@ -64,7 +64,7 @@ class ItemDBIImpl : ItemDBI {
         dbQuery {
             ItemEntity
                 .find { userFilter(userId) and (ItemTable.category eq categoryId.toEntityId(CategoryTable)) }
-                .map { it.toDto() }
+                .map { it.toData() }
         }
 
     override suspend fun getOfList(
@@ -74,7 +74,7 @@ class ItemDBIImpl : ItemDBI {
         dbQuery {
             ItemEntity
                 .find { userFilter(userId) and (ItemTable.list eq listId.toEntityId(ListTable)) }
-                .map { it.toDto() }
+                .map { it.toData() }
         }
 
     override suspend fun setCompletion(

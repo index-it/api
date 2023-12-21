@@ -1,6 +1,5 @@
 package app.index.data.sources.db.schemas.tasks
 
-import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
 import app.index.data.sources.db.schemas.lists.ItemEntity
 import app.index.data.sources.db.schemas.lists.ItemTable
@@ -14,6 +13,7 @@ import app.index.data.sources.db.schemas.tasks.TaskTable.id
 import app.index.data.sources.db.schemas.tasks.TaskTable.item
 import app.index.data.sources.db.schemas.tasks.TaskTable.name
 import app.index.data.sources.db.schemas.tasks.TaskTable.priority
+import app.index.data.sources.db.schemas.tasks.TaskTable.rrule
 import app.index.data.sources.db.schemas.tasks.TaskTable.user
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
@@ -102,7 +102,7 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val itemEntity by ItemEntity optionalReferencedOn TaskTable.item
 }
 
-fun TaskEntity.fromDto(taskData: TaskData) {
+fun TaskEntity.fromData(taskData: TaskData) {
     user = taskData.userId.toEntityId(UsersTable)
     item = taskData.itemId?.toEntityId(ItemTable)
     name = taskData.name
@@ -117,26 +117,19 @@ fun TaskEntity.fromDto(taskData: TaskData) {
     completedAt = taskData.completedAt
 }
 
-fun TaskEntity.toDto() =
-    TaskData(
-        id = id.toIxId(),
-        userId = user.toIxId(),
-        itemId = item?.toIxId(),
-        name = name,
-        description = description,
-        dueDate = dueDate,
-        rrule = rrule,
-        onDayReminder = onDayReminder,
-        completed = completed,
-        priority = priority,
-        createdAt = createdAt,
-        editedAt = editedAt,
-        completedAt = completedAt,
-        subTasks = subTasks.map { it.toDto() },
-    )
-
-fun SubTaskEntity.toDto() =
-    SubTaskData(
-        name = name,
-        completed = completed,
-    )
+fun TaskEntity.toData() = TaskData(
+    id = id.toIxId(),
+    userId = user.toIxId(),
+    itemId = item?.toIxId(),
+    name = name,
+    description = description,
+    dueDate = dueDate,
+    rrule = rrule,
+    onDayReminder = onDayReminder,
+    completed = completed,
+    priority = priority,
+    createdAt = createdAt,
+    editedAt = editedAt,
+    completedAt = completedAt,
+    subTasks = subTasks.map { it.toData() },
+)

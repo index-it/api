@@ -1,5 +1,6 @@
 package app.index.data.sources.db.schemas.tasks
 
+import app.index.data.models.tasks.SubTaskData
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -26,3 +27,8 @@ class SubTaskEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val taskEntity by TaskEntity referencedOn SubTaskTable.task
 }
+
+fun SubTaskEntity.toData() = SubTaskData(
+    name = name,
+    completed = completed,
+)

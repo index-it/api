@@ -99,7 +99,7 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
 
-fun ItemEntity.fromDto(itemData: ItemData) {
+fun ItemEntity.fromData(itemData: ItemData) {
     user = itemData.userId.toEntityId(UsersTable)
     list = itemData.listId.toEntityId(ListTable)
     category = itemData.categoryId.toEntityId(CategoryTable)
@@ -111,7 +111,7 @@ fun ItemEntity.fromDto(itemData: ItemData) {
     completedAt = itemData.completedAt
 }
 
-fun ItemEntity.toDto() =
+fun ItemEntity.toData() =
     ItemData(
         id = id.toIxId(),
         userId = user.toIxId(),

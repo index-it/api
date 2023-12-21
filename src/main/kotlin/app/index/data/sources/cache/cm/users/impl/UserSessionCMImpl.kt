@@ -50,5 +50,5 @@ class UserSessionCMImpl(
         ),
     )
 
-    override fun deleteAll(userId: IxId<UserData>) = delete("$userId:*")
+    override fun deleteAllOfUser(userId: IxId<UserData>) = delete("$userId:*")
 }

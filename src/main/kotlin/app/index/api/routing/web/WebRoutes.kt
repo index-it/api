@@ -19,8 +19,8 @@ class WebhookRoute {
         @Contextual val id: IxId<TaskReminderJobDto>,
     )
 
-    @Resource("/registration-token-expiration-job")
-    class FCMRegistrationTokenExpirationJobRoute(val parent: WebhookRoute)
+    @Resource("/daily-job")
+    class DailyJobRoute(val parent: WebhookRoute)
 }
 
 fun Route.webRoutes() {

@@ -49,7 +49,7 @@ class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var creationSource by UsersTable.creationSource
 }
 
-fun UserEntity.fromDto(userData: UserData) {
+fun UserEntity.fromData(userData: UserData) {
     email = userData.email
     passwordHash = userData.passwordHash
     emailVerified = userData.emailVerified
@@ -57,7 +57,7 @@ fun UserEntity.fromDto(userData: UserData) {
     creationSource = userData.creationSource
 }
 
-fun UserEntity.toDto() =
+fun UserEntity.toData() =
     UserData(
         id = id.toIxId(),
         email = email,

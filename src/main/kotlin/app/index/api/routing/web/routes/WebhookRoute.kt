@@ -2,6 +2,8 @@ package app.index.api.routing.web.routes
 
 import app.index.api.routing.web.WebhookRoute
 import app.index.core.clients.FCMClient
+import app.index.data.daos.auth.EmailVerificationDao
+import app.index.data.daos.auth.PasswordResetDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.daos.user.FCMRegistrationTokenDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -15,6 +17,8 @@ fun Route.webhookRoute() {
     val taskReminderJobDao by inject<TaskReminderJobDao>()
     val fcmRegistrationTokenDao by inject<FCMRegistrationTokenDao>()
     val fcmClient by inject<FCMClient>()
+    val emailVerificationDao by inject<EmailVerificationDao>()
+    val passwordResetDao by inject<PasswordResetDao>()
 
     get<WebhookRoute.TaskReminderJobRoute>({
         tags = listOf("web", "webhook")
@@ -50,10 +54,10 @@ fun Route.webhookRoute() {
         call.respond(HttpStatusCode.OK)
     }
 
-    get<WebhookRoute.FCMRegistrationTokenExpirationJobRoute>({
+    get<WebhookRoute.DailyJobRoute>({
         tags = listOf("web", "webhook")
-        operationId = "fcm-registration-token-expiration-job-webhook"
-        summary = "receives webhooks for fcm registration token expiration job"
+        operationId = "daily-job"
+        summary = "receives webhooks for actions that should be executed daily (cleaning up expired db data for example)"
         response {
             HttpStatusCode.OK to {
                 description = "handled"
@@ -61,6 +65,8 @@ fun Route.webhookRoute() {
         }
     }) {
         fcmRegistrationTokenDao.deleteExpired()
+        emailVerificationDao.deleteExpired()
+        passwordResetDao.deleteExpired()
 
         call.respond(HttpStatusCode.OK)
     }

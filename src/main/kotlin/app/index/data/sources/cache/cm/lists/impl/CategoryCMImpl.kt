@@ -64,14 +64,6 @@ class CategoryCMImpl(
         delete(keyValue(userId, listId), categoryId.toString())
     }
 
-    override fun deleteMultiple(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-        categoryIds: List<IxId<CategoryData>>,
-    ) {
-        deleteMultiple(keyValue(userId, listId), *categoryIds.map { it.toString() }.toTypedArray())
-    }
-
     override fun deleteAllOfUser(userId: IxId<UserData>) {
         deleteAll("${userId}_*")
     }

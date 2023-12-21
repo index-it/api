@@ -45,5 +45,5 @@ class UserSessionDao(
         sessionId: IxId<UserAuthSessionData>,
     ) = userSessionCM.delete(userId, sessionId)
 
-    fun deleteAllOfUser(userId: IxId<UserData>) = userSessionCM.deleteAll(userId)
+    fun deleteAllOfUser(userId: IxId<UserData>) = userSessionCM.deleteAllOfUser(userId)
 }

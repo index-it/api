@@ -23,7 +23,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
     override suspend fun create(fcmRegistrationToken: FCMRegistrationTokenData) {
         dbQuery {
             FCMRegistrationTokenEntity.new {
-                fromDto(fcmRegistrationToken)
+                fromData(fcmRegistrationToken)
             }
         }
     }
@@ -34,7 +34,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
                 .find { FCMRegistrationTokenTable.token eq token }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
     }
 
@@ -43,7 +43,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
             FCMRegistrationTokenEntity
                 .find { FCMRegistrationTokenTable.user eq id.toEntityId(UsersTable) }
                 .limit(1)
-                .map { it.toDto() }
+                .map { it.toData() }
         }
     }
 

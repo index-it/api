@@ -5,8 +5,8 @@ import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.user.UserDBI
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
-import app.index.data.sources.db.schemas.user.fromDto
-import app.index.data.sources.db.schemas.user.toDto
+import app.index.data.sources.db.schemas.user.fromData
+import app.index.data.sources.db.schemas.user.toData
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -18,7 +18,7 @@ class UserDBIImpl : UserDBI {
     override suspend fun create(userData: UserData) {
         dbQuery {
             UserEntity.new(userData.id.id) {
-                fromDto(userData)
+                fromData(userData)
             }
         }
     }
@@ -26,7 +26,7 @@ class UserDBIImpl : UserDBI {
     override suspend fun get(id: IxId<UserData>): UserData? =
         dbQuery {
             UserEntity.findById(id.id)
-        }?.toDto()
+        }?.toData()
 
     override suspend fun get(email: String): UserData? =
         dbQuery {
@@ -34,7 +34,7 @@ class UserDBIImpl : UserDBI {
                 .find { UsersTable.email eq email }
                 .limit(1)
                 .firstOrNull()
-                ?.toDto()
+                ?.toData()
         }
 
     override suspend fun verifyEmail(id: IxId<UserData>) {

@@ -15,7 +15,7 @@ interface TaskReminderJobDBI : DBI {
 
     suspend fun get(jobId: IxId<TaskReminderJobDto>): TaskReminderJobDto?
 
-    suspend fun getFromTask(taskId: IxId<TaskData>): TaskReminderJobDto?
+    suspend fun getOfTask(taskId: IxId<TaskData>): TaskReminderJobDto?
 
     suspend fun delete(jobId: IxId<TaskReminderJobDto>)
 

@@ -59,14 +59,14 @@ class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var listEntity by ListEntity referencedOn CategoryTable.list
 }
 
-fun CategoryEntity.fromDto(categoryData: CategoryData) {
+fun CategoryEntity.fromData(categoryData: CategoryData) {
     user = categoryData.userId.toEntityId(UsersTable)
     list = categoryData.listId.toEntityId(ListTable)
     name = categoryData.name
     color = categoryData.color
 }
 
-fun CategoryEntity.toDto() =
+fun CategoryEntity.toData() =
     CategoryData(
         id = id.toIxId(),
         userId = user.toIxId(),

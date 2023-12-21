@@ -1,6 +1,8 @@
 package app.index.data.sources.db.schemas.tasks
 
 import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable.id
+import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable.task
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toIxId
@@ -42,9 +44,8 @@ class TaskReminderJobEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val userEntity by UserEntity referencedOn TaskReminderJobTable.user
 }
 
-fun TaskReminderJobEntity.toDto() =
-    TaskReminderJobDto(
-        id = id.toIxId(),
-        task = taskEntity.toDto(),
-        userId = user.toIxId(),
-    )
+fun TaskReminderJobEntity.toData() = TaskReminderJobDto(
+    id = id.toIxId(),
+    task = taskEntity.toData(),
+    userId = user.toIxId(),
+)

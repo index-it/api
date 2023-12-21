@@ -65,7 +65,7 @@ class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val userEntity by UserEntity referencedOn ListTable.user
 }
 
-fun ListEntity.fromDto(listData: ListData) {
+fun ListEntity.fromData(listData: ListData) {
     user = listData.userId.toEntityId(UsersTable)
     name = listData.name
     emoji = listData.icon.first()
@@ -74,7 +74,7 @@ fun ListEntity.fromDto(listData: ListData) {
     editedAt = listData.editedAt
 }
 
-fun ListEntity.toDto() =
+fun ListEntity.toData() =
     ListData(
         id = id.toIxId(),
         userId = user.toIxId(),
