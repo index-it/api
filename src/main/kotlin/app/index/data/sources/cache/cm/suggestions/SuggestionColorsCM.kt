@@ -1,10 +1,10 @@
 package app.index.data.sources.cache.cm.suggestions
 
 import app.index.core.logic.typedId.impl.IxIntId
-import app.index.data.models.suggestions.ColorSuggestionsDto
+import app.index.data.models.suggestions.ColorSuggestionsData
 
 interface SuggestionColorsCM {
-    fun cache(colorSuggestionsDto: ColorSuggestionsDto)
+    fun cache(colorSuggestionsData: ColorSuggestionsData)
 
-    fun get(id: IxIntId<ColorSuggestionsDto>): ColorSuggestionsDto?
+    fun get(id: IxIntId<ColorSuggestionsData>): ColorSuggestionsData?
 }

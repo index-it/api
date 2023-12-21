@@ -14,30 +14,30 @@ class SuggestionRoutes {
     class ColorsRoute(val parent: SuggestionRoutes = SuggestionRoutes())
 
     @Resource("list-names")
-    class ListNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+    class ListNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
 
     @Resource("category-names")
-    class CategoryNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+    class CategoryNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
 
     @Resource("item-names")
-    class ItemNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+    class ItemNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
 
     @Resource("task-names")
-    class TaskNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes())
+    class TaskNamesRoute(val parent: SuggestionRoutes = SuggestionRoutes(), val locale: String)
 
     @Resource("templates")
     class TemplateRoute(val parent: SuggestionRoutes = SuggestionRoutes()) {
         @Resource("list")
-        class ListRoute(val parent: TemplateRoute = TemplateRoute())
+        class ListRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
 
         @Resource("category")
-        class CategoryRoute(val parent: TemplateRoute = TemplateRoute())
+        class CategoryRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
 
         @Resource("item")
-        class ItemRoute(val parent: TemplateRoute = TemplateRoute())
+        class ItemRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
 
         @Resource("task")
-        class TaskRoute(val parent: TemplateRoute = TemplateRoute())
+        class TaskRoute(val parent: TemplateRoute = TemplateRoute(), val locale: String)
     }
 }
 

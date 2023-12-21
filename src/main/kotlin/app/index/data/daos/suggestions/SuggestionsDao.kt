@@ -3,8 +3,8 @@ package app.index.data.daos.suggestions
 import app.index.config.SuggestionConfig
 import app.index.core.logic.typedId.impl.IxIntId
 import app.index.core.logic.typedId.toIxIntId
-import app.index.data.models.suggestions.ColorSuggestionsDto
-import app.index.data.models.suggestions.NameSuggestionsDto
+import app.index.data.models.suggestions.ColorSuggestionsData
+import app.index.data.models.suggestions.NameSuggestionsData
 import app.index.data.sources.cache.cm.suggestions.SuggestionCategoryNamesCM
 import app.index.data.sources.cache.cm.suggestions.SuggestionColorsCM
 import app.index.data.sources.cache.cm.suggestions.SuggestionItemNamesCM
@@ -26,15 +26,15 @@ class SuggestionsDao(
     private val suggestionTaskNamesCM: SuggestionItemNamesCM,
     private val suggestionColorsCM: SuggestionColorsCM,
 ) {
-    private val listNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionListNamesId.toIxIntId()
-    private val categoryNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionCategoryNamesId.toIxIntId()
-    private val itemNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionItemNamesId.toIxIntId()
-    private val taskNameSuggestionsId: IxIntId<NameSuggestionsDto> = SuggestionConfig.suggestionTaskNamesId.toIxIntId()
+    private val listNameSuggestionsId: IxIntId<NameSuggestionsData> = SuggestionConfig.suggestionListNamesId.toIxIntId()
+    private val categoryNameSuggestionsId: IxIntId<NameSuggestionsData> = SuggestionConfig.suggestionCategoryNamesId.toIxIntId()
+    private val itemNameSuggestionsId: IxIntId<NameSuggestionsData> = SuggestionConfig.suggestionItemNamesId.toIxIntId()
+    private val taskNameSuggestionsId: IxIntId<NameSuggestionsData> = SuggestionConfig.suggestionTaskNamesId.toIxIntId()
 
-    private val colorSuggestionsId: IxIntId<ColorSuggestionsDto> = SuggestionConfig.suggestionColorsId.toIxIntId()
+    private val colorSuggestionsId: IxIntId<ColorSuggestionsData> = SuggestionConfig.suggestionColorsId.toIxIntId()
 
-    fun getRandomNameSuggestion(nameSuggestionsDto: NameSuggestionsDto?): String {
-        return nameSuggestionsDto?.names?.randomOrNull() ?: run {
+    fun getRandomNameSuggestion(nameSuggestionsData: NameSuggestionsData?): String {
+        return nameSuggestionsData?.names?.randomOrNull() ?: run {
             logger.warn { "Empty array of suggested names in suggestion with id $listNameSuggestionsId" }
             "Quack"
         }
@@ -49,11 +49,11 @@ class SuggestionsDao(
         }
     }
 
-    suspend fun getListNames(): NameSuggestionsDto? {
-        var names = suggestionListNamesCM.get(listNameSuggestionsId)
+    suspend fun getListNames(locale: String): NameSuggestionsData? {
+        var names = suggestionListNamesCM.get(listNameSuggestionsId, locale)
 
         if (names == null) {
-            names = suggestionNamesDBI.get(listNameSuggestionsId)
+            names = suggestionNamesDBI.get(listNameSuggestionsId, locale)
                 ?: run {
                     logger.warn { "No template for list names found with id $listNameSuggestionsId" }
                     return null
@@ -65,11 +65,11 @@ class SuggestionsDao(
         return names
     }
 
-    suspend fun getCategoryNames(): NameSuggestionsDto? {
-        var names = suggestionCategoryNamesCM.get(categoryNameSuggestionsId)
+    suspend fun getCategoryNames(locale: String): NameSuggestionsData? {
+        var names = suggestionCategoryNamesCM.get(categoryNameSuggestionsId, locale)
 
         if (names == null) {
-            names = suggestionNamesDBI.get(categoryNameSuggestionsId)
+            names = suggestionNamesDBI.get(categoryNameSuggestionsId, locale)
                 ?: run {
                     logger.warn { "No template for category names found with id $categoryNameSuggestionsId" }
                     return null
@@ -81,11 +81,11 @@ class SuggestionsDao(
         return names
     }
 
-    suspend fun getItemNames(): NameSuggestionsDto? {
-        var names = suggestionItemNamesCM.get(itemNameSuggestionsId)
+    suspend fun getItemNames(locale: String): NameSuggestionsData? {
+        var names = suggestionItemNamesCM.get(itemNameSuggestionsId, locale)
 
         if (names == null) {
-            names = suggestionNamesDBI.get(itemNameSuggestionsId)
+            names = suggestionNamesDBI.get(itemNameSuggestionsId, locale)
                 ?: run {
                     logger.warn { "No template for item names found with id $itemNameSuggestionsId" }
                     return null
@@ -97,11 +97,11 @@ class SuggestionsDao(
         return names
     }
 
-    suspend fun getTaskNames(): NameSuggestionsDto? {
-        var names = suggestionTaskNamesCM.get(taskNameSuggestionsId)
+    suspend fun getTaskNames(locale: String): NameSuggestionsData? {
+        var names = suggestionTaskNamesCM.get(taskNameSuggestionsId, locale)
 
         if (names == null) {
-            names = suggestionNamesDBI.get(taskNameSuggestionsId)
+            names = suggestionNamesDBI.get(taskNameSuggestionsId, locale)
                 ?: run {
                     logger.warn { "No template for task names found with id $taskNameSuggestionsId" }
                     return null
@@ -113,7 +113,7 @@ class SuggestionsDao(
         return names
     }
 
-    suspend fun getColors(): ColorSuggestionsDto? {
+    suspend fun getColors(): ColorSuggestionsData? {
         var colors = suggestionColorsCM.get(colorSuggestionsId)
 
         if (colors == null) {

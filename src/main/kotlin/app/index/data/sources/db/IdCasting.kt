@@ -12,4 +12,5 @@ fun <T> EntityID<Int>.toIxIntId(): IxIntId<T> = IxIntId(value)
 
 fun IxId<*>.toEntityId(table: IdTable<UUID>) = EntityID(this.id, table)
 
+@Suppress("UNUSED")
 fun IxIntId<*>.toEntityIntId(table: IdTable<Int>) = EntityID(this.id, table)

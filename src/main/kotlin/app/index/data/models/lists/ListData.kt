@@ -1,7 +1,7 @@
 package app.index.data.models.lists
 
 import app.index.core.logic.DatetimeUtils
-import app.index.core.logic.RegexPatterns
+import app.index.data.validation.RegexPatterns
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.validation.Validatable
 import app.index.data.models.user.UserData

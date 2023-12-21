@@ -20,6 +20,12 @@ fun Route.templatesRoute() {
         tags = listOf("templates")
         operationId = "list-template"
         summary = "gets a list template"
+        request {
+            queryParameter<String>("locale") {
+                description = "ISO 639 set 1 language code"
+                required = true
+            }
+        }
         response {
             HttpStatusCode.OK to {
                 description = "the list template"
@@ -27,7 +33,7 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getListNames())
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getListNames(it.locale))
         val color = suggestionsDao.getRandomColor()
 
         call.respond(ListData.ListTemplateResponseData(name, color))
@@ -37,6 +43,12 @@ fun Route.templatesRoute() {
         tags = listOf("templates")
         operationId = "category-template"
         summary = "gets a category template"
+        request {
+            queryParameter<String>("locale") {
+                description = "ISO 639 set 1 language code"
+                required = true
+            }
+        }
         response {
             HttpStatusCode.OK to {
                 description = "the category template"
@@ -44,7 +56,7 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getCategoryNames())
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getCategoryNames(it.locale))
         val color = suggestionsDao.getRandomColor()
 
         call.respond(CategoryData.CategoryTemplateResponseData(name, color))
@@ -54,6 +66,12 @@ fun Route.templatesRoute() {
         tags = listOf("templates")
         operationId = "item-template"
         summary = "gets an item template"
+        request {
+            queryParameter<String>("locale") {
+                description = "ISO 639 set 1 language code"
+                required = true
+            }
+        }
         response {
             HttpStatusCode.OK to {
                 description = "the item template"
@@ -61,7 +79,7 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getItemNames())
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getItemNames(it.locale))
 
         call.respond(ItemData.ItemTemplateResponseData(name))
     }
@@ -70,6 +88,12 @@ fun Route.templatesRoute() {
         tags = listOf("templates")
         operationId = "task-template"
         summary = "gets a task template"
+        request {
+            queryParameter<String>("locale") {
+                description = "ISO 639 set 1 language code"
+                required = true
+            }
+        }
         response {
             HttpStatusCode.OK to {
                 description = "the task template"
@@ -77,7 +101,7 @@ fun Route.templatesRoute() {
             }
         }
     }) {
-        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getTaskNames())
+        val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getTaskNames(it.locale))
 
         call.respond(TaskData.TaskTemplateResponseData(name))
     }

@@ -1,6 +1,6 @@
 package app.index.data.models.auth
 
-import app.index.core.logic.RegexPatterns
+import app.index.data.validation.RegexPatterns
 import app.index.data.validation.Validatable
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
