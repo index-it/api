@@ -6,7 +6,7 @@ import app.index.config.core.ConfigurationProperty
 @Configuration("brevo")
 object BrevoConfig {
     @ConfigurationProperty("api.key")
-    lateinit var apiKey: String
+    var apiKey: String = "none"
 
     @ConfigurationProperty("template.email.verification")
     var emailVerificationTemplateId: Long = 2
@@ -18,14 +18,14 @@ object BrevoConfig {
     var passwordResetSuccessTemplateId: Long = 3
 
     @ConfigurationProperty("email.verification.success.url")
-    lateinit var emailVerificationSuccessUrl: String
+    var emailVerificationSuccessUrl: String = "https://index-it.app/email-verified"
 
     @ConfigurationProperty("email.verification.error.url")
-    lateinit var emailVerificationErrorUrl: String
+    var emailVerificationErrorUrl: String = "https://index-it.app/invalid-email-verification-code"
 
     @ConfigurationProperty("email.verification.url")
-    lateinit var emailVerificationUrl: String
+    var emailVerificationUrl: String = "http://localhost:8080/verify-email"
 
     @ConfigurationProperty("reset.password.url")
-    lateinit var passwordResetUrl: String
+    var passwordResetUrl: String = "https://index-it.app/reset-password"
 }

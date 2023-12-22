@@ -9,16 +9,13 @@ object GoogleCloudConfig {
     lateinit var project: String
 
     @ConfigurationProperty("cloud.scheduler.location")
-    lateinit var location: String
+    var location: String = "us-east1"
 
     /**
      * This **must be set as an environment variable** in order to work with FCM and Google Cloud Scheduler.
      *
-     * For example:
-     * `GOOGLE_APPLICATION_CREDENTIALS=./gcp-service-account.json`
-     *
      * Reference: https://github.com/googleapis/google-cloud-java#authentication
      */
     @ConfigurationProperty("application.credentials")
-    lateinit var applicationCredentialPath: String
+    var applicationCredentialPath: String = "./gcp-service-account.json"
 }

@@ -6,11 +6,11 @@ import app.index.config.core.ConfigurationProperty
 @Configuration("postgres")
 object PostgresConfig {
     @ConfigurationProperty("url")
-    lateinit var url: String
+    var url: String = "jdbc:postgresql://localhost:5432/indexdevdb"
 
     @ConfigurationProperty("user")
-    lateinit var user: String
+    var user: String = "IndexDevUser"
 
     @ConfigurationProperty("password")
-    lateinit var password: String
+    var password: String = "IndexDevPassword"
 }

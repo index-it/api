@@ -6,14 +6,14 @@ import app.index.config.core.ConfigurationProperty
 @Configuration("rabbitmq")
 object RabbitMQConfig {
     @ConfigurationProperty("connection.string")
-    lateinit var connectionString: String
+    var connectionString: String = "amqp://guest:guest@localhost:5672"
 
     @ConfigurationProperty("exchange.name")
-    lateinit var exchangeName: String
+    var exchangeName: String = "indexexchange"
 
     @ConfigurationProperty("websockets.queue.name")
-    lateinit var websocketsQueueName: String
+    var websocketsQueueName: String = "websocketqueue"
 
     @ConfigurationProperty("websockets.routing.key")
-    lateinit var websocketsRoutingKey: String
+    var websocketsRoutingKey: String = "websocketroutingkey"
 }

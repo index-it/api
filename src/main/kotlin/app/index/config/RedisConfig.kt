@@ -6,5 +6,5 @@ import app.index.config.core.ConfigurationProperty
 @Configuration("redis")
 object RedisConfig {
     @ConfigurationProperty("connection.string")
-    lateinit var connectionString: String
+    var connectionString: String = "redis://localhost:6379"
 }

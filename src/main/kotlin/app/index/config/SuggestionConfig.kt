@@ -6,17 +6,17 @@ import app.index.config.core.ConfigurationProperty
 @Configuration("suggestion")
 object SuggestionConfig {
     @ConfigurationProperty("list.names.id")
-    var suggestionListNamesId: Int = 0
+    var suggestionListNamesId: Int = 1
 
     @ConfigurationProperty("category.names.id")
-    var suggestionCategoryNamesId: Int = 0
+    var suggestionCategoryNamesId: Int = 2
 
     @ConfigurationProperty("item.names.id")
-    var suggestionItemNamesId: Int = 0
+    var suggestionItemNamesId: Int = 3
 
     @ConfigurationProperty("task.names.id")
-    var suggestionTaskNamesId: Int = 0
+    var suggestionTaskNamesId: Int = 4
 
     @ConfigurationProperty("colors.id")
-    var suggestionColorsId: Int = 0
+    var suggestionColorsId: Int = 1
 }
