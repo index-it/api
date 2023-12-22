@@ -5,9 +5,15 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.data.validation.Validatable
 import app.index.data.models.lists.ItemData
 import app.index.data.models.user.UserData
+import app.index.data.sources.db.schemas.tasks.TaskReminderTable
 import app.index.data.validation.Validations
+import io.konform.validation.Invalid
 import io.konform.validation.Validation
+import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.*
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -41,9 +47,9 @@ data class TaskData(
     val subTasks: List<SubTaskData> = emptyList(),
     val dueDate: Long? = null,
     val rrule: String? = null,
-    val onDayReminder: Long? = null,
     val completed: Boolean = false,
     val priority: Int? = null,
+    val reminders: List<TaskReminderData> = emptyList(),
     @SerialName("created_at")
     val createdAt: Long = DatetimeUtils.currentMillis(),
     @SerialName("edited_at")
@@ -57,13 +63,19 @@ data class TaskData(
         val description: String? = null,
         val dueDate: Long? = null,
         val rrule: String? = null,
-        val onDayReminder: Long? = null,
+        val reminders: List<TaskReminderData> = emptyList(),
         val subTasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
         @Contextual val itemId: IxId<ItemData>? = null,
     ) : Validatable<TaskCreateRequestData> {
-        override fun validate() =
-            Validation {
+        override fun validate(): ValidationResult<TaskCreateRequestData> {
+            if (reminders.isNotEmpty() && dueDate == null) {
+                return Invalid(
+                    internalErrors = mapOf(Pair("dataPath=.reminders", listOf("cannot have reminders without a due date")))
+                )
+            }
+
+            return Validation {
                 TaskCreateRequestData::name {
                     minLength(Validations.Task.MIN_NAME_LENGTH)
                     maxLength(Validations.Task.MAX_NAME_LENGTH)
@@ -79,7 +91,22 @@ data class TaskData(
                     minimum(Validations.Task.MINIMUM_PRIORITY)
                     maximum(Validations.Task.MAXIMUM_PRIORITY)
                 }
+                TaskCreateRequestData::subTasks onEach {
+                    SubTaskData::name {
+                        maxLength(200)
+                    }
+                }
+                TaskCreateRequestData::reminders onEach {
+                    TaskReminderData::daysBefore {
+                        minimum(0)
+                    }
+                    TaskReminderData::timeOffset {
+                        minimum(0)
+                        exclusiveMaximum(DatetimeUtils.ONE_DAY_MILLIS)
+                    }
+                }
             }.invoke(this)
+        }
     }
 
     @Serializable
@@ -88,13 +115,19 @@ data class TaskData(
         val description: String? = null,
         val dueDate: Long? = null,
         val rrule: String? = null,
-        val onDayReminder: Long? = null,
+        val reminders: List<TaskReminderData> = emptyList(),
         val subTasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
         @Contextual val itemId: IxId<ItemData>? = null,
     ) : Validatable<TaskUpdateRequestData> {
-        override fun validate() =
-            Validation {
+        override fun validate(): ValidationResult<TaskUpdateRequestData> {
+            if (reminders.isNotEmpty() && dueDate == null) {
+                return Invalid(
+                    internalErrors = mapOf(Pair("dataPath=.reminders", listOf("cannot have reminders without a due date")))
+                )
+            }
+
+            return Validation {
                 TaskUpdateRequestData::name {
                     minLength(Validations.Task.MIN_NAME_LENGTH)
                     maxLength(Validations.Task.MAX_NAME_LENGTH)
@@ -110,7 +143,22 @@ data class TaskData(
                     minimum(Validations.Task.MINIMUM_PRIORITY)
                     maximum(Validations.Task.MAXIMUM_PRIORITY)
                 }
+                TaskUpdateRequestData::subTasks onEach {
+                    SubTaskData::name {
+                        maxLength(200)
+                    }
+                }
+                TaskUpdateRequestData::reminders onEach {
+                    TaskReminderData::daysBefore {
+                        minimum(0)
+                    }
+                    TaskReminderData::timeOffset {
+                        minimum(0)
+                        exclusiveMaximum(DatetimeUtils.ONE_DAY_MILLIS)
+                    }
+                }
             }.invoke(this)
+        }
     }
 
     @Serializable
@@ -123,4 +171,10 @@ data class TaskData(
 data class SubTaskData(
     val name: String,
     var completed: Boolean,
+)
+
+@Serializable
+data class TaskReminderData(
+    val daysBefore: Int,
+    val timeOffset: Long
 )

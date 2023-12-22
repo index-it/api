@@ -8,10 +8,20 @@ import kotlinx.serialization.Serializable
 /**
  * @property id job id
  * @property task
+ * @property userId
+ * @property scheduledAt
  */
 @Serializable
-data class TaskReminderJobDto(
-    @Contextual val id: IxId<TaskReminderJobDto>,
+data class TaskReminderJobData(
+    @Contextual val id: IxId<TaskReminderJobData>,
     @Contextual val task: TaskData,
     @Contextual val userId: IxId<UserData>,
-)
+    val scheduledAt: Long
+) {
+    data class TaskReminderJobCreateData(
+        val id: IxId<TaskReminderJobData>,
+        val taskId: IxId<TaskData>,
+        val userId: IxId<UserData>,
+        val scheduledAt: Long
+    )
+}

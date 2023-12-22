@@ -8,12 +8,11 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
 object SubTaskTable : IntIdTable() {
-    val task =
-        reference(
-            name = "id_task",
-            foreign = TaskTable,
-            onDelete = ReferenceOption.CASCADE,
-        )
+    val task = reference(
+        name = "id_task",
+        foreign = TaskTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
     val name = varchar("ix_name", 150)
     val completed = bool("completed")
 }

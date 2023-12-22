@@ -3,7 +3,7 @@ package app.index.api.routing.web
 import app.index.api.routing.web.routes.notifyRoute
 import app.index.api.routing.web.routes.webhookRoute
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.models.tasks.TaskReminderJobData
 import io.ktor.resources.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Contextual
@@ -16,7 +16,7 @@ class WebhookRoute {
     @Resource("/task-reminder-job/{id}")
     class TaskReminderJobRoute(
         val parent: WebhookRoute,
-        @Contextual val id: IxId<TaskReminderJobDto>,
+        @Contextual val id: IxId<TaskReminderJobData>,
     )
 
     @Resource("/daily-job")

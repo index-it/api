@@ -85,12 +85,18 @@ class TaskDBIImpl : TaskDBI {
                 this[SubTaskTable.completed] = it.completed
             }
 
+            TaskReminderTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
+            TaskReminderTable.batchInsert(taskUpdateRequestData.reminders) {
+                this[TaskReminderTable.task] = taskId.toEntityId(TaskTable)
+                this[TaskReminderTable.daysBefore] = it.daysBefore
+                this[TaskReminderTable.timeOffset] = it.timeOffset
+            }
+
             TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[name] = taskUpdateRequestData.name
                 it[description] = taskUpdateRequestData.description
                 it[dueDate] = taskUpdateRequestData.dueDate
                 it[rrule] = taskUpdateRequestData.rrule
-                it[onDayReminder] = taskUpdateRequestData.onDayReminder
                 it[priority] = taskUpdateRequestData.priority
                 it[editedAt] = DatetimeUtils.currentMillis()
                 it[item] = taskUpdateRequestData.itemId?.toEntityId(ItemTable)

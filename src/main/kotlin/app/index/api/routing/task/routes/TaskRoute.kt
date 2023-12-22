@@ -1,6 +1,6 @@
 package app.index.api.routing.task.routes
 
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.clients.GoogleCloudSchedulerClient
 import app.index.core.logic.typedId.newIxId
@@ -10,7 +10,7 @@ import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.models.tasks.TaskReminderJobData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -48,7 +48,7 @@ fun Route.taskRoute() {
         }
     }) {
         val task =
-            taskDao.get(userIdFromSession()!!, it.taskId)
+            taskDao.get(userIdFromSessionOrThrow(), it.taskId)
                 ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(task)
@@ -106,13 +106,12 @@ fun Route.taskRoute() {
         }
     }) {
         val updateData = call.receive<TaskData.TaskUpdateRequestData>()
-        val userId = userIdFromSession()!!
+        val userId = userIdFromSessionOrThrow()
         val taskId = it.taskId
         val newItemIdToConnect = updateData.itemId
 
-        val task =
-            taskDao.get(userId, it.taskId)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val task = taskDao.get(userId, it.taskId)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (task.itemId != null && updateData.rrule != null) {
             return@put call.respond(HttpStatusCode.MethodNotAllowed)
@@ -128,27 +127,25 @@ fun Route.taskRoute() {
 
             // connects the new item if required
             if (newItemIdToConnect != null) {
-                val newConnectedItem =
-                    itemDao.get(userId, newItemIdToConnect)
-                        ?: return@put call.respond(HttpStatusCode.NotFound)
+                val newConnectedItem = itemDao.get(userId, newItemIdToConnect)
+                    ?: return@put call.respond(HttpStatusCode.NotFound)
 
                 itemDao.setTaskConnection(userId, newConnectedItem.listId, newConnectedItem.id, taskId)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
             }
         }
 
-        val updatedTask =
-            taskDao.update(userId, taskId, updateData)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val updatedTask = taskDao.update(userId, taskId, updateData)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        // /////////////////////////////
-        // / ON DAY REMINDER REFRESH ///
-        // /////////////////////////////
+        ///////////////////////////////
+        /// ON DAY REMINDER REFRESH ///
+        ///////////////////////////////
 
         val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(task.dueDate, task.onDayReminder)
 
         if (onDayReminderTimestamp != null) {
-            var jobId = taskReminderJobDao.getOfTask(taskId)?.id
+            var jobId = taskReminderJobDao.getAllOfTask(taskId)?.id
 
             if (jobId != null) {
                 googleCloudSchedulerClient.deleteTaskReminderJob(jobId)
@@ -161,8 +158,6 @@ fun Route.taskRoute() {
         }
 
         call.respond(updatedTask)
-
-        // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_UPDATED, item)
     }
 
     delete<TasksRoute.TaskRoute>({
@@ -185,7 +180,7 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        val userId = userIdFromSession()!!
+        val userId = userIdFromSessionOrThrow()
 
         taskReminderJobDao.deleteAllOfTask(it.taskId)
 
@@ -204,7 +199,7 @@ fun Route.taskRoute() {
                                 )
 
                             if (onDayReminderTimestamp != null) {
-                                val jobId = newIxId<TaskReminderJobDto>()
+                                val jobId = newIxId<TaskReminderJobData>()
 
                                 taskReminderJobDao.create(
                                     jobId = jobId,
@@ -222,6 +217,5 @@ fun Route.taskRoute() {
         taskDao.delete(userId, it.taskId)
 
         call.respond(HttpStatusCode.OK)
-        // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_DELETED, "${it.parent.parent.listId}:${it.itemId}")
     }
 }

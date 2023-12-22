@@ -2,7 +2,8 @@ package app.index.data.sources.db.dbi.task.impl
 
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.models.tasks.TaskReminderData
+import app.index.data.models.tasks.TaskReminderJobData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskReminderJobDBI
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobEntity
@@ -18,19 +19,18 @@ import org.koin.core.annotation.Single
 @Single(createdAtStart = true)
 class TaskReminderJobDBIImpl : TaskReminderJobDBI {
     override suspend fun create(
-        jobId: IxId<TaskReminderJobDto>,
-        taskId: IxId<TaskData>,
-        userId: IxId<UserData>,
+        taskReminderJobCreateData: TaskReminderJobData.TaskReminderJobCreateData
     ) {
         dbQuery {
-            TaskReminderJobEntity.new(jobId.id) {
-                task = taskId.toEntityId(TaskTable)
-                user = userId.toEntityId(UsersTable)
+            TaskReminderJobEntity.new(taskReminderJobCreateData.id.id) {
+                task = taskReminderJobCreateData.taskId.toEntityId(TaskTable)
+                user = taskReminderJobCreateData.userId.toEntityId(UsersTable)
+                scheduledAt = taskReminderJobCreateData.scheduledAt
             }
         }
     }
 
-    override suspend fun get(jobId: IxId<TaskReminderJobDto>): TaskReminderJobDto? =
+    override suspend fun get(jobId: IxId<TaskReminderJobData>): TaskReminderJobData? =
         dbQuery {
             TaskReminderJobEntity
                 .find { TaskReminderJobTable.id eq jobId.toEntityId(TaskReminderJobTable) }
@@ -39,16 +39,15 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 ?.toData()
         }
 
-    override suspend fun getOfTask(taskId: IxId<TaskData>): TaskReminderJobDto? =
+    override suspend fun getAllOfTask(taskId: IxId<TaskData>): List<TaskReminderJobData> =
         dbQuery {
             TaskReminderJobEntity
                 .find { TaskReminderJobTable.task eq taskId.toEntityId(TaskTable) }
                 .limit(1)
-                .firstOrNull()
-                ?.toData()
+                .map { it.toData() }
         }
 
-    override suspend fun delete(jobId: IxId<TaskReminderJobDto>) {
+    override suspend fun delete(jobId: IxId<TaskReminderJobData>) {
         dbQuery {
             TaskReminderJobTable.deleteWhere {
                 id eq jobId.toEntityId(TaskReminderJobTable)

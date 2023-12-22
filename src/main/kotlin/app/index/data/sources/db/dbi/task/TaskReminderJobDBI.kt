@@ -2,22 +2,17 @@ package app.index.data.sources.db.dbi.task
 
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobDto
-import app.index.data.models.user.UserData
+import app.index.data.models.tasks.TaskReminderJobData
 import app.index.data.sources.db.dbi.DBI
 
 interface TaskReminderJobDBI : DBI {
-    suspend fun create(
-        jobId: IxId<TaskReminderJobDto>,
-        taskId: IxId<TaskData>,
-        userId: IxId<UserData>,
-    )
+    suspend fun create(taskReminderJobCreateData: TaskReminderJobData.TaskReminderJobCreateData)
 
-    suspend fun get(jobId: IxId<TaskReminderJobDto>): TaskReminderJobDto?
+    suspend fun get(jobId: IxId<TaskReminderJobData>): TaskReminderJobData?
 
-    suspend fun getOfTask(taskId: IxId<TaskData>): TaskReminderJobDto?
+    suspend fun getAllOfTask(taskId: IxId<TaskData>): List<TaskReminderJobData>
 
-    suspend fun delete(jobId: IxId<TaskReminderJobDto>)
+    suspend fun delete(jobId: IxId<TaskReminderJobData>)
 
     suspend fun deleteAllOfTask(taskId: IxId<TaskData>)
 }

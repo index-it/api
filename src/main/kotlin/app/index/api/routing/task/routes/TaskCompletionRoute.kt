@@ -1,6 +1,6 @@
 package app.index.api.routing.task.routes
 
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.clients.GoogleCloudSchedulerClient
 import app.index.core.logic.typedId.newIxId
@@ -9,7 +9,7 @@ import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.models.tasks.TaskReminderJobData
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -51,10 +51,10 @@ fun Route.taskCompletionRoute() {
             }
         }
     }) {
-        val userId = userIdFromSession()!!
-        val updatedTask =
-            taskDao.setCompletion(userId, it.parent.taskId, it.completed)
-                ?: return@put call.respond(HttpStatusCode.NotFound)
+        val userId = userIdFromSessionOrThrow()
+
+        val updatedTask = taskDao.setCompletion(userId, it.parent.taskId, it.completed)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (updatedTask.itemId != null) {
             itemDao.get(userId, updatedTask.itemId)
@@ -78,7 +78,7 @@ fun Route.taskCompletionRoute() {
                         )
 
                     if (onDayReminderTimestamp != null) {
-                        val jobId = newIxId<TaskReminderJobDto>()
+                        val jobId = newIxId<TaskReminderJobData>()
 
                         taskReminderJobDao.create(
                             jobId = jobId,

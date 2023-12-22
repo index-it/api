@@ -1,6 +1,7 @@
 package app.index.api.routing.task.routes
 
 import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.clients.GoogleCloudSchedulerClient
 import app.index.core.logic.typedId.newIxId
@@ -9,7 +10,7 @@ import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.models.tasks.TaskReminderJobData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -43,11 +44,13 @@ fun Route.tasksRoute() {
             }
         }
     }) {
+        val userId = userIdFromSessionOrThrow()
+
         val tasks =
             when (it.completed) {
-                true -> taskDao.getAllCompleted(userIdFromSession()!!)
-                false -> taskDao.getAllUncompleted(userIdFromSession()!!)
-                null -> taskDao.getAll(userIdFromSession()!!)
+                true -> taskDao.getAllCompleted(userId)
+                false -> taskDao.getAllUncompleted(userId)
+                null -> taskDao.getAll(userId)
             }
 
         call.respond(tasks)
@@ -80,31 +83,27 @@ fun Route.tasksRoute() {
             }
         }
     }) {
-        val userId = userIdFromSession()!!
+        val userId = userIdFromSessionOrThrow()
         val newTask = call.receive<TaskData.TaskCreateRequestData>()
         val itemIdToConnect = newTask.itemId
 
-        // ////////////////
-        // / VALIDATION ///
-        // ////////////////
+        //////////////////
+        /// VALIDATION ///
+        //////////////////
         // TODO: Move to validate library
         if (itemIdToConnect != null && newTask.rrule != null) {
             return@post call.respond(HttpStatusCode.BadRequest, "cannot create recurring connected task")
         }
 
-        if (newTask.onDayReminder != null && newTask.dueDate == null) {
-            return@post call.respond(HttpStatusCode.BadRequest, "cannot add on day reminder for task without due date")
-        }
-
-        // ///////////////////
-        // / TASK CREATION ///
-        // ///////////////////
+        /////////////////////
+        /// TASK CREATION ///
+        /////////////////////
 
         val task =
             if (itemIdToConnect != null) {
-                // //////////////////
-                // / CONNECT ITEM ///
-                // //////////////////
+                ////////////////////
+                /// CONNECT ITEM ///
+                ////////////////////
                 val itemToConnect =
                     itemDao.get(userId, itemIdToConnect)
                         ?: return@post call.respond(HttpStatusCode.NotFound)
@@ -119,14 +118,14 @@ fun Route.tasksRoute() {
                 taskDao.create(userIdFromSession()!!, newTask)
             }
 
-        // /////////////////////
-        // / ON DAY REMINDER ///
-        // /////////////////////
+        ///////////////////////
+        /// ON DAY REMINDER ///
+        ///////////////////////
 
         val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(newTask.dueDate, newTask.onDayReminder)
 
         if (onDayReminderTimestamp != null) {
-            val jobId = newIxId<TaskReminderJobDto>()
+            val jobId = newIxId<TaskReminderJobData>()
 
             taskReminderJobDao.create(
                 jobId = jobId,
@@ -138,7 +137,5 @@ fun Route.tasksRoute() {
         }
 
         call.respond(task)
-
-        // emitRabbitMqWebsocketEvent(RabbitMqWebsocketEventType.ITEM_CREATED, item)
     }
 }

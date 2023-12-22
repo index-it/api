@@ -3,7 +3,7 @@ package app.index.core.clients
 import app.index.config.GoogleCloudConfig
 import app.index.config.JobConfig
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.tasks.TaskReminderJobDto
+import app.index.data.models.tasks.TaskReminderJobData
 import com.google.cloud.scheduler.v1.*
 import com.google.protobuf.Timestamp
 import org.koin.core.annotation.Single
@@ -70,7 +70,7 @@ class GoogleCloudSchedulerClient {
      * @throws Exception failed to create job
      */
     fun createTaskReminderJob(
-        id: IxId<TaskReminderJobDto>,
+        id: IxId<TaskReminderJobData>,
         reminderTimestamp: Long,
     ) {
         val webhookUrl = "${JobConfig.taskReminderJobWebhookUrl}/$id"
@@ -101,7 +101,7 @@ class GoogleCloudSchedulerClient {
      *
      * @throws Exception
      */
-    fun deleteTaskReminderJob(id: IxId<TaskReminderJobDto>) {
+    fun deleteTaskReminderJob(id: IxId<TaskReminderJobData>) {
         val name = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, id.toString())
         cloudSchedulerClient.deleteJob(name)
     }

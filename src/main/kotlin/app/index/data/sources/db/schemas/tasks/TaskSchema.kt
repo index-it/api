@@ -34,7 +34,6 @@ import java.util.*
  * @property description
  * @property dueDate
  * @property rrule
- * @property onDayReminder
  * @property completed
  * @property priority
  * @property createdAt
@@ -58,7 +57,6 @@ object TaskTable : UUIDTable() {
     val description = varchar("description", 500).nullable()
     val dueDate = long("due_date").nullable()
     val rrule = varchar("rrule", 200).nullable()
-    val onDayReminder = long("due_date_reminder").nullable()
     val completed = bool("completed")
     val priority = integer("priority").nullable()
     val createdAt = long("created_at")
@@ -78,6 +76,10 @@ object TaskTable : UUIDTable() {
  * @property createdAt
  * @property editedAt
  * @property completedAt
+ *
+ * @property subTasks
+ * @property reminders
+ *
  * @property userEntity
  * @property itemEntity
  */
@@ -90,7 +92,6 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var description by TaskTable.description
     var dueDate by TaskTable.dueDate
     var rrule by TaskTable.rrule
-    var onDayReminder by TaskTable.onDayReminder
     var completed by TaskTable.completed
     var priority by TaskTable.priority
     var createdAt by TaskTable.createdAt
@@ -98,6 +99,7 @@ class TaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var completedAt by TaskTable.completedAt
 
     val subTasks by SubTaskEntity referrersOn SubTaskTable.task
+    val reminders by TaskReminderEntity referrersOn TaskReminderTable.task
     @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn TaskTable.user
     @Suppress("MemberVisibilityCanBePrivate")
@@ -111,7 +113,6 @@ fun TaskEntity.fromData(taskData: TaskData) {
     description = taskData.description
     dueDate = taskData.dueDate
     rrule = taskData.rrule
-    onDayReminder = taskData.onDayReminder
     completed = taskData.completed
     priority = taskData.priority
     createdAt = taskData.createdAt
@@ -127,9 +128,9 @@ fun TaskEntity.toData() = TaskData(
     description = description,
     dueDate = dueDate,
     rrule = rrule,
-    onDayReminder = onDayReminder,
     completed = completed,
     priority = priority,
+    reminders = reminders.map { it.toData() },
     createdAt = createdAt,
     editedAt = editedAt,
     completedAt = completedAt,
