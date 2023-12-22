@@ -1,9 +1,17 @@
 package app.index.core.logic.usecases
 
+import app.index.core.clients.GoogleCloudSchedulerClient
 import app.index.core.logic.DatetimeUtils
+import app.index.core.logic.typedId.impl.IxId
+import app.index.core.logic.typedId.newIxId
+import app.index.data.daos.task.TaskDao
+import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderData
+import app.index.data.models.tasks.TaskReminderJobData
 import org.dmfs.rfc5545.recur.RecurrenceRule
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Calendar
@@ -11,7 +19,10 @@ import java.util.Date
 import java.util.TimeZone
 import kotlin.math.max
 
-object TaskUseCase {
+object TaskUseCase : KoinComponent {
+    private val taskDao by inject<TaskDao>()
+    private val taskReminderJobDao by inject<TaskReminderJobDao>()
+    private val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
 
     /**
      * If a task is recurring, this calculates the next occurrence date and the updated rrule in case `COUNT` was used as the end clause
@@ -49,19 +60,22 @@ object TaskUseCase {
     }
 
     /**
-     * Calculates the timestamp for the on day reminder
+     * Creates the next occurrence of a recurring task if needed
      *
-     * @return Timestamp for the on day reminder, null for no reminder
+     * @param task
+     *
+     * @return the created [TaskData] or null if no next occurrence is needed
+     *
+     * @see calculateNextOccurrenceDueDateAndRRule
      */
-    fun calculateOnDayReminderTimestamp(
-        dueDate: Long?,
-        onDayReminder: Long?,
-    ): Long? {
-        if (dueDate == null || onDayReminder == null) {
-            return null
-        }
+    suspend fun createNextOccurrence(task: TaskData): TaskData? {
+        val (dueDate, rrule) = calculateNextOccurrenceDueDateAndRRule(task) ?: return null
 
-        return (dueDate + onDayReminder).takeIf { it > DatetimeUtils.currentMillis() }
+        val nextOccurrenceTask = taskDao.createNextOccurrence(task, dueDate, rrule)
+
+        createReminders(nextOccurrenceTask)
+
+        return nextOccurrenceTask
     }
 
     /**
@@ -97,5 +111,82 @@ object TaskUseCase {
         }
 
         return timestamps
+    }
+
+    /**
+     * Creates all task reminder jobs for [TaskData.reminders]
+     *
+     * This method should be used for newly created tasks, if you have an existing tasks
+     * and you need to recreate its reminders (for example when they get updated) see [refreshReminders]
+     *
+     * @param task
+     *
+     * @see refreshReminders
+     */
+    suspend fun createReminders(task: TaskData) {
+        val reminderJobs = calculateReminderTimestamps(task.dueDate, task.reminders).map {
+            TaskReminderJobData.TaskReminderJobCreateData(
+                id = newIxId(),
+                taskId = task.id,
+                userId = task.userId,
+                scheduledAt = it
+            )
+        }
+
+        if (reminderJobs.isNotEmpty()) {
+            taskReminderJobDao.createAll(reminderJobs)
+            reminderJobs.forEach { reminderJob ->
+                googleCloudSchedulerClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
+            }
+        }
+    }
+
+    /**
+     * Finds and delete outdated task reminder jobs + detects and creates missing task reminder jobs
+     *
+     * @param task
+     */
+    suspend fun refreshReminders(task: TaskData) {
+        val reminderTimestamps = calculateReminderTimestamps(task.dueDate, task.reminders)
+        val existingReminderJobs = taskReminderJobDao.getAllOfTask(task.id)
+
+        // Find and delete outdated jobs
+        val outdatedReminderJobs = mutableListOf<IxId<TaskReminderJobData>>()
+
+        existingReminderJobs.forEach { reminderJobData ->
+            if (reminderJobData.scheduledAt !in reminderTimestamps) {
+                outdatedReminderJobs.add(reminderJobData.id)
+            }
+        }
+
+        if (outdatedReminderJobs.isNotEmpty()) {
+            taskReminderJobDao.deleteMultiple(outdatedReminderJobs)
+            outdatedReminderJobs.forEach { jobId ->
+                googleCloudSchedulerClient.deleteTaskReminderJob(jobId)
+            }
+        }
+
+        // Detect and create missing jobs
+        val missingReminderJobs = mutableListOf<TaskReminderJobData.TaskReminderJobCreateData>()
+
+        reminderTimestamps.forEach { timestamp ->
+            if (existingReminderJobs.none { reminderJob -> reminderJob.scheduledAt == timestamp }) {
+                missingReminderJobs.add(
+                    TaskReminderJobData.TaskReminderJobCreateData(
+                        id = newIxId(),
+                        taskId = task.id,
+                        userId = task.userId,
+                        scheduledAt = timestamp
+                    )
+                )
+            }
+        }
+
+        if (missingReminderJobs.isNotEmpty()) {
+            taskReminderJobDao.createAll(missingReminderJobs)
+            missingReminderJobs.forEach { reminderJob ->
+                googleCloudSchedulerClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
+            }
+        }
     }
 }

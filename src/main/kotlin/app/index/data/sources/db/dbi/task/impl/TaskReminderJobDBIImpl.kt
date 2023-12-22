@@ -13,6 +13,7 @@ import app.index.data.sources.db.schemas.tasks.toData
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.koin.core.annotation.Single
@@ -63,6 +64,16 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
         dbQuery {
             TaskReminderJobTable.deleteWhere {
                 id eq jobId.toEntityId(TaskReminderJobTable)
+            }
+        }
+    }
+
+    override suspend fun deleteMultiple(jobIds: List<IxId<TaskReminderJobData>>) {
+        dbQuery {
+            val ids = jobIds.map { it.toEntityId(TaskReminderJobTable) }
+
+            TaskReminderJobTable.deleteWhere {
+                id inList ids
             }
         }
     }

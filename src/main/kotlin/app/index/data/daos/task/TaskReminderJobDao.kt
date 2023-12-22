@@ -34,6 +34,10 @@ class TaskReminderJobDao(
         taskReminderJobDBI.delete(jobId)
     }
 
+    suspend fun deleteMultiple(jobIds: List<IxId<TaskReminderJobData>>) {
+        taskReminderJobDBI.deleteMultiple(jobIds)
+    }
+
     suspend fun deleteAllOfTask(taskId: IxId<TaskData>) {
         taskReminderJobDBI.deleteAllOfTask(taskId)
     }

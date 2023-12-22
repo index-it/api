@@ -21,7 +21,6 @@ fun Route.taskCompletionRoute() {
     val taskDao by inject<TaskDao>()
     val taskReminderJobDao by inject<TaskReminderJobDao>()
     val itemDao by inject<ItemDao>()
-    val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
 
     put<TasksRoute.TaskRoute.CompletionRoute>({
         tags = listOf("tasks")
@@ -66,31 +65,9 @@ fun Route.taskCompletionRoute() {
         if (it.completed) {
             taskReminderJobDao.deleteAllOfTask(updatedTask.id)
 
-            TaskUseCase.calculateNextOccurrenceDueDateAndRRule(updatedTask)
-                ?.also { (dueDate, rrule) ->
-                    val nextOccurrenceTask = taskDao.createNextOccurrence(updatedTask, dueDate, rrule)
-
-                    // TODO: Extract to some function or side effect in dao?
-                    val onDayReminderTimestamp =
-                        TaskUseCase.calculateOnDayReminderTimestamp(
-                            nextOccurrenceTask.dueDate,
-                            nextOccurrenceTask.onDayReminder,
-                        )
-
-                    if (onDayReminderTimestamp != null) {
-                        val jobId = newIxId<TaskReminderJobData>()
-
-                        taskReminderJobDao.create(
-                            jobId = jobId,
-                            taskId = nextOccurrenceTask.id,
-                            userId = userId,
-                        )
-
-                        googleCloudSchedulerClient.createTaskReminderJob(jobId, onDayReminderTimestamp)
-                    }
-                    // TODO: WS
-                }
+            TaskUseCase.createNextOccurrence(updatedTask)
         } else if (updatedTask.rrule != null) {
+            // Cannot un-complete task with recurring rule
             return@put call.respond(HttpStatusCode.MethodNotAllowed)
         }
 

@@ -115,23 +115,7 @@ fun Route.tasksRoute() {
             taskDao.create(userIdFromSession()!!, newTask)
         }
 
-        /////////////////
-        /// REMINDERS ///
-        /////////////////
-        val taskReminderJobCreateData = TaskUseCase.calculateReminderTimestamps(task.dueDate, task.reminders).map {  timestamp ->
-            TaskReminderJobData.TaskReminderJobCreateData(
-                id = newIxId(),
-                taskId = task.id,
-                userId = userId,
-                scheduledAt = timestamp
-            )
-        }
-
-        taskReminderJobDao.createAll(taskReminderJobCreateData)
-
-        taskReminderJobCreateData.forEach {
-            googleCloudSchedulerClient.createTaskReminderJob(it.id, it.scheduledAt)
-        }
+        TaskUseCase.createReminders(task)
 
         call.respond(task)
     }

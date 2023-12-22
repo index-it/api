@@ -3,6 +3,7 @@ package app.index.api.routing.task.routes
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.clients.GoogleCloudSchedulerClient
+import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.data.daos.list.ItemDao
@@ -25,7 +26,6 @@ fun Route.taskRoute() {
     val taskDao by inject<TaskDao>()
     val taskReminderJobDao by inject<TaskReminderJobDao>()
     val itemDao by inject<ItemDao>()
-    val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
 
     get<TasksRoute.TaskRoute>({
         tags = listOf("tasks")
@@ -47,9 +47,8 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        val task =
-            taskDao.get(userIdFromSessionOrThrow(), it.taskId)
-                ?: return@get call.respond(HttpStatusCode.NotFound)
+        val task = taskDao.get(userIdFromSessionOrThrow(), it.taskId)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(task)
     }
@@ -138,24 +137,7 @@ fun Route.taskRoute() {
         val updatedTask = taskDao.update(userId, taskId, updateData)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        ///////////////////////////////
-        /// ON DAY REMINDER REFRESH ///
-        ///////////////////////////////
-
-        val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(task.dueDate, task.onDayReminder)
-
-        if (onDayReminderTimestamp != null) {
-            var jobId = taskReminderJobDao.getAllOfTask(taskId)?.id
-
-            if (jobId != null) {
-                googleCloudSchedulerClient.deleteTaskReminderJob(jobId)
-            } else {
-                jobId = newIxId()
-                taskReminderJobDao.create(jobId, taskId, userId)
-            }
-
-            googleCloudSchedulerClient.createTaskReminderJob(jobId, onDayReminderTimestamp)
-        }
+        TaskUseCase.refreshReminders(task)
 
         call.respond(updatedTask)
     }
@@ -185,33 +167,9 @@ fun Route.taskRoute() {
         taskReminderJobDao.deleteAllOfTask(it.taskId)
 
         if (!it.all) {
-            taskDao.get(userId, it.taskId)
-                ?.also { task ->
-                    TaskUseCase.calculateNextOccurrenceDueDateAndRRule(task)
-                        ?.also { (dueDate, rrule) ->
-                            val nextOccurrenceTask = taskDao.createNextOccurrence(task, dueDate, rrule)
-
-                            // TODO: Extract to some function or side effect in dao?
-                            val onDayReminderTimestamp =
-                                TaskUseCase.calculateOnDayReminderTimestamp(
-                                    nextOccurrenceTask.dueDate,
-                                    nextOccurrenceTask.onDayReminder,
-                                )
-
-                            if (onDayReminderTimestamp != null) {
-                                val jobId = newIxId<TaskReminderJobData>()
-
-                                taskReminderJobDao.create(
-                                    jobId = jobId,
-                                    taskId = nextOccurrenceTask.id,
-                                    userId = userId,
-                                )
-
-                                googleCloudSchedulerClient.createTaskReminderJob(jobId, onDayReminderTimestamp)
-                            }
-                            // TODO: WS
-                        }
-                }
+            taskDao.get(userId, it.taskId)?.let { task ->
+                val nextOccurrenceTask = TaskUseCase.createNextOccurrence(task)
+            }
         }
 
         taskDao.delete(userId, it.taskId)
