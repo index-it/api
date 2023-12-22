@@ -24,6 +24,7 @@ class SubTaskEntity(id: EntityID<Int>) : IntEntity(id) {
     var name by SubTaskTable.name
     var completed by SubTaskTable.completed
 
+    @Suppress("UNUSED")
     val taskEntity by TaskEntity referencedOn SubTaskTable.task
 }
 

@@ -8,8 +8,11 @@ import app.index.data.sources.db.schemas.lists.ListTable
 import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable
 import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable
 import app.index.data.sources.db.schemas.tasks.SubTaskTable
+import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable
+import app.index.data.sources.db.schemas.tasks.TaskReminderTable
 import app.index.data.sources.db.schemas.tasks.TaskTable
 import app.index.data.sources.db.schemas.user.EmailVerificationTable
+import app.index.data.sources.db.schemas.user.FCMRegistrationTokenTable
 import app.index.data.sources.db.schemas.user.PasswordResetTable
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.schemas.web.ReleaseNotifyTable
@@ -45,10 +48,13 @@ fun main() {
             ItemTable,
             ItemContentTable,
             TaskTable,
+            TaskReminderTable,
+            TaskReminderJobTable,
             SubTaskTable,
             ReleaseNotifyTable,
             ColorSuggestionTable,
             NameSuggestionTable,
+            FCMRegistrationTokenTable
         )
     }
 

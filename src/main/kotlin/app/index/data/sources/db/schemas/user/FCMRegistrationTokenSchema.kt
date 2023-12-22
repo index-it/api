@@ -19,12 +19,11 @@ import org.jetbrains.exposed.sql.ReferenceOption
  */
 object FCMRegistrationTokenTable : IntIdTable() {
     val token = varchar("token", 100).uniqueIndex()
-    val user =
-        reference(
-            name = "id_user",
-            foreign = UsersTable,
-            onDelete = ReferenceOption.CASCADE,
-        ).index()
+    val user = reference(
+        name = "id_user",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
     val createdAt = long("created_at")
 }
 

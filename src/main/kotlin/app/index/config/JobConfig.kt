@@ -12,5 +12,5 @@ object JobConfig {
     var dailyJobWebhookUrl: String = "https://api-dev.index-it.app/webhook/daily-job"
 
     @ConfigurationProperty("daily.job.id")
-    var dailyJobId: String = "daily-job"
+    var dailyJobId: String = "dev-daily-job"
 }
