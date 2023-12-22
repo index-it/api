@@ -86,11 +86,12 @@ object TaskUseCase : KoinComponent {
      *
      * @return the list of timestamps
      */
-    fun calculateReminderTimestamps(dueDate: Long?, reminders: List<TaskReminderData>): List<Long> {
+    private fun calculateReminderTimestamps(dueDate: Long?, reminders: List<TaskReminderData>): List<Long> {
         if (dueDate == null) {
             return emptyList()
         }
 
+        val currentTimestamp = DatetimeUtils.currentMillis()
         val timestamps = mutableListOf<Long>()
         val calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC))
 
@@ -124,14 +125,17 @@ object TaskUseCase : KoinComponent {
      * @see refreshReminders
      */
     suspend fun createReminders(task: TaskData) {
-        val reminderJobs = calculateReminderTimestamps(task.dueDate, task.reminders).map {
-            TaskReminderJobData.TaskReminderJobCreateData(
-                id = newIxId(),
-                taskId = task.id,
-                userId = task.userId,
-                scheduledAt = it
-            )
-        }
+        val currentMillis = DatetimeUtils.currentMillis()
+        val reminderJobs = calculateReminderTimestamps(task.dueDate, task.reminders)
+            .filter { it > currentMillis }
+            .map {
+                TaskReminderJobData.TaskReminderJobCreateData(
+                    id = newIxId(),
+                    taskId = task.id,
+                    userId = task.userId,
+                    scheduledAt = it
+                )
+            }
 
         if (reminderJobs.isNotEmpty()) {
             taskReminderJobDao.createAll(reminderJobs)
@@ -168,19 +172,22 @@ object TaskUseCase : KoinComponent {
 
         // Detect and create missing jobs
         val missingReminderJobs = mutableListOf<TaskReminderJobData.TaskReminderJobCreateData>()
+        val currentMillis = DatetimeUtils.currentMillis()
 
-        reminderTimestamps.forEach { timestamp ->
-            if (existingReminderJobs.none { reminderJob -> reminderJob.scheduledAt == timestamp }) {
-                missingReminderJobs.add(
-                    TaskReminderJobData.TaskReminderJobCreateData(
-                        id = newIxId(),
-                        taskId = task.id,
-                        userId = task.userId,
-                        scheduledAt = timestamp
+        reminderTimestamps
+            .filter { it > currentMillis }
+            .forEach { timestamp ->
+                if (existingReminderJobs.none { reminderJob -> reminderJob.scheduledAt == timestamp }) {
+                    missingReminderJobs.add(
+                        TaskReminderJobData.TaskReminderJobCreateData(
+                            id = newIxId(),
+                            taskId = task.id,
+                            userId = task.userId,
+                            scheduledAt = timestamp
+                        )
                     )
-                )
+                }
             }
-        }
 
         if (missingReminderJobs.isNotEmpty()) {
             taskReminderJobDao.createAll(missingReminderJobs)

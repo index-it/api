@@ -31,9 +31,11 @@ class GoogleCloudSchedulerClient {
      * Creates the daily job that notifies the backend to perform certain actions daily
      */
     private fun createDailyJobIfMissing() {
+        val jobName = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.dailyJobId).toString()
+
         val jobExists =
             try {
-                cloudSchedulerClient.getJob(JobConfig.dailyJobId)
+                cloudSchedulerClient.getJob(jobName)
             } catch (_: Exception) {
                 null
             }.let { it != null }
@@ -45,7 +47,7 @@ class GoogleCloudSchedulerClient {
 
             val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
             val job = Job.newBuilder()
-                .setName(JobConfig.dailyJobId)
+                .setName(jobName)
                 .setHttpTarget(httpTarget)
                 .setSchedule("0 0 * * *")
                 .build()
@@ -79,9 +81,10 @@ class GoogleCloudSchedulerClient {
             .setUri(webhookUrl)
 
         val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
+        val jobName = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, id.toString()).toString()
         val seconds = (reminderTimestamp / 1000) - 1
         val job = Job.newBuilder()
-            .setName(id.toString())
+            .setName(jobName)
             .setHttpTarget(httpTarget)
             .setScheduleTime(Timestamp.newBuilder().setSeconds(seconds).build())
             .build()
