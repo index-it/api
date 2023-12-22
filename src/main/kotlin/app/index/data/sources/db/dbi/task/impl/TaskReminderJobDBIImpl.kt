@@ -13,6 +13,7 @@ import app.index.data.sources.db.schemas.tasks.toData
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.koin.core.annotation.Single
 
@@ -26,6 +27,17 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 task = taskReminderJobCreateData.taskId.toEntityId(TaskTable)
                 user = taskReminderJobCreateData.userId.toEntityId(UsersTable)
                 scheduledAt = taskReminderJobCreateData.scheduledAt
+            }
+        }
+    }
+
+    override suspend fun createAll(taskReminderJobCreateData: List<TaskReminderJobData.TaskReminderJobCreateData>) {
+        dbQuery {
+            TaskReminderJobTable.batchInsert(taskReminderJobCreateData) {
+                this[TaskReminderJobTable.id] = it.id.toEntityId(TaskReminderJobTable)
+                this[TaskReminderJobTable.task] = it.taskId.toEntityId(TaskTable)
+                this[TaskReminderJobTable.user] = it.userId.toEntityId(UsersTable)
+                this[TaskReminderJobTable.scheduledAt] = it.scheduledAt
             }
         }
     }

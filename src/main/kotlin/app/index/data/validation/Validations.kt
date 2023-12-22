@@ -29,6 +29,8 @@ object Validations {
         const val MAX_DESCRIPTION_LENGTH = 500
 
         const val MAX_SUBTASK_COUNT = 50
+        const val MAX_SUBTASK_NAME_LENGTH = 200
+        const val MAX_REMINDERS_COUNT = 10
 
         const val MINIMUM_PRIORITY = 0
         const val MAXIMUM_PRIORITY = 4

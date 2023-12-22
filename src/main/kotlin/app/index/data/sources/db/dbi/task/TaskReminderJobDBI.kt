@@ -8,6 +8,8 @@ import app.index.data.sources.db.dbi.DBI
 interface TaskReminderJobDBI : DBI {
     suspend fun create(taskReminderJobCreateData: TaskReminderJobData.TaskReminderJobCreateData)
 
+    suspend fun createAll(taskReminderJobCreateData: List<TaskReminderJobData.TaskReminderJobCreateData>)
+
     suspend fun get(jobId: IxId<TaskReminderJobData>): TaskReminderJobData?
 
     suspend fun getAllOfTask(taskId: IxId<TaskData>): List<TaskReminderJobData>

@@ -87,14 +87,17 @@ data class TaskData(
                 TaskCreateRequestData::subTasks {
                     maxItems(Validations.Task.MAX_SUBTASK_COUNT)
                 }
+                TaskCreateRequestData::subTasks onEach {
+                    SubTaskData::name {
+                        maxLength(Validations.Task.MAX_SUBTASK_NAME_LENGTH)
+                    }
+                }
                 TaskCreateRequestData::priority ifPresent {
                     minimum(Validations.Task.MINIMUM_PRIORITY)
                     maximum(Validations.Task.MAXIMUM_PRIORITY)
                 }
-                TaskCreateRequestData::subTasks onEach {
-                    SubTaskData::name {
-                        maxLength(200)
-                    }
+                TaskCreateRequestData::reminders {
+                    maxItems(Validations.Task.MAX_REMINDERS_COUNT)
                 }
                 TaskCreateRequestData::reminders onEach {
                     TaskReminderData::daysBefore {
@@ -139,14 +142,17 @@ data class TaskData(
                 TaskUpdateRequestData::subTasks {
                     maxItems(Validations.Task.MAX_SUBTASK_COUNT)
                 }
+                TaskUpdateRequestData::subTasks onEach {
+                    SubTaskData::name {
+                        maxLength(Validations.Task.MAX_SUBTASK_NAME_LENGTH)
+                    }
+                }
                 TaskUpdateRequestData::priority ifPresent {
                     minimum(Validations.Task.MINIMUM_PRIORITY)
                     maximum(Validations.Task.MAXIMUM_PRIORITY)
                 }
-                TaskUpdateRequestData::subTasks onEach {
-                    SubTaskData::name {
-                        maxLength(200)
-                    }
+                TaskUpdateRequestData::reminders {
+                    maxItems(Validations.Task.MAX_REMINDERS_COUNT)
                 }
                 TaskUpdateRequestData::reminders onEach {
                     TaskReminderData::daysBefore {

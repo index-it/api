@@ -16,6 +16,12 @@ class TaskReminderJobDao(
         taskReminderJobDBI.create(taskReminderJobCreateData)
     }
 
+    suspend fun createAll(
+        taskReminderJobCreateData: List<TaskReminderJobData.TaskReminderJobCreateData>
+    ) {
+        taskReminderJobDBI.createAll(taskReminderJobCreateData)
+    }
+
     suspend fun get(id: IxId<TaskReminderJobData>): TaskReminderJobData? {
         return taskReminderJobDBI.get(id)
     }

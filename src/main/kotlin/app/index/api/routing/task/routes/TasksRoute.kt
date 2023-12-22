@@ -46,12 +46,11 @@ fun Route.tasksRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        val tasks =
-            when (it.completed) {
-                true -> taskDao.getAllCompleted(userId)
-                false -> taskDao.getAllUncompleted(userId)
-                null -> taskDao.getAll(userId)
-            }
+        val tasks = when (it.completed) {
+            true -> taskDao.getAllCompleted(userId)
+            false -> taskDao.getAllUncompleted(userId)
+            null -> taskDao.getAll(userId)
+        }
 
         call.respond(tasks)
     }
@@ -66,7 +65,7 @@ fun Route.tasksRoute() {
                 required = true
                 example(
                     "sample-task",
-                    TaskData.TaskCreateRequestData("find skis", "find some skis for this winter", null, null, null, emptyList()),
+                    TaskData.TaskCreateRequestData("find skis", "find some skis for this winter", null, null, emptyList(), emptyList()),
                 )
             }
         }
@@ -90,7 +89,7 @@ fun Route.tasksRoute() {
         //////////////////
         /// VALIDATION ///
         //////////////////
-        // TODO: Move to validate library
+
         if (itemIdToConnect != null && newTask.rrule != null) {
             return@post call.respond(HttpStatusCode.BadRequest, "cannot create recurring connected task")
         }
@@ -99,41 +98,39 @@ fun Route.tasksRoute() {
         /// TASK CREATION ///
         /////////////////////
 
-        val task =
-            if (itemIdToConnect != null) {
-                ////////////////////
-                /// CONNECT ITEM ///
-                ////////////////////
-                val itemToConnect =
-                    itemDao.get(userId, itemIdToConnect)
-                        ?: return@post call.respond(HttpStatusCode.NotFound)
+        val task = if (itemIdToConnect != null) {
+            ////////////////////
+            /// CONNECT ITEM ///
+            ////////////////////
+            val itemToConnect = itemDao.get(userId, itemIdToConnect)
+                ?: return@post call.respond(HttpStatusCode.NotFound)
 
-                val task = taskDao.create(userIdFromSession()!!, newTask)
+            val task = taskDao.create(userIdFromSession()!!, newTask)
 
-                itemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
-                    ?: return@post call.respond(HttpStatusCode.NotFound)
+            itemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
+                ?: return@post call.respond(HttpStatusCode.NotFound)
 
-                task
-            } else {
-                taskDao.create(userIdFromSession()!!, newTask)
-            }
+            task
+        } else {
+            taskDao.create(userIdFromSession()!!, newTask)
+        }
 
-        ///////////////////////
-        /// ON DAY REMINDER ///
-        ///////////////////////
-
-        val onDayReminderTimestamp = TaskUseCase.calculateOnDayReminderTimestamp(newTask.dueDate, newTask.onDayReminder)
-
-        if (onDayReminderTimestamp != null) {
-            val jobId = newIxId<TaskReminderJobData>()
-
-            taskReminderJobDao.create(
-                jobId = jobId,
+        /////////////////
+        /// REMINDERS ///
+        /////////////////
+        val taskReminderJobCreateData = TaskUseCase.calculateReminderTimestamps(task.dueDate, task.reminders).map {  timestamp ->
+            TaskReminderJobData.TaskReminderJobCreateData(
+                id = newIxId(),
                 taskId = task.id,
                 userId = userId,
+                scheduledAt = timestamp
             )
+        }
 
-            googleCloudSchedulerClient.createTaskReminderJob(jobId, onDayReminderTimestamp)
+        taskReminderJobDao.createAll(taskReminderJobCreateData)
+
+        taskReminderJobCreateData.forEach {
+            googleCloudSchedulerClient.createTaskReminderJob(it.id, it.scheduledAt)
         }
 
         call.respond(task)

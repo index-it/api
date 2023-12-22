@@ -2,7 +2,13 @@ package app.index.core.logic.usecases
 
 import app.index.core.logic.DatetimeUtils
 import app.index.data.models.tasks.TaskData
+import app.index.data.models.tasks.TaskReminderData
 import org.dmfs.rfc5545.recur.RecurrenceRule
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 import kotlin.math.max
 
 object TaskUseCase {
@@ -56,5 +62,40 @@ object TaskUseCase {
         }
 
         return (dueDate + onDayReminder).takeIf { it > DatetimeUtils.currentMillis() }
+    }
+
+    /**
+     * Calculates all the timestamps for the reminders of the task
+     *
+     * @param dueDate
+     * @param reminders make sure those are validated as this function does not validate them
+     *
+     * @return the list of timestamps
+     */
+    fun calculateReminderTimestamps(dueDate: Long?, reminders: List<TaskReminderData>): List<Long> {
+        if (dueDate == null) {
+            return emptyList()
+        }
+
+        val timestamps = mutableListOf<Long>()
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC))
+
+        reminders.forEach { taskReminder ->
+            try {
+                calendar.time = Date(dueDate)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                calendar.roll(taskReminder.daysBefore, false)
+
+                timestamps.add(calendar.timeInMillis.plus(taskReminder.timeOffset))
+            } catch (_: Exception) {
+                // invalid date info
+            }
+        }
+
+        return timestamps
     }
 }
