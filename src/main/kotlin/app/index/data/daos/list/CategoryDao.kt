@@ -89,8 +89,9 @@ class CategoryDao(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
         categoryId: IxId<CategoryData>,
-    ) {
-        categoryDBI.delete(userId, categoryId)
+    ): Boolean {
+        val deleted = categoryDBI.delete(userId, categoryId)
+
         categoryCM.delete(userId, listId, categoryId)
 
         val itemIdsOfCategory = itemCM.getAll(userId, listId)
@@ -98,5 +99,7 @@ class CategoryDao(
             .map { item -> item.id }
         itemContentCM.deleteMultiple(userId, itemIdsOfCategory)
         itemCM.deleteMultiple(userId, listId, itemIdsOfCategory)
+
+        return deleted
     }
 }

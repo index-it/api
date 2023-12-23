@@ -14,8 +14,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
-// TODO: Job to delete expired stuff
-
 /**
  * @property id
  * @property token

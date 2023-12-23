@@ -1,16 +1,17 @@
 package app.index.api.routing.task.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSession
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
-import app.index.core.clients.GoogleCloudSchedulerClient
-import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.TaskCreateOrUpdateEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
-import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -22,9 +23,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.tasksRoute() {
     val taskDao by inject<TaskDao>()
-    val taskReminderJobDao by inject<TaskReminderJobDao>()
     val itemDao by inject<ItemDao>()
-    val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<TasksRoute>({
         tags = listOf("tasks")
@@ -107,16 +107,31 @@ fun Route.tasksRoute() {
 
             val task = taskDao.create(userIdFromSession()!!, newTask)
 
-            itemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
+            val updatedItem = itemDao.setTaskConnection(userId, itemToConnect.listId, itemToConnect.id, task.id)
                 ?: return@post call.respond(HttpStatusCode.NotFound)
+
+            emitWebsocketEvent(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.ITEM_UPDATED,
+                content = ItemCreateOrUpdateEventContent(updatedItem)
+            )
 
             task
         } else {
             taskDao.create(userIdFromSession()!!, newTask)
         }
 
+        /////////////////
+        /// REMINDERS ///
+        /////////////////
         TaskUseCase.createReminders(task)
 
         call.respond(task)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.TASK_CREATED,
+            content = TaskCreateOrUpdateEventContent(task)
+        )
     }
 }

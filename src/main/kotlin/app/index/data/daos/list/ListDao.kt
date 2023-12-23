@@ -85,8 +85,8 @@ class ListDao(
     suspend fun delete(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
-    ) {
-        listDBI.delete(userId, listId)
+    ) : Boolean {
+        val deleted = listDBI.delete(userId, listId)
         listCM.delete(userId, listId)
 
         // Update cache as it doesn't have cascade events like sql does
@@ -96,5 +96,7 @@ class ListDao(
         itemContentCM.deleteMultiple(userId, itemsOfDeletedList.map { it.id })
 
         itemCM.deleteAllOfList(userId, listId)
+
+        return deleted
     }
 }

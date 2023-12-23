@@ -1,8 +1,12 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -16,6 +20,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.itemsRoute() {
     val itemDao by inject<ItemDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute.ItemsRoute>({
         tags = listOf("items")
@@ -76,5 +81,11 @@ fun Route.itemsRoute() {
         val item = itemDao.create(userIdFromSessionOrThrow(), it.parent.listId, newItem)
 
         call.respond(item)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.ITEM_CREATED,
+            content = ItemCreateOrUpdateEventContent(item)
+        )
     }
 }

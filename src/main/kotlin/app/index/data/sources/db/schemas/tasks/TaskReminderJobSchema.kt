@@ -2,7 +2,9 @@ package app.index.data.sources.db.schemas.tasks
 
 import app.index.data.models.tasks.TaskReminderJobData
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable.id
+import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable.scheduledAt
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable.task
+import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable.user
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toIxId

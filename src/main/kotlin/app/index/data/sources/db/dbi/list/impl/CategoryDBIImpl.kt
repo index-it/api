@@ -67,9 +67,7 @@ class CategoryDBIImpl : CategoryDBI {
     override suspend fun delete(
         userId: IxId<UserData>,
         categoryId: IxId<CategoryData>,
-    ) {
-        dbQuery {
-            CategoryTable.deleteWhere { userAndCategoryFilter(userId, categoryId) }
-        }
+    ): Boolean = dbQuery {
+        CategoryTable.deleteWhere { userAndCategoryFilter(userId, categoryId) } > 0
     }
 }

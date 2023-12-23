@@ -1,7 +1,11 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
@@ -15,6 +19,7 @@ import org.koin.ktor.ext.inject
 fun Route.itemCompletionRoute() {
     val itemDao by inject<ItemDao>()
     val taskDao by inject<TaskDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.CompletionRoute>({
         tags = listOf("items")
@@ -55,5 +60,11 @@ fun Route.itemCompletionRoute() {
         }
 
         call.respond(updatedItem)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.ITEM_UPDATED,
+            content = ItemCreateOrUpdateEventContent(updatedItem)
+        )
     }
 }

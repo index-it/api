@@ -1,15 +1,17 @@
 package app.index.api.routing.task.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
-import app.index.core.clients.GoogleCloudSchedulerClient
-import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.TaskCreateOrUpdateEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobData
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -21,6 +23,7 @@ fun Route.taskCompletionRoute() {
     val taskDao by inject<TaskDao>()
     val taskReminderJobDao by inject<TaskReminderJobDao>()
     val itemDao by inject<ItemDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     put<TasksRoute.TaskRoute.CompletionRoute>({
         tags = listOf("tasks")
@@ -56,21 +59,41 @@ fun Route.taskCompletionRoute() {
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (updatedTask.itemId != null) {
-            itemDao.get(userId, updatedTask.itemId)
-                ?.also { linkedItem ->
-                    itemDao.setCompletion(userId, linkedItem.listId, linkedItem.id, it.completed)
-                }
+            val connectedItem = itemDao.get(userId, updatedTask.itemId)
+
+            if (connectedItem != null) {
+                itemDao.setCompletion(userId, connectedItem.listId, connectedItem.id, it.completed)
+                    ?.also { updatedConnectedItem ->
+                        emitWebsocketEvent(
+                            websocketEventManager = websocketEventManager,
+                            type = WebsocketEventType.ITEM_UPDATED,
+                            content = ItemCreateOrUpdateEventContent(updatedConnectedItem)
+                        )
+                    }
+            }
         }
 
         if (it.completed) {
             taskReminderJobDao.deleteAllOfTask(updatedTask.id)
 
             TaskUseCase.createNextOccurrence(updatedTask)
+                ?.also { nextOccurrenceTask ->
+                    emitWebsocketEvent(
+                        websocketEventManager = websocketEventManager,
+                        type = WebsocketEventType.TASK_CREATED,
+                        content = TaskCreateOrUpdateEventContent(nextOccurrenceTask)
+                    )
+                }
         } else if (updatedTask.rrule != null) {
-            // Cannot un-complete task with recurring rule
-            return@put call.respond(HttpStatusCode.MethodNotAllowed)
+            return@put call.respond(HttpStatusCode.MethodNotAllowed, "Cannot un-complete task with recurring rule")
         }
 
         call.respond(updatedTask)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.TASK_UPDATED,
+            content = TaskCreateOrUpdateEventContent(updatedTask)
+        )
     }
 }

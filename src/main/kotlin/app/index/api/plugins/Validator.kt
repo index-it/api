@@ -1,6 +1,5 @@
 package app.index.api.plugins
 
-import app.index.data.validation.Validatable
 import app.index.data.models.auth.PasswordResetRequestBody
 import app.index.data.models.auth.RegistrationCredentials
 import app.index.data.models.lists.CategoryData
@@ -8,6 +7,7 @@ import app.index.data.models.lists.ItemContentData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
 import app.index.data.models.tasks.TaskData
+import app.index.data.validation.Validatable
 import io.konform.validation.Valid
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*

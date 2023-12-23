@@ -6,7 +6,6 @@ import app.index.core.logic.PasswordEncoder
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.EmailVerificationUseCase
 import app.index.core.logic.usecases.UserAuthUseCase
-import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.RegistrationCredentials
 import app.index.data.models.user.UserData

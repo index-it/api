@@ -2,9 +2,7 @@ package app.index.data.sources.db.dbi.task.impl
 
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderData
 import app.index.data.models.tasks.TaskReminderJobData
-import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskReminderJobDBI
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobEntity
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable

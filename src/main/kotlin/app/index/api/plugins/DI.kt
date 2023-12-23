@@ -7,6 +7,7 @@ import app.index.di.IClosableComponent
 import app.index.di.LogicModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
+import kotlinx.coroutines.runBlocking
 import org.koin.core.logger.Level
 import org.koin.ksp.generated.module
 import org.koin.ktor.ext.getKoin
@@ -42,7 +43,9 @@ fun Application.configureDI() {
         }
 
         closableComponents.forEach {
-            it.close()
+            runBlocking {
+                it.close()
+            }
         }
     }
 

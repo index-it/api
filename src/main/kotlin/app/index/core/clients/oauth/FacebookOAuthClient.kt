@@ -67,7 +67,7 @@ class FacebookOAuthClient(
         }
     }
 
-    override fun close() {
+    override suspend fun close() {
         httpClient.close()
     }
 }

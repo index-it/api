@@ -1,14 +1,18 @@
 package app.index.api.routing.websocket
 
 import app.index.api.plugins.AuthenticationMethods
+import app.index.core.logic.websocket.connection.WebsocketConnection
+import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.data.models.auth.UserAuthSessionData
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import org.koin.ktor.ext.inject
 
 fun Route.websocketRoutes() {
-    // TODO
+    val websocketConnectionsManager by inject<WebsocketConnectionsManager>()
+
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         webSocket("/ws") {
             val session = call.principal<UserAuthSessionData>()
@@ -18,11 +22,13 @@ fun Route.websocketRoutes() {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Not authenticated via session auth"))
             } else {
                 // Save the ws connection
-                /*
-                WebsocketConnectionsManager.handleConnection(
-                    WebsocketConnection(session.id, session.userId, this)
+                websocketConnectionsManager.handle(
+                    WebsocketConnection(
+                        sessionId = session.id,
+                        userId = session.userId,
+                        connection = this
+                    )
                 )
-                 */
             }
         }
     }

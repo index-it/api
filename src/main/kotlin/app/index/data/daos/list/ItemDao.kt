@@ -3,7 +3,6 @@ package app.index.data.daos.list
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
-import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
 import app.index.data.models.tasks.TaskData
@@ -151,10 +150,12 @@ class ItemDao(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
         itemId: IxId<ItemData>,
-    ) {
-        itemDBI.delete(userId, itemId)
+    ): Boolean {
+        val deleted = itemDBI.delete(userId, itemId)
         itemCM.delete(userId, listId, itemId)
 
         itemContentCM.delete(userId, itemId)
+
+        return deleted
     }
 }

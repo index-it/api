@@ -1,8 +1,8 @@
 package app.index.core.clients
 
 import app.index.config.BrevoConfig
-import app.index.data.models.email.BrevoOperationRequestBody
 import app.index.data.models.email.BrevoGenericRequestBody
+import app.index.data.models.email.BrevoOperationRequestBody
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -156,7 +156,7 @@ class BrevoClient : IClosableComponent {
         return response.status.isSuccess()
     }
 
-    override fun close() {
+    override suspend fun close() {
         httpClient.close()
     }
 }

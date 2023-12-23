@@ -35,5 +35,5 @@ interface TaskDBI : DBI {
     suspend fun delete(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
-    )
+    ) : Boolean
 }

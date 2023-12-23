@@ -12,11 +12,8 @@ import app.index.data.models.tasks.TaskReminderJobData
 import org.dmfs.rfc5545.recur.RecurrenceRule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.ZoneId
 import java.time.ZoneOffset
-import java.util.Calendar
-import java.util.Date
-import java.util.TimeZone
+import java.util.*
 import kotlin.math.max
 
 object TaskUseCase : KoinComponent {
@@ -91,7 +88,6 @@ object TaskUseCase : KoinComponent {
             return emptyList()
         }
 
-        val currentTimestamp = DatetimeUtils.currentMillis()
         val timestamps = mutableListOf<Long>()
         val calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC))
 

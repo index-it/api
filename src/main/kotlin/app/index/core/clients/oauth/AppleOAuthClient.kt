@@ -47,7 +47,7 @@ class AppleOAuthClient(
         }
     }
 
-    override fun close() {
+    override suspend fun close() {
         httpClient.close()
     }
 }

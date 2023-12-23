@@ -25,8 +25,11 @@ interface CategoryDBI : DBI {
         categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
     ): Boolean
 
+    /**
+     * @return true for deleted, false if nothing was matched in the database
+     */
     suspend fun delete(
         userId: IxId<UserData>,
         categoryId: IxId<CategoryData>,
-    )
+    ) : Boolean
 }

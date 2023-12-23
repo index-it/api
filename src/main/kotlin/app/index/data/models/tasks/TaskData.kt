@@ -2,18 +2,14 @@ package app.index.data.models.tasks
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.validation.Validatable
 import app.index.data.models.lists.ItemData
 import app.index.data.models.user.UserData
-import app.index.data.sources.db.schemas.tasks.TaskReminderTable
+import app.index.data.validation.Validatable
 import app.index.data.validation.Validations
 import io.konform.validation.Invalid
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.*
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -29,7 +25,7 @@ import kotlinx.serialization.Serializable
  * @param subTasks a list of sub-tasks
  * @param dueDate Due date **UTC** timestamp
  * @param rrule Recurrence rule for the task
- * @param onDayReminder Day time, **UTC**, of the due date expressed in milliseconds representing when the reminder should be sent
+ * @param reminders
  * @param completed
  * @param priority task priority indicated as an int: 0 --> very low, 1 --> low, 2 --> medium, 3 --> high
  * @param createdAt

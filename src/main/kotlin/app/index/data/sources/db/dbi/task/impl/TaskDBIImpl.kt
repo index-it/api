@@ -106,9 +106,7 @@ class TaskDBIImpl : TaskDBI {
     override suspend fun delete(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
-    ) {
-        dbQuery {
-            TaskTable.deleteWhere { userAndTaskFilter(userId, taskId) }
-        }
+    ) : Boolean = dbQuery {
+        TaskTable.deleteWhere { userAndTaskFilter(userId, taskId) } > 0
     }
 }

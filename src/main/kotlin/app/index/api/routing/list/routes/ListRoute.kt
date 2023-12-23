@@ -1,7 +1,12 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ListCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.ListDeleteEventContent
 import app.index.data.daos.list.ListDao
 import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -16,6 +21,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.listRoute() {
     val listDao by inject<ListDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute>({
         tags = listOf("lists")
@@ -76,6 +82,12 @@ fun Route.listRoute() {
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newList)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.LIST_UPDATED,
+            content = ListCreateOrUpdateEventContent(newList)
+        )
     }
 
     delete<ListsRoute.ListRoute>({
@@ -95,8 +107,16 @@ fun Route.listRoute() {
             }
         }
     }) {
-        listDao.delete(userIdFromSessionOrThrow(), it.listId)
+        val deleted = listDao.delete(userIdFromSessionOrThrow(), it.listId)
 
         call.respond(HttpStatusCode.OK)
+
+        if (deleted) {
+            emitWebsocketEvent(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.LIST_DELETED,
+                content = ListDeleteEventContent(it.listId)
+            )
+        }
     }
 }

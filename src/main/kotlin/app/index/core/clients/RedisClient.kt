@@ -9,7 +9,7 @@ import redis.clients.jedis.JedisPool
 class RedisClient : IClosableComponent {
     val jedisPool = JedisPool(RedisConfig.connectionString)
 
-    override fun close() {
+    override suspend fun close() {
         jedisPool.close()
     }
 }

@@ -134,8 +134,8 @@ class TaskDao(
     suspend fun delete(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
-    ) {
-        taskDBI.delete(userId, taskId)
+    ) : Boolean {
         taskCM.delete(userId, taskId)
+        return taskDBI.delete(userId, taskId)
     }
 }

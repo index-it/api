@@ -1,8 +1,8 @@
 package app.index.data.models.lists
 
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.validation.Validatable
 import app.index.data.models.user.UserData
+import app.index.data.validation.Validatable
 import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength

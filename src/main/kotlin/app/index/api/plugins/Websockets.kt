@@ -1,7 +1,9 @@
 package app.index.api.plugins
 
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
-import app.index.data.models.websocket.RabbitMqWebsocketEventType
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.WebsocketEventContent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
@@ -10,21 +12,18 @@ import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
 import java.time.Duration
 
-private val logger = KotlinLogging.logger {}
+private val log = KotlinLogging.logger {}
 
-// TODO:
-suspend fun PipelineContext<Unit, ApplicationCall>.emitRabbitMqWebsocketEvent(
-    eventType: RabbitMqWebsocketEventType,
-    eventData: Any?,
+suspend fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEvent(
+    websocketEventManager: WebsocketEventManager,
+    type: WebsocketEventType,
+    content: WebsocketEventContent,
 ) {
-    /*
     try {
-        val websocketEventDto = WebsocketEventManager.rabbitMqWebsocketEventDtoFromRestCall(this, eventType, eventData)
-        WebsocketEventManager.emit(websocketEventDto)
+        websocketEventManager.emit(this, type, content)
     } catch (e: Exception) {
-        logger.error(e) { "Error emitting websocket event (event type $eventType, event data $eventData)" }
+        log.error(e) { "Error emitting websocket event: type $type, content $content" }
     }
-     */
 }
 
 fun Application.configureWebsockets() {
@@ -34,28 +33,13 @@ fun Application.configureWebsockets() {
         maxFrameSize = Long.MAX_VALUE
         masking = true
 
-        contentConverter =
-            KotlinxWebsocketSerializationConverter(
-                Json {
-                    serializersModule = IdKotlinXSerializationModule
-                },
-            )
-
-        // If frames get too big compression should get implemented!
-        /*
-        extensions {
-            install(WebSocketDeflateExtension) {
-                /**
-         * Compression level to use for [java.util.zip.Deflater].
-         */
-                compressionLevel = Deflater.DEFAULT_COMPRESSION
-
-                /**
-         * Prevent compressing small outgoing frames.
-         */
-                compressIfBiggerThan(bytes = 4 * 1024)
+        contentConverter = KotlinxWebsocketSerializationConverter(
+            Json {
+                serializersModule = IdKotlinXSerializationModule
             }
-        }
-         */
+        )
+
+        // NOTE: If frames get too big compression should be implemented
+        // https://ktor.io/docs/websocket-deflate-extension.html
     }
 }

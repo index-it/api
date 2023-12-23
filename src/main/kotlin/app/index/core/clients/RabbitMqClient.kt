@@ -18,7 +18,7 @@ class RabbitMqClient : IClosableComponent {
         connection = factory.newConnection()
     }
 
-    override fun close() {
+    override suspend fun close() {
         connection.close()
     }
 }

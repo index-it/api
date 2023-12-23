@@ -1,7 +1,11 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.CategoryCreateOrUpdateEventContent
 import app.index.data.daos.list.CategoryDao
 import app.index.data.models.lists.CategoryData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -15,6 +19,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.categoriesRoute() {
     val categoryDao by inject<CategoryDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute.CategoriesRoute>({
         tags = listOf("categories")
@@ -65,5 +70,11 @@ fun Route.categoriesRoute() {
         val category = categoryDao.create(userIdFromSessionOrThrow(), it.parent.listId, newCategory)
 
         call.respond(category)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.CATEGORY_CREATED,
+            content = CategoryCreateOrUpdateEventContent(category)
+        )
     }
 }

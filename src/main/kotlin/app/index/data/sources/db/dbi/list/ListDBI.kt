@@ -24,5 +24,5 @@ interface ListDBI : DBI {
     suspend fun delete(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
-    )
+    ) : Boolean
 }

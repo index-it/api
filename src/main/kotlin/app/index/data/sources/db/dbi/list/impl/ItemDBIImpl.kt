@@ -2,7 +2,6 @@ package app.index.data.sources.db.dbi.list.impl
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
 import app.index.data.models.tasks.TaskData
@@ -106,9 +105,7 @@ class ItemDBIImpl : ItemDBI {
     override suspend fun delete(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,
-    ) {
-        dbQuery {
-            ItemTable.deleteWhere { userAndItemFilter(userId, itemId) }
-        }
+    ) : Boolean = dbQuery {
+        ItemTable.deleteWhere { userAndItemFilter(userId, itemId) } > 0
     }
 }

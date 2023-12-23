@@ -1,5 +1,5 @@
 package app.index.di
 
 interface IClosableComponent {
-    fun close()
+    suspend fun close()
 }

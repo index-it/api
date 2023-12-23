@@ -10,16 +10,11 @@ import org.koin.core.annotation.Single
 
 private const val DB_DRIVER = "org.postgresql.Driver"
 
-private const val DEFAULT_COLOR_SUGGESTIONS_ID = 1
-private const val DEFAULT_LIST_NAME_SUGGESTIONS_ID = 1
-private const val DEFAULT_CATEGORY_NAME_SUGGESTIONS_ID = 2
-private const val DEFAULT_ITEM_NAME_SUGGESTIONS_ID = 3
-private const val DEFAULT_TASK_NAME_SUGGESTIONS_ID = 4
-
 private val log = KotlinLogging.logger { }
 
 @Single(createdAtStart = true)
 class PostgresClient {
+    @Suppress("UNUSED")
     private val database = Database.connect(
         url = PostgresConfig.url,
         driver = DB_DRIVER,
@@ -27,6 +22,7 @@ class PostgresClient {
         password = PostgresConfig.password,
     )
 
+    @Suppress("UNUSED")
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(
             context = Dispatchers.IO,
@@ -37,10 +33,6 @@ class PostgresClient {
     }
 
     private fun runMigrations() {
-        // TODO: Recurring + Reminder stuff
-        // TODO: device registration table
-        // TODO: Suggestion
-        // TODO: web links
         val flyway = Flyway.configure()
             .driver(DB_DRIVER)
             .dataSource(PostgresConfig.url, PostgresConfig.user, PostgresConfig.password)
@@ -55,6 +47,8 @@ class PostgresClient {
             throw e
         }
     }
+
+    // TODO: Suggestions
 
     /*
     private suspend fun setupColorSuggestions() {

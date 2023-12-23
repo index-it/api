@@ -1,8 +1,13 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.ItemDeleteEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -17,6 +22,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.itemRoute() {
     val itemDao by inject<ItemDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
         tags = listOf("items")
@@ -86,6 +92,12 @@ fun Route.itemRoute() {
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newItem)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.ITEM_UPDATED,
+            content = ItemCreateOrUpdateEventContent(newItem)
+        )
     }
 
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
@@ -109,7 +121,16 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        itemDao.delete(userIdFromSessionOrThrow(), it.parent.parent.listId, it.itemId)
+        val deleted = itemDao.delete(userIdFromSessionOrThrow(), it.parent.parent.listId, it.itemId)
+
         call.respond(HttpStatusCode.OK)
+
+        if (deleted) {
+            emitWebsocketEvent(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.ITEM_DELETED,
+                content = ItemDeleteEventContent(it.itemId)
+            )
+        }
     }
 }

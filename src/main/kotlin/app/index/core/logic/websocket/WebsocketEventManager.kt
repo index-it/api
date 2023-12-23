@@ -1,79 +1,82 @@
 package app.index.core.logic.websocket
 
+import app.index.core.logic.ObjectMapper
+import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
+import app.index.core.logic.websocket.event.WebsocketEventData
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.WebsocketEventContent
+import app.index.core.logic.websocket.queue.WebsocketEventsQueueManager
+import app.index.data.models.auth.UserAuthSessionData
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.serialization.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.websocket.*
+import io.ktor.util.pipeline.*
+import org.koin.core.annotation.Single
 
 private val log = KotlinLogging.logger {}
 
-object WebsocketEventManager {
-    /*
-    fun rabbitMqWebsocketEventDtoFromRestCall(context: PipelineContext<Unit, ApplicationCall>, eventType: RabbitMqWebsocketEventType, eventData: Any?): RabbitMqWebsocketEventDto {
-        val sessionId = context.call.principal<UserAuthSessionDto>()?.id
-            ?: throw IllegalArgumentException("Session ID missing when trying to construct websocket event")
+@Single(createdAtStart = true)
+class WebsocketEventManager(
+    private val websocketEventsQueueManager: WebsocketEventsQueueManager,
+    private val websocketConnectionsManager: WebsocketConnectionsManager,
+    private val objectMapper: ObjectMapper
+) {
+    init {
+        websocketEventsQueueManager.startListeningAndConsumingEvents { body ->
+            if (body == null) {
+                log.error { "Missing rabbitmq message body in websocket queue" }
+            } else {
+                val websocketEventData: WebsocketEventData = objectMapper.decodeFromByteArray(body)
 
-        val userId = context.userIdFromSession()
-            ?: throw IllegalArgumentException("User ID missing when trying to construct websocket event")
+                log.debug { "Consuming rabbitMq websocket event: $websocketEventData" }
 
-        return RabbitMqWebsocketEventDto(
-            sessionId,
-            userId,
-            eventType,
-            "missing"
-            // ObjectMapper.encode(eventData) // TODO: Can't encode any!
-        )
-    }
-
-    suspend fun emit(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
-        try {
-            WebsocketsQueueManager.enqueue(rabbitMqWebsocketEventDto)
-            consume(rabbitMqWebsocketEventDto)
-        } catch (e: Exception) {
-            /*
-              I don't want the API server to handle this and perhaps respond with a 500 status code
-              Since websockets aren't related to the success of the http call
-     */
-            log.error(e) { "Unhandled exception in the websocket event manager" }
-        }
-    }
-
-    suspend fun consume(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
-        log.debug { "Consuming rabbitMq websocket event: $rabbitMqWebsocketEventDto" }
-        if (rabbitMqWebsocketEventDto.eventType.realTimeDataKind)
-            consumeRealTimeDataEvent(rabbitMqWebsocketEventDto)
-        else when(rabbitMqWebsocketEventDto.eventType) {
-            RabbitMqWebsocketEventType.CLOSE_ALL_CLIENT_CONNECTIONS -> consumeCloseAllUserWebsocketConnectionsEvent(rabbitMqWebsocketEventDto)
-            else -> {}
-        }
-    }
-
-    private suspend fun consumeRealTimeDataEvent(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
-        log.debug { "Consuming real time data event: $rabbitMqWebsocketEventDto" }
-
-        val userLocalConnections = WebsocketConnectionsManager.getConnectionsOfUserExcludingSession(
-            userId = rabbitMqWebsocketEventDto.fromUserId,
-            excludedSessionId = rabbitMqWebsocketEventDto.fromSessionId
-        )
-
-        if (userLocalConnections.isNotEmpty()) {
-            userLocalConnections.forEach {
-                try {
-                    it.websocketSession.sendSerialized(
-                        WebsocketFrameDataDto.fromWebsocketEvent(
-                            rabbitMqWebsocketEventDto
-                        )
-                    )
-                    log.debug { "Sent websocket event to websocket session: $it" }
-                } catch (e: IllegalStateException) {
-                    WebsocketConnectionsManager.removeConnection(it)
-                } catch (e: WebsocketConverterNotFoundException) {
-                    log.error(e) { "Could not find websocket converter for serialization" }
-                }
+                consume(websocketEventData)
             }
         }
     }
 
-    private suspend fun consumeCloseAllUserWebsocketConnectionsEvent(rabbitMqWebsocketEventDto: RabbitMqWebsocketEventDto) {
-        WebsocketConnectionsManager.closeAllSessionsOfUser(rabbitMqWebsocketEventDto.fromUserId)
+    private suspend fun consume(websocketEventData: WebsocketEventData) {
+        if (websocketEventData.type == WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED) {
+            websocketConnectionsManager.closeAllSessionsOfUser(websocketEventData.fromUserId)
+            return
+        }
+
+        val websocketConnectionsOfUser = websocketConnectionsManager.getConnectionsOfUserExcludingSession(
+            userId = websocketEventData.fromUserId,
+            excludedSessionId = websocketEventData.fromSessionId
+        )
+
+        websocketConnectionsOfUser.forEach {
+            try {
+                it.connection.sendSerialized(websocketEventData)
+                log.debug { "Sent websocket event to websocket connection: $it" }
+            } catch (e: IllegalStateException) {
+                // Websocket connection is closed already
+                websocketConnectionsManager.removeConnection(it)
+            } catch (e: WebsocketConverterNotFoundException) {
+                log.error(e) { "Could not find websocket converter for serialization" }
+            }
+        }
     }
 
+    /**
+     * @throws IllegalArgumentException missing [UserAuthSessionData] principal in [context]
+     * @throws Exception other exceptions handling the event
      */
+    suspend fun emit(context: PipelineContext<Unit, ApplicationCall>, eventType: WebsocketEventType, eventData: WebsocketEventContent) {
+        val authSession = context.call.principal<UserAuthSessionData>()
+            ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
+
+        val websocketEventData = WebsocketEventData(
+            fromSessionId = authSession.id,
+            fromUserId = authSession.userId,
+            type = eventType,
+            content = objectMapper.encode(eventData)
+        )
+
+        websocketEventsQueueManager.enqueue(websocketEventData)
+        consume(websocketEventData)
+    }
 }

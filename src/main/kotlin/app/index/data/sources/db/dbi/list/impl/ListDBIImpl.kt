@@ -68,9 +68,7 @@ class ListDBIImpl : ListDBI {
     override suspend fun delete(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
-    ) {
-        dbQuery {
-            ListTable.deleteWhere { userAndListFilter(userId, listId) }
-        }
+    ) : Boolean = dbQuery {
+        ListTable.deleteWhere { userAndListFilter(userId, listId) } > 0
     }
 }

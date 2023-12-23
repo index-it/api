@@ -1,17 +1,19 @@
 package app.index.api.routing.task.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
-import app.index.core.clients.GoogleCloudSchedulerClient
-import app.index.core.logic.typedId.impl.IxId
-import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.TaskCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.TaskDeleteEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
-import app.index.data.models.tasks.TaskReminderJobData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -26,6 +28,7 @@ fun Route.taskRoute() {
     val taskDao by inject<TaskDao>()
     val taskReminderJobDao by inject<TaskReminderJobDao>()
     val itemDao by inject<ItemDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<TasksRoute.TaskRoute>({
         tags = listOf("tasks")
@@ -122,6 +125,13 @@ fun Route.taskRoute() {
             // un-connects the old item if existing
             if (originalConnectedItem != null) {
                 itemDao.setTaskConnection(userId, originalConnectedItem.listId, originalConnectedItem.id, null)
+                    ?.also { updatedOriginalConnectedItem ->
+                        emitWebsocketEvent(
+                            websocketEventManager = websocketEventManager,
+                            type = WebsocketEventType.ITEM_UPDATED,
+                            content = ItemCreateOrUpdateEventContent(updatedOriginalConnectedItem)
+                        )
+                    }
             }
 
             // connects the new item if required
@@ -129,17 +139,29 @@ fun Route.taskRoute() {
                 val newConnectedItem = itemDao.get(userId, newItemIdToConnect)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
 
-                itemDao.setTaskConnection(userId, newConnectedItem.listId, newConnectedItem.id, taskId)
+                val updatedNewConnectedItem = itemDao.setTaskConnection(userId, newConnectedItem.listId, newConnectedItem.id, taskId)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
+
+                emitWebsocketEvent(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.ITEM_UPDATED,
+                    content = ItemCreateOrUpdateEventContent(updatedNewConnectedItem)
+                )
             }
         }
 
         val updatedTask = taskDao.update(userId, taskId, updateData)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        TaskUseCase.refreshReminders(task)
+        TaskUseCase.refreshReminders(updatedTask)
 
         call.respond(updatedTask)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.TASK_UPDATED,
+            content = TaskCreateOrUpdateEventContent(updatedTask)
+        )
     }
 
     delete<TasksRoute.TaskRoute>({
@@ -168,12 +190,27 @@ fun Route.taskRoute() {
 
         if (!it.all) {
             taskDao.get(userId, it.taskId)?.let { task ->
-                val nextOccurrenceTask = TaskUseCase.createNextOccurrence(task)
+                TaskUseCase.createNextOccurrence(task)
+                    ?.also { nextOccurrenceTask ->
+                        emitWebsocketEvent(
+                            websocketEventManager = websocketEventManager,
+                            type = WebsocketEventType.TASK_CREATED,
+                            content = TaskCreateOrUpdateEventContent(nextOccurrenceTask)
+                        )
+                    }
             }
         }
 
-        taskDao.delete(userId, it.taskId)
+        val deleted = taskDao.delete(userId, it.taskId)
 
         call.respond(HttpStatusCode.OK)
+
+        if (deleted) {
+            emitWebsocketEvent(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.TASK_DELETED,
+                content = TaskDeleteEventContent(it.taskId)
+            )
+        }
     }
 }

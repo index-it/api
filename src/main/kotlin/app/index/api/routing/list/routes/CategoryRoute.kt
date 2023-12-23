@@ -1,8 +1,13 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSession
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.core.logic.websocket.event.content.impl.CategoryCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.impl.CategoryDeleteEventContent
 import app.index.data.daos.list.CategoryDao
 import app.index.data.models.lists.CategoryData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -17,6 +22,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.categoryRoute() {
     val categoryDao by inject<CategoryDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
         tags = listOf("categories")
@@ -85,6 +91,12 @@ fun Route.categoryRoute() {
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newCategory)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.CATEGORY_UPDATED,
+            content = CategoryCreateOrUpdateEventContent(newCategory)
+        )
     }
 
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
@@ -108,8 +120,16 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        categoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
+        val deleted = categoryDao.delete(userIdFromSession()!!, it.parent.parent.listId, it.categoryId)
 
         call.respond(HttpStatusCode.OK)
+
+        if (deleted) {
+            emitWebsocketEvent(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.CATEGORY_DELETED,
+                content = CategoryDeleteEventContent(it.categoryId)
+            )
+        }
     }
 }

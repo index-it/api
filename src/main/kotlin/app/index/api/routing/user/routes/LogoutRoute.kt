@@ -1,6 +1,7 @@
 package app.index.api.routing.user.routes
 
 import app.index.api.routing.user.LogoutRoute
+import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.models.auth.UserSessionCookie
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -13,6 +14,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.logoutRoutes() {
     val userSessionDao by inject<UserSessionDao>()
+    val websocketConnectionsManager by inject<WebsocketConnectionsManager>()
 
     get<LogoutRoute>({
         tags = listOf("auth")
@@ -28,8 +30,9 @@ fun Route.logoutRoutes() {
 
         userSessionDao.delete(session.userId, session.sessionId)
 
-        // WebsocketConnectionsManager.closeConnection(session.sessionId)
         call.sessions.clear<UserSessionCookie>()
         call.respond(HttpStatusCode.OK)
+
+        websocketConnectionsManager.closeConnectionOfSession(session.sessionId)
     }
 }
