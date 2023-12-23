@@ -78,21 +78,7 @@ class TaskDBIImpl : TaskDBI {
         taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): Boolean =
         dbQuery {
-            SubTaskTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
-            SubTaskTable.batchInsert(taskUpdateRequestData.subTasks) {
-                this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
-                this[SubTaskTable.name] = it.name
-                this[SubTaskTable.completed] = it.completed
-            }
-
-            TaskReminderTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
-            TaskReminderTable.batchInsert(taskUpdateRequestData.reminders) {
-                this[TaskReminderTable.task] = taskId.toEntityId(TaskTable)
-                this[TaskReminderTable.daysBefore] = it.daysBefore
-                this[TaskReminderTable.timeOffset] = it.timeOffset
-            }
-
-            TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
+            val updated = TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[name] = taskUpdateRequestData.name
                 it[description] = taskUpdateRequestData.description
                 it[dueDate] = taskUpdateRequestData.dueDate
@@ -101,6 +87,24 @@ class TaskDBIImpl : TaskDBI {
                 it[editedAt] = DatetimeUtils.currentMillis()
                 it[item] = taskUpdateRequestData.itemId?.toEntityId(ItemTable)
             } > 0
+
+            if (updated) {
+                SubTaskTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
+                SubTaskTable.batchInsert(taskUpdateRequestData.subTasks) {
+                    this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
+                    this[SubTaskTable.name] = it.name
+                    this[SubTaskTable.completed] = it.completed
+                }
+
+                TaskReminderTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
+                TaskReminderTable.batchInsert(taskUpdateRequestData.reminders) {
+                    this[TaskReminderTable.task] = taskId.toEntityId(TaskTable)
+                    this[TaskReminderTable.daysBefore] = it.daysBefore
+                    this[TaskReminderTable.timeOffset] = it.timeOffset
+                }
+            }
+
+            return@dbQuery updated
         }
 
     override suspend fun delete(
