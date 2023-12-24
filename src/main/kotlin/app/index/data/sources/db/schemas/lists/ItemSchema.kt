@@ -23,7 +23,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 /**
  * @property id

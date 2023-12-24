@@ -74,7 +74,7 @@ class ItemDBIImpl : ItemDBI {
         dbQuery {
             ItemTable.update({ userAndItemFilter(userId, itemId) }) {
                 it[this.completed] = completed
-                it[this.completed_at] = if (completed) DatetimeUtils.currentMillis() else null
+                it[this.completed_at] = if (completed) DatetimeUtils.currentJavaInstant() else null
             } > 0
         }
 
@@ -98,7 +98,7 @@ class ItemDBIImpl : ItemDBI {
             ItemTable.update({ userAndItemFilter(userId, itemId) }) {
                 it[name] = itemUpdateRequestData.name
                 it[category] = itemUpdateRequestData.category_id.toEntityId(CategoryTable)
-                it[edited_at] = DatetimeUtils.currentMillis()
+                it[edited_at] = DatetimeUtils.currentJavaInstant()
             } > 0
         }
 

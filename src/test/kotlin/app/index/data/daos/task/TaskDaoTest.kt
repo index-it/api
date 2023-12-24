@@ -4,6 +4,8 @@ import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.data.models.tasks.TaskData
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.junit5.JUnit5Asserter.fail
@@ -12,8 +14,8 @@ class TaskDaoTest {
     @Test
     fun calculateNextOccurrenceDueDateAndRRule() {
         val rrule = "FREQ=DAILY;"
-        val currentMillis = DatetimeUtils.currentMillis()
-        var expectedNewDueDate = currentMillis + DatetimeUtils.ONE_DAY_MILLIS
+        val currentLocalDate = DatetimeUtils.currentLocalDate()
+        var expectedNewLocalDate = currentLocalDate.plus(1, DateTimeUnit.DAY)
 
         // First occurrence
         val task =
@@ -24,7 +26,7 @@ class TaskDaoTest {
                 name = "test",
                 description = null,
                 subtasks = emptyList(),
-                due_date = currentMillis,
+                due_date = currentLocalDate,
                 rrule = rrule,
             )
 
@@ -32,10 +34,10 @@ class TaskDaoTest {
             TaskUseCase.calculateNextOccurrenceDueDateAndRRule(task)
                 ?: fail("Didn't recognize task next occurrence with rrule `$rrule`!")
 
-        assertEquals((expectedNewDueDate) / 10000, nextDueDate / 10000)
+        assertEquals(expectedNewLocalDate, nextDueDate)
 
         // Second occurrence
-        expectedNewDueDate += DatetimeUtils.ONE_DAY_MILLIS
+        expectedNewLocalDate = expectedNewLocalDate.plus(1, DateTimeUnit.DAY)
 
         val newOccurrence =
             TaskData(
@@ -53,10 +55,10 @@ class TaskDaoTest {
                 completed_at = null,
             )
 
-        val thirdOccurrence =
+        val (nextNextDueDate, _) =
             TaskUseCase.calculateNextOccurrenceDueDateAndRRule(newOccurrence)
                 ?: fail("Didn't recognize task next occurrence with rrule `$rrule`!")
 
-        assertEquals((expectedNewDueDate) / 10000, thirdOccurrence.first / 10000)
+        assertEquals(expectedNewLocalDate, nextNextDueDate)
     }
 }

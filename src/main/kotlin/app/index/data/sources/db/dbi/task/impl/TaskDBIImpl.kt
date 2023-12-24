@@ -9,6 +9,7 @@ import app.index.data.sources.db.schemas.lists.ItemTable
 import app.index.data.sources.db.schemas.tasks.*
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
+import kotlinx.datetime.toJavaLocalDate
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.koin.core.annotation.Single
@@ -68,7 +69,7 @@ class TaskDBIImpl : TaskDBI {
         dbQuery {
             TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[this.completed] = completed
-                it[this.completed_at] = if (completed) DatetimeUtils.currentMillis() else null
+                it[this.completed_at] = if (completed) DatetimeUtils.currentJavaInstant() else null
             } > 0
         }
 
@@ -81,10 +82,10 @@ class TaskDBIImpl : TaskDBI {
             val updated = TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[name] = taskUpdateRequestData.name
                 it[description] = taskUpdateRequestData.description
-                it[due_date] = taskUpdateRequestData.due_date
+                it[due_date] = taskUpdateRequestData.due_date?.toJavaLocalDate()
                 it[rrule] = taskUpdateRequestData.rrule
                 it[priority] = taskUpdateRequestData.priority
-                it[edited_at] = DatetimeUtils.currentMillis()
+                it[edited_at] = DatetimeUtils.currentJavaInstant()
                 it[item] = taskUpdateRequestData.item_id?.toEntityId(ItemTable)
             } > 0
 

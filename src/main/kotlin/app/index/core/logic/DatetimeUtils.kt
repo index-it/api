@@ -1,10 +1,15 @@
 package app.index.core.logic
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import java.time.Instant
 import java.time.ZoneOffset
-import java.util.*
 
 object DatetimeUtils {
-    val utcTimeZone: TimeZone = TimeZone.getTimeZone(ZoneOffset.UTC)
+    val javaUtcTimeZone = java.util.TimeZone.getTimeZone(ZoneOffset.UTC)
+    val utcTimeZone: TimeZone = TimeZone.UTC
 
     const val ONE_DAY_SECONDS: Long = 24 * 60 * 60
     const val ONE_DAY_MILLIS: Long = ONE_DAY_SECONDS * 1000
@@ -13,4 +18,14 @@ object DatetimeUtils {
      * Shortcut for [System.currentTimeMillis]
      */
     fun currentMillis(): Long = System.currentTimeMillis()
+
+    fun currentLocalDate(): LocalDate {
+        return Clock.System.now()
+            .toLocalDateTime(utcTimeZone)
+            .date
+    }
+
+    fun currentInstant() = Clock.System.now()
+
+    fun currentJavaInstant() = Instant.now()
 }

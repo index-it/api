@@ -22,6 +22,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.datetime.LocalDate
 import org.koin.ktor.ext.inject
 
 fun Route.taskRoute() {
@@ -74,7 +75,7 @@ fun Route.taskRoute() {
                     TaskData.TaskUpdateRequestData(
                         name = "ski equipment",
                         description = "find ski equipment for winter",
-                        due_date = 1703500710000,
+                        due_date = LocalDate(2023, 12, 2),
                         subtasks =
                         mutableListOf(
                             SubTaskData(

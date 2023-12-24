@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.koin.core.annotation.Single
+import java.time.Instant
 
 @Single(createdAtStart = true)
 class TaskReminderJobDBIImpl : TaskReminderJobDBI {
@@ -25,7 +26,7 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
             TaskReminderJobEntity.new(taskReminderJobCreateData.id.id) {
                 task = taskReminderJobCreateData.taskId.toEntityId(TaskTable)
                 user = taskReminderJobCreateData.userId.toEntityId(UsersTable)
-                scheduledAt = taskReminderJobCreateData.scheduledAt
+                scheduledAt = Instant.ofEpochMilli(taskReminderJobCreateData.scheduledAt)
             }
         }
     }
@@ -36,7 +37,7 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 this[TaskReminderJobTable.id] = it.id.toEntityId(TaskReminderJobTable)
                 this[TaskReminderJobTable.task] = it.taskId.toEntityId(TaskTable)
                 this[TaskReminderJobTable.user] = it.userId.toEntityId(UsersTable)
-                this[TaskReminderJobTable.scheduledAt] = it.scheduledAt
+                this[TaskReminderJobTable.scheduledAt] = Instant.ofEpochMilli(it.scheduledAt)
             }
         }
     }

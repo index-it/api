@@ -21,7 +21,7 @@ fun Route.webhookRoute() {
     val passwordResetDao by inject<PasswordResetDao>()
 
     get<WebhookRoute.TaskReminderJobRoute>({
-        tags = listOf("web", "webhook")
+        tags = listOf("web")
         operationId = "task-reminder-job-webhook"
         summary = "receives webhooks for task reminder jobs"
         request {
@@ -55,7 +55,7 @@ fun Route.webhookRoute() {
     }
 
     get<WebhookRoute.DailyJobRoute>({
-        tags = listOf("web", "webhook")
+        tags = listOf("web")
         operationId = "daily-job"
         summary = "receives webhooks for actions that should be executed daily (cleaning up expired db data for example)"
         response {

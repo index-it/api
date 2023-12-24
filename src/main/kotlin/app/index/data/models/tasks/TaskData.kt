@@ -58,7 +58,7 @@ data class TaskData(
     data class TaskCreateRequestData(
         val name: String,
         val description: String? = null,
-        val due_date: Long? = null,
+        val due_date: LocalDate? = null,
         val rrule: String? = null,
         val reminders: List<TaskReminderData> = emptyList(),
         val subtasks: List<SubTaskData> = emptyList(),
@@ -113,7 +113,7 @@ data class TaskData(
     data class TaskUpdateRequestData(
         val name: String,
         val description: String? = null,
-        val due_date: Long? = null,
+        val due_date: LocalDate? = null,
         val rrule: String? = null,
         val reminders: List<TaskReminderData> = emptyList(),
         val subtasks: List<SubTaskData> = emptyList(),

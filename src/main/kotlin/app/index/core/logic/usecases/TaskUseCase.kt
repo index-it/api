@@ -9,11 +9,10 @@ import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderData
 import app.index.data.models.tasks.TaskReminderJobData
+import kotlinx.datetime.*
 import org.dmfs.rfc5545.recur.RecurrenceRule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.ZoneOffset
-import java.util.*
 import kotlin.math.max
 
 object TaskUseCase : KoinComponent {
@@ -26,7 +25,7 @@ object TaskUseCase : KoinComponent {
      *
      * @return Null if this task isn't recurring or if it reached the end clause, a [Pair] with the next occurrence timestamp and updated rrule otherwise
      */
-    fun calculateNextOccurrenceDueDateAndRRule(task: TaskData): Pair<Long, String>? {
+    fun calculateNextOccurrenceDueDateAndRRule(task: TaskData): Pair<LocalDate, String>? {
         if (task.due_date == null || task.rrule == null) {
             return null
         }
@@ -42,7 +41,7 @@ object TaskUseCase : KoinComponent {
         }
 
         return rrule
-            .iterator(max(task.due_date, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
+            .iterator(max(task.due_date.toEpochDays() * DatetimeUtils.ONE_DAY_MILLIS, DatetimeUtils.currentMillis()), DatetimeUtils.javaUtcTimeZone)
             .apply {
                 try {
                     skip(1)
@@ -52,7 +51,8 @@ object TaskUseCase : KoinComponent {
             .takeIf { it.hasNext() }
             ?.nextMillis()
             ?.let {
-                Pair(it, rrule.toString())
+                val epochDays: Int = (it / DatetimeUtils.ONE_DAY_MILLIS).toInt()
+                Pair(LocalDate.fromEpochDays(epochDays), rrule.toString())
             }
     }
 
@@ -83,25 +83,21 @@ object TaskUseCase : KoinComponent {
      *
      * @return the list of timestamps
      */
-    private fun calculateReminderTimestamps(dueDate: Long?, reminders: List<TaskReminderData>): List<Long> {
+    private fun calculateReminderTimestamps(dueDate: LocalDate?, reminders: List<TaskReminderData>): List<Long> {
         if (dueDate == null) {
             return emptyList()
         }
 
         val timestamps = mutableListOf<Long>()
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC))
 
         reminders.forEach { taskReminder ->
             try {
-                calendar.time = Date(dueDate)
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
+                val reminderMillis = dueDate.minus(taskReminder.days_before, DateTimeUnit.DAY)
+                    .atStartOfDayIn(DatetimeUtils.utcTimeZone)
+                    .plus(taskReminder.time_offset, DateTimeUnit.MILLISECOND)
+                    .toEpochMilliseconds()
 
-                calendar.roll(taskReminder.days_before, false)
-
-                timestamps.add(calendar.timeInMillis.plus(taskReminder.time_offset))
+                timestamps.add(reminderMillis)
             } catch (_: Exception) {
                 // invalid date info
             }

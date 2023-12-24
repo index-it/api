@@ -18,9 +18,11 @@ object GoogleCloudConfig {
      * `GOOGLE_APPLICATION_CREDENTIALS=./gcp-service-account.json`
      *
      * For local development see https://cloud.google.com/docs/authentication/provide-credentials-adc?hl=it#local-dev
+     * tldr: run `gcloud auth application-default login`
      *
      * Reference: https://github.com/googleapis/google-cloud-java#authentication
      */
     @ConfigurationProperty("application.credentials")
+    @Suppress("UNUSED")
     var applicationCredentialPath: String = "./gcp-service-account.json"
 }

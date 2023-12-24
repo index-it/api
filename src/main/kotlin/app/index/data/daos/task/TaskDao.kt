@@ -7,6 +7,7 @@ import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.tasks.TaskCM
 import app.index.data.sources.db.dbi.task.TaskDBI
+import kotlinx.datetime.LocalDate
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -42,7 +43,7 @@ class TaskDao(
 
     suspend fun createNextOccurrence(
         task: TaskData,
-        dueDate: Long,
+        dueDate: LocalDate,
         rrule: String,
     ): TaskData {
         val taskData =

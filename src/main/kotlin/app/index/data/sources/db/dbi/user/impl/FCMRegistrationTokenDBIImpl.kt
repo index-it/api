@@ -7,11 +7,15 @@ import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.user.FCMRegistrationTokenDBI
 import app.index.data.sources.db.schemas.user.*
 import app.index.data.sources.db.toEntityId
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
+import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
+import java.time.Instant
 
 @Single(createdAtStart = true)
 class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
@@ -51,7 +55,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
         dbQuery {
             FCMRegistrationTokenTable.update({ FCMRegistrationTokenTable.token eq fcmRegistrationToken.token }) {
                 it[user] = fcmRegistrationToken.userId.toEntityId(UsersTable)
-                it[created_at] = fcmRegistrationToken.createdAt
+                it[created_at] = Instant.ofEpochMilli(fcmRegistrationToken.createdAt)
             }
         }
     }
@@ -64,7 +68,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
 
     override suspend fun deleteExpired() {
         dbQuery {
-            val maxAge = DatetimeUtils.currentMillis() - DatetimeUtils.ONE_DAY_MILLIS * 60
+            val maxAge = DatetimeUtils.currentInstant().minus(60, DateTimeUnit.DAY, DatetimeUtils.utcTimeZone).toJavaInstant()
 
             FCMRegistrationTokenTable.deleteWhere {
                 created_at less maxAge
