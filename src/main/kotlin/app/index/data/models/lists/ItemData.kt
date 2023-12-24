@@ -10,7 +10,6 @@ import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
 import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,22 +18,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemData(
     @Contextual val id: IxId<ItemData>,
-    @Contextual val userId: IxId<UserData>,
-    @Contextual val listId: IxId<ListData>,
-    @Contextual val categoryId: IxId<CategoryData>,
-    @Contextual val taskId: IxId<TaskData>? = null,
+    @Contextual val user_id: IxId<UserData>,
+    @Contextual val list_id: IxId<ListData>,
+    @Contextual val category_id: IxId<CategoryData>,
+    @Contextual val task_id: IxId<TaskData>? = null,
     val name: String,
     val completed: Boolean = false,
-    @SerialName("created_at")
-    val createdAt: Long = DatetimeUtils.currentMillis(),
-    @SerialName("edited_at")
-    val editedAt: Long? = null,
-    @SerialName("completed_at")
-    val completedAt: Long? = null,
+    val created_at: Long = DatetimeUtils.currentMillis(),
+    val edited_at: Long? = null,
+    val completed_at: Long? = null,
 ) {
     @Serializable
     data class ItemCreateRequestData(
-        @Contextual val categoryId: IxId<CategoryData>,
+        @Contextual val category_id: IxId<CategoryData>,
         val name: String,
     ) : Validatable<ItemCreateRequestData> {
         override fun validate() =
@@ -48,7 +44,7 @@ data class ItemData(
 
     @Serializable
     data class ItemUpdateRequestData(
-        @Contextual val categoryId: IxId<CategoryData>,
+        @Contextual val category_id: IxId<CategoryData>,
         val name: String,
     ) : Validatable<ItemUpdateRequestData> {
         override fun validate() =

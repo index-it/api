@@ -17,14 +17,14 @@ class ListsRoute {
     @Resource("{listId}")
     class ListRoute(
         val parent: ListsRoute = ListsRoute(),
-        @Contextual val listId: IxId<ListData>,
+        @Contextual val list_id: IxId<ListData>,
     ) {
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
             @Resource("{categoryId}")
             class CategoryRoute(
                 val parent: CategoriesRoute,
-                @Contextual val categoryId: IxId<CategoryData>,
+                @Contextual val category_id: IxId<CategoryData>,
             )
         }
 
@@ -33,7 +33,7 @@ class ListsRoute {
             @Resource("{itemId}")
             class ItemRoute(
                 val parent: ItemsRoute,
-                @Contextual val itemId: IxId<ItemData>,
+                @Contextual val item_id: IxId<ItemData>,
             ) {
                 @Resource("content")
                 class ContentRoute(val parent: ItemRoute)

@@ -51,7 +51,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
         dbQuery {
             FCMRegistrationTokenTable.update({ FCMRegistrationTokenTable.token eq fcmRegistrationToken.token }) {
                 it[user] = fcmRegistrationToken.userId.toEntityId(UsersTable)
-                it[createdAt] = fcmRegistrationToken.createdAt
+                it[created_at] = fcmRegistrationToken.createdAt
             }
         }
     }
@@ -67,7 +67,7 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
             val maxAge = DatetimeUtils.currentMillis() - DatetimeUtils.ONE_DAY_MILLIS * 60
 
             FCMRegistrationTokenTable.deleteWhere {
-                createdAt less maxAge
+                created_at less maxAge
             }
         }
     }

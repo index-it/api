@@ -50,7 +50,7 @@ fun Route.taskRoute() {
             }
         }
     }) {
-        val task = taskDao.get(userIdFromSessionOrThrow(), it.taskId)
+        val task = taskDao.get(userIdFromSessionOrThrow(), it.task_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(task)
@@ -74,8 +74,8 @@ fun Route.taskRoute() {
                     TaskData.TaskUpdateRequestData(
                         name = "ski equipment",
                         description = "find ski equipment for winter",
-                        dueDate = 1703500710000,
-                        subTasks =
+                        due_date = 1703500710000,
+                        subtasks =
                         mutableListOf(
                             SubTaskData(
                                 "skis",
@@ -109,22 +109,22 @@ fun Route.taskRoute() {
     }) {
         val updateData = call.receive<TaskData.TaskUpdateRequestData>()
         val userId = userIdFromSessionOrThrow()
-        val taskId = it.taskId
-        val newItemIdToConnect = updateData.itemId
+        val taskId = it.task_id
+        val newItemIdToConnect = updateData.item_id
 
-        val task = taskDao.get(userId, it.taskId)
+        val task = taskDao.get(userId, it.task_id)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (task.itemId != null && updateData.rrule != null) {
+        if (task.item_id != null && updateData.rrule != null) {
             return@put call.respond(HttpStatusCode.MethodNotAllowed)
         }
 
-        if (task.itemId != newItemIdToConnect) {
-            val originalConnectedItem = task.itemId?.let { originalItemId -> itemDao.get(userId, originalItemId) }
+        if (task.item_id != newItemIdToConnect) {
+            val originalConnectedItem = task.item_id?.let { originalItemId -> itemDao.get(userId, originalItemId) }
 
             // un-connects the old item if existing
             if (originalConnectedItem != null) {
-                itemDao.setTaskConnection(userId, originalConnectedItem.listId, originalConnectedItem.id, null)
+                itemDao.setTaskConnection(userId, originalConnectedItem.list_id, originalConnectedItem.id, null)
                     ?.also { updatedOriginalConnectedItem ->
                         emitWebsocketEvent(
                             websocketEventManager = websocketEventManager,
@@ -139,7 +139,7 @@ fun Route.taskRoute() {
                 val newConnectedItem = itemDao.get(userId, newItemIdToConnect)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
 
-                val updatedNewConnectedItem = itemDao.setTaskConnection(userId, newConnectedItem.listId, newConnectedItem.id, taskId)
+                val updatedNewConnectedItem = itemDao.setTaskConnection(userId, newConnectedItem.list_id, newConnectedItem.id, taskId)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
 
                 emitWebsocketEvent(
@@ -186,10 +186,10 @@ fun Route.taskRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        taskReminderJobDao.deleteAllOfTask(it.taskId)
+        taskReminderJobDao.deleteAllOfTask(it.task_id)
 
         if (!it.all) {
-            taskDao.get(userId, it.taskId)?.let { task ->
+            taskDao.get(userId, it.task_id)?.let { task ->
                 TaskUseCase.createNextOccurrence(task)
                     ?.also { nextOccurrenceTask ->
                         emitWebsocketEvent(
@@ -201,7 +201,7 @@ fun Route.taskRoute() {
             }
         }
 
-        val deleted = taskDao.delete(userId, it.taskId)
+        val deleted = taskDao.delete(userId, it.task_id)
 
         call.respond(HttpStatusCode.OK)
 
@@ -209,7 +209,7 @@ fun Route.taskRoute() {
             emitWebsocketEvent(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.TASK_DELETED,
-                content = TaskDeleteEventContent(it.taskId)
+                content = TaskDeleteEventContent(it.task_id)
             )
         }
     }

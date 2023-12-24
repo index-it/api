@@ -23,18 +23,16 @@ import java.util.*
  * @property color
  */
 object CategoryTable : UUIDTable() {
-    val user =
-        reference(
-            name = "id_user",
-            foreign = UsersTable,
-            onDelete = ReferenceOption.CASCADE,
-        ).index()
-    val list =
-        reference(
-            name = "id_list",
-            foreign = ListTable,
-            onDelete = ReferenceOption.CASCADE,
-        ).index()
+    val user = reference(
+        name = "id_user",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
+    val list = reference(
+        name = "id_list",
+        foreign = ListTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
     val name = varchar("ix_name", 50)
     val color = varchar("color", 9)
 }
@@ -63,8 +61,8 @@ class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 }
 
 fun CategoryEntity.fromData(categoryData: CategoryData) {
-    user = categoryData.userId.toEntityId(UsersTable)
-    list = categoryData.listId.toEntityId(ListTable)
+    user = categoryData.user_id.toEntityId(UsersTable)
+    list = categoryData.list_id.toEntityId(ListTable)
     name = categoryData.name
     color = categoryData.color
 }
@@ -72,8 +70,8 @@ fun CategoryEntity.fromData(categoryData: CategoryData) {
 fun CategoryEntity.toData() =
     CategoryData(
         id = id.toIxId(),
-        userId = user.toIxId(),
-        listId = list.toIxId(),
+        user_id = user.toIxId(),
+        list_id = list.toIxId(),
         name = name,
         color = color,
     )

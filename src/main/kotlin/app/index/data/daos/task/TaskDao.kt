@@ -20,22 +20,22 @@ class TaskDao(
     ): TaskData {
         val taskData = TaskData(
             id = newIxId(),
-            userId = userId,
-            itemId = taskCreateRequestData.itemId,
+            user_id = userId,
+            item_id = taskCreateRequestData.item_id,
             name = taskCreateRequestData.name,
             description = taskCreateRequestData.description,
-            dueDate = taskCreateRequestData.dueDate,
+            due_date = taskCreateRequestData.due_date,
             rrule = taskCreateRequestData.rrule,
-            subTasks = taskCreateRequestData.subTasks,
+            subtasks = taskCreateRequestData.subtasks,
             completed = false,
             priority = taskCreateRequestData.priority,
-            createdAt = DatetimeUtils.currentMillis(),
-            editedAt = null,
-            completedAt = null,
+            created_at = DatetimeUtils.currentMillis(),
+            edited_at = null,
+            completed_at = null,
         )
 
         taskDBI.create(taskData)
-        taskCM.cache(taskData.userId, taskData)
+        taskCM.cache(taskData.user_id, taskData)
 
         return taskData
     }
@@ -48,20 +48,20 @@ class TaskDao(
         val taskData =
             TaskData(
                 id = newIxId(),
-                userId = task.userId,
-                itemId = null, // Cannot have connected recurring tasks
+                user_id = task.user_id,
+                item_id = null, // Cannot have connected recurring tasks
                 name = task.name,
                 description = task.description,
-                dueDate = dueDate,
+                due_date = dueDate,
                 rrule = rrule,
-                subTasks = task.subTasks.map { it.apply { completed = false } },
+                subtasks = task.subtasks.map { it.apply { completed = false } },
                 completed = false,
-                createdAt = DatetimeUtils.currentMillis(),
-                editedAt = task.editedAt,
-                completedAt = null,
+                created_at = DatetimeUtils.currentMillis(),
+                edited_at = task.edited_at,
+                completed_at = null,
             )
         taskDBI.create(taskData)
-        taskCM.cache(taskData.userId, taskData)
+        taskCM.cache(taskData.user_id, taskData)
 
         return taskData
     }

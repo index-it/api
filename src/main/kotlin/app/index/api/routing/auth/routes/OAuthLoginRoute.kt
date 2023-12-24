@@ -56,7 +56,7 @@ fun Route.oauthLoginRoutes() {
             }
         }
     }) {
-        val userInfo = googleOAuthClient.getUserInfoFromIdTokenIfValid(it.tokenId)
+        val userInfo = googleOAuthClient.getUserInfoFromIdTokenIfValid(it.token_id)
             ?: throw AuthenticationException()
 
         if (!userInfo.verifiedEmail) {

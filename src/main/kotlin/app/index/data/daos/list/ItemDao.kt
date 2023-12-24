@@ -84,15 +84,15 @@ class ItemDao(
     ): ItemData {
         val itemData = ItemData(
             id = newIxId(),
-            userId = userId,
-            listId = listId,
-            categoryId = itemCreateRequestData.categoryId,
-            taskId = null,
+            user_id = userId,
+            list_id = listId,
+            category_id = itemCreateRequestData.category_id,
+            task_id = null,
             name = itemCreateRequestData.name,
             completed = false,
-            createdAt = DatetimeUtils.currentMillis(),
-            editedAt = null,
-            completedAt = null,
+            created_at = DatetimeUtils.currentMillis(),
+            edited_at = null,
+            completed_at = null,
         )
 
         itemDBI.create(itemData)

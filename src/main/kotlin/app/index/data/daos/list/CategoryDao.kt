@@ -58,8 +58,8 @@ class CategoryDao(
     ): CategoryData {
         val categoryData = CategoryData(
             id = newIxId(),
-            userId = userId,
-            listId = listId,
+            user_id = userId,
+            list_id = listId,
             name = categoryCreateRequestData.name,
             color = categoryCreateRequestData.color,
         )
@@ -95,7 +95,7 @@ class CategoryDao(
         categoryCM.delete(userId, listId, categoryId)
 
         val itemIdsOfCategory = itemCM.getAll(userId, listId)
-            .filter { it.categoryId == categoryId }
+            .filter { it.category_id == categoryId }
             .map { item -> item.id }
         itemContentCM.deleteMultiple(userId, itemIdsOfCategory)
         itemCM.deleteMultiple(userId, listId, itemIdsOfCategory)

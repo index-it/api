@@ -20,14 +20,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ListData(
     @Contextual val id: IxId<ListData>,
-    @Contextual var userId: IxId<UserData>,
+    @Contextual var user_id: IxId<UserData>,
     var name: String,
     var icon: String, // Single emoji at the moment
     var color: String, // Represented as #RRGGBB hex color
-    @SerialName("created_at")
-    val createdAt: Long = DatetimeUtils.currentMillis(),
-    @SerialName("edited_at")
-    val editedAt: Long? = null,
+    val created_at: Long = DatetimeUtils.currentMillis(),
+    val edited_at: Long? = null,
 ) {
     @Serializable
     data class ListCreateRequestData(

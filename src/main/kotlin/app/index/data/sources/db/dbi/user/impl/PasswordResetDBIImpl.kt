@@ -25,7 +25,7 @@ class PasswordResetDBIImpl(
 
             PasswordResetEntity.count(
                 PasswordResetTable.user eq id.toEntityId(UsersTable)
-                        and (PasswordResetTable.expiresAt greater currentMillis)
+                        and (PasswordResetTable.expires_at greater currentMillis)
             )
         }
 
@@ -57,7 +57,7 @@ class PasswordResetDBIImpl(
             val currentMillis = DatetimeUtils.currentMillis()
 
             PasswordResetTable.deleteWhere {
-                expiresAt less currentMillis
+                expires_at less currentMillis
             }
         }
     }

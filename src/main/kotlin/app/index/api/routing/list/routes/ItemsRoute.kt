@@ -46,9 +46,9 @@ fun Route.itemsRoute() {
         val userId = userIdFromSessionOrThrow()
 
         val items = when (it.completed) {
-            true -> itemDao.getAllCompleted(userId, it.parent.listId)
-            false -> itemDao.getAllUncompleted(userId, it.parent.listId)
-            null -> itemDao.getAll(userId, it.parent.listId)
+            true -> itemDao.getAllCompleted(userId, it.parent.list_id)
+            false -> itemDao.getAllUncompleted(userId, it.parent.list_id)
+            null -> itemDao.getAll(userId, it.parent.list_id)
         }
 
         call.respond(items)
@@ -78,7 +78,7 @@ fun Route.itemsRoute() {
     }) {
         val newItem = call.receive<ItemData.ItemCreateRequestData>()
 
-        val item = itemDao.create(userIdFromSessionOrThrow(), it.parent.listId, newItem)
+        val item = itemDao.create(userIdFromSessionOrThrow(), it.parent.list_id, newItem)
 
         call.respond(item)
 

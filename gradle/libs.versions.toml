@@ -1,6 +1,7 @@
 [versions]
 kotlin="1.9.0"
 kotlinxCoroutines="1.7.3"
+kotlinxDatetime="0.5.0"
 reflections="0.10.2"
 ksp="1.9.0-1.0.13"
 
@@ -46,6 +47,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [libraries]
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 reflections = { group = "org.reflections", name = "reflections", version.ref  = "reflections" }
 
 kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
@@ -63,6 +65,7 @@ koin-logger = { group = "io.insert-koin", name = "koin-logger-slf4j", version.re
 exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
 exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
 exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+exposed-datetime = { group = "org.jetbrains.exposed", name = "exposed-java-time", version.ref = "exposed" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 flyway = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
 flyway-postgres = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
@@ -124,6 +127,7 @@ postgres = [
     "exposed-core",
     "exposed-dao",
     "exposed-jdbc",
+    "exposed-datetime",
     "flyway",
     "flyway-postgres"
 ]

@@ -43,7 +43,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        val list = listDao.get(userIdFromSessionOrThrow(), it.listId)
+        val list = listDao.get(userIdFromSessionOrThrow(), it.list_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)
@@ -78,7 +78,7 @@ fun Route.listRoute() {
     }) {
         val updatedList = call.receive<ListData.ListUpdateRequestData>()
 
-        val newList = listDao.update(userIdFromSessionOrThrow(), it.listId, updatedList)
+        val newList = listDao.update(userIdFromSessionOrThrow(), it.list_id, updatedList)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newList)
@@ -107,7 +107,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        val deleted = listDao.delete(userIdFromSessionOrThrow(), it.listId)
+        val deleted = listDao.delete(userIdFromSessionOrThrow(), it.list_id)
 
         call.respond(HttpStatusCode.OK)
 
@@ -115,7 +115,7 @@ fun Route.listRoute() {
             emitWebsocketEvent(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.LIST_DELETED,
-                content = ListDeleteEventContent(it.listId)
+                content = ListDeleteEventContent(it.list_id)
             )
         }
     }

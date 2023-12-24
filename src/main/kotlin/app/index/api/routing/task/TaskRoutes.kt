@@ -16,7 +16,7 @@ class TasksRoute(val completed: Boolean? = null) {
     @Resource("{taskId}")
     class TaskRoute(
         val parent: TasksRoute,
-        @Contextual val taskId: IxId<TaskData>,
+        @Contextual val task_id: IxId<TaskData>,
         val all: Boolean = true,
     ) {
         @Resource("completion")

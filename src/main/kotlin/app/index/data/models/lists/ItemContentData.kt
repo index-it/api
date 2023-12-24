@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemContentData(
     @Contextual val id: IxId<ItemContentData>,
-    @Contextual val userId: IxId<UserData>,
-    @Contextual val itemId: IxId<ItemData>,
+    @Contextual val user_id: IxId<UserData>,
+    @Contextual val item_id: IxId<ItemData>,
     val content: String,
 ) {
     @Serializable

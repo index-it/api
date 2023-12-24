@@ -25,7 +25,7 @@ class EmailVerificationDBIImpl(
 
             EmailVerificationEntity.count(
                 EmailVerificationTable.user eq id.toEntityId(UsersTable)
-                        and (EmailVerificationTable.expiresAt greater currentMillis)
+                        and (EmailVerificationTable.expires_at greater currentMillis)
             )
         }
 
@@ -57,7 +57,7 @@ class EmailVerificationDBIImpl(
             val currentMillis = DatetimeUtils.currentMillis()
 
             EmailVerificationTable.deleteWhere {
-                expiresAt less currentMillis
+                expires_at less currentMillis
             }
         }
     }

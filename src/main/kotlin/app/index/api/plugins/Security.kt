@@ -94,7 +94,7 @@ fun Application.configureSecurity() {
 
         session<UserSessionCookie>(AuthenticationMethods.USER_SESSION_AUTH) {
             validate { userSessionCookie ->
-                val session = userSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
+                val session = userSessionDao.get(userSessionCookie.user_id, userSessionCookie.session_id)
 
                 // If there is no session or if it has expired
                 if (session == null || (DatetimeUtils.currentMillis() - session.iat) >= (ApiConfig.sessionMaxAgeInSeconds * 1000)) {

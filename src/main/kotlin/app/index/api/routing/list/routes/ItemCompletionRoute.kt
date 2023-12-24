@@ -52,11 +52,11 @@ fun Route.itemCompletionRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        val updatedItem = itemDao.setCompletion(userId, it.parent.parent.parent.listId, it.parent.itemId, it.completed)
+        val updatedItem = itemDao.setCompletion(userId, it.parent.parent.parent.list_id, it.parent.item_id, it.completed)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (updatedItem.taskId != null) {
-            taskDao.setCompletion(userId, updatedItem.taskId, it.completed)
+        if (updatedItem.task_id != null) {
+            taskDao.setCompletion(userId, updatedItem.task_id, it.completed)
         }
 
         call.respond(updatedItem)

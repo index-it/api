@@ -19,12 +19,12 @@ class TaskDaoTest {
         val task =
             TaskData(
                 id = newIxId(),
-                userId = newIxId(),
-                itemId = null,
+                user_id = newIxId(),
+                item_id = null,
                 name = "test",
                 description = null,
-                subTasks = emptyList(),
-                dueDate = currentMillis,
+                subtasks = emptyList(),
+                due_date = currentMillis,
                 rrule = rrule,
             )
 
@@ -40,17 +40,17 @@ class TaskDaoTest {
         val newOccurrence =
             TaskData(
                 id = newIxId(),
-                userId = task.userId,
-                itemId = task.itemId,
+                user_id = task.user_id,
+                item_id = task.item_id,
                 name = task.name,
                 description = task.description,
-                dueDate = nextDueDate,
+                due_date = nextDueDate,
                 rrule = rrule,
-                subTasks = task.subTasks.map { it.apply { completed = false } },
+                subtasks = task.subtasks.map { it.apply { completed = false } },
                 completed = false,
-                createdAt = DatetimeUtils.currentMillis(),
-                editedAt = task.editedAt,
-                completedAt = null,
+                created_at = DatetimeUtils.currentMillis(),
+                edited_at = task.edited_at,
+                completed_at = null,
             )
 
         val thirdOccurrence =

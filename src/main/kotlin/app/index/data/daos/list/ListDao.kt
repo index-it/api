@@ -26,16 +26,16 @@ class ListDao(
     ): ListData {
         val listData = ListData(
             id = newIxId(),
-            userId = userId,
+            user_id = userId,
             name = listCreateRequestData.name,
             icon = listCreateRequestData.icon,
             color = listCreateRequestData.color,
-            createdAt = DatetimeUtils.currentMillis(),
-            editedAt = null,
+            created_at = DatetimeUtils.currentMillis(),
+            edited_at = null,
         )
 
         listDBI.create(listData)
-        listCM.cache(listData.userId, listData)
+        listCM.cache(listData.user_id, listData)
 
         return listData
     }

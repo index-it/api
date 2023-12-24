@@ -40,7 +40,7 @@ class UserDBIImpl : UserDBI {
     override suspend fun verifyEmail(id: IxId<UserData>) {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
-                it[emailVerified] = true
+                it[email_verified] = true
             }
         }
     }
@@ -53,9 +53,9 @@ class UserDBIImpl : UserDBI {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
                 if (verifyEmail) {
-                    it[emailVerified] = true
+                    it[email_verified] = true
                 }
-                it[passwordHash] = newPasswordHashed
+                it[password_hash] = newPasswordHashed
             }
         }
     }

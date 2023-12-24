@@ -10,6 +10,7 @@ import io.konform.validation.Invalid
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.*
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,54 +19,54 @@ import kotlinx.serialization.Serializable
  * Represents a task, kind of like a to-do
  *
  * @param id
- * @param userId
- * @param itemId id of the item to which this task is linked - when the task gets completed, the item also gets completed and vice-versa
+ * @param user_id
+ * @param item_id id of the item to which this task is linked - when the task gets completed, the item also gets completed and vice-versa
  * @param name
  * @param description
- * @param subTasks a list of sub-tasks
- * @param dueDate Due date **UTC** timestamp
+ * @param subtasks a list of sub-tasks
+ * @param due_date Due date **UTC** timestamp
  * @param rrule Recurrence rule for the task
  * @param reminders
  * @param completed
  * @param priority task priority indicated as an int: 0 --> very low, 1 --> low, 2 --> medium, 3 --> high
- * @param createdAt
- * @param editedAt
- * @param completedAt
+ * @param created_at
+ * @param edited_at
+ * @param completed_at
  */
 @Serializable
 @Suppress("Unused")
 data class TaskData(
     @Contextual val id: IxId<TaskData>,
-    @Contextual val userId: IxId<UserData>,
-    @Contextual val itemId: IxId<ItemData>? = null,
+    @Contextual val user_id: IxId<UserData>,
+    @Contextual val item_id: IxId<ItemData>? = null,
     val name: String,
     val description: String? = null,
-    val subTasks: List<SubTaskData> = emptyList(),
-    val dueDate: Long? = null,
+    val subtasks: List<SubTaskData> = emptyList(),
+    val due_date: LocalDate? = null,
     val rrule: String? = null,
     val completed: Boolean = false,
     val priority: Int? = null,
     val reminders: List<TaskReminderData> = emptyList(),
     @SerialName("created_at")
-    val createdAt: Long = DatetimeUtils.currentMillis(),
+    val created_at: Long = DatetimeUtils.currentMillis(),
     @SerialName("edited_at")
-    val editedAt: Long? = null,
+    val edited_at: Long? = null,
     @SerialName("completed_at")
-    val completedAt: Long? = null,
+    val completed_at: Long? = null,
 ) {
     @Serializable
     data class TaskCreateRequestData(
         val name: String,
         val description: String? = null,
-        val dueDate: Long? = null,
+        val due_date: Long? = null,
         val rrule: String? = null,
         val reminders: List<TaskReminderData> = emptyList(),
-        val subTasks: List<SubTaskData> = emptyList(),
+        val subtasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
-        @Contextual val itemId: IxId<ItemData>? = null,
+        @Contextual val item_id: IxId<ItemData>? = null,
     ) : Validatable<TaskCreateRequestData> {
         override fun validate(): ValidationResult<TaskCreateRequestData> {
-            if (reminders.isNotEmpty() && dueDate == null) {
+            if (reminders.isNotEmpty() && due_date == null) {
                 return Invalid(
                     internalErrors = mapOf(Pair("dataPath=.reminders", listOf("cannot have reminders without a due date")))
                 )
@@ -80,10 +81,10 @@ data class TaskData(
                     minLength(Validations.Task.MIN_DESCRIPTION_LENGTH)
                     maxLength(Validations.Task.MAX_DESCRIPTION_LENGTH)
                 }
-                TaskCreateRequestData::subTasks {
+                TaskCreateRequestData::subtasks {
                     maxItems(Validations.Task.MAX_SUBTASK_COUNT)
                 }
-                TaskCreateRequestData::subTasks onEach {
+                TaskCreateRequestData::subtasks onEach {
                     SubTaskData::name {
                         maxLength(Validations.Task.MAX_SUBTASK_NAME_LENGTH)
                     }
@@ -96,10 +97,10 @@ data class TaskData(
                     maxItems(Validations.Task.MAX_REMINDERS_COUNT)
                 }
                 TaskCreateRequestData::reminders onEach {
-                    TaskReminderData::daysBefore {
+                    TaskReminderData::days_before {
                         minimum(0)
                     }
-                    TaskReminderData::timeOffset {
+                    TaskReminderData::time_offset {
                         minimum(0)
                         exclusiveMaximum(DatetimeUtils.ONE_DAY_MILLIS)
                     }
@@ -112,15 +113,15 @@ data class TaskData(
     data class TaskUpdateRequestData(
         val name: String,
         val description: String? = null,
-        val dueDate: Long? = null,
+        val due_date: Long? = null,
         val rrule: String? = null,
         val reminders: List<TaskReminderData> = emptyList(),
-        val subTasks: List<SubTaskData> = emptyList(),
+        val subtasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
-        @Contextual val itemId: IxId<ItemData>? = null,
+        @Contextual val item_id: IxId<ItemData>? = null,
     ) : Validatable<TaskUpdateRequestData> {
         override fun validate(): ValidationResult<TaskUpdateRequestData> {
-            if (reminders.isNotEmpty() && dueDate == null) {
+            if (reminders.isNotEmpty() && due_date == null) {
                 return Invalid(
                     internalErrors = mapOf(Pair("dataPath=.reminders", listOf("cannot have reminders without a due date")))
                 )
@@ -135,10 +136,10 @@ data class TaskData(
                     minLength(Validations.Task.MIN_DESCRIPTION_LENGTH)
                     maxLength(Validations.Task.MAX_DESCRIPTION_LENGTH)
                 }
-                TaskUpdateRequestData::subTasks {
+                TaskUpdateRequestData::subtasks {
                     maxItems(Validations.Task.MAX_SUBTASK_COUNT)
                 }
-                TaskUpdateRequestData::subTasks onEach {
+                TaskUpdateRequestData::subtasks onEach {
                     SubTaskData::name {
                         maxLength(Validations.Task.MAX_SUBTASK_NAME_LENGTH)
                     }
@@ -151,10 +152,10 @@ data class TaskData(
                     maxItems(Validations.Task.MAX_REMINDERS_COUNT)
                 }
                 TaskUpdateRequestData::reminders onEach {
-                    TaskReminderData::daysBefore {
+                    TaskReminderData::days_before {
                         minimum(0)
                     }
-                    TaskReminderData::timeOffset {
+                    TaskReminderData::time_offset {
                         minimum(0)
                         exclusiveMaximum(DatetimeUtils.ONE_DAY_MILLIS)
                     }
@@ -177,6 +178,6 @@ data class SubTaskData(
 
 @Serializable
 data class TaskReminderData(
-    val daysBefore: Int,
-    val timeOffset: Long
+    val days_before: Int,
+    val time_offset: Long
 )

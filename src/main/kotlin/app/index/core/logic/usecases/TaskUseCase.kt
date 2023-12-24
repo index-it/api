@@ -27,7 +27,7 @@ object TaskUseCase : KoinComponent {
      * @return Null if this task isn't recurring or if it reached the end clause, a [Pair] with the next occurrence timestamp and updated rrule otherwise
      */
     fun calculateNextOccurrenceDueDateAndRRule(task: TaskData): Pair<Long, String>? {
-        if (task.dueDate == null || task.rrule == null) {
+        if (task.due_date == null || task.rrule == null) {
             return null
         }
 
@@ -42,7 +42,7 @@ object TaskUseCase : KoinComponent {
         }
 
         return rrule
-            .iterator(max(task.dueDate, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
+            .iterator(max(task.due_date, DatetimeUtils.currentMillis()), DatetimeUtils.utcTimeZone)
             .apply {
                 try {
                     skip(1)
@@ -99,9 +99,9 @@ object TaskUseCase : KoinComponent {
                 calendar.set(Calendar.SECOND, 0)
                 calendar.set(Calendar.MILLISECOND, 0)
 
-                calendar.roll(taskReminder.daysBefore, false)
+                calendar.roll(taskReminder.days_before, false)
 
-                timestamps.add(calendar.timeInMillis.plus(taskReminder.timeOffset))
+                timestamps.add(calendar.timeInMillis.plus(taskReminder.time_offset))
             } catch (_: Exception) {
                 // invalid date info
             }
@@ -122,13 +122,13 @@ object TaskUseCase : KoinComponent {
      */
     suspend fun createReminders(task: TaskData) {
         val currentMillis = DatetimeUtils.currentMillis()
-        val reminderJobs = calculateReminderTimestamps(task.dueDate, task.reminders)
+        val reminderJobs = calculateReminderTimestamps(task.due_date, task.reminders)
             .filter { it > currentMillis }
             .map {
                 TaskReminderJobData.TaskReminderJobCreateData(
                     id = newIxId(),
                     taskId = task.id,
-                    userId = task.userId,
+                    userId = task.user_id,
                     scheduledAt = it
                 )
             }
@@ -147,7 +147,7 @@ object TaskUseCase : KoinComponent {
      * @param task
      */
     suspend fun refreshReminders(task: TaskData) {
-        val reminderTimestamps = calculateReminderTimestamps(task.dueDate, task.reminders)
+        val reminderTimestamps = calculateReminderTimestamps(task.due_date, task.reminders)
         val existingReminderJobs = taskReminderJobDao.getAllOfTask(task.id)
 
         // Find and delete outdated jobs
@@ -178,7 +178,7 @@ object TaskUseCase : KoinComponent {
                         TaskReminderJobData.TaskReminderJobCreateData(
                             id = newIxId(),
                             taskId = task.id,
-                            userId = task.userId,
+                            userId = task.user_id,
                             scheduledAt = timestamp
                         )
                     )

@@ -28,11 +28,11 @@ fun Route.logoutRoutes() {
     }) {
         val session = call.sessions.get<UserSessionCookie>()!!
 
-        userSessionDao.delete(session.userId, session.sessionId)
+        userSessionDao.delete(session.user_id, session.session_id)
 
         call.sessions.clear<UserSessionCookie>()
         call.respond(HttpStatusCode.OK)
 
-        websocketConnectionsManager.closeConnectionOfSession(session.sessionId)
+        websocketConnectionsManager.closeConnectionOfSession(session.session_id)
     }
 }

@@ -27,7 +27,7 @@ class UserSessionDao(
 
         upsert(
             UserAuthSessionData(
-                id = userSessionCookie.sessionId,
+                id = userSessionCookie.session_id,
                 userId = userId,
                 iat = DatetimeUtils.currentMillis(),
                 deviceName = device,

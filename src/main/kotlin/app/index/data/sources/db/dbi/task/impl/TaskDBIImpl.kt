@@ -33,7 +33,7 @@ class TaskDBIImpl : TaskDBI {
                 fromData(taskData)
             }
 
-            SubTaskTable.batchInsert(taskData.subTasks) {
+            SubTaskTable.batchInsert(taskData.subtasks) {
                 this[SubTaskTable.task] = taskData.id.toEntityId(TaskTable)
                 this[SubTaskTable.name] = it.name
                 this[SubTaskTable.completed] = it.completed
@@ -68,7 +68,7 @@ class TaskDBIImpl : TaskDBI {
         dbQuery {
             TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[this.completed] = completed
-                it[this.completedAt] = if (completed) DatetimeUtils.currentMillis() else null
+                it[this.completed_at] = if (completed) DatetimeUtils.currentMillis() else null
             } > 0
         }
 
@@ -81,16 +81,17 @@ class TaskDBIImpl : TaskDBI {
             val updated = TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[name] = taskUpdateRequestData.name
                 it[description] = taskUpdateRequestData.description
-                it[dueDate] = taskUpdateRequestData.dueDate
+                it[due_date] = taskUpdateRequestData.due_date
                 it[rrule] = taskUpdateRequestData.rrule
                 it[priority] = taskUpdateRequestData.priority
-                it[editedAt] = DatetimeUtils.currentMillis()
-                it[item] = taskUpdateRequestData.itemId?.toEntityId(ItemTable)
+                it[edited_at] = DatetimeUtils.currentMillis()
+                it[item] = taskUpdateRequestData.item_id?.toEntityId(ItemTable)
             } > 0
 
+            // TODO: Joins
             if (updated) {
                 SubTaskTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
-                SubTaskTable.batchInsert(taskUpdateRequestData.subTasks) {
+                SubTaskTable.batchInsert(taskUpdateRequestData.subtasks) {
                     this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
                     this[SubTaskTable.name] = it.name
                     this[SubTaskTable.completed] = it.completed
@@ -99,8 +100,8 @@ class TaskDBIImpl : TaskDBI {
                 TaskReminderTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
                 TaskReminderTable.batchInsert(taskUpdateRequestData.reminders) {
                     this[TaskReminderTable.task] = taskId.toEntityId(TaskTable)
-                    this[TaskReminderTable.daysBefore] = it.daysBefore
-                    this[TaskReminderTable.timeOffset] = it.timeOffset
+                    this[TaskReminderTable.days_before] = it.days_before
+                    this[TaskReminderTable.time_offset] = it.time_offset
                 }
             }
 

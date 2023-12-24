@@ -41,7 +41,7 @@ fun Route.itemContentRoute() {
             }
         }
     }) {
-        val content = itemContentDao.getOrCreate(userIdFromSessionOrThrow(), it.parent.itemId)
+        val content = itemContentDao.getOrCreate(userIdFromSessionOrThrow(), it.parent.item_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(content)
@@ -77,7 +77,7 @@ fun Route.itemContentRoute() {
     }) {
         val updatedItemContent = call.receive<ItemContentData.ItemContentCreateOrUpdateRequestData>()
 
-        val newContent = itemContentDao.update(userIdFromSessionOrThrow(), it.parent.itemId, updatedItemContent)
+        val newContent = itemContentDao.update(userIdFromSessionOrThrow(), it.parent.item_id, updatedItemContent)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newContent)

@@ -13,6 +13,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.timestamp
 import java.util.*
 
 /**
@@ -34,7 +35,7 @@ object TaskReminderJobTable : UUIDTable() {
         foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE,
     ).index()
-    val scheduledAt = long("scheduled_at")
+    val scheduledAt = timestamp("scheduled_at")
 }
 
 /**
@@ -61,5 +62,5 @@ fun TaskReminderJobEntity.toData() = TaskReminderJobData(
     id = id.toIxId(),
     task = taskEntity.toData(),
     userId = user.toIxId(),
-    scheduledAt = scheduledAt
+    scheduledAt = scheduledAt.toEpochMilli()
 )

@@ -19,8 +19,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CategoryData(
     @Contextual val id: IxId<CategoryData>,
-    @Contextual val userId: IxId<UserData>,
-    @Contextual val listId: IxId<ListData>,
+    @Contextual val user_id: IxId<UserData>,
+    @Contextual val list_id: IxId<ListData>,
     var name: String,
     var color: String, // Represented as #010101 hex color
 ) {

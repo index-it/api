@@ -38,7 +38,7 @@ fun Route.categoriesRoute() {
             }
         }
     }) {
-        val categories = categoryDao.getAll(userIdFromSessionOrThrow(), it.parent.listId)
+        val categories = categoryDao.getAll(userIdFromSessionOrThrow(), it.parent.list_id)
 
         call.respond(categories)
     }
@@ -67,7 +67,7 @@ fun Route.categoriesRoute() {
     }) {
         val newCategory = call.receive<CategoryData.CategoryCreateRequestData>()
 
-        val category = categoryDao.create(userIdFromSessionOrThrow(), it.parent.listId, newCategory)
+        val category = categoryDao.create(userIdFromSessionOrThrow(), it.parent.list_id, newCategory)
 
         call.respond(category)
 

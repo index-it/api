@@ -82,6 +82,7 @@ class GoogleCloudSchedulerClient {
 
         val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
         val jobName = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, id.toString()).toString()
+        // This won't be precise if too far in the future if timezones change
         val seconds = (reminderTimestamp / 1000) - 1
         val job = Job.newBuilder()
             .setName(jobName)

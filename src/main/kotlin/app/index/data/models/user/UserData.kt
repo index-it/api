@@ -35,7 +35,7 @@ data class UserData(
     data class UserResponseDto(
         @Contextual val id: IxId<UserData>,
         val email: String,
-        val creationTimestamp: Long,
-        val creationSource: CreationSource,
+        val creation_timestamp: Long,
+        val creation_source: CreationSource,
     )
 }

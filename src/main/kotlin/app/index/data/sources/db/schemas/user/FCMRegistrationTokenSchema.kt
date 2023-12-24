@@ -1,7 +1,7 @@
 package app.index.data.sources.db.schemas.user
 
 import app.index.data.models.user.FCMRegistrationTokenData
-import app.index.data.sources.db.schemas.user.FCMRegistrationTokenTable.createdAt
+import app.index.data.sources.db.schemas.user.FCMRegistrationTokenTable.created_at
 import app.index.data.sources.db.schemas.user.FCMRegistrationTokenTable.token
 import app.index.data.sources.db.schemas.user.FCMRegistrationTokenTable.user
 import app.index.data.sources.db.toEntityId
@@ -11,11 +11,13 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.timestamp
+import java.time.Instant
 
 /**
  * @property token
  * @property user
- * @property createdAt
+ * @property created_at
  */
 object FCMRegistrationTokenTable : IntIdTable() {
     val token = varchar("token", 100).uniqueIndex()
@@ -24,13 +26,13 @@ object FCMRegistrationTokenTable : IntIdTable() {
         foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE,
     ).index()
-    val createdAt = long("created_at")
+    val created_at = timestamp("created_at")
 }
 
 /**
  * @property token
  * @property user
- * @property createdAt
+ * @property created_at
  *
  * @property userEntity
  */
@@ -39,7 +41,7 @@ class FCMRegistrationTokenEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var token by FCMRegistrationTokenTable.token
     var user by FCMRegistrationTokenTable.user
-    var createdAt by FCMRegistrationTokenTable.createdAt
+    var created_at by FCMRegistrationTokenTable.created_at
 
     @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn FCMRegistrationTokenTable.user
@@ -48,12 +50,12 @@ class FCMRegistrationTokenEntity(id: EntityID<Int>) : IntEntity(id) {
 fun FCMRegistrationTokenEntity.fromData(fcmRegistrationTokenData: FCMRegistrationTokenData) {
     token = fcmRegistrationTokenData.token
     user = fcmRegistrationTokenData.userId.toEntityId(UsersTable)
-    createdAt = fcmRegistrationTokenData.createdAt
+    created_at = Instant.ofEpochMilli(fcmRegistrationTokenData.createdAt)
 }
 
 fun FCMRegistrationTokenEntity.toData() =
     FCMRegistrationTokenData(
         token = token,
         userId = user.toIxId(),
-        createdAt = createdAt,
+        createdAt = created_at.toEpochMilli(),
     )

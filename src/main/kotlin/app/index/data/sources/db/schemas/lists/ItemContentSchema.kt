@@ -23,18 +23,16 @@ import java.util.*
  * @property content
  */
 object ItemContentTable : UUIDTable() {
-    val user =
-        reference(
-            name = "id_user",
-            foreign = UsersTable,
-            onDelete = ReferenceOption.CASCADE,
-        ).index()
-    val item =
-        reference(
-            name = "id_item",
-            foreign = ItemTable,
-            onDelete = ReferenceOption.CASCADE,
-        ).index()
+    val user = reference(
+        name = "id_user",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
+    val item = reference(
+        name = "id_item",
+        foreign = ItemTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
     val content = text("ix_content", eagerLoading = true)
 }
 
@@ -60,15 +58,15 @@ class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 }
 
 fun ItemContentEntity.fromData(itemContentData: ItemContentData) {
-    user = itemContentData.userId.toEntityId(UsersTable)
-    item = itemContentData.itemId.toEntityId(ItemTable)
+    user = itemContentData.user_id.toEntityId(UsersTable)
+    item = itemContentData.item_id.toEntityId(ItemTable)
     content = itemContentData.content
 }
 
 fun ItemContentEntity.toData() =
     ItemContentData(
         id = id.toIxId(),
-        userId = user.toIxId(),
-        itemId = item.toIxId(),
+        user_id = user.toIxId(),
+        item_id = item.toIxId(),
         content = content,
     )

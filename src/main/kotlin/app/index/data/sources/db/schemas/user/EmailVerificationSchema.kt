@@ -1,8 +1,8 @@
 package app.index.data.sources.db.schemas.user
 
 import app.index.data.models.email.EmailVerificationData
-import app.index.data.sources.db.schemas.user.EmailVerificationTable.createdAt
-import app.index.data.sources.db.schemas.user.EmailVerificationTable.expiresAt
+import app.index.data.sources.db.schemas.user.EmailVerificationTable.created_at
+import app.index.data.sources.db.schemas.user.EmailVerificationTable.expires_at
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.id
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.token
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.user
@@ -13,13 +13,15 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.timestamp
+import java.time.Instant
 
 /**
  * @property id
  * @property token
  * @property user
- * @property createdAt
- * @property expiresAt
+ * @property created_at
+ * @property expires_at
  */
 object EmailVerificationTable : IntIdTable() {
     val token = varchar("token", 100).uniqueIndex()
@@ -28,16 +30,16 @@ object EmailVerificationTable : IntIdTable() {
         foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE,
     ).index()
-    val createdAt = long("created_at")
-    val expiresAt = long("expires_at")
+    val created_at = timestamp("created_at")
+    val expires_at = timestamp("expires_at")
 }
 
 /**
  * @property id
  * @property token
  * @property user
- * @property createdAt
- * @property expiresAt
+ * @property created_at
+ * @property expires_at
  * @property userEntity
  */
 class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
@@ -45,8 +47,8 @@ class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var token by EmailVerificationTable.token
     var user by EmailVerificationTable.user
-    var createdAt by EmailVerificationTable.createdAt
-    var expiresAt by EmailVerificationTable.expiresAt
+    var created_at by EmailVerificationTable.created_at
+    var expires_at by EmailVerificationTable.expires_at
 
     var userEntity by UserEntity referencedOn EmailVerificationTable.user
 }
@@ -54,14 +56,14 @@ class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
 fun EmailVerificationEntity.fromData(emailVerificationData: EmailVerificationData) {
     token = emailVerificationData.token
     user = emailVerificationData.userId.toEntityId(UsersTable)
-    createdAt = emailVerificationData.createdAt
-    expiresAt = emailVerificationData.expireAt
+    created_at = Instant.ofEpochMilli(emailVerificationData.createdAt)
+    expires_at = Instant.ofEpochMilli(emailVerificationData.expireAt)
 }
 
 fun EmailVerificationEntity.toData() =
     EmailVerificationData(
         token = token,
         userId = user.toIxId(),
-        expireAt = expiresAt,
-        createdAt = createdAt,
+        expireAt = expires_at.toEpochMilli(),
+        createdAt = created_at.toEpochMilli(),
     )

@@ -2,8 +2,8 @@ package app.index.data.sources.db.schemas.lists
 
 import app.index.data.models.lists.ListData
 import app.index.data.sources.db.schemas.lists.ListTable.color
-import app.index.data.sources.db.schemas.lists.ListTable.createdAt
-import app.index.data.sources.db.schemas.lists.ListTable.editedAt
+import app.index.data.sources.db.schemas.lists.ListTable.created_at
+import app.index.data.sources.db.schemas.lists.ListTable.edited_at
 import app.index.data.sources.db.schemas.lists.ListTable.emoji
 import app.index.data.sources.db.schemas.lists.ListTable.id
 import app.index.data.sources.db.schemas.lists.ListTable.name
@@ -17,6 +17,8 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.timestamp
+import java.time.Instant
 import java.util.*
 
 /**
@@ -25,21 +27,20 @@ import java.util.*
  * @property name
  * @property emoji
  * @property color
- * @property createdAt
- * @property editedAt
+ * @property created_at
+ * @property edited_at
  */
 object ListTable : UUIDTable() {
-    val user =
-        reference(
-            name = "id_user",
-            foreign = UsersTable,
-            onDelete = ReferenceOption.CASCADE,
-        ).index()
+    val user = reference(
+        name = "id_user",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
     val name = varchar("ix_name", 100)
     val emoji = char("emoji")
     val color = varchar("color", 9)
-    val createdAt = long("created_at")
-    val editedAt = long("edited_at").nullable()
+    val created_at = timestamp("created_at")
+    val edited_at = timestamp("edited_at").nullable()
 }
 
 /**
@@ -48,8 +49,8 @@ object ListTable : UUIDTable() {
  * @property name
  * @property emoji
  * @property color
- * @property createdAt
- * @property editedAt
+ * @property created_at
+ * @property edited_at
  * @property userEntity
  */
 class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -59,28 +60,29 @@ class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by ListTable.name
     var emoji by ListTable.emoji
     var color by ListTable.color
-    var createdAt by ListTable.createdAt
-    var editedAt by ListTable.editedAt
+    var created_at by ListTable.created_at
+    var edited_at by ListTable.edited_at
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn ListTable.user
 }
 
 fun ListEntity.fromData(listData: ListData) {
-    user = listData.userId.toEntityId(UsersTable)
+    user = listData.user_id.toEntityId(UsersTable)
     name = listData.name
     emoji = listData.icon.first()
     color = listData.color
-    createdAt = listData.createdAt
-    editedAt = listData.editedAt
+    created_at = Instant.ofEpochMilli(listData.created_at)
+    edited_at = listData.edited_at?.let { Instant.ofEpochMilli(it) }
 }
 
 fun ListEntity.toData() =
     ListData(
         id = id.toIxId(),
-        userId = user.toIxId(),
+        user_id = user.toIxId(),
         name = name,
         icon = emoji.toString(),
         color = color,
-        createdAt = createdAt,
-        editedAt = editedAt,
+        created_at = created_at.toEpochMilli(),
+        edited_at = edited_at?.toEpochMilli(),
     )

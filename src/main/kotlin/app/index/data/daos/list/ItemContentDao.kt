@@ -25,8 +25,8 @@ class ItemContentDao(
 
         val itemContentData = ItemContentData(
             id = newIxId(),
-            userId = userId,
-            itemId = itemId,
+            user_id = userId,
+            item_id = itemId,
             content = "",
         )
 

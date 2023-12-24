@@ -11,6 +11,6 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class UserSessionCookie(
-    @Contextual val sessionId: IxId<UserAuthSessionData>,
-    @Contextual val userId: IxId<UserData>,
+    @Contextual val session_id: IxId<UserAuthSessionData>,
+    @Contextual val user_id: IxId<UserData>,
 ) : Principal

@@ -1,8 +1,8 @@
 package app.index.data.sources.db.schemas.user
 
 import app.index.data.models.user.PasswordResetData
-import app.index.data.sources.db.schemas.user.PasswordResetTable.createdAt
-import app.index.data.sources.db.schemas.user.PasswordResetTable.expiresAt
+import app.index.data.sources.db.schemas.user.PasswordResetTable.created_at
+import app.index.data.sources.db.schemas.user.PasswordResetTable.expires_at
 import app.index.data.sources.db.schemas.user.PasswordResetTable.id
 import app.index.data.sources.db.schemas.user.PasswordResetTable.token
 import app.index.data.sources.db.schemas.user.PasswordResetTable.user
@@ -13,13 +13,15 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.timestamp
+import java.time.Instant
 
 /**
  * @property id
  * @property token
  * @property user
- * @property createdAt
- * @property expiresAt
+ * @property created_at
+ * @property expires_at
  */
 object PasswordResetTable : IntIdTable() {
     val token = varchar("token", 100).uniqueIndex()
@@ -29,16 +31,16 @@ object PasswordResetTable : IntIdTable() {
             foreign = UsersTable,
             onDelete = ReferenceOption.CASCADE,
         ).index()
-    val createdAt = long("created_at")
-    val expiresAt = long("expires_at")
+    val created_at = timestamp("created_at")
+    val expires_at = timestamp("expires_at")
 }
 
 /**
  * @property id
  * @property token
  * @property user
- * @property createdAt
- * @property expiresAt
+ * @property created_at
+ * @property expires_at
  * @property userEntity
  */
 class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
@@ -46,8 +48,8 @@ class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var token by PasswordResetTable.token
     var user by PasswordResetTable.user
-    var createdAt by PasswordResetTable.createdAt
-    var expiresAt by PasswordResetTable.expiresAt
+    var created_at by PasswordResetTable.created_at
+    var expires_at by PasswordResetTable.expires_at
 
     val userEntity by UserEntity referencedOn PasswordResetTable.user
 }
@@ -55,14 +57,14 @@ class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
 fun PasswordResetEntity.fromData(passwordResetData: PasswordResetData) {
     token = passwordResetData.token
     user = passwordResetData.userId.toEntityId(UsersTable)
-    createdAt = passwordResetData.createdAt
-    expiresAt = passwordResetData.expireAt
+    created_at = Instant.ofEpochMilli(passwordResetData.createdAt)
+    expires_at = Instant.ofEpochMilli(passwordResetData.expireAt)
 }
 
 fun PasswordResetEntity.toData() =
     PasswordResetData(
         token = token,
         userId = user.toIxId(),
-        createdAt = createdAt,
-        expireAt = expiresAt,
+        createdAt = created_at.toEpochMilli(),
+        expireAt = expires_at.toEpochMilli(),
     )

@@ -61,7 +61,7 @@ class ListDBIImpl : ListDBI {
                 it[name] = listUpdateRequestData.name
                 it[emoji] = listUpdateRequestData.icon.first()
                 it[color] = listUpdateRequestData.color
-                it[editedAt] = DatetimeUtils.currentMillis()
+                it[edited_at] = DatetimeUtils.currentMillis()
             } > 0
         }
 

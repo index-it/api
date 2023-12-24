@@ -55,14 +55,14 @@ fun Route.taskCompletionRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        val updatedTask = taskDao.setCompletion(userId, it.parent.taskId, it.completed)
+        val updatedTask = taskDao.setCompletion(userId, it.parent.task_id, it.completed)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (updatedTask.itemId != null) {
-            val connectedItem = itemDao.get(userId, updatedTask.itemId)
+        if (updatedTask.item_id != null) {
+            val connectedItem = itemDao.get(userId, updatedTask.item_id)
 
             if (connectedItem != null) {
-                itemDao.setCompletion(userId, connectedItem.listId, connectedItem.id, it.completed)
+                itemDao.setCompletion(userId, connectedItem.list_id, connectedItem.id, it.completed)
                     ?.also { updatedConnectedItem ->
                         emitWebsocketEvent(
                             websocketEventManager = websocketEventManager,

@@ -1,10 +1,10 @@
 package app.index.data.sources.db.schemas.tasks
 
 import app.index.data.models.tasks.TaskReminderData
-import app.index.data.sources.db.schemas.tasks.TaskReminderTable.daysBefore
+import app.index.data.sources.db.schemas.tasks.TaskReminderTable.days_before
 import app.index.data.sources.db.schemas.tasks.TaskReminderTable.id
 import app.index.data.sources.db.schemas.tasks.TaskReminderTable.task
-import app.index.data.sources.db.schemas.tasks.TaskReminderTable.timeOffset
+import app.index.data.sources.db.schemas.tasks.TaskReminderTable.time_offset
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -14,8 +14,8 @@ import org.jetbrains.exposed.sql.ReferenceOption
 /**
  * @property id
  * @property task
- * @property daysBefore
- * @property timeOffset
+ * @property days_before
+ * @property time_offset
  */
 object TaskReminderTable : IntIdTable() {
     val task = reference(
@@ -23,15 +23,15 @@ object TaskReminderTable : IntIdTable() {
         foreign = TaskTable,
         onDelete = ReferenceOption.CASCADE,
     ).index()
-    val daysBefore = integer("days_before")
-    val timeOffset = long("time_offset")
+    val days_before = integer("days_before")
+    val time_offset = long("time_offset")
 }
 
 /**
  * @property id
  * @property task
- * @property daysBefore
- * @property timeOffset
+ * @property days_before
+ * @property time_offset
  *
  * @property taskEntity
  */
@@ -39,14 +39,14 @@ class TaskReminderEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<TaskReminderEntity>(TaskReminderTable)
 
     var task by TaskReminderTable.task
-    var daysBefore by TaskReminderTable.daysBefore
-    var timeOffset by TaskReminderTable.timeOffset
+    var days_before by TaskReminderTable.days_before
+    var time_offset by TaskReminderTable.time_offset
 
     @Suppress("MemberVisibilityCanBePrivate")
     val taskEntity by TaskEntity referencedOn TaskReminderTable.task
 }
 
 fun TaskReminderEntity.toData() = TaskReminderData(
-    daysBefore = daysBefore,
-    timeOffset = timeOffset
+    days_before = days_before,
+    time_offset = time_offset
 )
