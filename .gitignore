@@ -46,3 +46,4 @@ script-outputs
 ### SECRETS ###
 **.env
 app-engine/app.yaml
+**-service-account.json

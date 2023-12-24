@@ -1,5 +1,5 @@
-import app.index_it.config.core.ConfigurationManager
-import app.index_it.config.core.ConfigurationReader
+import app.index.config.core.ConfigurationManager
+import app.index.config.core.ConfigurationReader
 import core.createScriptOutputsFolderIfNotExisting
 import java.io.File
 

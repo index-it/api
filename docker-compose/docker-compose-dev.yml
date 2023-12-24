@@ -1,7 +1,7 @@
 version: "3.8"
 name: "index-dev-environment"
 services:
-  index-postgres:
+  postgres:
     image: postgres
     restart: unless-stopped
     environment:
@@ -9,71 +9,68 @@ services:
       POSTGRES_USER: IndexDevUser
       POSTGRES_PASSWORD: IndexDevPassword
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - index-dev-pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - postgres-network
-  index-adminer:
+      - index-dev-postgres-network
+  adminer:
     image: adminer
     restart: always
     ports:
       - "8081:8080"
     networks:
-      - postgres-network
-  index-redis:
+      - index-dev-postgres-network
+  redis:
     image: redis:latest
-    container_name: "index-redis"
     restart: unless-stopped
     volumes:
-      - redis:/data
+      - index-dev-redis:/data
     ports:
       - "6379:6379"
     networks:
-      - redis-network
-  index-redis-insight:
+      - index-dev-redis-network
+  redis-insight:
     image: redislabs/redisinsight
-    container_name: "index-redis-insight"
     restart: unless-stopped
     ports:
       - "8082:8001"
     networks:
-      - redis-network
-  index-rabbit:
+      - index-dev-redis-network
+  rabbit:
     image: rabbitmq:3.9-management
-    container_name: "index-rabbit"
     restart: unless-stopped
     ports:
       - "5672:5672"
       - "8083:15672"
-  index-prometheus:
+  prometheus:
     image: prom/prometheus
     ports:
       - "9090:9090"
     volumes:
-      - "../prometheus/prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
+      - "../config/prometheus/prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
     networks:
-      - monitor-net
-  index-grafana:
+      - index-dev-monitor-network
+  grafana:
     image: grafana/grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
-      - grafana-storage:/var/lib/grafana
+      - index-dev-grafana-storage:/var/lib/grafana
     networks:
-      - monitor-net
+      - index-dev-monitor-network
 
 volumes:
-  redis: {}
-  pgdata: {}
-  rabbit: {}
-  grafana-storage: {}
+  index-dev-redis: {}
+  index-dev-pgdata: {}
+  index-dev-rabbit: {}
+  index-dev-grafana-storage: {}
 
 networks:
-  redis-network:
-    name: redis-network
-  postgres-network:
-    name: postgres-network
-  monitor-net:
-    name: monitor-net
+  index-dev-redis-network:
+    name: index-dev-redis-network
+  index-dev-postgres-network:
+    name: index-dev-postgres-network
+  index-dev-monitor-network:
+    name: index-dev-monitor-network

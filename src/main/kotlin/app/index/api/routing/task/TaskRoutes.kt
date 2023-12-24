@@ -1,0 +1,33 @@
+package app.index.api.routing.task
+
+import app.index.api.plugins.AuthenticationMethods
+import app.index.api.routing.task.routes.taskCompletionRoute
+import app.index.api.routing.task.routes.taskRoute
+import app.index.api.routing.task.routes.tasksRoute
+import app.index.core.logic.typedId.impl.IxId
+import app.index.data.models.tasks.TaskData
+import io.ktor.resources.*
+import io.ktor.server.auth.*
+import io.ktor.server.routing.*
+import kotlinx.serialization.Contextual
+
+@Resource("tasks")
+class TasksRoute(val completed: Boolean? = null) {
+    @Resource("{taskId}")
+    class TaskRoute(
+        val parent: TasksRoute,
+        @Contextual val task_id: IxId<TaskData>,
+        val all: Boolean = true,
+    ) {
+        @Resource("completion")
+        class CompletionRoute(val parent: TaskRoute, val completed: Boolean)
+    }
+}
+
+fun Route.taskRoutes() {
+    authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
+        tasksRoute()
+        taskRoute()
+        taskCompletionRoute()
+    }
+}

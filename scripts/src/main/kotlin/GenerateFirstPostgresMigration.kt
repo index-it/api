@@ -1,18 +1,21 @@
-import app.index_it.config.PostgresConfig
-import app.index_it.config.core.ConfigurationManager
-import app.index_it.config.core.ConfigurationReader
-import app.index_it.data.sources.db.schemas.lists.CategoryTable
-import app.index_it.data.sources.db.schemas.lists.ItemContentTable
-import app.index_it.data.sources.db.schemas.lists.ItemTable
-import app.index_it.data.sources.db.schemas.lists.ListTable
-import app.index_it.data.sources.db.schemas.suggestions.ColorSuggestionTable
-import app.index_it.data.sources.db.schemas.suggestions.NameSuggestionTable
-import app.index_it.data.sources.db.schemas.tasks.SubTaskTable
-import app.index_it.data.sources.db.schemas.tasks.TaskTable
-import app.index_it.data.sources.db.schemas.user.EmailVerificationTable
-import app.index_it.data.sources.db.schemas.user.PasswordResetTable
-import app.index_it.data.sources.db.schemas.user.UsersTable
-import app.index_it.data.sources.db.schemas.web.ReleaseNotifyTable
+import app.index.config.PostgresConfig
+import app.index.config.core.ConfigurationManager
+import app.index.config.core.ConfigurationReader
+import app.index.data.sources.db.schemas.lists.CategoryTable
+import app.index.data.sources.db.schemas.lists.ItemContentTable
+import app.index.data.sources.db.schemas.lists.ItemTable
+import app.index.data.sources.db.schemas.lists.ListTable
+import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable
+import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable
+import app.index.data.sources.db.schemas.tasks.SubTaskTable
+import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable
+import app.index.data.sources.db.schemas.tasks.TaskReminderTable
+import app.index.data.sources.db.schemas.tasks.TaskTable
+import app.index.data.sources.db.schemas.user.EmailVerificationTable
+import app.index.data.sources.db.schemas.user.FCMRegistrationTokenTable
+import app.index.data.sources.db.schemas.user.PasswordResetTable
+import app.index.data.sources.db.schemas.user.UsersTable
+import app.index.data.sources.db.schemas.web.ReleaseNotifyTable
 import core.createScriptOutputsFolderIfNotExisting
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -26,7 +29,7 @@ private const val DB_DRIVER = "org.postgresql.Driver"
  * Result file should be put in /resources/db/migration/V1__create_db.sql
  */
 fun main() {
-    ConfigurationManager("app.index_it.config", ConfigurationReader::read).initialize()
+    ConfigurationManager(ConfigurationManager.DEFAULT_CONFIG_PACKAGE, ConfigurationReader::read).initialize()
 
     Database.connect(
         url = PostgresConfig.url,
@@ -45,10 +48,13 @@ fun main() {
             ItemTable,
             ItemContentTable,
             TaskTable,
+            TaskReminderTable,
+            TaskReminderJobTable,
             SubTaskTable,
             ReleaseNotifyTable,
             ColorSuggestionTable,
             NameSuggestionTable,
+            FCMRegistrationTokenTable
         )
     }
 

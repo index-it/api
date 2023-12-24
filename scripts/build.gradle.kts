@@ -2,6 +2,10 @@ plugins {
     kotlin("jvm")
 }
 
+kotlin {
+    jvmToolchain(20)
+}
+
 repositories {
     mavenCentral()
 }

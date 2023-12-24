@@ -1,0 +1,49 @@
+package app.index.core.clients
+
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.messaging.FcmOptions
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.MulticastMessage
+import com.google.firebase.messaging.Notification
+import org.koin.core.annotation.Single
+
+/**
+ * Firebase cloud messaging client
+ */
+@Single(createdAtStart = true)
+class FCMClient {
+    private val firebaseOptions =
+        FirebaseOptions.builder()
+            .setCredentials(GoogleCredentials.getApplicationDefault())
+            .build()
+
+    private val firebaseApp = FirebaseApp.initializeApp(firebaseOptions)
+    private val firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp)
+
+    private val taskReminderAnalyticsLabel = "task-reminder"
+
+    fun sendTaskReminderNotification(
+        taskName: String,
+        registrationToken: List<String>,
+    ) {
+        if (registrationToken.isEmpty()) {
+            return
+        }
+
+        val message =
+            MulticastMessage.builder()
+                .addAllTokens(registrationToken)
+                .setNotification(
+                    Notification.builder()
+                        .setTitle("Task reminder")
+                        .setBody(taskName)
+                        .build(),
+                )
+                .setFcmOptions(FcmOptions.withAnalyticsLabel(taskReminderAnalyticsLabel))
+                .build()
+
+        firebaseMessaging.sendEachForMulticast(message)
+    }
+}
