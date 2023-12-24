@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS category (id uuid PRIMARY KEY, id_user uuid NOT NULL,
 CREATE INDEX category_id_user ON category (id_user);
 CREATE INDEX category_id_list ON category (id_list);
 CREATE TABLE IF NOT EXISTS task (id uuid PRIMARY KEY, id_user uuid NOT NULL, id_item uuid NULL, ix_name VARCHAR(150) NOT NULL, description VARCHAR(500) NULL, due_date DATE NULL, rrule VARCHAR(200) NULL, completed BOOLEAN NOT NULL, priority INT NULL, created_at TIMESTAMP NOT NULL, edited_at TIMESTAMP NULL, completed_at TIMESTAMP NULL);
-CREATE TABLE IF NOT EXISTS item (id uuid PRIMARY KEY, id_user uuid NOT NULL, id_list uuid NOT NULL, id_category uuid NOT NULL, id_task uuid NULL, ix_name VARCHAR(150) NOT NULL, completed BOOLEAN NOT NULL, created_at TIMESTAMP NOT NULL, edited_at TIMESTAMP NULL, completed_at TIMESTAMP NULL);
+CREATE TABLE IF NOT EXISTS item (id uuid PRIMARY KEY, id_user uuid NOT NULL, id_list uuid NOT NULL, id_category uuid NOT NULL, id_task uuid NULL, ix_name VARCHAR(150) NOT NULL, completed BOOLEAN NOT NULL, link VARCHAR(200) NULL, created_at TIMESTAMP NOT NULL, edited_at TIMESTAMP NULL, completed_at TIMESTAMP NULL);
 CREATE INDEX item_id_user ON item (id_user);
 CREATE INDEX item_id_list ON item (id_list);
 CREATE INDEX item_id_category ON item (id_category);

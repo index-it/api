@@ -14,6 +14,8 @@ object Validations {
     object Item {
         const val MIN_NAME_LENGTH = 1
         const val MAX_NAME_LENGTH = 200
+
+        const val MAX_LINK_LENGTH = 200
     }
 
     object ItemContent {
