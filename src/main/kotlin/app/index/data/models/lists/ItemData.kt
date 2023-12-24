@@ -24,6 +24,7 @@ data class ItemData(
     @Contextual val task_id: IxId<TaskData>? = null,
     val name: String,
     val completed: Boolean = false,
+    val link: String? = null,
     val created_at: Long = DatetimeUtils.currentMillis(),
     val edited_at: Long? = null,
     val completed_at: Long? = null,
@@ -32,12 +33,16 @@ data class ItemData(
     data class ItemCreateRequestData(
         @Contextual val category_id: IxId<CategoryData>,
         val name: String,
+        val link: String?
     ) : Validatable<ItemCreateRequestData> {
         override fun validate() =
             Validation {
                 ItemCreateRequestData::name {
                     minLength(Validations.Item.MIN_NAME_LENGTH)
                     maxLength(Validations.Item.MAX_NAME_LENGTH)
+                }
+                ItemCreateRequestData::link ifPresent {
+                    maxLength(Validations.Item.MAX_LINK_LENGTH)
                 }
             }.invoke(this)
     }
@@ -46,12 +51,16 @@ data class ItemData(
     data class ItemUpdateRequestData(
         @Contextual val category_id: IxId<CategoryData>,
         val name: String,
+        val link: String?
     ) : Validatable<ItemUpdateRequestData> {
         override fun validate() =
             Validation {
                 ItemUpdateRequestData::name {
                     minLength(Validations.Item.MIN_NAME_LENGTH)
                     maxLength(Validations.Item.MAX_NAME_LENGTH)
+                }
+                ItemUpdateRequestData::link ifPresent {
+                    maxLength(Validations.Item.MAX_LINK_LENGTH)
                 }
             }.invoke(this)
     }

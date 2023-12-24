@@ -89,7 +89,7 @@ class TaskDBIImpl : TaskDBI {
                 it[item] = taskUpdateRequestData.item_id?.toEntityId(ItemTable)
             } > 0
 
-            // TODO: Joins
+            // TODO: Delete where join
             if (updated) {
                 SubTaskTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
                 SubTaskTable.batchInsert(taskUpdateRequestData.subtasks) {
