@@ -66,7 +66,7 @@ fun Route.itemsRoute() {
             body<ItemData.ItemCreateRequestData> {
                 required = true
                 description = "item data"
-                example("sample-item", ItemData.ItemCreateRequestData(newIxId(), "Milos"))
+                example("sample-item", ItemData.ItemCreateRequestData(newIxId(), "Milos", null))
             }
         }
         response {

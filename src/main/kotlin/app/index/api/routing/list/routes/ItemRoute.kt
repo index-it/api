@@ -72,7 +72,7 @@ fun Route.itemRoute() {
                 description = "new item data"
                 example(
                     "sample-item-update",
-                    ItemData.ItemUpdateRequestData(newIxId(), "Milos 🧿"),
+                    ItemData.ItemUpdateRequestData(newIxId(), "Milos 🧿", null),
                 )
             }
         }
