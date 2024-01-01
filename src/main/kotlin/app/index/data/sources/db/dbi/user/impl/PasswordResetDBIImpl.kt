@@ -54,7 +54,7 @@ class PasswordResetDBIImpl(
 
     override suspend fun deleteExpired() {
         dbQuery {
-            val currentMillis = DatetimeUtils.currentMillis()
+            val currentMillis = DatetimeUtils.currentJavaInstant()
 
             PasswordResetTable.deleteWhere {
                 expires_at less currentMillis

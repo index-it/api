@@ -21,7 +21,7 @@ class EmailVerificationDBIImpl(
 ) : EmailVerificationDBI {
     override suspend fun count(id: IxId<UserData>): Long =
         dbQuery {
-            val currentMillis = DatetimeUtils.currentMillis()
+            val currentMillis = DatetimeUtils.currentJavaInstant()
 
             EmailVerificationEntity.count(
                 EmailVerificationTable.user eq id.toEntityId(UsersTable)
