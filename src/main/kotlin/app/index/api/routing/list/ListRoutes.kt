@@ -14,14 +14,14 @@ import kotlinx.serialization.Contextual
 @Resource("/lists")
 @Suppress("unused")
 class ListsRoute {
-    @Resource("{listId}")
+    @Resource("{list_id}")
     class ListRoute(
         val parent: ListsRoute = ListsRoute(),
         @Contextual val list_id: IxId<ListData>,
     ) {
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
-            @Resource("{categoryId}")
+            @Resource("{category_id}")
             class CategoryRoute(
                 val parent: CategoriesRoute,
                 @Contextual val category_id: IxId<CategoryData>,
@@ -30,7 +30,7 @@ class ListsRoute {
 
         @Resource("items")
         class ItemsRoute(val parent: ListRoute, val completed: Boolean? = null) {
-            @Resource("{itemId}")
+            @Resource("{item_id}")
             class ItemRoute(
                 val parent: ItemsRoute,
                 @Contextual val item_id: IxId<ItemData>,

@@ -13,7 +13,7 @@ import kotlinx.serialization.Contextual
 
 @Resource("tasks")
 class TasksRoute(val completed: Boolean? = null) {
-    @Resource("{taskId}")
+    @Resource("{task_id}")
     class TaskRoute(
         val parent: TasksRoute,
         @Contextual val task_id: IxId<TaskData>,
