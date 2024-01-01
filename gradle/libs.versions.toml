@@ -19,7 +19,7 @@ koinKsp="1.3.0"
 exposed="0.44.1"
 postgresql="42.6.0"
 flyway="10.1.0"
-jedis="4.4.3"
+jedis="5.1.0"
 amqpClient="5.18.0"
 
 ktor="2.3.7"

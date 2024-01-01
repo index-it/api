@@ -7,10 +7,10 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-group = "app.index_it"
+group = "app.index"
 version = "0.0.1"
 application {
-    mainClass.set("app.index_it.ApplicationKt")
+    mainClass.set("app.index.ApplicationKt")
 }
 
 kotlin {

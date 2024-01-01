@@ -5,8 +5,10 @@ services:
     container_name: "index-api"
     env_file:
       - .env
+    volumes:
+      - $HOME/.config/gcloud/gcp-service-account.json:/gcp/gcp-service-account.json:ro
     ports:
-      - "8080:${PORT}"
+      - "8080:${API_PORT}"
   prometheus:
     image: prom/prometheus
     ports:
