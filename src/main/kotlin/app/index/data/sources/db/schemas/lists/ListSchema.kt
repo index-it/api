@@ -37,7 +37,7 @@ object ListTable : UUIDTable() {
         onDelete = ReferenceOption.CASCADE,
     ).index()
     val name = varchar("ix_name", 100)
-    val emoji = char("emoji")
+    val emoji = varchar("emoji", 10)
     val color = varchar("color", 9)
     val created_at = timestamp("created_at")
     val edited_at = timestamp("edited_at").nullable()
@@ -70,7 +70,7 @@ class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 fun ListEntity.fromData(listData: ListData) {
     user = listData.user_id.toEntityId(UsersTable)
     name = listData.name
-    emoji = listData.icon.first()
+    emoji = listData.icon
     color = listData.color
     created_at = Instant.ofEpochMilli(listData.created_at)
     edited_at = listData.edited_at?.let { Instant.ofEpochMilli(it) }

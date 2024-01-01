@@ -54,10 +54,10 @@ class EmailVerificationDBIImpl(
 
     override suspend fun deleteExpired() {
         dbQuery {
-            val currentMillis = DatetimeUtils.currentMillis()
+            val currentTimestamp = DatetimeUtils.currentJavaInstant()
 
             EmailVerificationTable.deleteWhere {
-                expires_at less currentMillis
+                expires_at less currentTimestamp
             }
         }
     }

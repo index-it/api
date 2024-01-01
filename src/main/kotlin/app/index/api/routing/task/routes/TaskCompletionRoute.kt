@@ -31,7 +31,7 @@ fun Route.taskCompletionRoute() {
         summary = "completes or un-completes a task"
         description = "this completes or un-completes a task and a related item if existing"
         request {
-            pathParameter<String>("taskId") {
+            pathParameter<String>("task_id") {
                 required = true
                 description = "the id of the task"
             }

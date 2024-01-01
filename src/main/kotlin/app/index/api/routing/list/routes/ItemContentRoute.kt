@@ -22,11 +22,11 @@ fun Route.itemContentRoute() {
         summary = "gets the content of an item"
         description = "get the content of an item, if the content doesn't yet exist it gets created"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("itemId") {
+            pathParameter<String>("item_id") {
                 required = true
                 description = "the id of the item"
             }
@@ -52,11 +52,11 @@ fun Route.itemContentRoute() {
         operationId = "update item content"
         summary = "updates the content of an item"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("itemId") {
+            pathParameter<String>("item_id") {
                 required = true
                 description = "the id of the item"
             }

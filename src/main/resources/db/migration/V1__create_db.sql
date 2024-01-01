@@ -6,7 +6,7 @@ CREATE INDEX passwordreset_id_user ON passwordreset (id_user);
 CREATE TABLE IF NOT EXISTS emailverification (id SERIAL PRIMARY KEY, token VARCHAR(100) NOT NULL, id_user uuid NOT NULL, created_at TIMESTAMP NOT NULL, expires_at TIMESTAMP NOT NULL, CONSTRAINT fk_emailverification_id_user__id FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT);
 ALTER TABLE emailverification ADD CONSTRAINT emailverification_token_unique UNIQUE (token);
 CREATE INDEX emailverification_id_user ON emailverification (id_user);
-CREATE TABLE IF NOT EXISTS list (id uuid PRIMARY KEY, id_user uuid NOT NULL, ix_name VARCHAR(100) NOT NULL, emoji CHAR NOT NULL, color VARCHAR(9) NOT NULL, created_at TIMESTAMP NOT NULL, edited_at TIMESTAMP NULL, CONSTRAINT fk_list_id_user__id FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT);
+CREATE TABLE IF NOT EXISTS list (id uuid PRIMARY KEY, id_user uuid NOT NULL, ix_name VARCHAR(100) NOT NULL, emoji VARCHAR(10) NOT NULL, color VARCHAR(9) NOT NULL, created_at TIMESTAMP NOT NULL, edited_at TIMESTAMP NULL, CONSTRAINT fk_list_id_user__id FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT);
 CREATE INDEX list_id_user ON list (id_user);
 CREATE TABLE IF NOT EXISTS category (id uuid PRIMARY KEY, id_user uuid NOT NULL, id_list uuid NOT NULL, ix_name VARCHAR(50) NOT NULL, color VARCHAR(9) NOT NULL, CONSTRAINT fk_category_id_user__id FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT fk_category_id_list__id FOREIGN KEY (id_list) REFERENCES list(id) ON DELETE CASCADE ON UPDATE RESTRICT);
 CREATE INDEX category_id_user ON category (id_user);

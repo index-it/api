@@ -29,11 +29,11 @@ fun Route.itemRoute() {
         operationId = "get-item"
         summary = "gets a single item"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("itemId") {
+            pathParameter<String>("item_id") {
                 required = true
                 description = "the id of the item"
             }
@@ -59,11 +59,11 @@ fun Route.itemRoute() {
         operationId = "update-item"
         summary = "updates an item"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("itemId") {
+            pathParameter<String>("item_id") {
                 required = true
                 description = "the id of the item"
             }
@@ -106,11 +106,11 @@ fun Route.itemRoute() {
         summary = "deletes an item"
         description = "deletes an item and its content"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("itemId") {
+            pathParameter<String>("item_id") {
                 required = true
                 description = "the id of the item"
             }

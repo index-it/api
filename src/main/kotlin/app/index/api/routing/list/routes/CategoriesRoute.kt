@@ -26,7 +26,7 @@ fun Route.categoriesRoute() {
         operationId = "get-categories"
         summary = "gets all categories of a list"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
@@ -48,7 +48,7 @@ fun Route.categoriesRoute() {
         operationId = "create-category"
         summary = "creates a category"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }

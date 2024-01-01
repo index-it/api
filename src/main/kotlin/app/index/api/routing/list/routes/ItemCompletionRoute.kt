@@ -27,11 +27,11 @@ fun Route.itemCompletionRoute() {
         summary = "completes or un-completes an item"
         description = "this completes or un-completes an item and a related task if existing"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("itemId") {
+            pathParameter<String>("item_id") {
                 required = true
                 description = "the id of the item"
             }

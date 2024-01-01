@@ -29,11 +29,11 @@ fun Route.categoryRoute() {
         operationId = "get-category"
         summary = "gets a single category"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("categoryId") {
+            pathParameter<String>("category_id") {
                 required = true
                 description = "the id of the category"
             }
@@ -59,11 +59,11 @@ fun Route.categoryRoute() {
         operationId = "update-category"
         summary = "updates a category"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("categoryId") {
+            pathParameter<String>("category_id") {
                 required = true
                 description = "the id of the category"
             }
@@ -105,11 +105,11 @@ fun Route.categoryRoute() {
         summary = "deletes a category"
         description = "deletes a category and *+all** the items and item contents inside it"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
-            pathParameter<String>("categoryId") {
+            pathParameter<String>("category_id") {
                 required = true
                 description = "the id of the category"
             }

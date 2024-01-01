@@ -59,7 +59,7 @@ class ListDBIImpl : ListDBI {
         dbQuery {
             ListTable.update({ userAndListFilter(userId, listId) }) {
                 it[name] = listUpdateRequestData.name
-                it[emoji] = listUpdateRequestData.icon.first()
+                it[emoji] = listUpdateRequestData.icon
                 it[color] = listUpdateRequestData.color
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
             } > 0

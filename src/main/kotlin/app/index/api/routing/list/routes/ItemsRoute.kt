@@ -27,7 +27,7 @@ fun Route.itemsRoute() {
         operationId = "get list items"
         summary = "gets all the items of a list"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
@@ -59,7 +59,7 @@ fun Route.itemsRoute() {
         operationId = "create-item"
         summary = "creates a new item in a list"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }

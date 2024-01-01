@@ -21,11 +21,11 @@ class PasswordResetDBIImpl(
 ) : PasswordResetDBI {
     override suspend fun count(id: IxId<UserData>): Long =
         dbQuery {
-            val currentMillis = DatetimeUtils.currentMillis()
+            val currentTimestamp = DatetimeUtils.currentJavaInstant()
 
             PasswordResetEntity.count(
                 PasswordResetTable.user eq id.toEntityId(UsersTable)
-                        and (PasswordResetTable.expires_at greater currentMillis)
+                        and (PasswordResetTable.expires_at greater currentTimestamp)
             )
         }
 

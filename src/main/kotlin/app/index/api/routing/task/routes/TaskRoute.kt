@@ -36,7 +36,7 @@ fun Route.taskRoute() {
         operationId = "get-task"
         summary = "gets a single task"
         request {
-            pathParameter<String>("taskId") {
+            pathParameter<String>("task_id") {
                 required = true
                 description = "the id of the task"
             }
@@ -62,7 +62,7 @@ fun Route.taskRoute() {
         operationId = "update-task"
         summary = "updates a task"
         request {
-            pathParameter<String>("taskId") {
+            pathParameter<String>("task_id") {
                 required = true
                 description = "the id of the task"
             }
@@ -170,7 +170,7 @@ fun Route.taskRoute() {
         operationId = "delete-task"
         summary = "deletes a task"
         request {
-            pathParameter<String>("taskId") {
+            pathParameter<String>("task_id") {
                 required = true
                 description = "the id of the task"
             }

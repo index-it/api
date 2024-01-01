@@ -28,7 +28,7 @@ fun Route.listRoute() {
         operationId = "get-list"
         summary = "gets a single list"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
@@ -54,7 +54,7 @@ fun Route.listRoute() {
         operationId = "update-list"
         summary = "updates a list"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
@@ -96,7 +96,7 @@ fun Route.listRoute() {
         summary = "deletes a list"
         description = "this deletes the list and **all** of its content, meaning categories, items and item contents of the list will be deleted"
         request {
-            pathParameter<String>("listId") {
+            pathParameter<String>("list_id") {
                 required = true
                 description = "the id of the list"
             }
