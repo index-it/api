@@ -8,7 +8,7 @@ object JobConfig {
     @ConfigurationProperty("task.reminder.job.webhook.url")
     var taskReminderJobWebhookUrl: String = "https://api-dev.index-it.app/webhook/task-reminder-job"
 
-    @ConfigurationProperty("daily-job.webhook.url")
+    @ConfigurationProperty("daily.job.webhook.url")
     var dailyJobWebhookUrl: String = "https://api-dev.index-it.app/webhook/daily-job"
 
     @ConfigurationProperty("daily.job.id")
