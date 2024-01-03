@@ -98,6 +98,7 @@ class ItemDBIImpl : ItemDBI {
             ItemTable.update({ userAndItemFilter(userId, itemId) }) {
                 it[name] = itemUpdateRequestData.name
                 it[category] = itemUpdateRequestData.category_id.toEntityId(CategoryTable)
+                it[link] = itemUpdateRequestData.link
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
             } > 0
         }
