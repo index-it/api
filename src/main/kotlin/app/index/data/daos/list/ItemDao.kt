@@ -89,6 +89,7 @@ class ItemDao(
             category_id = itemCreateRequestData.category_id,
             task_id = null,
             name = itemCreateRequestData.name,
+            link = itemCreateRequestData.link,
             completed = false,
             created_at = DatetimeUtils.currentMillis(),
             edited_at = null,
