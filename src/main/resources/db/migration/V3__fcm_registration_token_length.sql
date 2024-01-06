@@ -1,1 +1,2 @@
-ALTER TABLE fcmregistrationtoken ALTER COLUMN token VARCHAR (300) NOT NULL;
+ALTER TABLE fcmregistrationtoken
+ALTER COLUMN token TYPE VARCHAR(300);
