@@ -20,7 +20,7 @@ import java.time.Instant
  * @property created_at
  */
 object FCMRegistrationTokenTable : IntIdTable() {
-    val token = varchar("token", 100).uniqueIndex()
+    val token = varchar("token", 300).uniqueIndex()
     val user = reference(
         name = "id_user",
         foreign = UsersTable,
