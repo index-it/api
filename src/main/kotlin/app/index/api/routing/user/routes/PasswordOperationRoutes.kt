@@ -8,7 +8,7 @@ import app.index.core.logic.PasswordEncoder
 import app.index.core.logic.usecases.PasswordResetUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.impl.EmptyEventContent
+import app.index.core.logic.websocket.event.content.EmptyEventContent
 import app.index.data.daos.auth.PasswordResetDao
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
@@ -117,7 +117,7 @@ fun Route.passwordOperationRoutes() {
         )
 
         // Invalidate all other user websocket connections
-        emitWebsocketEvent(websocketEventManager, WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED, EmptyEventContent())
+        emitWebsocketEvent(websocketEventManager, WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED, EmptyEventContent)
 
         // Invalidate all other user active sessions
         userSessionDao.deleteAllOfUser(passwordResetDto.userId)

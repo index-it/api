@@ -6,8 +6,8 @@ import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.impl.ItemCreateOrUpdateEventContent
-import app.index.core.logic.websocket.event.content.impl.ItemDeleteEventContent
+import app.index.core.logic.websocket.event.content.ItemCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.ItemDeleteEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete

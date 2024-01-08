@@ -5,7 +5,7 @@ import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.impl.CategoryCreateOrUpdateEventContent
+import app.index.core.logic.websocket.event.content.CategoryCreateOrUpdateEventContent
 import app.index.data.daos.list.CategoryDao
 import app.index.data.models.lists.CategoryData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
