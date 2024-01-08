@@ -7,7 +7,10 @@ import com.google.firebase.messaging.FcmOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Single
+
+private val logger = KotlinLogging.logger {  }
 
 /**
  * Firebase cloud messaging client
@@ -45,5 +48,7 @@ class FCMClient {
                 .build()
 
         firebaseMessaging.sendEachForMulticast(message)
+
+        logger.debug { "Sent task reminder notification" }
     }
 }

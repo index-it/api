@@ -47,8 +47,12 @@ dependencies {
     implementation(libs.dotenv)
     implementation(libs.jedis)
     implementation(libs.amqp.client)
+
+    implementation(platform(libs.google.cloud.bom))
     implementation(libs.google.api.client)
+    implementation(libs.google.cloud.tasks)
     implementation(libs.google.cloud.scheduler)
+
     implementation(libs.firebase.admin)
     implementation(libs.librecur)
 

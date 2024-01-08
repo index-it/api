@@ -1,6 +1,6 @@
 package app.index.core.logic.usecases
 
-import app.index.core.clients.GoogleCloudSchedulerClient
+import app.index.core.clients.GoogleCloudTasksClient
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
@@ -9,16 +9,19 @@ import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.tasks.TaskReminderData
 import app.index.data.models.tasks.TaskReminderJobData
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.*
 import org.dmfs.rfc5545.recur.RecurrenceRule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.math.max
 
+private val logger = KotlinLogging.logger {  }
+
 object TaskUseCase : KoinComponent {
     private val taskDao by inject<TaskDao>()
     private val taskReminderJobDao by inject<TaskReminderJobDao>()
-    private val googleCloudSchedulerClient by inject<GoogleCloudSchedulerClient>()
+    private val googleCloudTasksClient by inject<GoogleCloudTasksClient>()
 
     /**
      * If a task is recurring, this calculates the next occurrence date and the updated rrule in case `COUNT` was used as the end clause
@@ -132,7 +135,7 @@ object TaskUseCase : KoinComponent {
         if (reminderJobs.isNotEmpty()) {
             taskReminderJobDao.createAll(reminderJobs)
             reminderJobs.forEach { reminderJob ->
-                googleCloudSchedulerClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
+                googleCloudTasksClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
             }
         }
     }
@@ -158,7 +161,11 @@ object TaskUseCase : KoinComponent {
         if (outdatedReminderJobs.isNotEmpty()) {
             taskReminderJobDao.deleteMultiple(outdatedReminderJobs)
             outdatedReminderJobs.forEach { jobId ->
-                googleCloudSchedulerClient.deleteTaskReminderJob(jobId)
+                try {
+                    googleCloudTasksClient.deleteTaskReminderJob(jobId)
+                } catch (e: Exception) {
+                    logger.error(e) { "Failed deleting task reminder job" }
+                }
             }
         }
 
@@ -184,7 +191,7 @@ object TaskUseCase : KoinComponent {
         if (missingReminderJobs.isNotEmpty()) {
             taskReminderJobDao.createAll(missingReminderJobs)
             missingReminderJobs.forEach { reminderJob ->
-                googleCloudSchedulerClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
+                googleCloudTasksClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
             }
         }
     }

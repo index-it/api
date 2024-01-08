@@ -2,16 +2,15 @@ package app.index.core.clients
 
 import app.index.config.GoogleCloudConfig
 import app.index.config.JobConfig
-import app.index.core.logic.typedId.impl.IxId
-import app.index.data.models.tasks.TaskReminderJobData
 import com.google.cloud.scheduler.v1.*
-import com.google.protobuf.Timestamp
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Single
+
+private val logger = KotlinLogging.logger {  }
 
 /**
  * Client to interact with Google Cloud Scheduler
  *
- * @see createTaskReminderJob
  * @see createDailyJobIfMissing
  */
 @Single(createdAtStart = true)
@@ -58,55 +57,8 @@ class GoogleCloudSchedulerClient {
                     .setJob(job)
                     .build(),
             )
+
+            logger.debug { "Created missing daily job with name ${job.name}" }
         }
-    }
-
-    /**
-     * Creates a job to schedule a task reminder webhook
-     *
-     * The scheduled job will run at [reminderTimestamp] - 1000 milliseconds (so one second before)
-     *
-     * @param id
-     * @param reminderTimestamp
-     *
-     * @throws Exception failed to create job
-     */
-    fun createTaskReminderJob(
-        id: IxId<TaskReminderJobData>,
-        reminderTimestamp: Long,
-    ) {
-        val webhookUrl = "${JobConfig.taskReminderJobWebhookUrl}/$id"
-        val httpTarget = HttpTarget.newBuilder()
-            .setHttpMethod(HttpMethod.GET)
-            .setUri(webhookUrl)
-
-        val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()
-        val jobName = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, id.toString()).toString()
-        // This won't be precise if too far in the future if timezones change
-        val seconds = (reminderTimestamp / 1000) - 1
-        val job = Job.newBuilder()
-            .setName(jobName)
-            .setHttpTarget(httpTarget)
-            .setScheduleTime(Timestamp.newBuilder().setSeconds(seconds).build())
-            .build()
-
-        cloudSchedulerClient.createJob(
-            CreateJobRequest.newBuilder()
-                .setParent(parent)
-                .setJob(job)
-                .build(),
-        )
-    }
-
-    /**
-     * Deletes a job by its id
-     *
-     * @param id job id
-     *
-     * @throws Exception
-     */
-    fun deleteTaskReminderJob(id: IxId<TaskReminderJobData>) {
-        val name = JobName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, id.toString())
-        cloudSchedulerClient.deleteJob(name)
     }
 }

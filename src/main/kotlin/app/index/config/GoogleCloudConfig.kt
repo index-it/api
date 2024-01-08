@@ -5,14 +5,14 @@ import app.index.config.core.ConfigurationProperty
 
 @Configuration("google")
 object GoogleCloudConfig {
-    @ConfigurationProperty("cloud.scheduler.project")
+    @ConfigurationProperty("cloud.project")
     lateinit var project: String
 
-    @ConfigurationProperty("cloud.scheduler.location")
+    @ConfigurationProperty("cloud.location")
     var location: String = "us-east1"
 
     /**
-     * This **must be set as an environment variable** in order to work with FCM and Google Cloud Scheduler in production.
+     * This **must be set as an environment variable** in order to work with FCM and Google Cloud services in production.
      *
      * For example:
      * `GOOGLE_APPLICATION_CREDENTIALS=./gcp-service-account.json`

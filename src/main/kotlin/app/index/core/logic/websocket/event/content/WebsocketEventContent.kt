@@ -1,3 +1,6 @@
 package app.index.core.logic.websocket.event.content
 
-abstract class WebsocketEventContent {}
+import kotlinx.serialization.Serializable
+
+@Serializable
+abstract class WebsocketEventContent
