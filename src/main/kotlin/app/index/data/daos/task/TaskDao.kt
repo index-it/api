@@ -28,6 +28,7 @@ class TaskDao(
             due_date = taskCreateRequestData.due_date,
             rrule = taskCreateRequestData.rrule,
             subtasks = taskCreateRequestData.subtasks,
+            reminders = taskCreateRequestData.reminders,
             completed = false,
             priority = taskCreateRequestData.priority,
             created_at = DatetimeUtils.currentMillis(),
