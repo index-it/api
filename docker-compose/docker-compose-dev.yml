@@ -1,9 +1,11 @@
 version: "3.8"
-name: "index-dev-environment"
+name: "index-dev-env"
+
 services:
   postgres:
     image: postgres
-    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    restart: no
     environment:
       POSTGRES_DB: indexdevdb
       POSTGRES_USER: IndexDevUser
@@ -16,14 +18,16 @@ services:
       - index-dev-postgres-network
   adminer:
     image: adminer
-    restart: always
+    container_name: ${COMPOSE_PROJECT_NAME}_adminer
+    restart: no
     ports:
       - "8081:8080"
     networks:
       - index-dev-postgres-network
   redis:
     image: redis:latest
-    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_redis
+    restart: no
     volumes:
       - index-dev-redis:/data
     ports:
@@ -32,19 +36,23 @@ services:
       - index-dev-redis-network
   redis-insight:
     image: redislabs/redisinsight
-    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_redis-insight
+    restart: no
     ports:
       - "8082:8001"
     networks:
       - index-dev-redis-network
   rabbit:
     image: rabbitmq:3.9-management
-    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_rabbit
+    restart: no
     ports:
       - "5672:5672"
       - "8083:15672"
   prometheus:
     image: prom/prometheus
+    container_name: ${COMPOSE_PROJECT_NAME}_prometheus
+    restart: no
     ports:
       - "9090:9090"
     volumes:
@@ -53,7 +61,8 @@ services:
       - index-dev-monitor-network
   grafana:
     image: grafana/grafana
-    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_grafana
+    restart: no
     ports:
       - "3000:3000"
     volumes:

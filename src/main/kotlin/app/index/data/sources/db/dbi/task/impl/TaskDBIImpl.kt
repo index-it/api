@@ -79,6 +79,7 @@ class TaskDBIImpl : TaskDBI {
         taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): Boolean =
         dbQuery {
+            // TODO: Don't do this as if only subtasks or reminder changed this updated boolean will be false
             val updated = TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
                 it[name] = taskUpdateRequestData.name
                 it[description] = taskUpdateRequestData.description
