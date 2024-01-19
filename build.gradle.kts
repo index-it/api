@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.sentry)
 }
 
 group = "app.index"
@@ -73,4 +74,15 @@ tasks {
         archiveFileName.set("index-api.jar")
         mergeServiceFiles()
     }
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "index-cp"
+    projectName = "api"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
