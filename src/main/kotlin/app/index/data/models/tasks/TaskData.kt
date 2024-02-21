@@ -155,10 +155,6 @@ data class TaskData(
                     TaskReminderData::days_before {
                         minimum(0)
                     }
-                    TaskReminderData::time_offset {
-                        minimum(0)
-                        exclusiveMaximum(DatetimeUtils.ONE_DAY_MILLIS)
-                    }
                 }
             }.invoke(this)
         }
@@ -176,6 +172,15 @@ data class SubTaskData(
     var completed: Boolean,
 )
 
+/**
+ * @param days_before days before the due date when the reminder should be triggered
+ * @param time_offset time offset in milliseconds from the due date
+ *
+ * [time_offset] is in UTC, because of that it might be negative
+ *
+ * Example: I set a reminder with 0 [days_before] and at 01:00 AM but my timezone is UTC+4,
+ * so the [time_offset] will be 01 - 4 = -3 hours => -3 * 60 * 60 * 1000 milliseconds
+ */
 @Serializable
 data class TaskReminderData(
     val days_before: Int,
