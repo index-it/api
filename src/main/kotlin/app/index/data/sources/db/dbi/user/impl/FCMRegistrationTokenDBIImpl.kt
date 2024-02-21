@@ -46,7 +46,6 @@ class FCMRegistrationTokenDBIImpl : FCMRegistrationTokenDBI {
         return dbQuery {
             FCMRegistrationTokenEntity
                 .find { FCMRegistrationTokenTable.user eq id.toEntityId(UsersTable) }
-                .limit(1)
                 .map { it.toData() }
         }
     }
