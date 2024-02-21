@@ -55,7 +55,6 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
         dbQuery {
             TaskReminderJobEntity
                 .find { TaskReminderJobTable.task eq taskId.toEntityId(TaskTable) }
-                .limit(1)
                 .map { it.toData() }
         }
 
