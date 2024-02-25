@@ -21,9 +21,9 @@ class ResetPasswordRoute(val token: String)
 @Resource("/me")
 class MeRoute {
     @Resource("notifications")
-    class Notifications {
-        @Resource("registration") // TODO: Fix by adding parent: Notifications() thing and MeRoute and add Route nomenclature
-        class Token
+    class NotificationsRoute(val parent: MeRoute) {
+        @Resource("registration")
+        class RegistrationRoute(val parent: NotificationsRoute)
     }
 }
 

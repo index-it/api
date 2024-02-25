@@ -16,7 +16,7 @@ import org.koin.ktor.ext.inject
 fun Route.fcmRoutes() {
     val fcmRegistrationTokenDao by inject<FCMRegistrationTokenDao>()
 
-    post<MeRoute.Notifications.Token>({
+    post<MeRoute.NotificationsRoute.RegistrationRoute>({
         tags = listOf("user")
         operationId = "notification-token"
         summary = "saves a user device notification token"

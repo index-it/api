@@ -79,19 +79,19 @@ class TaskDBIImpl : TaskDBI {
         taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): Boolean =
         dbQuery {
-            // TODO: Don't do this as if only subtasks or reminder changed this updated boolean will be false
-            val updated = TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
-                it[name] = taskUpdateRequestData.name
-                it[description] = taskUpdateRequestData.description
-                it[due_date] = taskUpdateRequestData.due_date?.toJavaLocalDate()
-                it[rrule] = taskUpdateRequestData.rrule
-                it[priority] = taskUpdateRequestData.priority
-                it[edited_at] = DatetimeUtils.currentJavaInstant()
-                it[item] = taskUpdateRequestData.item_id?.toEntityId(ItemTable)
-            } > 0
+            val exists = TaskTable.select { userAndTaskFilter(userId, taskId) }.limit(1).firstOrNull() != null
 
-            // TODO: Delete where join
-            if (updated) {
+            if (exists) {
+                TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
+                    it[name] = taskUpdateRequestData.name
+                    it[description] = taskUpdateRequestData.description
+                    it[due_date] = taskUpdateRequestData.due_date?.toJavaLocalDate()
+                    it[rrule] = taskUpdateRequestData.rrule
+                    it[priority] = taskUpdateRequestData.priority
+                    it[edited_at] = DatetimeUtils.currentJavaInstant()
+                    it[item] = taskUpdateRequestData.item_id?.toEntityId(ItemTable)
+                } > 0
+
                 SubTaskTable.deleteWhere { task eq taskId.toEntityId(TaskTable) }
                 SubTaskTable.batchInsert(taskUpdateRequestData.subtasks) {
                     this[SubTaskTable.task] = taskId.toEntityId(TaskTable)
@@ -107,7 +107,7 @@ class TaskDBIImpl : TaskDBI {
                 }
             }
 
-            return@dbQuery updated
+            return@dbQuery exists
         }
 
     override suspend fun delete(

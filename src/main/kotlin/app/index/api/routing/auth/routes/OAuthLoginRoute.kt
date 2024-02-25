@@ -94,7 +94,6 @@ fun Route.oauthLoginRoutes() {
     }
 
     /*
-    TODO
     get<LoginWithApple>({
         tags = listOf("auth")
         operationId = "login-with-apple"
@@ -129,7 +128,7 @@ fun Route.oauthLoginRoutes() {
             return@get call.respond(HttpStatusCode.MethodNotAllowed)
 
         // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Apple)
-        // TODO: Check if email is verified
+        // TO DO: Check if email is verified
         var userA = UserDao.getFromEmail(userInfo.email)
 
         if (userA == null) {
