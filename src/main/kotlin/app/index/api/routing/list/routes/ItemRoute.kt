@@ -48,7 +48,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        val item = itemDao.get(userIdFromSessionOrThrow(), it.parent.parent.list_id, it.item_id)
+        val item = itemDao.get(userIdFromSessionOrThrow(), it.item_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -88,7 +88,7 @@ fun Route.itemRoute() {
     }) {
         val updatedItem = call.receive<ItemData.ItemUpdateRequestData>()
 
-        val newItem = itemDao.update(userIdFromSessionOrThrow(), it.parent.parent.list_id, it.item_id, updatedItem)
+        val newItem = itemDao.update(userIdFromSessionOrThrow(), it.item_id, updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newItem)
@@ -121,7 +121,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        val deleted = itemDao.delete(userIdFromSessionOrThrow(), it.parent.parent.list_id, it.item_id)
+        val deleted = itemDao.delete(userIdFromSessionOrThrow(), it.item_id)
 
         call.respond(HttpStatusCode.OK)
 

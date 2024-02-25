@@ -8,9 +8,8 @@ import app.index.data.models.lists.ListData
 import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.ItemCM
 import app.index.data.sources.cache.core.DoubleHashedCM
-import org.koin.core.annotation.Single
 
-@Single(createdAtStart = true, binds = [ItemCM::class])
+@Suppress("DEPRECATION", "UNUSED")
 class ItemCMImpl(
     redisClient: RedisClient,
     objectMapper: ObjectMapper,

@@ -121,11 +121,9 @@ fun Route.taskRoute() {
         }
 
         if (task.item_id != newItemIdToConnect) {
-            val originalConnectedItem = task.item_id?.let { originalItemId -> itemDao.get(userId, originalItemId) }
-
             // un-connects the old item if existing
-            if (originalConnectedItem != null) {
-                itemDao.setTaskConnection(userId, originalConnectedItem.list_id, originalConnectedItem.id, null)
+            if (task.item_id != null) {
+                itemDao.setTaskConnection(userId, task.item_id, null)
                     ?.also { updatedOriginalConnectedItem ->
                         emitWebsocketEvent(
                             websocketEventManager = websocketEventManager,
@@ -137,10 +135,7 @@ fun Route.taskRoute() {
 
             // connects the new item if required
             if (newItemIdToConnect != null) {
-                val newConnectedItem = itemDao.get(userId, newItemIdToConnect)
-                    ?: return@put call.respond(HttpStatusCode.NotFound)
-
-                val updatedNewConnectedItem = itemDao.setTaskConnection(userId, newConnectedItem.list_id, newConnectedItem.id, taskId)
+                val updatedNewConnectedItem = itemDao.setTaskConnection(userId, newItemIdToConnect, taskId)
                     ?: return@put call.respond(HttpStatusCode.NotFound)
 
                 emitWebsocketEvent(

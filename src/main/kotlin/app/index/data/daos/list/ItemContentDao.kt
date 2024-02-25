@@ -5,7 +5,6 @@ import app.index.core.logic.typedId.newIxId
 import app.index.data.models.lists.ItemContentData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.user.UserData
-import app.index.data.sources.cache.cm.lists.ItemContentCM
 import app.index.data.sources.db.dbi.list.ItemContentDBI
 import org.koin.core.annotation.Single
 
@@ -13,7 +12,6 @@ import org.koin.core.annotation.Single
 class ItemContentDao(
     private val itemDao: ItemDao,
     private val itemContentDBI: ItemContentDBI,
-    private val itemContentCM: ItemContentCM,
 ) {
     suspend fun create(
         userId: IxId<UserData>,
@@ -31,7 +29,6 @@ class ItemContentDao(
         )
 
         itemContentDBI.create(itemContentData)
-        itemContentCM.cache(userId, itemContentData)
 
         return itemContentData
     }
@@ -40,15 +37,7 @@ class ItemContentDao(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,
     ): ItemContentData? {
-        var content = itemContentCM.get(userId, itemId)
-
-        if (content == null) {
-            content = itemContentDBI.get(userId, itemId)
-                ?: return null
-            itemContentCM.cache(userId, content)
-        }
-
-        return content
+        return itemContentDBI.get(userId, itemId)
     }
 
     suspend fun getOrCreate(
@@ -61,11 +50,7 @@ class ItemContentDao(
         itemId: IxId<ItemData>,
         itemContentCreateOrUpdateRequestData: ItemContentData.ItemContentCreateOrUpdateRequestData,
     ): ItemContentData? {
-        val updated = itemContentDBI.update(userId, itemId, itemContentCreateOrUpdateRequestData)
-
-        if (updated) {
-            itemContentCM.delete(userId, itemId)
-        }
+        itemContentDBI.update(userId, itemId, itemContentCreateOrUpdateRequestData)
 
         return get(userId, itemId)
     }
@@ -74,7 +59,6 @@ class ItemContentDao(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,
     ) {
-        itemContentCM.delete(userId, itemId)
         itemContentDBI.delete(userId, itemId)
     }
 }

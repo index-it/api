@@ -7,9 +7,8 @@ import app.index.data.models.lists.ListData
 import app.index.data.models.user.UserData
 import app.index.data.sources.cache.cm.lists.ListCM
 import app.index.data.sources.cache.core.DoubleHashedCM
-import org.koin.core.annotation.Single
 
-@Single(createdAtStart = true, binds = [ListCM::class])
+@Suppress("DEPRECATION", "UNUSED")
 class ListCMImpl(
     redisClient: RedisClient,
     objectMapper: ObjectMapper,

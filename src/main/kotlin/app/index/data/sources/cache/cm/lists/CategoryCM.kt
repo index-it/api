@@ -5,6 +5,7 @@ import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ListData
 import app.index.data.models.user.UserData
 
+@Deprecated("Caching in front of database entities is not recommended anymore")
 interface CategoryCM {
     fun getAll(
         userId: IxId<UserData>,

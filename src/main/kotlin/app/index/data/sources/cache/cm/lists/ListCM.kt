@@ -4,6 +4,7 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.ListData
 import app.index.data.models.user.UserData
 
+@Deprecated("Caching in front of database entities is not recommended anymore")
 interface ListCM {
     fun getAll(userId: IxId<UserData>): List<ListData>
 

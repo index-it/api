@@ -5,7 +5,6 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
-import app.index.data.sources.cache.cm.tasks.TaskCM
 import app.index.data.sources.db.dbi.task.TaskDBI
 import kotlinx.datetime.LocalDate
 import org.koin.core.annotation.Single
@@ -13,7 +12,6 @@ import org.koin.core.annotation.Single
 @Single(createdAtStart = true)
 class TaskDao(
     private val taskDBI: TaskDBI,
-    private val taskCM: TaskCM,
 ) {
     suspend fun create(
         userId: IxId<UserData>,
@@ -37,7 +35,6 @@ class TaskDao(
         )
 
         taskDBI.create(taskData)
-        taskCM.cache(taskData.user_id, taskData)
 
         return taskData
     }
@@ -65,45 +62,27 @@ class TaskDao(
                 completed_at = null,
             )
         taskDBI.create(taskData)
-        taskCM.cache(taskData.user_id, taskData)
 
         return taskData
     }
 
     suspend fun getAll(userId: IxId<UserData>): List<TaskData> {
-        var tasks = taskCM.getAll(userId)
-
-        if (tasks.isEmpty()) {
-            tasks = taskDBI.get(userId)
-            if (tasks.isNotEmpty()) {
-                taskCM.cacheAll(userId, tasks)
-            }
-        }
-
-        return tasks
+        return taskDBI.get(userId)
     }
 
-    suspend fun getAllUncompleted(userId: IxId<UserData>) =
-        getAll(userId)
-            .filter { !it.completed }
+    suspend fun getAllUncompleted(userId: IxId<UserData>): List<TaskData> {
+        return taskDBI.getUncompleted(userId)
+    }
 
-    suspend fun getAllCompleted(userId: IxId<UserData>) =
-        getAll(userId)
-            .filter { it.completed }
+    suspend fun getAllCompleted(userId: IxId<UserData>): List<TaskData> {
+        return taskDBI.getCompleted(userId)
+    }
 
     suspend fun get(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
     ): TaskData? {
-        var task = taskCM.get(userId, taskId)
-
-        if (task == null) {
-            task = taskDBI.get(userId, taskId)
-                ?: return null
-            taskCM.cache(userId, task)
-        }
-
-        return task
+        return taskDBI.get(userId, taskId)
     }
 
     suspend fun setCompletion(
@@ -111,12 +90,7 @@ class TaskDao(
         taskId: IxId<TaskData>,
         completed: Boolean,
     ): TaskData? {
-        val updated = taskDBI.setCompletion(userId, taskId, completed)
-
-        if (updated) {
-            // This is done everywhere to make sure that cache is always in sync with the real data
-            taskCM.delete(userId, taskId)
-        }
+        taskDBI.setCompletion(userId, taskId, completed)
 
         return get(userId, taskId)
     }
@@ -126,11 +100,7 @@ class TaskDao(
         taskId: IxId<TaskData>,
         taskUpdateRequestData: TaskData.TaskUpdateRequestData,
     ): TaskData? {
-        val updated = taskDBI.update(userId, taskId, taskUpdateRequestData)
-
-        if (updated) {
-            taskCM.delete(userId, taskId)
-        }
+        taskDBI.update(userId, taskId, taskUpdateRequestData)
 
         return get(userId, taskId)
     }
@@ -139,7 +109,6 @@ class TaskDao(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
     ) : Boolean {
-        taskCM.delete(userId, taskId)
         return taskDBI.delete(userId, taskId)
     }
 }

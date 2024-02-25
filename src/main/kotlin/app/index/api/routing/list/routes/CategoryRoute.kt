@@ -48,7 +48,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val category = categoryDao.get(userIdFromSessionOrThrow(), it.parent.parent.list_id, it.category_id)
+        val category = categoryDao.get(userIdFromSessionOrThrow(), it.category_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -87,7 +87,7 @@ fun Route.categoryRoute() {
     }) {
         val updatedCategory = call.receive<CategoryData.CategoryUpdateRequestData>()
 
-        val newCategory = categoryDao.update(userIdFromSessionOrThrow(), it.parent.parent.list_id, it.category_id, updatedCategory)
+        val newCategory = categoryDao.update(userIdFromSessionOrThrow(), it.category_id, updatedCategory)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newCategory)
@@ -120,7 +120,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        val deleted = categoryDao.delete(userIdFromSession()!!, it.parent.parent.list_id, it.category_id)
+        val deleted = categoryDao.delete(userIdFromSession()!!, it.category_id)
 
         call.respond(HttpStatusCode.OK)
 

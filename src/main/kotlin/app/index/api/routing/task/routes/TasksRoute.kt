@@ -102,12 +102,9 @@ fun Route.tasksRoute() {
             ////////////////////
             /// CONNECT ITEM ///
             ////////////////////
-            val itemToConnect = itemDao.get(userId, itemIdToConnect)
-                ?: return@post call.respond(HttpStatusCode.NotFound)
-
             val task = taskDao.create(userIdFromSession()!!, newTask)
 
-            val updatedItem = itemDao.setTaskConnection(userId, itemToConnect.list_id, itemToConnect.id, task.id)
+            val updatedItem = itemDao.setTaskConnection(userId, itemIdToConnect, task.id)
                 ?: return@post call.respond(HttpStatusCode.NotFound)
 
             emitWebsocketEvent(

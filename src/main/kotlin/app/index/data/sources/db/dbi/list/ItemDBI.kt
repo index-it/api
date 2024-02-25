@@ -25,6 +25,16 @@ interface ItemDBI : DBI {
         listId: IxId<ListData>,
     ): List<ItemData>
 
+    suspend fun getUncompletedOfList(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        ): List<ItemData>
+    
+    suspend fun getCompletedOfList(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        ): List<ItemData>
+
     suspend fun setCompletion(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,

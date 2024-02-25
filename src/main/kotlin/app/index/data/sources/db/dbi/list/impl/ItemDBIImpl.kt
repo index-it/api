@@ -66,6 +66,26 @@ class ItemDBIImpl : ItemDBI {
                 .map { it.toData() }
         }
 
+    override suspend fun getUncompletedOfList(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        ): List<ItemData> =
+        dbQuery {
+            ItemEntity
+                .find { userFilter(userId) and (ItemTable.list eq listId.toEntityId(ListTable) and (ItemTable.completed eq false)) }
+                .map { it.toData() }
+        }
+
+    override suspend fun getCompletedOfList(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        ): List<ItemData> =
+        dbQuery {
+            ItemEntity
+                .find { userFilter(userId) and (ItemTable.list eq listId.toEntityId(ListTable) and (ItemTable.completed eq true)) }
+                .map { it.toData() }
+        }
+
     override suspend fun setCompletion(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,

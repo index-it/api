@@ -10,6 +10,10 @@ interface TaskDBI : DBI {
 
     suspend fun get(userId: IxId<UserData>): List<TaskData>
 
+    suspend fun getUncompleted(userId: IxId<UserData>): List<TaskData>
+
+    suspend fun getCompleted(userId: IxId<UserData>): List<TaskData>
+
     suspend fun get(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,

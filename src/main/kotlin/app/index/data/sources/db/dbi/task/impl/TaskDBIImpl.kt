@@ -49,6 +49,20 @@ class TaskDBIImpl : TaskDBI {
                 .map { it.toData() }
         }
 
+    override suspend fun getUncompleted(userId: IxId<UserData>): List<TaskData> =
+        dbQuery {
+            TaskEntity
+                .find { (TaskTable.user eq userId.toEntityId(UsersTable)) and (TaskTable.completed eq false) }
+                .map { it.toData() }
+        }
+
+    override suspend fun getCompleted(userId: IxId<UserData>): List<TaskData> =
+        dbQuery {
+            TaskEntity
+                .find { (TaskTable.user eq userId.toEntityId(UsersTable)) and (TaskTable.completed eq true) }
+                .map { it.toData() }
+        }
+
     override suspend fun get(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
