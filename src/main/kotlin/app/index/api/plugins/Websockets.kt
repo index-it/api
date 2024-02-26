@@ -9,12 +9,13 @@ import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import java.time.Duration
 
 private val log = KotlinLogging.logger {}
 
-suspend fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEvent(
+fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEvent(
     websocketEventManager: WebsocketEventManager,
     type: WebsocketEventType,
     content: WebsocketEventContent,
@@ -36,6 +37,8 @@ fun Application.configureWebsockets() {
         contentConverter = KotlinxWebsocketSerializationConverter(
             Json {
                 serializersModule = IdKotlinXSerializationModule
+                ignoreUnknownKeys = true
+                encodeDefaults = true
             }
         )
 
