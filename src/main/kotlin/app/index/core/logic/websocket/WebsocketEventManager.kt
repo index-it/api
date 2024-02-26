@@ -77,6 +77,7 @@ class WebsocketEventManager(
         )
 
         websocketEventsQueueManager.enqueue(websocketEventData)
-        consume(websocketEventData)
+        // Consume is not needed because we will already consume the event from the rabbitmq queue
+//        consume(websocketEventData)
     }
 }
