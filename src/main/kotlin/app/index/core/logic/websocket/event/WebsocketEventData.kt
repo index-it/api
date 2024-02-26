@@ -12,12 +12,12 @@ import kotlinx.serialization.Serializable
  * @param fromSessionId the user auth session that triggered this event
  * @param fromUserId the id of the user that triggered this event
  * @param type
- * @param content Serialized [WebsocketEventContent]
+ * @param content polymorphic data depending on the [type]
  */
 @Serializable
 data class WebsocketEventData(
     @Contextual val fromSessionId: IxId<UserAuthSessionData>,
     @Contextual val fromUserId: IxId<UserData>,
     val type: WebsocketEventType,
-    val content: String
+    val content: WebsocketEventContent
 )

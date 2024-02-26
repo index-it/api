@@ -65,7 +65,7 @@ class WebsocketEventManager(
      * @throws IllegalArgumentException missing [UserAuthSessionData] principal in [context]
      * @throws Exception other exceptions handling the event
      */
-    suspend fun emit(context: PipelineContext<Unit, ApplicationCall>, eventType: WebsocketEventType, eventData: WebsocketEventContent) {
+    fun emit(context: PipelineContext<Unit, ApplicationCall>, eventType: WebsocketEventType, eventData: WebsocketEventContent) {
         val authSession = context.call.principal<UserAuthSessionData>()
             ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
 
@@ -73,7 +73,7 @@ class WebsocketEventManager(
             fromSessionId = authSession.id,
             fromUserId = authSession.userId,
             type = eventType,
-            content = objectMapper.encode(eventData)
+            content = eventData
         )
 
         websocketEventsQueueManager.enqueue(websocketEventData)
