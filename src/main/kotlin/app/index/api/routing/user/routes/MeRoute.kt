@@ -5,8 +5,8 @@ import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.user.MeRoute
 import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.EmptyEventContent
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.UserSessionCookie
@@ -62,7 +62,7 @@ fun Route.meRoutes() {
         emitWebsocketEvent(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
-            content = EmptyEventContent
+            content = WebsocketEventContent.EmptyEventContent
         )
     }
 }

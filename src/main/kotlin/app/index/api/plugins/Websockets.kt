@@ -3,7 +3,7 @@ package app.index.api.plugins
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.WebsocketEventContent
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*

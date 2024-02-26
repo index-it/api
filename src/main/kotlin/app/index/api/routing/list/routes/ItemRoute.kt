@@ -5,9 +5,8 @@ import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.ItemCreateOrUpdateEventContent
-import app.index.core.logic.websocket.event.content.ItemDeleteEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.models.lists.ItemData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -96,7 +95,7 @@ fun Route.itemRoute() {
         emitWebsocketEvent(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_UPDATED,
-            content = ItemCreateOrUpdateEventContent(newItem)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(newItem)
         )
     }
 
@@ -129,7 +128,7 @@ fun Route.itemRoute() {
             emitWebsocketEvent(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.ITEM_DELETED,
-                content = ItemDeleteEventContent(it.item_id)
+                content = WebsocketEventContent.ItemDeleteEventContent(it.item_id)
             )
         }
     }

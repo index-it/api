@@ -4,8 +4,8 @@ import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.ItemCreateOrUpdateEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
@@ -64,7 +64,7 @@ fun Route.itemCompletionRoute() {
         emitWebsocketEvent(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_UPDATED,
-            content = ItemCreateOrUpdateEventContent(updatedItem)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem)
         )
     }
 }

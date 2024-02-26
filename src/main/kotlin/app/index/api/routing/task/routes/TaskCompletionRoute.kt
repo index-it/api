@@ -5,9 +5,8 @@ import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.ItemCreateOrUpdateEventContent
-import app.index.core.logic.websocket.event.content.TaskCreateOrUpdateEventContent
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
@@ -64,7 +63,7 @@ fun Route.taskCompletionRoute() {
                     emitWebsocketEvent(
                         websocketEventManager = websocketEventManager,
                         type = WebsocketEventType.ITEM_UPDATED,
-                        content = ItemCreateOrUpdateEventContent(updatedConnectedItem)
+                        content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedConnectedItem)
                     )
                 }
         }
@@ -77,7 +76,7 @@ fun Route.taskCompletionRoute() {
                     emitWebsocketEvent(
                         websocketEventManager = websocketEventManager,
                         type = WebsocketEventType.TASK_CREATED,
-                        content = TaskCreateOrUpdateEventContent(nextOccurrenceTask)
+                        content = WebsocketEventContent.TaskCreateOrUpdateEventContent(nextOccurrenceTask)
                     )
                 }
         } else if (updatedTask.rrule != null) {
@@ -89,7 +88,7 @@ fun Route.taskCompletionRoute() {
         emitWebsocketEvent(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.TASK_UPDATED,
-            content = TaskCreateOrUpdateEventContent(updatedTask)
+            content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updatedTask)
         )
     }
 }

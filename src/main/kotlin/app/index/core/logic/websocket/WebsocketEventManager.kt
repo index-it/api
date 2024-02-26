@@ -4,7 +4,7 @@ import app.index.core.logic.ObjectMapper
 import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.core.logic.websocket.event.WebsocketEventData
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.content.WebsocketEventContent
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.queue.WebsocketEventsQueueManager
 import app.index.data.models.auth.UserAuthSessionData
 import io.github.oshai.kotlinlogging.KotlinLogging
