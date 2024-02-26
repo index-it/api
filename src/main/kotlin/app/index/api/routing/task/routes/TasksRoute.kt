@@ -109,7 +109,8 @@ fun Route.tasksRoute() {
             emitWebsocketEvent(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.ITEM_UPDATED,
-                content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem)
+                content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem),
+                includeCurrentSession = true
             )
 
             task

@@ -126,7 +126,8 @@ fun Route.taskRoute() {
                         emitWebsocketEvent(
                             websocketEventManager = websocketEventManager,
                             type = WebsocketEventType.ITEM_UPDATED,
-                            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedOriginalConnectedItem)
+                            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedOriginalConnectedItem),
+                            includeCurrentSession = true
                         )
                     }
             }
@@ -139,7 +140,8 @@ fun Route.taskRoute() {
                 emitWebsocketEvent(
                     websocketEventManager = websocketEventManager,
                     type = WebsocketEventType.ITEM_UPDATED,
-                    content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedNewConnectedItem)
+                    content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedNewConnectedItem),
+                    includeCurrentSession = true
                 )
             }
         }
@@ -189,7 +191,8 @@ fun Route.taskRoute() {
                         emitWebsocketEvent(
                             websocketEventManager = websocketEventManager,
                             type = WebsocketEventType.TASK_CREATED,
-                            content = WebsocketEventContent.TaskCreateOrUpdateEventContent(nextOccurrenceTask)
+                            content = WebsocketEventContent.TaskCreateOrUpdateEventContent(nextOccurrenceTask),
+                            includeCurrentSession = true
                         )
                     }
             }

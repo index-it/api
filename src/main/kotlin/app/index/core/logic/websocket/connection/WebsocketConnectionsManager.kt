@@ -23,6 +23,10 @@ class WebsocketConnectionsManager : IClosableComponent {
         log.debug { "Handling new websocket connection: $websocketConnection" }
     }
 
+    fun getConnectionsOfUser(userId: IxId<UserData>): List<WebsocketConnection> {
+        return connections.filter { it.userId == userId }
+    }
+
     fun getConnectionsOfUserExcludingSession(userId: IxId<UserData>, excludedSessionId: IxId<UserAuthSessionData>): List<WebsocketConnection> {
         return connections.filter { it.userId == userId && it.sessionId != excludedSessionId }
     }

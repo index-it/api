@@ -57,6 +57,14 @@ fun Route.itemCompletionRoute() {
 
         if (updatedItem.task_id != null) {
             taskDao.setCompletion(userId, updatedItem.task_id, it.completed)
+                ?.also { updatedTaskData ->
+                    emitWebsocketEvent(
+                        websocketEventManager = websocketEventManager,
+                        type = WebsocketEventType.TASK_UPDATED,
+                        content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updatedTaskData),
+                        includeCurrentSession = true
+                    )
+                }
         }
 
         call.respond(updatedItem)

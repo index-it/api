@@ -19,9 +19,10 @@ fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEvent(
     websocketEventManager: WebsocketEventManager,
     type: WebsocketEventType,
     content: WebsocketEventContent,
+    includeCurrentSession: Boolean = false
 ) {
     try {
-        websocketEventManager.emit(this, type, content)
+        websocketEventManager.emit(this, type, content, includeCurrentSession)
     } catch (e: Exception) {
         log.error(e) { "Error emitting websocket event: type $type, content $content" }
     }
