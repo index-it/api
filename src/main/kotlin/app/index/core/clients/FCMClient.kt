@@ -1,5 +1,7 @@
 package app.index.core.clients
 
+import app.index.core.logic.typedId.impl.IxId
+import app.index.data.models.tasks.TaskData
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -28,6 +30,7 @@ class FCMClient {
     private val taskReminderAnalyticsLabel = "task-reminder"
 
     fun sendTaskReminderNotification(
+        taskId: IxId<TaskData>,
         taskName: String,
         registrationToken: List<String>,
     ) {
@@ -40,7 +43,7 @@ class FCMClient {
                 .addAllTokens(registrationToken)
                 .setNotification(
                     Notification.builder()
-                        .setTitle("Task reminder")
+                        .setTitle("tr:$taskId")
                         .setBody(taskName)
                         .build(),
                 )
