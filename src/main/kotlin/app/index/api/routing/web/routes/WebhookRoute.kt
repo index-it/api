@@ -46,7 +46,11 @@ fun Route.webhookRoute() {
         }
 
         // Send the task reminder notification to all registration tokens found
-        fcmClient.sendTaskReminderNotification(taskReminderJobDto.task.name, notificationRegistrationTokens)
+        fcmClient.sendTaskReminderNotification(
+            taskId = taskReminderJobDto.task.id,
+            taskName = taskReminderJobDto.task.name,
+            registrationToken = notificationRegistrationTokens
+        )
 
         // First mark the job as completed
         // (we don't want to delete it first from the database because if that errors this request won't succeed, and we'll receive another webhook for retry)
