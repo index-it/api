@@ -100,10 +100,6 @@ data class TaskData(
                     TaskReminderData::days_before {
                         minimum(0)
                     }
-                    TaskReminderData::time_offset {
-                        minimum(0)
-                        exclusiveMaximum(DatetimeUtils.ONE_DAY_MILLIS)
-                    }
                 }
             }.invoke(this)
         }
