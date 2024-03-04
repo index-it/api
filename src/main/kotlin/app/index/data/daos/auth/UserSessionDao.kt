@@ -46,4 +46,12 @@ class UserSessionDao(
     ) = userSessionCM.delete(userId, sessionId)
 
     fun deleteAllOfUser(userId: IxId<UserData>) = userSessionCM.deleteAllOfUser(userId)
+
+    fun deleteAllOfUserExcept(
+        userId: IxId<UserData>,
+        exceptSession: UserAuthSessionData,
+    ) {
+        deleteAllOfUser(userId)
+        upsert(exceptSession)
+    }
 }

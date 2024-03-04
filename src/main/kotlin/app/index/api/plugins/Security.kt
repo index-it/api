@@ -35,21 +35,6 @@ object AuthenticationMethods {
  */
 data class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserData>) : Principal
 
-/**
- * Gets the [IxId] of the session authenticated [UserData]
- */
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserData>? = call.principal<UserAuthSessionData>()?.userId
-
-/**
- * Gets the [IxId] of the session authenticated [UserData]
- *
- * @throws AuthenticationException if not authenticated
- */
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSessionOrThrow(): IxId<UserData> {
-    return call.principal<UserAuthSessionData>()?.userId
-        ?: throw AuthenticationException()
-}
-
 fun Application.configureSecurity() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
@@ -119,3 +104,28 @@ fun Application.configureSecurity() {
         }
     }
 }
+
+/**
+ * Gets the current [UserAuthSessionData]
+ */
+fun PipelineContext<Unit, ApplicationCall>.authSessionData(): UserAuthSessionData? = call.principal<UserAuthSessionData>()
+
+/**
+ * Gets the current [UserAuthSessionData]
+ *
+ * @throws AuthenticationException if not authenticated
+ */
+fun PipelineContext<Unit, ApplicationCall>.authSessionDataOrThrow(): UserAuthSessionData = authSessionData() ?: throw AuthenticationException()
+
+
+/**
+ * Gets the [IxId] of the session authenticated [UserData]
+ */
+fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserData>? = call.principal<UserAuthSessionData>()?.userId
+
+/**
+ * Gets the [IxId] of the session authenticated [UserData]
+ *
+ * @throws AuthenticationException if not authenticated
+ */
+fun PipelineContext<Unit, ApplicationCall>.userIdFromSessionOrThrow(): IxId<UserData> = userIdFromSession() ?: throw AuthenticationException()

@@ -95,6 +95,9 @@ fun Route.passwordOperationRoutes() {
             HttpStatusCode.OK to {
                 description = "password reset"
             }
+            HttpStatusCode.BadRequest to {
+                description = "password doesn't conform to rules, see response message"
+            }
             HttpStatusCode.NotFound to {
                 description = "something went wrong"
             }

@@ -20,6 +20,9 @@ class ResetPasswordRoute(val token: String)
 
 @Resource("/me")
 class MeRoute {
+    @Resource("password")
+    class ChangePasswordRoute(val parent: MeRoute)
+
     @Resource("notifications")
     class NotificationsRoute(val parent: MeRoute) {
         @Resource("registration")

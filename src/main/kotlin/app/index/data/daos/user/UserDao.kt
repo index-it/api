@@ -28,6 +28,13 @@ class UserDao(
         userDBI.verifyEmail(id)
     }
 
+    suspend fun changePassword(
+        id: IxId<UserData>,
+        newPasswordHashed: String,
+    ) {
+        userDBI.changePassword(id, newPasswordHashed)
+    }
+
     suspend fun resetPassword(
         id: IxId<UserData>,
         newPasswordHashed: String,

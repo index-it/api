@@ -45,6 +45,14 @@ class UserDBIImpl : UserDBI {
         }
     }
 
+    override suspend fun changePassword(id: IxId<UserData>, newPasswordHashed: String) {
+        dbQuery {
+            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
+                it[password_hash] = newPasswordHashed
+            }
+        }
+    }
+
     override suspend fun resetPassword(
         id: IxId<UserData>,
         newPasswordHashed: String,

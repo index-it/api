@@ -13,6 +13,11 @@ interface UserDBI : DBI {
 
     suspend fun verifyEmail(id: IxId<UserData>)
 
+    suspend fun changePassword(
+        id: IxId<UserData>,
+        newPasswordHashed: String,
+    )
+
     suspend fun resetPassword(
         id: IxId<UserData>,
         newPasswordHashed: String,
