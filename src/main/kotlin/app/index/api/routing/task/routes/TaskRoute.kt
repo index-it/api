@@ -181,11 +181,10 @@ fun Route.taskRoute() {
         }
     }) {
         val userId = userIdFromSessionOrThrow()
-
-        taskReminderJobDao.deleteAllOfTask(it.task_id)
+        val task = taskDao.get(userId, it.task_id)
 
         if (!it.all) {
-            taskDao.get(userId, it.task_id)?.let { task ->
+            task?.let { task ->
                 TaskUseCase.createNextOccurrence(task)
                     ?.also { nextOccurrenceTask ->
                         emitWebsocketEvent(
@@ -208,6 +207,14 @@ fun Route.taskRoute() {
                 type = WebsocketEventType.TASK_DELETED,
                 content = WebsocketEventContent.TaskDeleteEventContent(it.task_id)
             )
+
+            if (task?.item_id != null) {
+                emitWebsocketEvent(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.ITEM_DELETED,
+                    content = WebsocketEventContent.ItemDeleteEventContent(task.item_id)
+                )
+            }
         }
     }
 }

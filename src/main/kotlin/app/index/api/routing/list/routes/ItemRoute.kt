@@ -120,7 +120,11 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        val deleted = itemDao.delete(userIdFromSessionOrThrow(), it.item_id)
+        val userId = userIdFromSessionOrThrow()
+        val item = itemDao.get(userId, it.item_id)
+            ?: return@delete call.respond(HttpStatusCode.OK)
+
+        val deleted = itemDao.delete(userId, it.item_id)
 
         call.respond(HttpStatusCode.OK)
 
@@ -130,6 +134,14 @@ fun Route.itemRoute() {
                 type = WebsocketEventType.ITEM_DELETED,
                 content = WebsocketEventContent.ItemDeleteEventContent(it.item_id)
             )
+
+            if (item.task_id != null) {
+                emitWebsocketEvent(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.TASK_DELETED,
+                    content = WebsocketEventContent.TaskDeleteEventContent(item.task_id)
+                )
+            }
         }
     }
 }
