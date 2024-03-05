@@ -20,7 +20,7 @@ object Validations {
 
     object ItemContent {
         const val MIN_CONTENT_LENGTH = 0
-        const val MAX_CONTENT_LENGTH = 10000
+        const val MAX_CONTENT_LENGTH = 20000
     }
 
     object Task {
