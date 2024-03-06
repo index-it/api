@@ -5,6 +5,7 @@ import app.index.data.sources.db.schemas.lists.CategoryTable.color
 import app.index.data.sources.db.schemas.lists.CategoryTable.id
 import app.index.data.sources.db.schemas.lists.CategoryTable.list
 import app.index.data.sources.db.schemas.lists.CategoryTable.name
+import app.index.data.sources.db.schemas.lists.ListTable.nullable
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
@@ -14,6 +15,8 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.timestamp
+import java.time.Instant
 import java.util.*
 
 /**
@@ -21,6 +24,8 @@ import java.util.*
  * @property list
  * @property name
  * @property color
+ * @property created_at
+ * @property edited_at
  */
 object CategoryTable : UUIDTable() {
     val user = reference(
@@ -35,6 +40,8 @@ object CategoryTable : UUIDTable() {
     ).index()
     val name = varchar("ix_name", 50)
     val color = varchar("color", 9)
+    val created_at = timestamp("created_at")
+    val edited_at = timestamp("edited_at").nullable()
 }
 
 /**
@@ -53,6 +60,8 @@ class CategoryEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var list by CategoryTable.list
     var name by CategoryTable.name
     var color by CategoryTable.color
+    var created_at by CategoryTable.created_at
+    var edited_at by CategoryTable.edited_at
 
     @Suppress("MemberVisibilityCanBePrivate")
     val userEntity by UserEntity referencedOn CategoryTable.user
@@ -65,6 +74,8 @@ fun CategoryEntity.fromData(categoryData: CategoryData) {
     list = categoryData.list_id.toEntityId(ListTable)
     name = categoryData.name
     color = categoryData.color
+    created_at = Instant.ofEpochMilli(categoryData.created_at)
+    edited_at = categoryData.edited_at?.let { Instant.ofEpochMilli(it) }
 }
 
 fun CategoryEntity.toData() =
@@ -74,4 +85,6 @@ fun CategoryEntity.toData() =
         list_id = list.toIxId(),
         name = name,
         color = color,
+        created_at = created_at.toEpochMilli(),
+        edited_at = edited_at?.toEpochMilli(),
     )

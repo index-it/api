@@ -1,5 +1,6 @@
 package app.index.data.sources.db.dbi.list.impl
 
+import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ListData
@@ -61,6 +62,7 @@ class CategoryDBIImpl : CategoryDBI {
             CategoryTable.update({ userAndCategoryFilter(userId, categoryId) }) {
                 it[name] = categoryUpdateRequestData.name
                 it[color] = categoryUpdateRequestData.color
+                it[edited_at] = DatetimeUtils.currentJavaInstant()
             } > 0
         }
 

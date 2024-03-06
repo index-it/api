@@ -1,5 +1,6 @@
 package app.index.data.models.lists
 
+import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.user.UserData
 import app.index.data.validation.RegexPatterns
@@ -13,8 +14,7 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 /**
- * Groups items in a list, for example, a list of movies to watch can have categories for the genre.
- * 'name' is the category ID
+ * Groups items in a list, for example, a list of movies to watch can have categories for the genre
  */
 @Serializable
 data class CategoryData(
@@ -23,6 +23,8 @@ data class CategoryData(
     @Contextual val list_id: IxId<ListData>,
     var name: String,
     var color: String, // Represented as #010101 hex color
+    val created_at: Long = DatetimeUtils.currentMillis(),
+    val edited_at: Long? = null,
 ) {
     @Serializable
     data class CategoryCreateRequestData(
