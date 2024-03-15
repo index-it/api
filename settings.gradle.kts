@@ -1,1 +1,7 @@
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 rootProject.name = "index_api"
+
+include("scripts")
+include("fcm-registration-tokens-expiration-job")

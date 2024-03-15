@@ -1,22 +1,26 @@
-import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
-import org.hidetake.gradle.swagger.generator.SwaggerSource
-
-val ktorVersion: String = "2.2.4"
-val kmongoVersion: String = "4.9.0"
-val kotlinVersion: String = "1.8.10"
-
 plugins {
     application
-    kotlin("jvm") version "1.8.10"
-    kotlin("plugin.serialization") version "1.8.10"
-    id("io.ktor.plugin") version "2.2.3"
-    id("org.hidetake.swagger.generator") version "2.19.2"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.sentry)
 }
 
-group = "app.index_it"
+group = "app.index"
 version = "0.0.1"
 application {
-    mainClass.set("app.index_it.ApplicationKt")
+    mainClass.set("app.index.ApplicationKt")
+}
+
+kotlin {
+    jvmToolchain(20)
+}
+
+// Use KSP Generated sources
+sourceSets.main {
+    java.srcDirs("build/generated/ksp/main/kotlin")
 }
 
 repositories {
@@ -24,74 +28,61 @@ repositories {
 }
 
 dependencies {
-    swaggerUI("org.webjars:swagger-ui:4.18.2")
+    implementation(libs.bundles.logging)
+    implementation(libs.reflections)
+    api(libs.slf4j.api)
 
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.0")
+    implementation(libs.kotlinx.datetime)
 
-    implementation("io.konform:konform-jvm:0.4.0")
+    ksp(libs.koin.ksp)
+    implementation(libs.bundles.koin)
 
-    implementation("redis.clients:jedis:4.3.1")
+    implementation(libs.bundles.ktor.server)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.bundles.spring.security)
+    implementation(libs.bundles.monitoring)
 
-    // Rabbitmq client
-    implementation("com.rabbitmq:amqp-client:5.16.0")
+    implementation(libs.bundles.postgres)
 
-    implementation("org.litote.kmongo:kmongo-serialization:$kmongoVersion")
-    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.dotenv)
+    implementation(libs.jedis)
+    implementation(libs.amqp.client)
 
-    implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
-    implementation("io.ktor:ktor-server-websockets:$ktorVersion")
-    implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
-    implementation("io.ktor:ktor-server-resources:$ktorVersion")
-    implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation(platform(libs.google.cloud.bom))
+    implementation(libs.google.api.client)
+    implementation(libs.google.cloud.tasks)
+    implementation(libs.google.cloud.scheduler)
 
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation(libs.firebase.admin)
+    implementation(libs.librecur)
 
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
-    implementation("org.springframework.security:spring-security-crypto:6.0.2")
-    // Needed for bcrypt to work
-    implementation("commons-logging:commons-logging:1.2")
-
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-    implementation("ch.qos.logback:logback-classic:1.4.6")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("io.ktor:ktor-server-cors-jvm:2.2.4")
-
+    testImplementation(libs.junit)
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
-kotlin {
-    jvmToolchain(17)
+ksp {
+    arg("KOIN_CONFIG_CHECK", "true")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
-ktor {
-    fatJar {
+tasks {
+    shadowJar {
         archiveFileName.set("index-api.jar")
+        mergeServiceFiles()
     }
 }
 
-swaggerSources {
-    create("indexApi").apply {
-        setInputFile(file("openapi/index-openapi.yaml"))
-        ui(closureOf<GenerateSwaggerUI> {
-            outputDir = file("openapi/swagger-ui")
-        })
-    }
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "index-cp"
+    projectName = "api"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }

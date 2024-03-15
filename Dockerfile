@@ -1,10 +1,18 @@
-FROM gradle:7.5.0-jdk18 AS build
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN gradle shadowJar --no-daemon
+FROM gradle:8.3.0-jdk20 as builder
+WORKDIR /etc/index-api
+COPY . .
+USER root
+# Create the shadowjar (chmod +x makes the gradlew script executable)
+RUN chmod +x ./gradlew
+RUN ./gradlew shadowJar --no-daemon
 
-FROM openjdk:18
-EXPOSE 80:80
-RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/index-api.jar /app/index-api.jar
-ENTRYPOINT ["java","-jar","/app/index-api.jar"]
+FROM eclipse-temurin:20
+WORKDIR /opt/index-api
+# Copy the shadowjar in the current workdir
+COPY --from=builder ./etc/index-api/build/libs/ .
+# Entrypoint is used instead of CMD because the image is not intended to run another executable instead of the jar
+ENTRYPOINT java \
+    # java -D tag --> set a system property
+    -Dkotlin.script.classpath="/opt/index-api/index-api.jar" \
+    -jar \
+    ./index-api.jar

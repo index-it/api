@@ -3,15 +3,39 @@ version: 2.1
 orbs:
   gradle: circleci/gradle@3.0.0
   gcp-gcr: circleci/gcp-gcr@0.15.0
+  slack: circleci/slack@4.12.5
+
+jobs:
+  build-and-push-image:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: 'index-api-<< pipeline.git.branch >>'
+          no_output_timeout: 20m
+          registry-url: eu.gcr.io
+      - gcp-gcr/push-image:
+          image: 'index-api-<< pipeline.git.branch >>'
+          registry-url: eu.gcr.io
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+          mentions: <@U04NVUWQE93>
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+          mentions: <@U04NVUWQE93>
 
 workflows:
   test-build-publish:
     jobs:
       - gradle/test:
           name: test
-      - gcp-gcr/build-and-push-image:
-          image: 'index-api-<< pipeline.git.branch >>'
-          registry-url: eu.gcr.io
+          executor:
+            name: gradle/default
+            tag: '20.0.1'
+      - build-and-push-image:
           requires: [test]
           filters:
             branches:

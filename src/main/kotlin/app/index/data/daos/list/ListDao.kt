@@ -1,0 +1,63 @@
+package app.index.data.daos.list
+
+import app.index.core.logic.DatetimeUtils
+import app.index.core.logic.typedId.impl.IxId
+import app.index.core.logic.typedId.newIxId
+import app.index.data.models.lists.ListData
+import app.index.data.models.user.UserData
+import app.index.data.sources.db.dbi.list.ListDBI
+import org.koin.core.annotation.Single
+
+@Single(createdAtStart = true)
+class ListDao(
+    private val listDBI: ListDBI,
+) {
+    suspend fun create(
+        userId: IxId<UserData>,
+        listCreateRequestData: ListData.ListCreateRequestData,
+    ): ListData {
+        val listData = ListData(
+            id = newIxId(),
+            user_id = userId,
+            name = listCreateRequestData.name,
+            icon = listCreateRequestData.icon,
+            color = listCreateRequestData.color,
+            created_at = DatetimeUtils.currentMillis(),
+            edited_at = null,
+        )
+
+        listDBI.create(listData)
+
+        return listData
+    }
+
+    suspend fun getAll(userId: IxId<UserData>): List<ListData> {
+        return listDBI.get(userId)
+    }
+
+    suspend fun get(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): ListData? {
+        return listDBI.get(userId, listId)
+    }
+
+    suspend fun update(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        listUpdateRequestData: ListData.ListUpdateRequestData,
+    ): ListData? {
+        listDBI.update(userId, listId, listUpdateRequestData)
+
+        return get(userId, listId)
+    }
+
+    suspend fun delete(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ) : Boolean {
+        val deleted = listDBI.delete(userId, listId)
+
+        return deleted
+    }
+}

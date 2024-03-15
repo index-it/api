@@ -1,0 +1,114 @@
+package app.index.data.daos.list
+
+import app.index.core.logic.DatetimeUtils
+import app.index.core.logic.typedId.impl.IxId
+import app.index.core.logic.typedId.newIxId
+import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListData
+import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
+import app.index.data.sources.db.dbi.list.ItemDBI
+import org.koin.core.annotation.Single
+
+@Single(createdAtStart = true)
+class ItemDao(
+    private val itemDBI: ItemDBI,
+) {
+    suspend fun exists(
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): Boolean {
+        return itemDBI.exists(userId, itemId)
+    }
+
+    suspend fun getAll(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData> {
+        return itemDBI.getOfList(userId, listId)
+    }
+
+    suspend fun getAllUncompleted(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData> {
+        return itemDBI.getUncompletedOfList(userId, listId)
+    }
+
+    suspend fun getAllCompleted(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+    ): List<ItemData> {
+        return itemDBI.getCompletedOfList(userId, listId)
+    }
+
+    suspend fun get(
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): ItemData? {
+        return itemDBI.get(userId, itemId)
+    }
+
+    suspend fun create(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        itemCreateRequestData: ItemData.ItemCreateRequestData,
+    ): ItemData {
+        val itemData = ItemData(
+            id = newIxId(),
+            user_id = userId,
+            list_id = listId,
+            category_id = itemCreateRequestData.category_id,
+            task_id = null,
+            name = itemCreateRequestData.name,
+            link = itemCreateRequestData.link,
+            completed = false,
+            created_at = DatetimeUtils.currentMillis(),
+            edited_at = null,
+            completed_at = null,
+        )
+
+        itemDBI.create(itemData)
+
+        return itemData
+    }
+
+    suspend fun setCompletion(
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+        completed: Boolean,
+    ): ItemData? {
+        itemDBI.setCompletion(userId, itemId, completed)
+
+        return get(userId, itemId)
+    }
+
+    suspend fun setTaskConnection(
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+        taskId: IxId<TaskData>?,
+    ): ItemData? {
+        itemDBI.setTaskConnection(userId, itemId, taskId)
+
+        return get(userId, itemId)
+    }
+
+    suspend fun update(
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+        itemUpdateRequestData: ItemData.ItemUpdateRequestData,
+    ): ItemData? {
+        itemDBI.update(userId, itemId, itemUpdateRequestData)
+
+        return get(userId, itemId)
+    }
+
+    suspend fun delete(
+        userId: IxId<UserData>,
+        itemId: IxId<ItemData>,
+    ): Boolean {
+        val deleted = itemDBI.delete(userId, itemId)
+
+        return deleted
+    }
+}
