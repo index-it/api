@@ -5,6 +5,7 @@ import app.index.data.models.tasks.TaskData
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.messaging.AndroidConfig
 import com.google.firebase.messaging.FcmOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.MulticastMessage
@@ -41,13 +42,11 @@ class FCMClient {
         val message =
             MulticastMessage.builder()
                 .addAllTokens(registrationToken)
-                .setNotification(
-                    Notification.builder()
-                        .setTitle("tr:$taskId")
-                        .setBody(taskName)
-                        .build(),
-                )
+                .putData("type", "task-reminder")
+                .putData("task-id", taskId.toString())
+                .putData("task-name", taskName)
                 .setFcmOptions(FcmOptions.withAnalyticsLabel(taskReminderAnalyticsLabel))
+                .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
                 .build()
 
         firebaseMessaging.sendEachForMulticast(message)
