@@ -1,0 +1,2 @@
+INSERT INTO users (id, email, password_hash, email_verified, created_at, creation_source)
+VALUES ('8a37dc6b-f3b3-485d-b00d-17fc7ae08752', 'index-review@gmail.com', '$2a$10$gDhGVK7KJ.1LIsHMSX7iPeVg7QJMxRJHLWONO.0s7zIrgtUJOG74i', true, CURRENT_TIMESTAMP, 'NONE');

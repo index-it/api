@@ -58,3 +58,7 @@ My go to is [this one](https://grafana.com/grafana/dashboards/4701-jvm-micromete
 
 ##### Swagger UI
 Swagger is available at [localhost:$PORT/swagger](http://localhost:8080/swagger)
+
+## App review
+email: `index-review@gmail.com`  
+password: `tr5zFHAEspHSy53A`
