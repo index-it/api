@@ -1,0 +1,1 @@
+ALTER TABLE item ALTER COLUMN id_category DROP NOT NULL;
