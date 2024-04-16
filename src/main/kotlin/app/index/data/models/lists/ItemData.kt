@@ -20,7 +20,7 @@ data class ItemData(
     @Contextual val id: IxId<ItemData>,
     @Contextual val user_id: IxId<UserData>,
     @Contextual val list_id: IxId<ListData>,
-    @Contextual val category_id: IxId<CategoryData>,
+    @Contextual val category_id: IxId<CategoryData>?,
     @Contextual val task_id: IxId<TaskData>? = null,
     val name: String,
     val completed: Boolean = false,
@@ -31,7 +31,7 @@ data class ItemData(
 ) {
     @Serializable
     data class ItemCreateRequestData(
-        @Contextual val category_id: IxId<CategoryData>,
+        @Contextual val category_id: IxId<CategoryData>?,
         val name: String,
         val link: String?
     ) : Validatable<ItemCreateRequestData> {
@@ -49,7 +49,7 @@ data class ItemData(
 
     @Serializable
     data class ItemUpdateRequestData(
-        @Contextual val category_id: IxId<CategoryData>,
+        @Contextual val category_id: IxId<CategoryData>?,
         val name: String,
         val link: String?
     ) : Validatable<ItemUpdateRequestData> {

@@ -53,7 +53,7 @@ object ItemTable : UUIDTable() {
         name = "id_category",
         foreign = CategoryTable,
         onDelete = ReferenceOption.CASCADE,
-    ).index()
+    ).index().nullable()
     val task = reference(
         name = "id_task",
         foreign = TaskTable,
@@ -103,7 +103,7 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     @Suppress("MemberVisibilityCanBePrivate")
     val listEntity by ListEntity referencedOn ItemTable.list
     @Suppress("MemberVisibilityCanBePrivate")
-    val categoryEntity by CategoryEntity referencedOn ItemTable.category
+    val categoryEntity by CategoryEntity optionalReferencedOn ItemTable.category
     @Suppress("MemberVisibilityCanBePrivate")
     val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
@@ -111,7 +111,7 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 fun ItemEntity.fromData(itemData: ItemData) {
     user = itemData.user_id.toEntityId(UsersTable)
     list = itemData.list_id.toEntityId(ListTable)
-    category = itemData.category_id.toEntityId(CategoryTable)
+    category = itemData.category_id?.toEntityId(CategoryTable)
     task = itemData.task_id?.toEntityId(TaskTable)
     name = itemData.name
     completed = itemData.completed
@@ -126,7 +126,7 @@ fun ItemEntity.toData() =
         id = id.toIxId(),
         user_id = user.toIxId(),
         list_id = list.toIxId(),
-        category_id = category.toIxId(),
+        category_id = category?.toIxId(),
         task_id = task?.toIxId(),
         name = name,
         link = link,
