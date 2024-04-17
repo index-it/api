@@ -43,9 +43,9 @@ There is a pre-made `.env` file for development located in `/env/.env.developmen
 > The database by default is `indexdevdb`
 
 #### Developer database user
-A developer account for Index can be created by running the `CreateDevUser.kt` in `/scripts/`
-email: `giuliopime@gmail.com`
-password: `Password1!`
+A developer account for Index can be created by running the `CreateDevUser.kt` in `/scripts/`:  
+email: `giuliopime@gmail.com`  
+password: `Password1!`  
 
 ### Grafana
 ##### Security
