@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   gradle: circleci/gradle@3.0.0
-  gcp-gcr: circleci/gcp-gcr@0.15.0
+  gcp-gcr: circleci/gcp-gcr@0.16.2
   slack: circleci/slack@4.12.5
 
 jobs:
