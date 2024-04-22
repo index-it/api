@@ -46,6 +46,7 @@ fun Application.configureSecurity() {
             cookie.maxAgeInSeconds = ApiConfig.sessionMaxAgeInSeconds
             cookie.secure = ApiConfig.cookieSecure
             cookie.httpOnly = true
+            cookie.extensions["SameSite"] = "None"
 
             serializer =
                 KotlinxSessionSerializer(
