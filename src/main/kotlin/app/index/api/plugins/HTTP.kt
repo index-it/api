@@ -14,11 +14,14 @@ fun Application.configureHTTP() {
     install(XForwardedHeaders)
 
     install(CORS) {
+        allowCredentials = true
+
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
+
         anyHost() // Public api
     }
 
