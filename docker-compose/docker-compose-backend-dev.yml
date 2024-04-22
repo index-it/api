@@ -1,5 +1,5 @@
 version: "3.8"
-name: "index-dev-env"
+name: "index-backend-dev-env"
 
 services:
   postgres:
