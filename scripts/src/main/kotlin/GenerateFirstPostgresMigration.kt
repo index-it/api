@@ -1,10 +1,7 @@
 import app.index.config.PostgresConfig
 import app.index.config.core.ConfigurationManager
 import app.index.config.core.ConfigurationReader
-import app.index.data.sources.db.schemas.lists.CategoryTable
-import app.index.data.sources.db.schemas.lists.ItemContentTable
-import app.index.data.sources.db.schemas.lists.ItemTable
-import app.index.data.sources.db.schemas.lists.ListTable
+import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable
 import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable
 import app.index.data.sources.db.schemas.tasks.SubTaskTable
@@ -44,6 +41,9 @@ fun main() {
             PasswordResetTable,
             EmailVerificationTable,
             ListTable,
+            ListViewerTable,
+            ListEditorTable,
+            ListInvitationTable,
             CategoryTable,
             ItemTable,
             ItemContentTable,

@@ -21,6 +21,17 @@ interface ListDBI : DBI {
         listUpdateRequestData: ListData.ListUpdateRequestData,
     ): Boolean
 
+    /**
+     * Gives user permission to either view or edit a list
+     * This already handles mutual exclusiveness between viewers and editors
+     */
+    suspend fun addPermissionToUser(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        userToAddId: IxId<UserData>,
+        editor: Boolean
+    ): Boolean
+
     suspend fun delete(
         userId: IxId<UserData>,
         listId: IxId<ListData>,

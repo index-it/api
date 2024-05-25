@@ -19,6 +19,9 @@ class ListsRoute {
         val parent: ListsRoute = ListsRoute(),
         @Contextual val list_id: IxId<ListData>,
     ) {
+        @Resource("permissions")
+        class PermissionsRoute(val parent: ListRoute)
+
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
             @Resource("{category_id}")
@@ -43,6 +46,9 @@ class ListsRoute {
             }
         }
     }
+
+    @Resource("accept-invitation")
+    class AcceptInvitation(val parent: ListsRoute = ListsRoute())
 }
 
 fun Route.listRoutes() {

@@ -22,6 +22,9 @@ class ListDao(
             name = listCreateRequestData.name,
             icon = listCreateRequestData.icon,
             color = listCreateRequestData.color,
+            public = listCreateRequestData.public,
+            viewers = emptyList(),
+            editors = emptyList(),
             created_at = DatetimeUtils.currentMillis(),
             edited_at = null,
         )
@@ -48,6 +51,21 @@ class ListDao(
         listUpdateRequestData: ListData.ListUpdateRequestData,
     ): ListData? {
         listDBI.update(userId, listId, listUpdateRequestData)
+
+        return get(userId, listId)
+    }
+
+    /**
+     * Gives user permission to either view or edit a list
+     * This already handles mutual exclusiveness between viewers and editors
+     */
+    suspend fun addPermissionToUser(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        userToAddId: IxId<UserData>,
+        editor: Boolean
+    ): ListData? {
+        listDBI.addPermissionToUser(userId, listId, userToAddId, editor)
 
         return get(userId, listId)
     }

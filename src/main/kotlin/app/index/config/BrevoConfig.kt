@@ -17,6 +17,9 @@ object BrevoConfig {
     @ConfigurationProperty("template.password.reset.success")
     var passwordResetSuccessTemplateId: Long = 3
 
+    @ConfigurationProperty("template.list.invite")
+    var listInvitationTemplateId: Long = 5
+
     @ConfigurationProperty("email.verification.success.url")
     var emailVerificationSuccessUrl: String = "https://index-it.app/email-verified"
 
@@ -28,4 +31,7 @@ object BrevoConfig {
 
     @ConfigurationProperty("reset.password.url")
     var passwordResetUrl: String = "https://index-it.app/reset-password"
+
+    @ConfigurationProperty("list.invite.url")
+    var listInviteUrl: String = "https://index-it.app/list-invite"
 }

@@ -4,6 +4,7 @@ import app.index.api.routing.web.WebhookRoute
 import app.index.core.clients.FCMClient
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.auth.PasswordResetDao
+import app.index.data.daos.list.ListInvitationDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.daos.user.FCMRegistrationTokenDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -19,6 +20,7 @@ fun Route.webhookRoute() {
     val fcmClient by inject<FCMClient>()
     val emailVerificationDao by inject<EmailVerificationDao>()
     val passwordResetDao by inject<PasswordResetDao>()
+    val listInvitationDao by inject<ListInvitationDao>()
 
     get<WebhookRoute.TaskReminderJobRoute>({
         tags = listOf("web")
@@ -73,6 +75,7 @@ fun Route.webhookRoute() {
         fcmRegistrationTokenDao.deleteExpired()
         emailVerificationDao.deleteExpired()
         passwordResetDao.deleteExpired()
+        listInvitationDao.deleteExpired()
 
         call.respond(HttpStatusCode.OK)
     }

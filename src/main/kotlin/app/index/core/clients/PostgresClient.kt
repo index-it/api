@@ -40,6 +40,7 @@ class PostgresClient {
             .load()
         try {
             flyway.info()
+//            flyway.repair()
             flyway.migrate()
             log.info { "Flyway migration has finished" }
         } catch (e: Exception) {

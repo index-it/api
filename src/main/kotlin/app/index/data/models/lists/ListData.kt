@@ -23,6 +23,9 @@ data class ListData(
     var name: String,
     var icon: String, // Single emoji at the moment
     var color: String, // Represented as #RRGGBB hex color
+    var public: Boolean,
+    val viewers: List<@Contextual IxId<UserData>>,
+    val editors: List<@Contextual IxId<UserData>>,
     val created_at: Long = DatetimeUtils.currentMillis(),
     val edited_at: Long? = null,
 ) {
@@ -31,6 +34,7 @@ data class ListData(
         var name: String,
         var icon: String,
         var color: String,
+        var public: Boolean = false,
     ) : Validatable<ListCreateRequestData> {
         override fun validate() =
             Validation {
@@ -49,6 +53,7 @@ data class ListData(
         var name: String,
         var icon: String,
         var color: String,
+        var public: Boolean = false,
     ) : Validatable<ListUpdateRequestData> {
         override fun validate() =
             Validation {
@@ -61,6 +66,13 @@ data class ListData(
                 }
             }.invoke(this)
     }
+
+
+    @Serializable
+    data class ListPermissionAddRequestData(
+        val email: String,
+        val editor: Boolean
+    )
 
     @Serializable
     data class ListTemplateResponseData(

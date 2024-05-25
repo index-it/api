@@ -156,6 +156,56 @@ class BrevoClient : IClosableComponent {
         return response.status.isSuccess()
     }
 
+    /**
+     * Sends an email to [emailTo] indicating that the user [inviterEmail] has invited him to participate in the list
+     * named [listName], either as [editor] or just viewer
+     *
+     * @param inviterEmail email of the user that sent the invitation
+     * @param listName name of the list to which the user is invited
+     * @param emailTo email of the invited user
+     * @param editor whether he has been invited as editor if true, or viewer if false
+     * @param token to authenticate to invitation acceptance
+     *
+     * @return true if the email has been sent successful, false otherwise
+     */
+    suspend fun sendListInvitationEmail(
+        inviterEmail: String,
+        listName: String,
+        emailTo: String,
+        editor: Boolean,
+        token: String,
+    ): Boolean {
+        val response: HttpResponse =
+            httpClient.post("smtp/email") {
+                setBody(
+                    BrevoOperationRequestBody(
+                        to =
+                        listOf(
+                            BrevoGenericRequestBody.To(
+                                email = emailTo,
+                            ),
+                        ),
+                        templateId = BrevoConfig.listInvitationTemplateId,
+                        params =
+                        BrevoOperationRequestBody.ListInviteParams(
+                            url = "${BrevoConfig.listInviteUrl}?token=$token",
+                            inviter = inviterEmail,
+                            list_name = listName,
+                            role = if (editor) "editor" else "viewer"
+                        ),
+                    ),
+                )
+            }
+
+        if (response.status.isSuccess()) {
+            log.debug { "Sent list ($listName) invitation to $emailTo" }
+        } else {
+            log.error { "Failed to send list invitation email\nResponse: $response" }
+        }
+
+        return response.status.isSuccess()
+    }
+
     override suspend fun close() {
         httpClient.close()
     }

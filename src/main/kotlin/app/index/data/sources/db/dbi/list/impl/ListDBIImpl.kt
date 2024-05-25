@@ -5,16 +5,11 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.ListData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.list.ListDBI
-import app.index.data.sources.db.schemas.lists.ListEntity
-import app.index.data.sources.db.schemas.lists.ListTable
-import app.index.data.sources.db.schemas.lists.fromData
-import app.index.data.sources.db.schemas.lists.toData
+import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -61,8 +56,41 @@ class ListDBIImpl : ListDBI {
                 it[name] = listUpdateRequestData.name
                 it[emoji] = listUpdateRequestData.icon
                 it[color] = listUpdateRequestData.color
+                it[public] = listUpdateRequestData.public
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
             } > 0
+        }
+
+    override suspend fun addPermissionToUser(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        userToAddId: IxId<UserData>,
+        editor: Boolean
+    ): Boolean =
+        dbQuery {
+            val exists = ListTable.select { userAndListFilter(userId, listId) }.limit(1).firstOrNull() != null
+
+            if (exists) {
+                if (editor) {
+                    ListViewerTable.deleteWhere {
+                        (user eq userToAddId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+                    }
+                    ListEditorTable.upsert {
+                        it[user] = userToAddId.toEntityId(UsersTable)
+                        it[list] = listId.toEntityId(ListTable)
+                    }
+                } else {
+                    ListEditorTable.deleteWhere {
+                        (user eq userToAddId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+                    }
+                    ListViewerTable.upsert {
+                        it[user] = userToAddId.toEntityId(UsersTable)
+                        it[list] = listId.toEntityId(ListTable)
+                    }
+                }
+            }
+
+            return@dbQuery exists
         }
 
     override suspend fun delete(
