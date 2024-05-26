@@ -46,6 +46,15 @@ class ListDBIImpl : ListDBI {
                 ?.toData()
         }
 
+    override suspend fun getByIdOnly(
+        listId: IxId<ListData>,
+    ): ListData? =
+        dbQuery {
+            ListEntity
+                .findById(listId.id)
+                ?.toData()
+        }
+
     override suspend fun update(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
@@ -87,6 +96,26 @@ class ListDBIImpl : ListDBI {
                         it[user] = userToAddId.toEntityId(UsersTable)
                         it[list] = listId.toEntityId(ListTable)
                     }
+                }
+            }
+
+            return@dbQuery exists
+        }
+
+    override suspend fun removePermissionFromUser(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        userToRemoveId: IxId<UserData>
+    ): Boolean =
+        dbQuery {
+            val exists = ListTable.select { userAndListFilter(userId, listId) }.limit(1).firstOrNull() != null
+
+            if (exists) {
+                ListViewerTable.deleteWhere {
+                    (user eq userToRemoveId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+                }
+                ListEditorTable.deleteWhere {
+                    (user eq userToRemoveId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
                 }
             }
 

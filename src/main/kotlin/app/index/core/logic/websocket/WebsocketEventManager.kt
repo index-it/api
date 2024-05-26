@@ -75,6 +75,7 @@ class WebsocketEventManager(
         val authSession = context.call.principal<UserAuthSessionData>()
             ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
 
+        // TODO: Accept more user ids as parameters for shared events such as shared lists
         val websocketEventData = WebsocketEventData(
             fromSessionId = authSession.id,
             fromUserId = authSession.userId,

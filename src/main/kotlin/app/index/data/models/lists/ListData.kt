@@ -75,6 +75,11 @@ data class ListData(
     )
 
     @Serializable
+    data class ListPermissionRemoveRequestData(
+        @Contextual val user_id: IxId<UserData>,
+    )
+
+    @Serializable
     data class ListTemplateResponseData(
         val name: String,
         val color: String,

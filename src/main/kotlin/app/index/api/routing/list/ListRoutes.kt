@@ -48,10 +48,12 @@ class ListsRoute {
     }
 
     @Resource("accept-invitation")
-    class AcceptInvitation(val parent: ListsRoute = ListsRoute())
+    class AcceptInvitation(val parent: ListsRoute = ListsRoute(), val token: String)
 }
 
 fun Route.listRoutes() {
+    listPermissionRoute()
+
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         listsRoute()
         listRoute()

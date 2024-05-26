@@ -15,6 +15,11 @@ interface ListDBI : DBI {
         listId: IxId<ListData>,
     ): ListData?
 
+
+    suspend fun getByIdOnly(
+        listId: IxId<ListData>,
+    ): ListData?
+
     suspend fun update(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
@@ -30,6 +35,15 @@ interface ListDBI : DBI {
         listId: IxId<ListData>,
         userToAddId: IxId<UserData>,
         editor: Boolean
+    ): Boolean
+
+    /**
+     * Removes a user access to a list completely (both viewing and editing)
+     */
+    suspend fun removePermissionFromUser(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        userToRemoveId: IxId<UserData>
     ): Boolean
 
     suspend fun delete(

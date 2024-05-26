@@ -45,6 +45,12 @@ class ListDao(
         return listDBI.get(userId, listId)
     }
 
+    suspend fun getByIdOnly(
+        listId: IxId<ListData>,
+    ): ListData? {
+        return listDBI.getByIdOnly(listId)
+    }
+
     suspend fun update(
         userId: IxId<UserData>,
         listId: IxId<ListData>,
@@ -66,6 +72,19 @@ class ListDao(
         editor: Boolean
     ): ListData? {
         listDBI.addPermissionToUser(userId, listId, userToAddId, editor)
+
+        return get(userId, listId)
+    }
+
+    /**
+     * Removes a user access to a list completely (both viewing and editing)
+     */
+    suspend fun removePermissionFromUser(
+        userId: IxId<UserData>,
+        listId: IxId<ListData>,
+        userToRemoveId: IxId<UserData>,
+    ): ListData? {
+        listDBI.removePermissionFromUser(userId, listId, userToRemoveId)
 
         return get(userId, listId)
     }
