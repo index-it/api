@@ -160,7 +160,7 @@ fun Route.itemRoute() {
                 content = WebsocketEventContent.ItemDeleteEventContent(it.item_id)
             )
 
-            // TODO: what to do with all the connected tasks?
+            // TODO: what to do with all the connected tasks for websockets ?
         }
     }
 }

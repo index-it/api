@@ -5,9 +5,12 @@ import app.index.api.routing.user.routes.fcmRoutes
 import app.index.api.routing.user.routes.logoutRoutes
 import app.index.api.routing.user.routes.meRoutes
 import app.index.api.routing.user.routes.passwordOperationRoutes
+import app.index.core.logic.typedId.impl.IxId
+import app.index.data.models.user.UserData
 import io.ktor.resources.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.Contextual
 
 @Resource("/logout")
 class LogoutRoute
@@ -18,7 +21,11 @@ class PasswordForgottenRoute(val email: String)
 @Resource("/reset-password")
 class ResetPasswordRoute(val token: String)
 
-// TODO: Route to access user profile for shared lists
+@Resource("/users")
+class UsersRoute {
+    @Resource("{user_id}")
+    class UserRoute(@Contextual val user_id: IxId<UserData>)
+}
 
 @Resource("/me")
 class MeRoute {

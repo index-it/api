@@ -16,6 +16,7 @@ import app.index.data.daos.user.UserDao
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -26,7 +27,7 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import java.util.*
 
-fun Route.listPermissionRoute() {
+fun Route.listAccessRoute() {
     val listDao by inject<ListDao>()
     val userDao by inject<UserDao>()
     val listInvitationUseCase by inject<ListInvitationUseCase>()
@@ -36,8 +37,8 @@ fun Route.listPermissionRoute() {
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
 
-        post<ListsRoute.ListRoute.PermissionsRoute>({
-            tags = listOf("lists")
+        post<ListsRoute.ListRoute.AccessRoute>({
+            tags = listOf("lists", "lists-access")
             operationId = "add-user"
             summary = "invites a user to have access to a list or changes his permissions if he was already added"
             request {
@@ -143,8 +144,8 @@ fun Route.listPermissionRoute() {
             }
         }
 
-        delete<ListsRoute.ListRoute.PermissionsRoute>({
-            tags = listOf("lists")
+        delete<ListsRoute.ListRoute.AccessRoute>({
+            tags = listOf("lists", "lists-access")
             operationId = "remove-user"
             summary = "removes access to a user from the list"
             request {
@@ -201,7 +202,7 @@ fun Route.listPermissionRoute() {
     }
 
     post<ListsRoute.AcceptInvitation>({
-        tags = listOf("list")
+        tags = listOf("list", "lists-access")
         operationId = "accept-list-invitation"
         summary = "accepts a list invitation via a token"
         description = "a user can accept a list invitation via a token that is sent via email when he is invited"
@@ -263,5 +264,49 @@ fun Route.listPermissionRoute() {
             // user already has permissions
             call.respond(list)
         }
+    }
+
+    get<ListsRoute.ListRoute.AccessRoute.LeaveRoute>({
+        tags = listOf("lists", "lists-access")
+        operationId = "leave-list"
+        summary = "removes the user from the viewers or editors of the list"
+        description = "the user will be removed from the viewers or editors of the list"
+        request {
+            pathParameter<String>("list_id") {
+                required = true
+                description = "the id of the list"
+            }
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "list deleted"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
+            HttpStatusCode.MethodNotAllowed to {
+                description = "the owner cannot leave the list"
+            }
+        }
+    }) {
+        val userId = userIdFromSessionOrThrow()
+        val listId = it.parent.parent.list_id
+        val list = listDao.get(listId)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        if (list.user_id == userId) {
+            return@get call.respond(HttpStatusCode.MethodNotAllowed, "you cannot leave the list as you are the owner, try deleting it instead")
+        }
+
+        val updatedList = listDao.removePermissionFromUser(listId, userId)
+            ?: return@get call.respond(HttpStatusCode.OK)
+
+        call.respond(HttpStatusCode.OK)
+
+        emitWebsocketEvent(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.LIST_UPDATED,
+            content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList)
+        )
     }
 }

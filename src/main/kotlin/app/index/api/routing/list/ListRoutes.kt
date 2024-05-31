@@ -19,10 +19,11 @@ class ListsRoute {
         val parent: ListsRoute = ListsRoute(),
         @Contextual val list_id: IxId<ListData>,
     ) {
-        @Resource("permissions")
-        class PermissionsRoute(val parent: ListRoute)
-
-        // TODO: Route to leave a list
+        @Resource("access")
+        class AccessRoute(val parent: ListRoute) {
+            @Resource("leave")
+            class LeaveRoute(val parent: AccessRoute)
+        }
 
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
@@ -54,7 +55,7 @@ class ListsRoute {
 }
 
 fun Route.listRoutes() {
-    listPermissionRoute()
+    listAccessRoute()
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         listsRoute()
