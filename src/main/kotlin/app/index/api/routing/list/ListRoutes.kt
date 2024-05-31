@@ -22,6 +22,8 @@ class ListsRoute {
         @Resource("permissions")
         class PermissionsRoute(val parent: ListRoute)
 
+        // TODO: Route to leave a list
+
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
             @Resource("{category_id}")

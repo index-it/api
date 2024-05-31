@@ -32,7 +32,7 @@ fun Route.listsRoute() {
             }
         }
     }) {
-        call.respond(listDao.getAll(userIdFromSessionOrThrow()))
+        call.respond(listDao.getListsAccessibleByUser(userIdFromSessionOrThrow()))
     }
 
     post<ListsRoute>({

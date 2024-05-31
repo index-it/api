@@ -11,7 +11,6 @@ import app.index.data.sources.db.schemas.lists.ItemTable.link
 import app.index.data.sources.db.schemas.lists.ItemTable.list
 import app.index.data.sources.db.schemas.lists.ItemTable.name
 import app.index.data.sources.db.schemas.lists.ItemTable.task
-import app.index.data.sources.db.schemas.tasks.TaskEntity
 import app.index.data.sources.db.schemas.tasks.TaskTable
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
@@ -54,6 +53,7 @@ object ItemTable : UUIDTable() {
         foreign = CategoryTable,
         onDelete = ReferenceOption.CASCADE,
     ).index().nullable()
+    @Deprecated("Now multiple tasks can be connected to the same item because of lists sharing")
     val task = reference(
         name = "id_task",
         foreign = TaskTable,
@@ -82,7 +82,6 @@ object ItemTable : UUIDTable() {
  * @property userEntity
  * @property listEntity
  * @property categoryEntity
- * @property taskEntity
  */
 class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ItemEntity>(ItemTable)
@@ -90,7 +89,6 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var user by ItemTable.user
     var list by ItemTable.list
     var category by ItemTable.category
-    var task by ItemTable.task
     var name by ItemTable.name
     var completed by ItemTable.completed
     var link by ItemTable.link
@@ -104,15 +102,12 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val listEntity by ListEntity referencedOn ItemTable.list
     @Suppress("MemberVisibilityCanBePrivate")
     val categoryEntity by CategoryEntity optionalReferencedOn ItemTable.category
-    @Suppress("MemberVisibilityCanBePrivate")
-    val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
 
 fun ItemEntity.fromData(itemData: ItemData) {
     user = itemData.user_id.toEntityId(UsersTable)
     list = itemData.list_id.toEntityId(ListTable)
     category = itemData.category_id?.toEntityId(CategoryTable)
-    task = itemData.task_id?.toEntityId(TaskTable)
     name = itemData.name
     completed = itemData.completed
     link = itemData.link
@@ -127,7 +122,6 @@ fun ItemEntity.toData() =
         user_id = user.toIxId(),
         list_id = list.toIxId(),
         category_id = category?.toIxId(),
-        task_id = task?.toIxId(),
         name = name,
         link = link,
         completed = completed,

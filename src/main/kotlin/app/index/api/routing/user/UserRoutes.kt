@@ -18,6 +18,8 @@ class PasswordForgottenRoute(val email: String)
 @Resource("/reset-password")
 class ResetPasswordRoute(val token: String)
 
+// TODO: Route to access user profile for shared lists
+
 @Resource("/me")
 class MeRoute {
     @Resource("password")

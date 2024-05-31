@@ -4,11 +4,13 @@ import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
 import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -42,12 +44,21 @@ fun Route.itemRoute() {
                 description = "item data"
                 body<ItemData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
-        val item = itemDao.get(userIdFromSessionOrThrow(), it.item_id)
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        ) ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        val item = itemDao.get(it.item_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -80,14 +91,23 @@ fun Route.itemRoute() {
                 description = "item data"
                 body<ItemData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
+
         val updatedItem = call.receive<ItemData.ItemUpdateRequestData>()
 
-        val newItem = itemDao.update(userIdFromSessionOrThrow(), it.item_id, updatedItem)
+        val newItem = itemDao.update(it.item_id, updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newItem)
@@ -118,13 +138,18 @@ fun Route.itemRoute() {
             HttpStatusCode.OK to {
                 description = "item deleted"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
-        val userId = userIdFromSessionOrThrow()
-        val item = itemDao.get(userId, it.item_id)
-            ?: return@delete call.respond(HttpStatusCode.OK)
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@delete call.respond(HttpStatusCode.NotFound)
 
-        val deleted = itemDao.delete(userId, it.item_id)
+        val deleted = itemDao.delete(it.item_id)
 
         call.respond(HttpStatusCode.OK)
 
@@ -135,13 +160,7 @@ fun Route.itemRoute() {
                 content = WebsocketEventContent.ItemDeleteEventContent(it.item_id)
             )
 
-            if (item.task_id != null) {
-                emitWebsocketEvent(
-                    websocketEventManager = websocketEventManager,
-                    type = WebsocketEventType.TASK_DELETED,
-                    content = WebsocketEventContent.TaskDeleteEventContent(item.task_id)
-                )
-            }
+            // TODO: what to do with all the connected tasks?
         }
     }
 }

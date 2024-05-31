@@ -1,6 +1,13 @@
 package app.index.data.sources.db.schemas.lists
 
 import app.index.data.models.lists.ListInvitationData
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.created_at
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.editor
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.email
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.expires_at
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.id
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.list
+import app.index.data.sources.db.schemas.lists.ListInvitationTable.token
 import app.index.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass

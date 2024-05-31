@@ -3,6 +3,7 @@ package app.index.data.daos.task
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
+import app.index.data.models.lists.ItemData
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.task.TaskDBI
@@ -83,6 +84,13 @@ class TaskDao(
         taskId: IxId<TaskData>,
     ): TaskData? {
         return taskDBI.get(userId, taskId)
+    }
+
+    suspend fun setCompletionOfAllTasksConnectedToItem(
+        itemId: IxId<ItemData>,
+        completed: Boolean
+    ): List<TaskData> {
+        return taskDBI.setCompletionOfAllTasksConnectedToItem(itemId, completed)
     }
 
     suspend fun setCompletion(

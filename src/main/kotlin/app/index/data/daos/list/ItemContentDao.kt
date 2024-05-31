@@ -17,7 +17,7 @@ class ItemContentDao(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,
     ): ItemContentData? {
-        if (!itemDao.exists(userId, itemId)) {
+        if (!itemDao.exists(itemId)) {
             return null
         }
 
@@ -33,32 +33,25 @@ class ItemContentDao(
         return itemContentData
     }
 
-    suspend fun get(
-        userId: IxId<UserData>,
-        itemId: IxId<ItemData>,
-    ): ItemContentData? {
-        return itemContentDBI.get(userId, itemId)
+    suspend fun get(itemId: IxId<ItemData>): ItemContentData? {
+        return itemContentDBI.get(itemId)
     }
 
     suspend fun getOrCreate(
         userId: IxId<UserData>,
         itemId: IxId<ItemData>,
-    ) = get(userId, itemId) ?: create(userId, itemId)
+    ) = get(itemId) ?: create(userId, itemId)
 
     suspend fun update(
-        userId: IxId<UserData>,
         itemId: IxId<ItemData>,
         itemContentCreateOrUpdateRequestData: ItemContentData.ItemContentCreateOrUpdateRequestData,
     ): ItemContentData? {
-        itemContentDBI.update(userId, itemId, itemContentCreateOrUpdateRequestData)
+        itemContentDBI.update(itemId, itemContentCreateOrUpdateRequestData)
 
-        return get(userId, itemId)
+        return get(itemId)
     }
 
-    suspend fun delete(
-        userId: IxId<UserData>,
-        itemId: IxId<ItemData>,
-    ) {
-        itemContentDBI.delete(userId, itemId)
+    suspend fun delete(itemId: IxId<ItemData>) {
+        itemContentDBI.delete(itemId)
     }
 }

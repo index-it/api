@@ -5,6 +5,7 @@ import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.impl.IxId
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.usecases.ListInvitationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -12,6 +13,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ListDao
 import app.index.data.daos.list.ListInvitationDao
 import app.index.data.daos.user.UserDao
+import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
@@ -68,6 +70,9 @@ fun Route.listPermissionRoute() {
                 HttpStatusCode.BadRequest to {
                     description = "you cannot invite yourself to a list"
                 }
+                HttpStatusCode.Unauthorized to {
+                    description = "not authorized to perform this action on the list"
+                }
                 HttpStatusCode.NotFound to {
                     description = "list not found"
                 }
@@ -85,8 +90,11 @@ fun Route.listPermissionRoute() {
                 return@post call.respond(HttpStatusCode.BadRequest, "you cannot invite yourself to a list")
             }
 
-            val list = listDao.get(userId, listId)
-                ?: return@post call.respond(HttpStatusCode.NotFound)
+            val list = ListAuthorizationUseCase.getListIfAuthorized(
+                listId = listId,
+                userId = userIdFromSessionOrThrow(),
+                authorizationLevel = ListAuthorizationLevel.OWNER
+            ) ?: return@post call.respond(HttpStatusCode.NotFound)
 
             // if the user is null it means it doesn't have an index account, so he'll need to create one after accepting the invitation
             val addAsViewer =
@@ -102,9 +110,9 @@ fun Route.listPermissionRoute() {
             } else if (hasAlreadyAcceptedInvitation) {
                 // user has already accepted the invitation, just update the permission
                 val updatedList = if (permissionInfo.editor) {
-                    listDao.addPermissionToUser(userId, listId, invitedUser!!.id, true)
+                    listDao.addPermissionToUser(listId, invitedUser!!.id, true)
                 } else {
-                    listDao.addPermissionToUser(userId, listId, invitedUser!!.id, false)
+                    listDao.addPermissionToUser(listId, invitedUser!!.id, false)
                 }
 
                 if (updatedList == null) {
@@ -161,17 +169,25 @@ fun Route.listPermissionRoute() {
                         description = "the updated list"
                     }
                 }
+                HttpStatusCode.Unauthorized to {
+                    description = "not authorized to perform this action on the list"
+                }
                 HttpStatusCode.NotFound to {
                     description = "list not found"
                 }
             }
         }) {
-            val userId = userIdFromSessionOrThrow()
             val listId = it.parent.list_id
+
+            ListAuthorizationUseCase.getListIfAuthorized(
+                listId = listId,
+                userId = userIdFromSessionOrThrow(),
+                authorizationLevel = ListAuthorizationLevel.OWNER
+            ) ?: return@delete call.respond(HttpStatusCode.NotFound)
 
             val userToRemoveId = call.receive<ListData.ListPermissionRemoveRequestData>().user_id
 
-            val updatedList = listDao.removePermissionFromUser(userId, listId, userToRemoveId)
+            val updatedList = listDao.removePermissionFromUser(listId, userToRemoveId)
                 ?: return@delete call.respond(HttpStatusCode.NotFound)
 
             emitWebsocketEvent(
@@ -219,7 +235,7 @@ fun Route.listPermissionRoute() {
         val invitedUser = userDao.getFromEmail(listInvitationData.email)
             ?: return@post call.respond(HttpStatusCode.MethodNotAllowed, "you need an account to accept the invitation")
 
-        val list = listDao.getByIdOnly(listInvitationData.listId)
+        val list = listDao.get(listInvitationData.listId)
             ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val addAsViewer = !listInvitationData.editor && list.viewers.none { user -> user == invitedUser.id }
@@ -227,9 +243,9 @@ fun Route.listPermissionRoute() {
 
         if (addAsViewer || addAsEditor) {
             val updatedList = if (listInvitationData.editor) {
-                listDao.addPermissionToUser(list.user_id, list.id, invitedUser.id, true)
+                listDao.addPermissionToUser(list.id, invitedUser.id, true)
             } else {
-                listDao.addPermissionToUser(list.user_id, list.id, invitedUser.id, false)
+                listDao.addPermissionToUser(list.id, invitedUser.id, false)
             }
 
             if (updatedList == null) {

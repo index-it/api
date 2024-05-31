@@ -1,6 +1,5 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.plugins.authSessionData
 import app.index.api.plugins.authSessionDataOrThrow
 import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow

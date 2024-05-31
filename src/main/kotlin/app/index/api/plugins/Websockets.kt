@@ -2,14 +2,13 @@ package app.index.api.plugins
 
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import app.index.core.logic.websocket.WebsocketEventManager
-import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.core.logic.websocket.event.WebsocketEventContent
+import app.index.core.logic.websocket.event.WebsocketEventType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import java.time.Duration
 

@@ -4,23 +4,19 @@ import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ListData
-import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.list.CategoryDBI
 import app.index.data.sources.db.schemas.lists.*
-import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class CategoryDBIImpl : CategoryDBI {
-    private fun userAndCategoryFilter(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ) = Op.build { (CategoryTable.id eq categoryId.toEntityId(CategoryTable)) and (CategoryTable.user eq userId.toEntityId(UsersTable)) }
+    private fun categoryFilter(categoryId: IxId<CategoryData>) = Op.build {
+        CategoryTable.id eq categoryId.toEntityId(CategoryTable)
+    }
 
     override suspend fun create(categoryData: CategoryData) {
         dbQuery {
@@ -30,46 +26,36 @@ class CategoryDBIImpl : CategoryDBI {
         }
     }
 
-    override suspend fun get(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ): CategoryData? =
+    override suspend fun get(categoryId: IxId<CategoryData>): CategoryData? =
         dbQuery {
-            CategoryEntity.find { userAndCategoryFilter(userId, categoryId) }
+            CategoryEntity.find { categoryFilter(categoryId) }
                 .limit(1)
                 .firstOrNull()
                 ?.toData()
         }
 
-    override suspend fun getOfList(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): List<CategoryData> =
+    override suspend fun getOfList(listId: IxId<ListData>): List<CategoryData> =
         dbQuery {
             CategoryEntity
                 .find {
-                    (CategoryTable.list eq listId.toEntityId(ListTable)) and (CategoryTable.user eq userId.toEntityId(UsersTable))
+                    CategoryTable.list eq listId.toEntityId(ListTable)
                 }
                 .map { it.toData() }
         }
 
     override suspend fun update(
-        userId: IxId<UserData>,
         categoryId: IxId<CategoryData>,
         categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
     ): Boolean =
         dbQuery {
-            CategoryTable.update({ userAndCategoryFilter(userId, categoryId) }) {
+            CategoryTable.update({ categoryFilter(categoryId) }) {
                 it[name] = categoryUpdateRequestData.name
                 it[color] = categoryUpdateRequestData.color
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
             } > 0
         }
 
-    override suspend fun delete(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ): Boolean = dbQuery {
-        CategoryTable.deleteWhere { userAndCategoryFilter(userId, categoryId) } > 0
+    override suspend fun delete(categoryId: IxId<CategoryData>): Boolean = dbQuery {
+        CategoryTable.deleteWhere { categoryFilter(categoryId) } > 0
     }
 }

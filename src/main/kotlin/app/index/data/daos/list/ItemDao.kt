@@ -5,7 +5,6 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
-import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.list.ItemDBI
 import org.koin.core.annotation.Single
@@ -14,39 +13,24 @@ import org.koin.core.annotation.Single
 class ItemDao(
     private val itemDBI: ItemDBI,
 ) {
-    suspend fun exists(
-        userId: IxId<UserData>,
-        itemId: IxId<ItemData>,
-    ): Boolean {
-        return itemDBI.exists(userId, itemId)
+    suspend fun exists(itemId: IxId<ItemData>): Boolean {
+        return itemDBI.exists(itemId)
     }
 
-    suspend fun getAll(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): List<ItemData> {
-        return itemDBI.getOfList(userId, listId)
+    suspend fun getAll(listId: IxId<ListData>): List<ItemData> {
+        return itemDBI.getOfList(listId)
     }
 
-    suspend fun getAllUncompleted(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): List<ItemData> {
-        return itemDBI.getUncompletedOfList(userId, listId)
+    suspend fun getAllUncompleted(listId: IxId<ListData>): List<ItemData> {
+        return itemDBI.getUncompletedOfList(listId)
     }
 
-    suspend fun getAllCompleted(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): List<ItemData> {
-        return itemDBI.getCompletedOfList(userId, listId)
+    suspend fun getAllCompleted(listId: IxId<ListData>): List<ItemData> {
+        return itemDBI.getCompletedOfList(listId)
     }
 
-    suspend fun get(
-        userId: IxId<UserData>,
-        itemId: IxId<ItemData>,
-    ): ItemData? {
-        return itemDBI.get(userId, itemId)
+    suspend fun get(itemId: IxId<ItemData>): ItemData? {
+        return itemDBI.get(itemId)
     }
 
     suspend fun create(
@@ -59,7 +43,6 @@ class ItemDao(
             user_id = userId,
             list_id = listId,
             category_id = itemCreateRequestData.category_id,
-            task_id = null,
             name = itemCreateRequestData.name,
             link = itemCreateRequestData.link,
             completed = false,
@@ -74,40 +57,25 @@ class ItemDao(
     }
 
     suspend fun setCompletion(
-        userId: IxId<UserData>,
         itemId: IxId<ItemData>,
         completed: Boolean,
     ): ItemData? {
-        itemDBI.setCompletion(userId, itemId, completed)
+        itemDBI.setCompletion(itemId, completed)
 
-        return get(userId, itemId)
-    }
-
-    suspend fun setTaskConnection(
-        userId: IxId<UserData>,
-        itemId: IxId<ItemData>,
-        taskId: IxId<TaskData>?,
-    ): ItemData? {
-        itemDBI.setTaskConnection(userId, itemId, taskId)
-
-        return get(userId, itemId)
+        return get(itemId)
     }
 
     suspend fun update(
-        userId: IxId<UserData>,
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
     ): ItemData? {
-        itemDBI.update(userId, itemId, itemUpdateRequestData)
+        itemDBI.update(itemId, itemUpdateRequestData)
 
-        return get(userId, itemId)
+        return get(itemId)
     }
 
-    suspend fun delete(
-        userId: IxId<UserData>,
-        itemId: IxId<ItemData>,
-    ): Boolean {
-        val deleted = itemDBI.delete(userId, itemId)
+    suspend fun delete(itemId: IxId<ItemData>): Boolean {
+        val deleted = itemDBI.delete(itemId)
 
         return deleted
     }

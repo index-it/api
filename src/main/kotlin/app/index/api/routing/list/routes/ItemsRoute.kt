@@ -4,11 +4,13 @@ import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
 import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -41,14 +43,21 @@ fun Route.itemsRoute() {
                 description = "list items"
                 body<List<ItemData>>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
-        val userId = userIdFromSessionOrThrow()
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        ) ?: return@get call.respond(HttpStatusCode.NotFound)
 
         val items = when (it.completed) {
-            true -> itemDao.getAllCompleted(userId, it.parent.list_id)
-            false -> itemDao.getAllUncompleted(userId, it.parent.list_id)
-            null -> itemDao.getAll(userId, it.parent.list_id)
+            true -> itemDao.getAllCompleted(it.parent.list_id)
+            false -> itemDao.getAllUncompleted(it.parent.list_id)
+            null -> itemDao.getAll(it.parent.list_id)
         }
 
         call.respond(items)
@@ -74,11 +83,22 @@ fun Route.itemsRoute() {
                 description = "item created"
                 body<ItemData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
+        val userId = userIdFromSessionOrThrow()
+
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.list_id,
+            userId = userId,
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@post call.respond(HttpStatusCode.NotFound)
+
         val newItem = call.receive<ItemData.ItemCreateRequestData>()
 
-        val item = itemDao.create(userIdFromSessionOrThrow(), it.parent.list_id, newItem)
+        val item = itemDao.create(userId, it.parent.list_id, newItem)
 
         call.respond(item)
 

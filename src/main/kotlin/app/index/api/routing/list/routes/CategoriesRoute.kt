@@ -3,11 +3,13 @@ package app.index.api.routing.list.routes
 import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.CategoryDao
 import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -36,9 +38,18 @@ fun Route.categoriesRoute() {
                 description = "categories gotten"
                 body<List<CategoryData>>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
-        val categories = categoryDao.getAll(userIdFromSessionOrThrow(), it.parent.list_id)
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        ) ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        val categories = categoryDao.getAll(it.parent.list_id)
 
         call.respond(categories)
     }
@@ -63,8 +74,17 @@ fun Route.categoriesRoute() {
                 description = "category created"
                 body<CategoryData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@post call.respond(HttpStatusCode.NotFound)
+
         val newCategory = call.receive<CategoryData.CategoryCreateRequestData>()
 
         val category = categoryDao.create(userIdFromSessionOrThrow(), it.parent.list_id, newCategory)

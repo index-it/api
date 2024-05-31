@@ -7,9 +7,7 @@ import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
-import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -25,8 +23,6 @@ import org.koin.ktor.ext.inject
 
 fun Route.taskRoute() {
     val taskDao by inject<TaskDao>()
-    val taskReminderJobDao by inject<TaskReminderJobDao>()
-    val itemDao by inject<ItemDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<TasksRoute.TaskRoute>({
@@ -109,41 +105,12 @@ fun Route.taskRoute() {
         val updateData = call.receive<TaskData.TaskUpdateRequestData>()
         val userId = userIdFromSessionOrThrow()
         val taskId = it.task_id
-        val newItemIdToConnect = updateData.item_id
 
         val task = taskDao.get(userId, it.task_id)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         if (task.item_id != null && updateData.rrule != null) {
             return@put call.respond(HttpStatusCode.MethodNotAllowed)
-        }
-
-        if (task.item_id != newItemIdToConnect) {
-            // un-connects the old item if existing
-            if (task.item_id != null) {
-                itemDao.setTaskConnection(userId, task.item_id, null)
-                    ?.also { updatedOriginalConnectedItem ->
-                        emitWebsocketEvent(
-                            websocketEventManager = websocketEventManager,
-                            type = WebsocketEventType.ITEM_UPDATED,
-                            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedOriginalConnectedItem),
-                            includeCurrentSession = true
-                        )
-                    }
-            }
-
-            // connects the new item if required
-            if (newItemIdToConnect != null) {
-                val updatedNewConnectedItem = itemDao.setTaskConnection(userId, newItemIdToConnect, taskId)
-                    ?: return@put call.respond(HttpStatusCode.NotFound)
-
-                emitWebsocketEvent(
-                    websocketEventManager = websocketEventManager,
-                    type = WebsocketEventType.ITEM_UPDATED,
-                    content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedNewConnectedItem),
-                    includeCurrentSession = true
-                )
-            }
         }
 
         val updatedTask = taskDao.update(userId, taskId, updateData)
@@ -183,18 +150,16 @@ fun Route.taskRoute() {
         val userId = userIdFromSessionOrThrow()
         val task = taskDao.get(userId, it.task_id)
 
-        if (!it.all) {
-            task?.let { task ->
-                TaskUseCase.createNextOccurrence(task)
-                    ?.also { nextOccurrenceTask ->
-                        emitWebsocketEvent(
-                            websocketEventManager = websocketEventManager,
-                            type = WebsocketEventType.TASK_CREATED,
-                            content = WebsocketEventContent.TaskCreateOrUpdateEventContent(nextOccurrenceTask),
-                            includeCurrentSession = true
-                        )
-                    }
-            }
+        if (!it.all && task !== null) {
+            TaskUseCase.createNextOccurrence(task)
+                ?.also { nextOccurrenceTask ->
+                    emitWebsocketEvent(
+                        websocketEventManager = websocketEventManager,
+                        type = WebsocketEventType.TASK_CREATED,
+                        content = WebsocketEventContent.TaskCreateOrUpdateEventContent(nextOccurrenceTask),
+                        includeCurrentSession = true
+                    )
+                }
         }
 
         val deleted = taskDao.delete(userId, it.task_id)
@@ -207,14 +172,6 @@ fun Route.taskRoute() {
                 type = WebsocketEventType.TASK_DELETED,
                 content = WebsocketEventContent.TaskDeleteEventContent(it.task_id)
             )
-
-            if (task?.item_id != null) {
-                emitWebsocketEvent(
-                    websocketEventManager = websocketEventManager,
-                    type = WebsocketEventType.ITEM_DELETED,
-                    content = WebsocketEventContent.ItemDeleteEventContent(task.item_id)
-                )
-            }
         }
     }
 }

@@ -3,6 +3,8 @@ package app.index.api.routing.task.routes
 import app.index.api.plugins.emitWebsocketEvent
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
+import app.index.core.exceptions.AuthorizationException
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -10,6 +12,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
+import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.tasks.TaskData
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
@@ -57,18 +60,6 @@ fun Route.taskCompletionRoute() {
         val updatedTask = taskDao.setCompletion(userId, it.parent.task_id, it.completed)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (updatedTask.item_id != null) {
-            itemDao.setCompletion(userId, updatedTask.item_id, it.completed)
-                ?.also { updatedConnectedItem ->
-                    emitWebsocketEvent(
-                        websocketEventManager = websocketEventManager,
-                        type = WebsocketEventType.ITEM_UPDATED,
-                        content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedConnectedItem),
-                        includeCurrentSession = true
-                    )
-                }
-        }
-
         if (it.completed) {
             taskReminderJobDao.deleteAllOfTask(updatedTask.id)
 
@@ -92,5 +83,32 @@ fun Route.taskCompletionRoute() {
             type = WebsocketEventType.TASK_UPDATED,
             content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updatedTask)
         )
+
+        // update completion of connected item if user has at least editor permissions in its list
+        if (updatedTask.item_id != null) {
+            val item = itemDao.get(updatedTask.item_id)
+
+            if (item !== null) {
+                try {
+                    ListAuthorizationUseCase.getListIfAuthorized(
+                        listId = item.list_id,
+                        userId = userIdFromSessionOrThrow(),
+                        authorizationLevel = ListAuthorizationLevel.EDITOR
+                    )
+
+                    itemDao.setCompletion(updatedTask.item_id, it.completed)
+                        ?.also { updatedConnectedItem ->
+                            emitWebsocketEvent(
+                                websocketEventManager = websocketEventManager,
+                                type = WebsocketEventType.ITEM_UPDATED,
+                                content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedConnectedItem),
+                                includeCurrentSession = true
+                            )
+                        }
+                } catch (e: AuthorizationException) {
+                    // Do not update the item completion if the user is not at least an editor of the list
+                }
+            }
+        }
     }
 }

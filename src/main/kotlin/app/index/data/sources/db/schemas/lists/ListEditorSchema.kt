@@ -1,5 +1,8 @@
 package app.index.data.sources.db.schemas.lists
 
+import app.index.data.sources.db.schemas.lists.ListEditorTable.id
+import app.index.data.sources.db.schemas.lists.ListEditorTable.list
+import app.index.data.sources.db.schemas.lists.ListEditorTable.user
 import app.index.data.sources.db.schemas.user.UserEntity
 import app.index.data.sources.db.schemas.user.UsersTable
 import org.jetbrains.exposed.dao.IntEntity

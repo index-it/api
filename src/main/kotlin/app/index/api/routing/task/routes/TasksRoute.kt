@@ -8,7 +8,6 @@ import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.tasks.TaskData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -22,7 +21,6 @@ import org.koin.ktor.ext.inject
 
 fun Route.tasksRoute() {
     val taskDao by inject<TaskDao>()
-    val itemDao by inject<ItemDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<TasksRoute>({
@@ -81,7 +79,6 @@ fun Route.tasksRoute() {
             }
         }
     }) {
-        val userId = userIdFromSessionOrThrow()
         val newTask = call.receive<TaskData.TaskCreateRequestData>()
         val itemIdToConnect = newTask.item_id
 
@@ -97,26 +94,7 @@ fun Route.tasksRoute() {
         /// TASK CREATION ///
         /////////////////////
 
-        val task = if (itemIdToConnect != null) {
-            ////////////////////
-            /// CONNECT ITEM ///
-            ////////////////////
-            val task = taskDao.create(userIdFromSession()!!, newTask)
-
-            val updatedItem = itemDao.setTaskConnection(userId, itemIdToConnect, task.id)
-                ?: return@post call.respond(HttpStatusCode.NotFound)
-
-            emitWebsocketEvent(
-                websocketEventManager = websocketEventManager,
-                type = WebsocketEventType.ITEM_UPDATED,
-                content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem),
-                includeCurrentSession = true
-            )
-
-            task
-        } else {
-            taskDao.create(userIdFromSession()!!, newTask)
-        }
+        val task = taskDao.create(userIdFromSession()!!, newTask)
 
         /////////////////
         /// REMINDERS ///

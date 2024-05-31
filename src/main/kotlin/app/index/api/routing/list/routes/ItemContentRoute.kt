@@ -2,8 +2,10 @@ package app.index.api.routing.list.routes
 
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.data.daos.list.ItemContentDao
 import app.index.data.models.lists.ItemContentData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
@@ -36,12 +38,21 @@ fun Route.itemContentRoute() {
                 description = "item content"
                 body<ItemContentData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item not found"
             }
         }
     }) {
-        val content = itemContentDao.getOrCreate(userIdFromSessionOrThrow(), it.parent.item_id)
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        ) ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        val content = itemContentDao.getOrCreate(list.user_id, it.parent.item_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(content)
@@ -70,14 +81,23 @@ fun Route.itemContentRoute() {
                 description = "item content"
                 body<ItemContentData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item not found"
             }
         }
     }) {
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
+
         val updatedItemContent = call.receive<ItemContentData.ItemContentCreateOrUpdateRequestData>()
 
-        val newContent = itemContentDao.update(userIdFromSessionOrThrow(), it.parent.item_id, updatedItemContent)
+        val newContent = itemContentDao.update(it.parent.item_id, updatedItemContent)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newContent)
