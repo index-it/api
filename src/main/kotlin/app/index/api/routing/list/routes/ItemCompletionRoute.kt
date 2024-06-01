@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.usecases.ListAuthorizationUseCase
@@ -57,7 +57,7 @@ fun Route.itemCompletionRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.parent.list_id,
             userId = userId,
             authorizationLevel = ListAuthorizationLevel.EDITOR
@@ -68,10 +68,11 @@ fun Route.itemCompletionRoute() {
 
         call.respond(updatedItem)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_UPDATED,
-            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem),
+            users = list.getUsersWithAccess()
         )
 
         // update all connected tasks (multiple users might have a task connected to this item if the list is shared)
@@ -80,13 +81,13 @@ fun Route.itemCompletionRoute() {
             it.completed
         )
 
-        // TODO: user id of websocket event is not the one of the session but each task might have a different one
         updatedTasks.forEach { updateTask ->
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.TASK_UPDATED,
                 content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updateTask),
-                includeCurrentSession = true
+                users = listOf(updateTask.user_id),
+                includeCurrentSession = updateTask.user_id == userId
             )
         }
     }

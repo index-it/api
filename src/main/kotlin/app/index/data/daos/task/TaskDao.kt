@@ -79,6 +79,10 @@ class TaskDao(
         return taskDBI.getCompleted(userId)
     }
 
+    suspend fun getAllConnectedToItem(itemId: IxId<ItemData>): List<TaskData> {
+        return taskDBI.getConnectedToItem(itemId)
+    }
+
     suspend fun get(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,

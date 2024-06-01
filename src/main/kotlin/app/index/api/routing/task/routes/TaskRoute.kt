@@ -1,6 +1,6 @@
 package app.index.api.routing.task.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.logic.usecases.TaskUseCase
@@ -120,7 +120,7 @@ fun Route.taskRoute() {
 
         call.respond(updatedTask)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.TASK_UPDATED,
             content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updatedTask)
@@ -153,7 +153,7 @@ fun Route.taskRoute() {
         if (!it.all && task !== null) {
             TaskUseCase.createNextOccurrence(task)
                 ?.also { nextOccurrenceTask ->
-                    emitWebsocketEvent(
+                    emitWebsocketEventForCurrentSessionUser(
                         websocketEventManager = websocketEventManager,
                         type = WebsocketEventType.TASK_CREATED,
                         content = WebsocketEventContent.TaskCreateOrUpdateEventContent(nextOccurrenceTask),
@@ -167,7 +167,7 @@ fun Route.taskRoute() {
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForCurrentSessionUser(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.TASK_DELETED,
                 content = WebsocketEventContent.TaskDeleteEventContent(it.task_id)

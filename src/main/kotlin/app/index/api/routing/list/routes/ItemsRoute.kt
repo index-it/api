@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
@@ -90,7 +90,7 @@ fun Route.itemsRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.list_id,
             userId = userId,
             authorizationLevel = ListAuthorizationLevel.EDITOR
@@ -102,10 +102,11 @@ fun Route.itemsRoute() {
 
         call.respond(item)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_CREATED,
-            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(item)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(item),
+            users = list.getUsersWithAccess()
         )
     }
 }

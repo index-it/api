@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.usecases.ListAuthorizationUseCase
@@ -79,7 +79,7 @@ fun Route.categoriesRoute() {
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.list_id,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.EDITOR
@@ -91,10 +91,11 @@ fun Route.categoriesRoute() {
 
         call.respond(category)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.CATEGORY_CREATED,
-            content = WebsocketEventContent.CategoryCreateOrUpdateEventContent(category)
+            content = WebsocketEventContent.CategoryCreateOrUpdateEventContent(category),
+            users = list.getUsersWithAccess()
         )
     }
 }

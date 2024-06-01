@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
@@ -9,6 +9,7 @@ import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
+import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -23,6 +24,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.itemRoute() {
     val itemDao by inject<ItemDao>()
+    val taskDao by inject<TaskDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
@@ -99,7 +101,7 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.EDITOR
@@ -112,10 +114,11 @@ fun Route.itemRoute() {
 
         call.respond(newItem)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_UPDATED,
-            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(newItem)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(newItem),
+            users = list.getUsersWithAccess()
         )
     }
 
@@ -143,9 +146,10 @@ fun Route.itemRoute() {
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val userId = userIdFromSessionOrThrow()
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
-            userId = userIdFromSessionOrThrow(),
+            userId = userId,
             authorizationLevel = ListAuthorizationLevel.EDITOR
         ) ?: return@delete call.respond(HttpStatusCode.NotFound)
 
@@ -154,13 +158,22 @@ fun Route.itemRoute() {
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.ITEM_DELETED,
-                content = WebsocketEventContent.ItemDeleteEventContent(it.item_id)
+                content = WebsocketEventContent.ItemDeleteEventContent(it.item_id),
+                users = list.getUsersWithAccess()
             )
 
-            // TODO: what to do with all the connected tasks for websockets ?
+            taskDao.getAllConnectedToItem(it.item_id).forEach { unconnectedTask ->
+                emitWebsocketEventForUsers(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.TASK_UPDATED,
+                    content = WebsocketEventContent.TaskCreateOrUpdateEventContent(unconnectedTask),
+                    users = listOf(unconnectedTask.user_id),
+                    includeCurrentSession = unconnectedTask.user_id == userId
+                )
+            }
         }
     }
 }

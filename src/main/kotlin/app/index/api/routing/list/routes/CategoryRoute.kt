@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.usecases.ListAuthorizationUseCase
@@ -97,7 +97,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.EDITOR
@@ -110,10 +110,11 @@ fun Route.categoryRoute() {
 
         call.respond(newCategory)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.CATEGORY_UPDATED,
-            content = WebsocketEventContent.CategoryCreateOrUpdateEventContent(newCategory)
+            content = WebsocketEventContent.CategoryCreateOrUpdateEventContent(newCategory),
+            users = list.getUsersWithAccess()
         )
     }
 
@@ -141,7 +142,7 @@ fun Route.categoryRoute() {
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.EDITOR
@@ -152,10 +153,11 @@ fun Route.categoryRoute() {
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.CATEGORY_DELETED,
-                content = WebsocketEventContent.CategoryDeleteEventContent(it.category_id)
+                content = WebsocketEventContent.CategoryDeleteEventContent(it.category_id),
+                users = list.getUsersWithAccess()
             )
         }
     }

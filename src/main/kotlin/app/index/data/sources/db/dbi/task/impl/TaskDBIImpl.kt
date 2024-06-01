@@ -64,6 +64,13 @@ class TaskDBIImpl : TaskDBI {
                 .map { it.toData() }
         }
 
+    override suspend fun getConnectedToItem(itemId: IxId<ItemData>): List<TaskData> =
+        dbQuery {
+            TaskEntity
+                .find { TaskTable.item eq itemId.toEntityId(ItemTable) }
+                .map { it.toData() }
+        }
+
     override suspend fun get(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,

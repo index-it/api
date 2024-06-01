@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.usecases.ListAuthorizationUseCase
@@ -100,10 +100,11 @@ fun Route.listRoute() {
 
         call.respond(newList)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.LIST_UPDATED,
-            content = WebsocketEventContent.ListCreateOrUpdateEventContent(newList)
+            content = WebsocketEventContent.ListCreateOrUpdateEventContent(newList),
+            users = newList.getUsersWithAccess()
         )
     }
 
@@ -127,7 +128,7 @@ fun Route.listRoute() {
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.list_id,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.OWNER
@@ -138,10 +139,11 @@ fun Route.listRoute() {
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.LIST_DELETED,
-                content = WebsocketEventContent.ListDeleteEventContent(it.list_id)
+                content = WebsocketEventContent.ListDeleteEventContent(it.list_id),
+                users = list.getUsersWithAccess()
             )
         }
     }

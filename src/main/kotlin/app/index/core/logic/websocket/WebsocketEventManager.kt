@@ -1,12 +1,14 @@
 package app.index.core.logic.websocket
 
 import app.index.core.logic.ObjectMapper
+import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventData
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.core.logic.websocket.queue.WebsocketEventsQueueManager
 import app.index.data.models.auth.UserAuthSessionData
+import app.index.data.models.user.UserData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.*
 import io.ktor.server.application.*
@@ -71,11 +73,36 @@ class WebsocketEventManager(
      * @throws IllegalArgumentException missing [UserAuthSessionData] principal in [context]
      * @throws Exception other exceptions handling the event
      */
-    fun emit(context: PipelineContext<Unit, ApplicationCall>, eventType: WebsocketEventType, eventData: WebsocketEventContent, includeCurrentSession: Boolean) {
+    fun emit(
+        context: PipelineContext<Unit, ApplicationCall>,
+        eventType: WebsocketEventType,
+        eventData: WebsocketEventContent,
+        includeCurrentSession: Boolean
+    ) {
         val authSession = context.call.principal<UserAuthSessionData>()
             ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
 
-        // TODO: Accept more user ids as parameters for shared events such as shared lists
+        val websocketEventData = WebsocketEventData(
+            fromSessionId = authSession.id,
+            fromUserId = authSession.userId,
+            type = eventType,
+            inclusive = includeCurrentSession,
+            content = eventData
+        )
+
+        websocketEventsQueueManager.enqueue(websocketEventData)
+    }
+
+    /**
+     * @throws Exception other exceptions handling the event
+     */
+    fun emitForUsers(
+        context: PipelineContext<Unit, ApplicationCall>,
+        eventType: WebsocketEventType,
+        eventData: WebsocketEventContent,
+        users: List<IxId<UserData>>,
+        includeCurrentSession: Boolean
+    ) {
         val websocketEventData = WebsocketEventData(
             fromSessionId = authSession.id,
             fromUserId = authSession.userId,

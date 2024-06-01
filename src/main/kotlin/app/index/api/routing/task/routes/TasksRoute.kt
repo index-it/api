@@ -1,6 +1,6 @@
 package app.index.api.routing.task.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSession
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
@@ -103,7 +103,7 @@ fun Route.tasksRoute() {
 
         call.respond(task)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.TASK_CREATED,
             content = WebsocketEventContent.TaskCreateOrUpdateEventContent(task)

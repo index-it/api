@@ -1,7 +1,7 @@
 package app.index.api.routing.list.routes
 
 import app.index.api.plugins.AuthenticationMethods
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.impl.IxId
@@ -121,10 +121,11 @@ fun Route.listAccessRoute() {
                 } else {
                     call.respond(updatedList)
 
-                    emitWebsocketEvent(
+                    emitWebsocketEventForUsers(
                         websocketEventManager = websocketEventManager,
                         type = WebsocketEventType.LIST_UPDATED,
-                        content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList)
+                        content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList),
+                        users = updatedList.getUsersWithAccess()
                     )
                 }
             } else {
@@ -191,10 +192,11 @@ fun Route.listAccessRoute() {
             val updatedList = listDao.removePermissionFromUser(listId, userToRemoveId)
                 ?: return@delete call.respond(HttpStatusCode.NotFound)
 
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.LIST_UPDATED,
-                content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList)
+                content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList),
+                users = updatedList.getUsersWithAccess()
             )
 
             call.respond(updatedList)
@@ -254,10 +256,11 @@ fun Route.listAccessRoute() {
             } else {
                 call.respond(updatedList)
 
-                emitWebsocketEvent(
+                emitWebsocketEventForUsers(
                     websocketEventManager = websocketEventManager,
                     type = WebsocketEventType.LIST_UPDATED,
-                    content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList)
+                    content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList),
+                    users = updatedList.getUsersWithAccess()
                 )
             }
         } else {
@@ -303,10 +306,11 @@ fun Route.listAccessRoute() {
 
         call.respond(HttpStatusCode.OK)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.LIST_UPDATED,
-            content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList)
+            content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList),
+            users = updatedList.getUsersWithAccess()
         )
     }
 }

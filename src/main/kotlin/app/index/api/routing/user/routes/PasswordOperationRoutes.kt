@@ -1,6 +1,6 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.routing.user.PasswordForgottenRoute
 import app.index.api.routing.user.ResetPasswordRoute
 import app.index.core.clients.BrevoClient
@@ -120,7 +120,7 @@ fun Route.passwordOperationRoutes() {
         )
 
         // Invalidate all other user websocket connections
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
             content = WebsocketEventContent.EmptyEventContent

@@ -1,6 +1,6 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -60,7 +60,7 @@ fun Route.listsRoute() {
 
         call.respond(created)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.LIST_CREATED,
             content = WebsocketEventContent.ListCreateOrUpdateEventContent(created)

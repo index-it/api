@@ -29,6 +29,11 @@ data class ListData(
     val created_at: Long = DatetimeUtils.currentMillis(),
     val edited_at: Long? = null,
 ) {
+    /**
+     * Returns a list of user ids that have access to this list
+     */
+    fun getUsersWithAccess() = viewers + editors + user_id
+
     @Serializable
     data class ListCreateRequestData(
         var name: String,

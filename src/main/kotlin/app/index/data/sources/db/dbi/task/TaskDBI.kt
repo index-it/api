@@ -15,6 +15,8 @@ interface TaskDBI : DBI {
 
     suspend fun getCompleted(userId: IxId<UserData>): List<TaskData>
 
+    suspend fun getConnectedToItem(itemId: IxId<ItemData>): List<TaskData>
+
     suspend fun get(
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
