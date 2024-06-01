@@ -19,6 +19,12 @@ class ListsRoute {
         val parent: ListsRoute = ListsRoute(),
         @Contextual val list_id: IxId<ListData>,
     ) {
+        @Resource("access")
+        class AccessRoute(val parent: ListRoute) {
+            @Resource("leave")
+            class LeaveRoute(val parent: AccessRoute)
+        }
+
         @Resource("categories")
         class CategoriesRoute(val parent: ListRoute) {
             @Resource("{category_id}")
@@ -43,9 +49,14 @@ class ListsRoute {
             }
         }
     }
+
+    @Resource("accept-invitation")
+    class AcceptInvitation(val parent: ListsRoute = ListsRoute(), val token: String)
 }
 
 fun Route.listRoutes() {
+    listAccessRoute()
+
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         listsRoute()
         listRoute()

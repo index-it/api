@@ -18,7 +18,7 @@ class UserDao(
     }
 
     /**
-     * This method should be only used in the login route
+     * This method should be only used in the login route or list invitation route
      */
     suspend fun getFromEmail(email: String): UserData? {
         return userDBI.get(email)

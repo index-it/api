@@ -21,6 +21,7 @@ data class ItemData(
     @Contextual val user_id: IxId<UserData>,
     @Contextual val list_id: IxId<ListData>,
     @Contextual val category_id: IxId<CategoryData>?,
+    @Deprecated("Now multiple tasks can be connected to the same item because of lists sharing")
     @Contextual val task_id: IxId<TaskData>? = null,
     val name: String,
     val completed: Boolean = false,

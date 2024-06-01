@@ -12,18 +12,12 @@ import org.koin.core.annotation.Single
 class CategoryDao(
     private val categoryDBI: CategoryDBI,
 ) {
-    suspend fun getAll(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): List<CategoryData> {
-        return categoryDBI.getOfList(userId, listId)
+    suspend fun getAll(listId: IxId<ListData>): List<CategoryData> {
+        return categoryDBI.getOfList(listId)
     }
 
-    suspend fun get(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ): CategoryData? {
-        return categoryDBI.get(userId, categoryId)
+    suspend fun get(categoryId: IxId<CategoryData>): CategoryData? {
+        return categoryDBI.get(categoryId)
     }
 
     suspend fun create(
@@ -45,20 +39,14 @@ class CategoryDao(
     }
 
     suspend fun update(
-        userId: IxId<UserData>,
         categoryId: IxId<CategoryData>,
         categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
     ): CategoryData? {
-        categoryDBI.update(userId, categoryId, categoryUpdateRequestData)
-
-        return get(userId, categoryId)
+        return categoryDBI.update(categoryId, categoryUpdateRequestData)
     }
 
-    suspend fun delete(
-        userId: IxId<UserData>,
-        categoryId: IxId<CategoryData>,
-    ): Boolean {
-        val deleted = categoryDBI.delete(userId, categoryId)
+    suspend fun delete(categoryId: IxId<CategoryData>): Boolean {
+        val deleted = categoryDBI.delete(categoryId)
 
         return deleted
     }

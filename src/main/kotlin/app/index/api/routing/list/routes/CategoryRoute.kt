@@ -1,14 +1,15 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.CategoryDao
 import app.index.data.models.lists.CategoryData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -42,12 +43,21 @@ fun Route.categoryRoute() {
                 description = "category found"
                 body<CategoryData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "category or list not found"
             }
         }
     }) {
-        val category = categoryDao.get(userIdFromSessionOrThrow(), it.category_id)
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        ) ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        val category = categoryDao.get(it.category_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(category)
@@ -79,22 +89,32 @@ fun Route.categoryRoute() {
                     description = "the new category data"
                 }
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "category or list not found"
             }
         }
     }) {
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
+
         val updatedCategory = call.receive<CategoryData.CategoryUpdateRequestData>()
 
-        val newCategory = categoryDao.update(userIdFromSessionOrThrow(), it.category_id, updatedCategory)
+        val newCategory = categoryDao.update(it.category_id, updatedCategory)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newCategory)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.CATEGORY_UPDATED,
-            content = WebsocketEventContent.CategoryCreateOrUpdateEventContent(newCategory)
+            content = WebsocketEventContent.CategoryCreateOrUpdateEventContent(newCategory),
+            users = list.getUsersWithAccess()
         )
     }
 
@@ -117,17 +137,27 @@ fun Route.categoryRoute() {
             HttpStatusCode.OK to {
                 description = "category deleted"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
-        val deleted = categoryDao.delete(userIdFromSession()!!, it.category_id)
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@delete call.respond(HttpStatusCode.NotFound)
+
+        val deleted = categoryDao.delete(it.category_id)
 
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.CATEGORY_DELETED,
-                content = WebsocketEventContent.CategoryDeleteEventContent(it.category_id)
+                content = WebsocketEventContent.CategoryDeleteEventContent(it.category_id),
+                users = list.getUsersWithAccess()
             )
         }
     }

@@ -1,14 +1,17 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
+import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -21,6 +24,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.itemRoute() {
     val itemDao by inject<ItemDao>()
+    val taskDao by inject<TaskDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
@@ -42,12 +46,21 @@ fun Route.itemRoute() {
                 description = "item data"
                 body<ItemData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
-        val item = itemDao.get(userIdFromSessionOrThrow(), it.item_id)
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        ) ?: return@get call.respond(HttpStatusCode.NotFound)
+
+        val item = itemDao.get(it.item_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(item)
@@ -80,22 +93,32 @@ fun Route.itemRoute() {
                 description = "item data"
                 body<ItemData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
         }
     }) {
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
+
         val updatedItem = call.receive<ItemData.ItemUpdateRequestData>()
 
-        val newItem = itemDao.update(userIdFromSessionOrThrow(), it.item_id, updatedItem)
+        val newItem = itemDao.update(it.item_id, updatedItem)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newItem)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_UPDATED,
-            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(newItem)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(newItem),
+            users = list.getUsersWithAccess()
         )
     }
 
@@ -118,28 +141,37 @@ fun Route.itemRoute() {
             HttpStatusCode.OK to {
                 description = "item deleted"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
         val userId = userIdFromSessionOrThrow()
-        val item = itemDao.get(userId, it.item_id)
-            ?: return@delete call.respond(HttpStatusCode.OK)
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userId,
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@delete call.respond(HttpStatusCode.NotFound)
 
-        val deleted = itemDao.delete(userId, it.item_id)
+        val deleted = itemDao.delete(it.item_id)
 
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.ITEM_DELETED,
-                content = WebsocketEventContent.ItemDeleteEventContent(it.item_id)
+                content = WebsocketEventContent.ItemDeleteEventContent(it.item_id),
+                users = list.getUsersWithAccess()
             )
 
-            if (item.task_id != null) {
-                emitWebsocketEvent(
+            taskDao.getAllConnectedToItem(it.item_id).forEach { unconnectedTask ->
+                emitWebsocketEventForUsers(
                     websocketEventManager = websocketEventManager,
-                    type = WebsocketEventType.TASK_DELETED,
-                    content = WebsocketEventContent.TaskDeleteEventContent(item.task_id)
+                    type = WebsocketEventType.TASK_UPDATED,
+                    content = WebsocketEventContent.TaskCreateOrUpdateEventContent(unconnectedTask),
+                    users = listOf(unconnectedTask.user_id),
+                    includeCurrentSession = unconnectedTask.user_id == userId
                 )
             }
         }

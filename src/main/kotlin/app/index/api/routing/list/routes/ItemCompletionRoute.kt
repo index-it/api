@@ -1,14 +1,16 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
+import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -45,6 +47,9 @@ fun Route.itemCompletionRoute() {
                 description = "item completed"
                 body<ItemData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
             }
@@ -52,27 +57,38 @@ fun Route.itemCompletionRoute() {
     }) {
         val userId = userIdFromSessionOrThrow()
 
-        val updatedItem = itemDao.setCompletion(userId, it.parent.item_id, it.completed)
-            ?: return@put call.respond(HttpStatusCode.NotFound)
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.parent.list_id,
+            userId = userId,
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        if (updatedItem.task_id != null) {
-            taskDao.setCompletion(userId, updatedItem.task_id, it.completed)
-                ?.also { updatedTaskData ->
-                    emitWebsocketEvent(
-                        websocketEventManager = websocketEventManager,
-                        type = WebsocketEventType.TASK_UPDATED,
-                        content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updatedTaskData),
-                        includeCurrentSession = true
-                    )
-                }
-        }
+        val updatedItem = itemDao.setCompletion(it.parent.item_id, it.completed)
+            ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(updatedItem)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.ITEM_UPDATED,
-            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem)
+            content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem),
+            users = list.getUsersWithAccess()
         )
+
+        // update all connected tasks (multiple users might have a task connected to this item if the list is shared)
+        val updatedTasks = taskDao.setCompletionOfAllTasksConnectedToItem(
+            it.parent.item_id,
+            it.completed
+        )
+
+        updatedTasks.forEach { updateTask ->
+            emitWebsocketEventForUsers(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.TASK_UPDATED,
+                content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updateTask),
+                users = listOf(updateTask.user_id),
+                includeCurrentSession = updateTask.user_id == userId
+            )
+        }
     }
 }

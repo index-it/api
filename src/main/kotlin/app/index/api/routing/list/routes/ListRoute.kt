@@ -1,12 +1,14 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ListDao
+import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
@@ -37,12 +39,19 @@ fun Route.listRoute() {
                 description = "the list"
                 body<ListData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "list not found"
             }
         }
     }) {
-        val list = listDao.get(userIdFromSessionOrThrow(), it.list_id)
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.VIEWER
+        )
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(list)
@@ -70,22 +79,32 @@ fun Route.listRoute() {
                     description = "the updated list"
                 }
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
             HttpStatusCode.NotFound to {
                 description = "list not found"
             }
         }
     }) {
+        ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
+
         val updatedList = call.receive<ListData.ListUpdateRequestData>()
 
-        val newList = listDao.update(userIdFromSessionOrThrow(), it.list_id, updatedList)
+        val newList = listDao.update(it.list_id, updatedList)
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newList)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForUsers(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.LIST_UPDATED,
-            content = WebsocketEventContent.ListCreateOrUpdateEventContent(newList)
+            content = WebsocketEventContent.ListCreateOrUpdateEventContent(newList),
+            users = newList.getUsersWithAccess()
         )
     }
 
@@ -104,17 +123,27 @@ fun Route.listRoute() {
             HttpStatusCode.OK to {
                 description = "list deleted"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "not authorized to perform this action on the list"
+            }
         }
     }) {
-        val deleted = listDao.delete(userIdFromSessionOrThrow(), it.list_id)
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.OWNER
+        ) ?: return@delete call.respond(HttpStatusCode.NotFound)
+
+        val deleted = listDao.delete(it.list_id)
 
         call.respond(HttpStatusCode.OK)
 
         if (deleted) {
-            emitWebsocketEvent(
+            emitWebsocketEventForUsers(
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.LIST_DELETED,
-                content = WebsocketEventContent.ListDeleteEventContent(it.list_id)
+                content = WebsocketEventContent.ListDeleteEventContent(it.list_id),
+                users = list.getUsersWithAccess()
             )
         }
     }

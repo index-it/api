@@ -22,6 +22,9 @@ class ListDao(
             name = listCreateRequestData.name,
             icon = listCreateRequestData.icon,
             color = listCreateRequestData.color,
+            public = listCreateRequestData.public,
+            viewers = emptyList(),
+            editors = emptyList(),
             created_at = DatetimeUtils.currentMillis(),
             edited_at = null,
         )
@@ -32,31 +35,60 @@ class ListDao(
     }
 
     suspend fun getAll(userId: IxId<UserData>): List<ListData> {
-        return listDBI.get(userId)
+        return listDBI.getAllOfUser(userId)
     }
 
-    suspend fun get(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): ListData? {
-        return listDBI.get(userId, listId)
+    /**
+     * Gets all lists that the user has access to (meaning he is either a viewer, editor or owner)
+     */
+    suspend fun getListsAccessibleByUser(userId: IxId<UserData>): List<ListData> {
+        return listDBI.getListsAccessibleByUser(userId)
+    }
+
+    /**
+     * Gets a list by its [listId]
+     */
+    suspend fun get(listId: IxId<ListData>): ListData? {
+        return listDBI.get(listId)
     }
 
     suspend fun update(
-        userId: IxId<UserData>,
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,
     ): ListData? {
-        listDBI.update(userId, listId, listUpdateRequestData)
+        return listDBI.update(listId, listUpdateRequestData)
+    }
 
-        return get(userId, listId)
+    /**
+     * Gives user permission to either view or edit a list
+     * This already handles mutual exclusiveness between viewers and editors
+     */
+    suspend fun addPermissionToUser(
+        listId: IxId<ListData>,
+        userToAddId: IxId<UserData>,
+        editor: Boolean
+    ): ListData? {
+        listDBI.addPermissionToUser(listId, userToAddId, editor)
+
+        return get(listId)
+    }
+
+    /**
+     * Removes a user access to a list completely (both viewing and editing)
+     */
+    suspend fun removePermissionFromUser(
+        listId: IxId<ListData>,
+        userToRemoveId: IxId<UserData>,
+    ): ListData? {
+        listDBI.removePermissionFromUser(listId, userToRemoveId)
+
+        return get(listId)
     }
 
     suspend fun delete(
-        userId: IxId<UserData>,
         listId: IxId<ListData>,
     ) : Boolean {
-        val deleted = listDBI.delete(userId, listId)
+        val deleted = listDBI.delete(listId)
 
         return deleted
     }

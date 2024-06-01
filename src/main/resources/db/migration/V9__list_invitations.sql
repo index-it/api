@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS listinvitation (id SERIAL PRIMARY KEY, token VARCHAR(100) NOT NULL, email VARCHAR(150) NOT NULL, id_list uuid NOT NULL, editor BOOLEAN NOT NULL, created_at TIMESTAMP NOT NULL, expires_at TIMESTAMP NOT NULL, CONSTRAINT fk_listinvitation_id_list__id FOREIGN KEY (id_list) REFERENCES list(id) ON DELETE CASCADE ON UPDATE RESTRICT);
+ALTER TABLE listinvitation ADD CONSTRAINT listinvitation_token_unique UNIQUE (token);
+CREATE INDEX listinvitation_email ON listinvitation (email);
