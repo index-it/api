@@ -45,20 +45,17 @@ class WebsocketEventManager(
             return
         }
 
-        val websocketConnectionsOfUser = if (websocketEventData.inclusive) {
-            websocketConnectionsManager.getConnectionsOfUser(
-                userId = websocketEventData.fromUserId
-            )
-        } else {
-            websocketConnectionsManager.getConnectionsOfUserExcludingSession(
-                userId = websocketEventData.fromUserId,
-                excludedSessionId = websocketEventData.fromSessionId
-            )
+        val targetWebsocketConnections  = websocketEventData.targetUsers.map {
+            websocketConnectionsManager.getConnectionsOfUser(it)
+        }.flatten().toMutableSet()
+
+        if (!websocketEventData.inclusive) {
+            targetWebsocketConnections.removeIf { it.sessionId == websocketEventData.fromSessionId }
         }
 
-        websocketConnectionsOfUser.forEach {
+        targetWebsocketConnections.forEach {
             try {
-                it.connection.sendSerialized(websocketEventData)
+                it.connection.sendSerialized(websocketEventData.sanitize())
                 log.debug { "Sent websocket event to websocket connection: $it" }
             } catch (e: IllegalStateException) {
                 // Websocket connection is closed already
@@ -70,42 +67,30 @@ class WebsocketEventManager(
     }
 
     /**
+     * Emits a websocket event to all [targetUsers]
+     *
+     * @param fromSessionId
+     * @param fromUserId
+     * @param eventType
+     * @param eventData
+     * @param users the users to emit the event to if they have an active websocket connection
+     * @param includeCurrentSession whether to emit the event to the session of the user who triggered the event
+     *
      * @throws IllegalArgumentException missing [UserAuthSessionData] principal in [context]
      * @throws Exception other exceptions handling the event
      */
     fun emit(
-        context: PipelineContext<Unit, ApplicationCall>,
-        eventType: WebsocketEventType,
-        eventData: WebsocketEventContent,
-        includeCurrentSession: Boolean
-    ) {
-        val authSession = context.call.principal<UserAuthSessionData>()
-            ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
-
-        val websocketEventData = WebsocketEventData(
-            fromSessionId = authSession.id,
-            fromUserId = authSession.userId,
-            type = eventType,
-            inclusive = includeCurrentSession,
-            content = eventData
-        )
-
-        websocketEventsQueueManager.enqueue(websocketEventData)
-    }
-
-    /**
-     * @throws Exception other exceptions handling the event
-     */
-    fun emitForUsers(
-        context: PipelineContext<Unit, ApplicationCall>,
+        fromSessionId: IxId<UserAuthSessionData>,
+        fromUserId: IxId<UserData>,
         eventType: WebsocketEventType,
         eventData: WebsocketEventContent,
         users: List<IxId<UserData>>,
         includeCurrentSession: Boolean
     ) {
         val websocketEventData = WebsocketEventData(
-            fromSessionId = authSession.id,
-            fromUserId = authSession.userId,
+            fromSessionId = fromSessionId,
+            fromUserId = fromUserId,
+            targetUsers = users,
             type = eventType,
             inclusive = includeCurrentSession,
             content = eventData
