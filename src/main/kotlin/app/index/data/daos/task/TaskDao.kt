@@ -102,9 +102,7 @@ class TaskDao(
         taskId: IxId<TaskData>,
         completed: Boolean,
     ): TaskData? {
-        taskDBI.setCompletion(userId, taskId, completed)
-
-        return get(userId, taskId)
+        return taskDBI.setCompletion(userId, taskId, completed)
     }
 
     suspend fun update(

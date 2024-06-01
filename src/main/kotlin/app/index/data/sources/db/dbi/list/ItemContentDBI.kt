@@ -10,10 +10,16 @@ interface ItemContentDBI : DBI {
 
     suspend fun get(itemId: IxId<ItemData>): ItemContentData?
 
+    /**
+     * @return updated [ItemContentData] or null if nothing matched the [itemId]
+     */
     suspend fun update(
         itemId: IxId<ItemData>,
         itemContentCreateOrUpdateRequestData: ItemContentData.ItemContentCreateOrUpdateRequestData,
-    ): Boolean
+    ): ItemContentData?
 
-    suspend fun delete(itemId: IxId<ItemData>)
+    /**
+     * @return true for deleted, false if nothing matched the [itemId]
+     */
+    suspend fun delete(itemId: IxId<ItemData>): Boolean
 }

@@ -9,7 +9,7 @@ import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -46,13 +46,15 @@ class CategoryDBIImpl : CategoryDBI {
     override suspend fun update(
         categoryId: IxId<CategoryData>,
         categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
-    ): Boolean =
+    ): CategoryData? =
         dbQuery {
-            CategoryTable.update({ categoryFilter(categoryId) }) {
+            CategoryTable.updateReturning(where = { categoryFilter(categoryId) }) {
                 it[name] = categoryUpdateRequestData.name
                 it[color] = categoryUpdateRequestData.color
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
-            } > 0
+            }.firstOrNull()?.let {
+                CategoryEntity.wrapRow(it).toData()
+            }
         }
 
     override suspend fun delete(categoryId: IxId<CategoryData>): Boolean = dbQuery {

@@ -31,7 +31,7 @@ interface TaskDBI : DBI {
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
         completed: Boolean,
-    ): Boolean
+    ): TaskData?
 
     suspend fun setCompletionOfAllTasksConnectedToItem(
         itemId: IxId<ItemData>,

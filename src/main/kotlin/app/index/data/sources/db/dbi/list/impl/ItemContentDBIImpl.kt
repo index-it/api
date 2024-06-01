@@ -8,7 +8,7 @@ import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -37,16 +37,16 @@ class ItemContentDBIImpl : ItemContentDBI {
     override suspend fun update(
         itemId: IxId<ItemData>,
         itemContentCreateOrUpdateRequestData: ItemContentData.ItemContentCreateOrUpdateRequestData,
-    ): Boolean =
+    ): ItemContentData? =
         dbQuery {
-            ItemContentTable.update({ itemFilter(itemId) }) {
+            ItemContentTable.updateReturning(where = { itemFilter(itemId) }) {
                 it[content] = itemContentCreateOrUpdateRequestData.content
-            } > 0
+            }.firstOrNull()?.let {
+                ItemContentEntity.wrapRow(it).toData()
+            }
         }
 
-    override suspend fun delete(itemId: IxId<ItemData>) {
-        dbQuery {
-            ItemContentTable.deleteWhere { itemFilter(itemId) }
-        }
+    override suspend fun delete(itemId: IxId<ItemData>) = dbQuery {
+        ItemContentTable.deleteWhere { itemFilter(itemId) } > 0
     }
 }

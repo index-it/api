@@ -58,15 +58,17 @@ class ListDBIImpl : ListDBI {
     override suspend fun update(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,
-    ): Boolean =
+    ): ListData? =
         dbQuery {
-            ListTable.update({ listFilter(listId) }) {
+            ListTable.updateReturning(where = { listFilter(listId) }) {
                 it[name] = listUpdateRequestData.name
                 it[emoji] = listUpdateRequestData.icon
                 it[color] = listUpdateRequestData.color
                 it[public] = listUpdateRequestData.public
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
-            } > 0
+            }.firstOrNull()?.let {
+                ListEntity.wrapRow(it).toData()
+            }
         }
 
     override suspend fun addPermissionToUser(

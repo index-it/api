@@ -12,13 +12,16 @@ interface CategoryDBI : DBI {
 
     suspend fun getOfList(listId: IxId<ListData>): List<CategoryData>
 
+    /**
+     * @return updated [CategoryData] or null if nothing matched the [categoryId]
+     */
     suspend fun update(
         categoryId: IxId<CategoryData>,
         categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
-    ): Boolean
+    ): CategoryData?
 
     /**
-     * @return true for deleted, false if nothing was matched in the database
+     * @return true for deleted, false if nothing matched the [categoryId]
      */
     suspend fun delete(categoryId: IxId<CategoryData>) : Boolean
 }

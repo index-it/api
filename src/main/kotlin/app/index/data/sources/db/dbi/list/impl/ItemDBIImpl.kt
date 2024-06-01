@@ -7,10 +7,7 @@ import app.index.data.models.lists.ListData
 import app.index.data.sources.db.dbi.list.ItemDBI
 import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.toEntityId
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -77,25 +74,29 @@ class ItemDBIImpl : ItemDBI {
     override suspend fun setCompletion(
         itemId: IxId<ItemData>,
         completed: Boolean,
-    ): Boolean =
+    ): ItemData? =
         dbQuery {
-            ItemTable.update({ itemFilter(itemId) }) {
+            ItemTable.updateReturning(where = { itemFilter(itemId) }) {
                 it[this.completed] = completed
                 it[this.completed_at] = if (completed) DatetimeUtils.currentJavaInstant() else null
-            } > 0
+            }.firstOrNull()?.let {
+                ItemEntity.wrapRow(it).toData()
+            }
         }
 
     override suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
-    ): Boolean =
+    ): ItemData? =
         dbQuery {
-            ItemTable.update({ itemFilter(itemId) }) {
+            ItemTable.updateReturning(where = { itemFilter(itemId) }) {
                 it[name] = itemUpdateRequestData.name
                 it[category] = itemUpdateRequestData.category_id?.toEntityId(CategoryTable)
                 it[link] = itemUpdateRequestData.link
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
-            } > 0
+            }.firstOrNull()?.let {
+                ItemEntity.wrapRow(it).toData()
+            }
         }
 
     override suspend fun delete(

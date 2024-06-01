@@ -60,18 +60,14 @@ class ItemDao(
         itemId: IxId<ItemData>,
         completed: Boolean,
     ): ItemData? {
-        itemDBI.setCompletion(itemId, completed)
-
-        return get(itemId)
+        return itemDBI.setCompletion(itemId, completed)
     }
 
     suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
     ): ItemData? {
-        itemDBI.update(itemId, itemUpdateRequestData)
-
-        return get(itemId)
+        return itemDBI.update(itemId, itemUpdateRequestData)
     }
 
     suspend fun delete(itemId: IxId<ItemData>): Boolean {

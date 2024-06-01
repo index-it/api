@@ -87,12 +87,14 @@ class TaskDBIImpl : TaskDBI {
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
         completed: Boolean,
-    ): Boolean =
+    ): TaskData? =
         dbQuery {
-            TaskTable.update({ userAndTaskFilter(userId, taskId) }) {
+            TaskTable.updateReturning(where = { userAndTaskFilter(userId, taskId) }) {
                 it[this.completed] = completed
                 it[this.completed_at] = if (completed) DatetimeUtils.currentJavaInstant() else null
-            } > 0
+            }.firstOrNull()?.let {
+                TaskEntity.wrapRow(it).toData()
+            }
         }
 
     override suspend fun setCompletionOfAllTasksConnectedToItem(

@@ -56,9 +56,7 @@ class ListDao(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,
     ): ListData? {
-        listDBI.update(listId, listUpdateRequestData)
-
-        return get(listId)
+        return listDBI.update(listId, listUpdateRequestData)
     }
 
     /**

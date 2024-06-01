@@ -42,9 +42,7 @@ class CategoryDao(
         categoryId: IxId<CategoryData>,
         categoryUpdateRequestData: CategoryData.CategoryUpdateRequestData,
     ): CategoryData? {
-        categoryDBI.update(categoryId, categoryUpdateRequestData)
-
-        return get(categoryId)
+        return categoryDBI.update(categoryId, categoryUpdateRequestData)
     }
 
     suspend fun delete(categoryId: IxId<CategoryData>): Boolean {

@@ -31,14 +31,14 @@ interface ItemDBI : DBI {
     suspend fun setCompletion(
         itemId: IxId<ItemData>,
         completed: Boolean,
-    ): Boolean
+    ): ItemData?
 
     suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
-    ): Boolean
+    ): ItemData?
 
     suspend fun delete(
         itemId: IxId<ItemData>,
-    ) : Boolean
+    ): Boolean
 }

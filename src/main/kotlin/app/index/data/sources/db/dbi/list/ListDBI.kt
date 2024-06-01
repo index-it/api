@@ -24,7 +24,7 @@ interface ListDBI : DBI {
     suspend fun update(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData
-    ): Boolean
+    ): ListData?
 
     /**
      * Gives user permission to either view or edit a list

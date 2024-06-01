@@ -46,9 +46,7 @@ class ItemContentDao(
         itemId: IxId<ItemData>,
         itemContentCreateOrUpdateRequestData: ItemContentData.ItemContentCreateOrUpdateRequestData,
     ): ItemContentData? {
-        itemContentDBI.update(itemId, itemContentCreateOrUpdateRequestData)
-
-        return get(itemId)
+        return itemContentDBI.update(itemId, itemContentCreateOrUpdateRequestData)
     }
 
     suspend fun delete(itemId: IxId<ItemData>) {
