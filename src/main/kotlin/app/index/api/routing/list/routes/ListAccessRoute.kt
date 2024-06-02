@@ -38,7 +38,7 @@ fun Route.listAccessRoute() {
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
 
         post<ListsRoute.ListRoute.AccessRoute>({
-            tags = listOf("lists", "lists-access")
+            tags = listOf("lists-access")
             operationId = "add-user"
             summary = "invites a user to have access to a list or changes his permissions if he was already added"
             request {
@@ -146,7 +146,7 @@ fun Route.listAccessRoute() {
         }
 
         delete<ListsRoute.ListRoute.AccessRoute>({
-            tags = listOf("lists", "lists-access")
+            tags = listOf("lists-access")
             operationId = "remove-user"
             summary = "removes access to a user from the list"
             request {
@@ -204,7 +204,7 @@ fun Route.listAccessRoute() {
     }
 
     post<ListsRoute.AcceptInvitation>({
-        tags = listOf("list", "lists-access")
+        tags = listOf("lists-access")
         operationId = "accept-list-invitation"
         summary = "accepts a list invitation via a token"
         description = "a user can accept a list invitation via a token that is sent via email when he is invited"
@@ -270,7 +270,7 @@ fun Route.listAccessRoute() {
     }
 
     get<ListsRoute.ListRoute.AccessRoute.LeaveRoute>({
-        tags = listOf("lists", "lists-access")
+        tags = listOf("lists-access")
         operationId = "leave-list"
         summary = "removes the user from the viewers or editors of the list"
         description = "the user will be removed from the viewers or editors of the list"

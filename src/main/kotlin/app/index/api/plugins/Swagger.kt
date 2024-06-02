@@ -93,10 +93,10 @@ fun Application.configureSwagger() {
             version = "1.0.0"
         }
 
-        externalDocs {
-            url = "https://api-docs.index-it.app"
-            description = "Official documentation"
-        }
+//        externalDocs {
+//            url = "https://api-docs.index-it.app"
+//            description = "Official documentation"
+//        }
 
         /**
          * SERVERS
@@ -108,8 +108,8 @@ fun Application.configureSwagger() {
         }
 
         server {
-            url = "https://api-beta.index-it.app"
-            description = "Beta api server"
+            url = "https://api-staging.index-it.app"
+            description = "Staging api server"
         }
 
         server {
