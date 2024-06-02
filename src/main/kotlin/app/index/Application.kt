@@ -4,6 +4,7 @@ import app.index.api.plugins.*
 import app.index.api.routing.configureRouting
 import app.index.config.ApiConfig
 import app.index.config.ApplicationConfig
+import app.index.config.SentryConfig
 import app.index.config.core.ConfigurationManager
 import app.index.config.core.ConfigurationReader
 import app.index.config.core.models.ApplicationEnvironment
@@ -29,9 +30,12 @@ fun main() {
     /**
      * Configure Sentry environment
      */
+    val isSentryEnabled = ApplicationConfig.environment != ApplicationEnvironment.LOCAL
+
     Sentry.init { options ->
         options.environment = ApplicationConfig.environment.sentryName
-        options.isEnabled = ApplicationConfig.environment != ApplicationEnvironment.LOCAL
+        options.isEnabled = isSentryEnabled
+        options.dsn = if (isSentryEnabled) SentryConfig.dsn else null
     }
 
     /**

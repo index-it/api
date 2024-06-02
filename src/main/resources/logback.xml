@@ -5,13 +5,7 @@
         </encoder>
     </appender>
 
-    <!-- Configure the Sentry appender -->
-    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
-        <options>
-            <dsn>https://c06da9f5a93f65a997a9d7066d485fa3@o4506597646073856.ingest.sentry.io/4506597646925824</dsn>
-        </options>
-    </appender>
-
+    <!-- dsn is configured in Java code -->
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SENTRY" />
