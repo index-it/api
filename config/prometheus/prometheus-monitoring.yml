@@ -7,4 +7,4 @@ scrape_configs:
     metrics_path: /monitoring/metrics
     static_configs:
       - targets:
-          - host.docker.internal:8080 # Change to a valid endpoint to index apis
+          - host.docker.internal:8080 # Change to a valid endpoint to index apis for example index:8080 for docker compose

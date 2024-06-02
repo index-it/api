@@ -2,6 +2,19 @@ version: "3.8"
 name: "index-backend-staging-env"
 
 services:
+  api:
+    image: eu.gcr.io/index-352608/index-api-staging:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_api
+    env_file:
+      - .env
+    volumes:
+      - $HOME/.config/gcloud/gcp-service-account.json:/gcp/gcp-service-account.json:ro
+    ports:
+      - "8080:${API_PORT}"
+    networks:
+      - index-staging-postgres-network
+      - index-staging-redis-network
+      - index-staging-monitor-network
   postgres:
     image: postgres
     container_name: ${COMPOSE_PROJECT_NAME}_postgres
