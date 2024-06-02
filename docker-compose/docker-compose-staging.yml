@@ -56,7 +56,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - "../config/prometheus/prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
+      - "./prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
     networks:
       - index-staging-monitor-network
   grafana:
