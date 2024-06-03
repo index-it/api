@@ -36,7 +36,7 @@ services:
       - index-dev-redis-network
   redis-insight:
     image: redislabs/redisinsight
-    container_name: ${COMPOSE_PROJECT_NAME}_redis-insight
+    container_name: ${COMPOSE_PROJECT_NAME}-redis-insight
     restart: no
     ports:
       - "8082:8001"
@@ -44,14 +44,14 @@ services:
       - index-dev-redis-network
   rabbit:
     image: rabbitmq:3.9-management
-    container_name: ${COMPOSE_PROJECT_NAME}_rabbit
+    container_name: ${COMPOSE_PROJECT_NAME}-rabbit
     restart: no
     ports:
       - "5672:5672"
       - "8083:15672"
   prometheus:
     image: prom/prometheus
-    container_name: ${COMPOSE_PROJECT_NAME}_prometheus
+    container_name: ${COMPOSE_PROJECT_NAME}-prometheus
     restart: no
     ports:
       - "9090:9090"
@@ -61,7 +61,7 @@ services:
       - index-dev-monitor-network
   grafana:
     image: grafana/grafana
-    container_name: ${COMPOSE_PROJECT_NAME}_grafana
+    container_name: ${COMPOSE_PROJECT_NAME}-grafana
     restart: no
     ports:
       - "3000:3000"

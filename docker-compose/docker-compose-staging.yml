@@ -4,7 +4,7 @@ name: "index-backend-staging-env"
 services:
   api:
     image: eu.gcr.io/index-352608/index-api-staging:latest
-    container_name: ${COMPOSE_PROJECT_NAME}_api
+    container_name: ${COMPOSE_PROJECT_NAME}-api
     env_file:
       - .env
     volumes:
@@ -15,9 +15,13 @@ services:
       - index-staging-postgres-network
       - index-staging-redis-network
       - index-staging-monitor-network
+    depends_on:
+      - postgres
+      - redis
+      - prometheus
   postgres:
     image: postgres
-    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    container_name: ${COMPOSE_PROJECT_NAME}-postgres
     restart: no
     environment:
       POSTGRES_DB: indexstagingdb
@@ -25,13 +29,13 @@ services:
       POSTGRES_PASSWORD: IndexStagingPassword
     volumes:
       - index-staging-pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
     networks:
       - index-staging-postgres-network
   adminer:
     image: adminer
-    container_name: ${COMPOSE_PROJECT_NAME}_adminer
+    container_name: ${COMPOSE_PROJECT_NAME}-adminer
     restart: no
     ports:
       - "8081:8080"
@@ -39,42 +43,35 @@ services:
       - index-staging-postgres-network
   redis:
     image: redis:latest
-    container_name: ${COMPOSE_PROJECT_NAME}_redis
+    container_name: ${COMPOSE_PROJECT_NAME}-redis
     restart: no
     volumes:
       - index-staging-redis:/data
-    ports:
-      - "6379:6379"
+#    ports:
+#      - "6379:6379"
     networks:
       - index-staging-redis-network
   redis-insight:
     image: redislabs/redisinsight
-    container_name: ${COMPOSE_PROJECT_NAME}_redis-insight
+    container_name: ${COMPOSE_PROJECT_NAME}-redis-insight
     restart: no
     ports:
       - "8082:8001"
     networks:
       - index-staging-redis-network
-  rabbit:
-    image: rabbitmq:3.9-management
-    container_name: ${COMPOSE_PROJECT_NAME}_rabbit
-    restart: no
-    ports:
-      - "5672:5672"
-      - "8083:15672"
   prometheus:
     image: prom/prometheus
-    container_name: ${COMPOSE_PROJECT_NAME}_prometheus
+    container_name: ${COMPOSE_PROJECT_NAME}-prometheus
     restart: no
-    ports:
-      - "9090:9090"
+#    ports:
+#      - "9090:9090"
     volumes:
       - "./prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
     networks:
       - index-staging-monitor-network
   grafana:
     image: grafana/grafana
-    container_name: ${COMPOSE_PROJECT_NAME}_grafana
+    container_name: ${COMPOSE_PROJECT_NAME}-grafana
     restart: no
     ports:
       - "3000:3000"
@@ -86,7 +83,6 @@ services:
 volumes:
   index-staging-redis: {}
   index-staging-pgdata: {}
-  index-staging-rabbit: {}
   index-staging-grafana-storage: {}
 
 networks:
