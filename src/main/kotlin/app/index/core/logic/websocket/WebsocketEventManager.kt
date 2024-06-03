@@ -11,10 +11,7 @@ import app.index.data.models.auth.UserAuthSessionData
 import app.index.data.models.user.UserData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.websocket.*
-import io.ktor.util.pipeline.*
 import org.koin.core.annotation.Single
 
 private val log = KotlinLogging.logger {}
@@ -41,7 +38,11 @@ class WebsocketEventManager(
 
     private suspend fun consume(websocketEventData: WebsocketEventData) {
         if (websocketEventData.type == WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED) {
-            websocketConnectionsManager.closeAllSessionsOfUser(websocketEventData.fromUserId)
+            if (websocketEventData.fromUserId == null) {
+                throw IllegalArgumentException("Emitted a USER_AUTH_SESSIONS_INVALIDATED websocket event but the event payload FROM_USER_ID property is null")
+            } else {
+                websocketConnectionsManager.closeAllSessionsOfUser(websocketEventData.fromUserId)
+            }
             return
         }
 
@@ -67,21 +68,20 @@ class WebsocketEventManager(
     }
 
     /**
-     * Emits a websocket event to all [targetUsers]
+     * Emits a websocket event to all [users]
      *
-     * @param fromSessionId
-     * @param fromUserId
+     * @param fromSessionId null if websocket event was not triggered by a logged in user
+     * @param fromUserId null if websocket event was not triggered by a logged in user
      * @param eventType
      * @param eventData
      * @param users the users to emit the event to if they have an active websocket connection
      * @param includeCurrentSession whether to emit the event to the session of the user who triggered the event
      *
-     * @throws IllegalArgumentException missing [UserAuthSessionData] principal in [context]
      * @throws Exception other exceptions handling the event
      */
     fun emit(
-        fromSessionId: IxId<UserAuthSessionData>,
-        fromUserId: IxId<UserData>,
+        fromSessionId: IxId<UserAuthSessionData>?,
+        fromUserId: IxId<UserData>?,
         eventType: WebsocketEventType,
         eventData: WebsocketEventContent,
         users: List<IxId<UserData>>,

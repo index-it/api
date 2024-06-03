@@ -30,7 +30,6 @@ import java.util.*
 fun Route.listAccessRoute() {
     val listDao by inject<ListDao>()
     val userDao by inject<UserDao>()
-    val listInvitationUseCase by inject<ListInvitationUseCase>()
     val listInvitationDao by inject<ListInvitationDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
@@ -129,7 +128,7 @@ fun Route.listAccessRoute() {
                     )
                 }
             } else {
-                val sent = listInvitationUseCase.sendInvitation(
+                val sent = ListInvitationUseCase.sendInvitation(
                     fromUserEmail = inviter.email,
                     listId = listId,
                     listName = list.name,
@@ -203,7 +202,7 @@ fun Route.listAccessRoute() {
         }
     }
 
-    post<ListsRoute.AcceptInvitation>({
+    get<ListsRoute.AcceptInvitation>({
         tags = listOf("lists-access")
         operationId = "accept-list-invitation"
         summary = "accepts a list invitation via a token"
@@ -233,13 +232,13 @@ fun Route.listAccessRoute() {
         }
     }) { request ->
         val listInvitationData = listInvitationDao.get(request.token)
-            ?: return@post call.respond(HttpStatusCode.NotFound)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         val invitedUser = userDao.getFromEmail(listInvitationData.email)
-            ?: return@post call.respond(HttpStatusCode.MethodNotAllowed, "you need an account to accept the invitation")
+            ?: return@get call.respond(HttpStatusCode.MethodNotAllowed, "you need an account to accept the invitation")
 
         val list = listDao.get(listInvitationData.listId)
-            ?: return@post call.respond(HttpStatusCode.NotFound)
+            ?: return@get call.respond(HttpStatusCode.NotFound)
 
         val addAsViewer = !listInvitationData.editor && list.viewers.none { user -> user == invitedUser.id }
         val addAsEditor = listInvitationData.editor && list.editors.none { user -> user == invitedUser.id }

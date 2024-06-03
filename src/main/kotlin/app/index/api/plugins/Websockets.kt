@@ -49,12 +49,11 @@ fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEventForUsers(
     includeCurrentSession: Boolean = false
 ) {
     val authSession = this.call.principal<UserAuthSessionData>()
-        ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
 
     try {
         websocketEventManager.emit(
-            fromSessionId = authSession.id,
-            fromUserId = authSession.userId,
+            fromSessionId = authSession?.id,
+            fromUserId = authSession?.userId,
             eventType = type,
             eventData = content,
             users = users,

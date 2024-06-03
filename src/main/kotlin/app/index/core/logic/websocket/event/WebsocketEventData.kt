@@ -18,16 +18,16 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class WebsocketEventData(
-    @Contextual val fromSessionId: IxId<UserAuthSessionData>,
-    @Contextual val fromUserId: IxId<UserData>,
+    @Contextual val fromSessionId: IxId<UserAuthSessionData>?,
+    @Contextual val fromUserId: IxId<UserData>?,
     val targetUsers: List<@Contextual IxId<UserData>>,
     val type: WebsocketEventType,
     val inclusive: Boolean,
     val content: WebsocketEventContent
 ) {
     @Serializable data class WebsocketEventSanitizedData(
-        @Contextual val fromSessionId: IxId<UserAuthSessionData>,
-        @Contextual val fromUserId: IxId<UserData>,
+        @Contextual val fromSessionId: IxId<UserAuthSessionData>?,
+        @Contextual val fromUserId: IxId<UserData>?,
         val type: WebsocketEventType,
         val inclusive: Boolean,
         val content: WebsocketEventContent

@@ -8,6 +8,7 @@ import app.index.data.sources.db.schemas.lists.ListInvitationTable.expires_at
 import app.index.data.sources.db.schemas.lists.ListInvitationTable.id
 import app.index.data.sources.db.schemas.lists.ListInvitationTable.list
 import app.index.data.sources.db.schemas.lists.ListInvitationTable.token
+import app.index.data.sources.db.toEntityId
 import app.index.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -61,6 +62,8 @@ class ListInvitationEntity(id: EntityID<Int>) : IntEntity(id) {
 fun ListInvitationEntity.fromData(listInvitationData: ListInvitationData) {
     token = listInvitationData.token
     email = listInvitationData.email
+    list = listInvitationData.listId.toEntityId(ListTable)
+    editor = listInvitationData.editor
     created_at = Instant.ofEpochMilli(listInvitationData.createdAt)
     expires_at = Instant.ofEpochMilli(listInvitationData.expireAt)
 }
