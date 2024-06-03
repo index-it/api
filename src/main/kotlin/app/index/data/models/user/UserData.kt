@@ -1,6 +1,7 @@
 package app.index.data.models.user
 
 import app.index.core.logic.typedId.impl.IxId
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -20,9 +21,11 @@ data class UserData(
         GOOGLE,
 
         @SerialName("apple")
+        @Suppress("UNUSED")
         APPLE,
 
         @SerialName("facebook")
+        @Suppress("UNUSED")
         FACEBOOK,
 
         @SerialName("none")
@@ -33,9 +36,13 @@ data class UserData(
 
     @Serializable
     data class UserResponseDto(
+        @field:Schema(required = true)
         @Contextual val id: IxId<UserData>,
+        @field:Schema(required = true)
         val email: String,
+        @field:Schema(required = true)
         val creation_timestamp: Long,
+        @field:Schema(required = true)
         val creation_source: CreationSource,
     )
 }

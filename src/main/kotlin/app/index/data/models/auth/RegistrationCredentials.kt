@@ -7,11 +7,14 @@ import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
 import io.konform.validation.jsonschema.pattern
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegistrationCredentials(
+    @field:Schema(required = true)
     val email: String,
+    @field:Schema(required = true)
     val password: String,
 ) : Validatable<RegistrationCredentials> {
     override fun validate(): ValidationResult<RegistrationCredentials> =

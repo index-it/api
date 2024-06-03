@@ -27,6 +27,7 @@ amqpClient="5.18.0"
 
 ktor="2.3.7"
 ktorSwagger="2.7.1"
+swaggerAnnotations="2.2.22"
 jsonSchemaGenereator="4.32.0"
 konform="0.4.0"
 libRecur="0.15.0"
@@ -96,6 +97,7 @@ ktor-micrometer = { group = "io.ktor", name = "ktor-server-metrics-micrometer", 
 micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometerRegistryPrometheus" }
 ktor-swagger = { group = "io.github.smiley4", name = "ktor-swagger-ui", version.ref = "ktorSwagger" }
 json-schema-generator = { group = "com.github.victools", name = "jsonschema-generator", version.ref = "jsonSchemaGenereator" }
+swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swaggerAnnotations"}
 
 konform = { group = "io.konform", name = "konform-jvm", version.ref = "konform" }
 
@@ -158,6 +160,7 @@ ktor-server = [
     "ktor-server-rate-limit",
     "ktor-swagger",
     "json-schema-generator",
+    "swagger-annotations",
     "konform"
 ]
 

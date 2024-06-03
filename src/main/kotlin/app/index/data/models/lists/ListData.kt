@@ -10,6 +10,7 @@ import io.konform.validation.Validation
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.minLength
 import io.konform.validation.jsonschema.pattern
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -18,14 +19,23 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ListData(
+    @field:Schema(required = true)
     @Contextual val id: IxId<ListData>,
+    @field:Schema(required = true)
     @Contextual var user_id: IxId<UserData>,
+    @field:Schema(required = true)
     var name: String,
+    @field:Schema(required = true)
     var icon: String, // Single emoji at the moment
+    @field:Schema(required = true)
     var color: String, // Represented as #RRGGBB hex color
+    @field:Schema(required = true)
     var public: Boolean,
+    @field:Schema(required = true)
     val viewers: List<@Contextual IxId<UserData>>,
+    @field:Schema(required = true)
     val editors: List<@Contextual IxId<UserData>>,
+    @field:Schema(required = true)
     val created_at: Long = DatetimeUtils.currentMillis(),
     val edited_at: Long? = null,
 ) {
@@ -36,9 +46,13 @@ data class ListData(
 
     @Serializable
     data class ListCreateRequestData(
+        @field:Schema(required = true)
         var name: String,
+        @field:Schema(required = true)
         var icon: String,
+        @field:Schema(required = true)
         var color: String,
+        @field:Schema(required = true)
         var public: Boolean = false,
     ) : Validatable<ListCreateRequestData> {
         override fun validate() =
@@ -55,9 +69,13 @@ data class ListData(
 
     @Serializable
     data class ListUpdateRequestData(
+        @field:Schema(required = true)
         var name: String,
+        @field:Schema(required = true)
         var icon: String,
+        @field:Schema(required = true)
         var color: String,
+        @field:Schema(required = true)
         var public: Boolean = false,
     ) : Validatable<ListUpdateRequestData> {
         override fun validate() =
@@ -75,18 +93,23 @@ data class ListData(
 
     @Serializable
     data class ListPermissionAddRequestData(
+        @field:Schema(required = true)
         val email: String,
+        @field:Schema(required = true)
         val editor: Boolean
     )
 
     @Serializable
     data class ListPermissionRemoveRequestData(
+        @field:Schema(required = true)
         @Contextual val user_id: IxId<UserData>,
     )
 
     @Serializable
     data class ListTemplateResponseData(
+        @field:Schema(required = true)
         val name: String,
+        @field:Schema(required = true)
         val color: String,
     )
 }
