@@ -1,7 +1,13 @@
 package app.index.api.routing.admin.routes
 
 import app.index.api.plugins.AuthenticationMethods
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.admin.AdminRoute
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
+import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.user.UserData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
@@ -14,6 +20,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.adminUsersByIdRoute() {
     val userDao by inject<UserDao>()
+    val userSessionDao by inject<UserSessionDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     get<AdminRoute.UsersRoute.UserByIdRoute>({
         tags = listOf("admin")
@@ -62,7 +70,15 @@ fun Route.adminUsersByIdRoute() {
         }
     }) {
         userDao.delete(it.user_id)
+        userSessionDao.deleteAllOfUser(it.user_id)
 
         call.respond(HttpStatusCode.OK)
+
+        emitWebsocketEventForUsers(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
+            content = WebsocketEventContent.EmptyEventContent,
+            users = listOf(it.user_id)
+        )
     }
 }
