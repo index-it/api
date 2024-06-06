@@ -18,9 +18,9 @@ class AdminRoute {
         @Resource("/id/{user_id}")
         class UserByIdRoute(val parent: UsersRoute = UsersRoute(), @Contextual val user_id: IxId<UserData>)
 
-        @Resource("/email/{email}")
+        @Resource("/email")
         class UserByEmailRoute(val parent: UsersRoute = UsersRoute(), val email: String) {
-            @Resource("verify-email")
+            @Resource("/verify-email")
             class VerifyEmailRoute(val parent: UserByEmailRoute)
         }
     }

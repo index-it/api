@@ -60,7 +60,7 @@ fun Route.adminUsersByEmailRoute() {
         summary = "verifies the email on behalf of a user"
         securitySchemeName = AuthenticationMethods.ADMIN_BEARER_AUTH
         request {
-            pathParameter<String>("email") {
+            queryParameter<String>("email") {
                 description = "the encoded email of the user"
                 example = "sample%40mail.com"
                 required = true
