@@ -1,7 +1,6 @@
 package app.index.api.routing.admin.routes
 
 import app.index.api.plugins.AuthenticationMethods
-import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.admin.AdminRoute
 import app.index.core.logic.websocket.WebsocketEventManager
