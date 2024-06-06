@@ -45,4 +45,16 @@ data class UserData(
         @field:Schema(required = true)
         val creation_source: CreationSource,
     )
+
+    @Serializable
+    data class AdminUserCreateRequestData(
+        @field:Schema(required = true)
+        val email: String,
+        @field:Schema(required = true)
+        val password: String,
+        @field:Schema(required = true)
+        val email_verified: Boolean,
+        @field:Schema(required = true)
+        val creation_source: CreationSource
+    )
 }
