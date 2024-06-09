@@ -34,7 +34,7 @@ fun Route.oauthLoginRoutes() {
         description = "the user needs to get an id token with google oauth and forward it to this endpoint to get authenticated via google"
         protected = false
         request {
-            queryParameter<String>("tokenId") {
+            queryParameter<String>("token_id") {
                 description = "the id token received from google"
                 required = true
                 allowEmptyValue = false
