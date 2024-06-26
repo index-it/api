@@ -1,0 +1,27 @@
+package app.index.api.plugins
+
+import app.index.config.BigQueryConfig
+import app.index.core.logic.AnalyticsEventManager
+import app.index.data.models.analytics.AnalyticsEvent
+import app.index.data.models.analytics.AnalyticsEventData
+import app.index.data.models.analytics.AnalyticsEventReceiver
+import io.ktor.server.application.*
+import io.ktor.util.pipeline.*
+
+fun PipelineContext<Unit, ApplicationCall>.emitAnalyticsEvent(
+    analyticsEventManager: AnalyticsEventManager,
+    analyticsEventData: AnalyticsEventData
+) {
+    val receivers = buildList {
+        if (BigQueryConfig.enabled)
+            add(AnalyticsEventReceiver.BIGQUERY)
+
+        if (BigQueryConfig.console_enabled)
+            add(AnalyticsEventReceiver.CONSOLE)
+    }
+
+    analyticsEventManager.emitAnalyticsEvent(AnalyticsEvent(
+        data = analyticsEventData,
+        receivers = receivers
+    ))
+}

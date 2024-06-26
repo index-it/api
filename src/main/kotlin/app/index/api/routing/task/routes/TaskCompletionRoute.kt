@@ -1,9 +1,11 @@
 package app.index.api.routing.task.routes
 
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.exceptions.AuthorizationException
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -12,6 +14,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.tasks.TaskData
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -26,6 +29,7 @@ fun Route.taskCompletionRoute() {
     val taskReminderJobDao by inject<TaskReminderJobDao>()
     val itemDao by inject<ItemDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     put<TasksRoute.TaskRoute.CompletionRoute>({
         tags = listOf("tasks")
@@ -82,6 +86,15 @@ fun Route.taskCompletionRoute() {
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.TASK_UPDATED,
             content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updatedTask)
+        )
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.TaskCompletionEventData(
+                user_id = userId,
+                task_id = updatedTask.id,
+                completed = it.completed
+            )
         )
 
         // update completion of connected item if user has at least editor permissions in its list

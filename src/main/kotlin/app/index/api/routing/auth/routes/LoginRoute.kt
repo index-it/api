@@ -1,11 +1,15 @@
 package app.index.api.routing.auth.routes
 
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.routing.auth.LoginRoute
 import app.index.core.exceptions.AuthenticationException
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.PasswordEncoder
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.auth.LoginCredentialsData
+import app.index.data.models.user.UserData
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -20,6 +24,7 @@ fun Route.loginRoute() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
     val passwordEncoder by inject<PasswordEncoder>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     post<LoginRoute>({
         tags = listOf("auth")
@@ -73,5 +78,13 @@ fun Route.loginRoute() {
 
         call.sessions.set(userSessionId)
         call.respond(HttpStatusCode.OK)
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.UserLoginEventData(
+                user_id = user.id,
+                login_source = UserData.CreationSource.NONE,
+            )
+        )
     }
 }

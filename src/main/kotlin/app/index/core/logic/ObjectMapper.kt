@@ -1,8 +1,12 @@
 package app.index.core.logic
 
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import org.koin.core.annotation.Factory
 
 @Factory
@@ -14,12 +18,28 @@ class ObjectMapper {
         ignoreUnknownKeys = true
     }
 
-    inline fun <reified T> encode(data: T): String {
+    @OptIn(ExperimentalSerializationApi::class)
+    val jsonOmittingClassDiscriminator = Json {
+        serializersModule = IdKotlinXSerializationModule
+        prettyPrint = true
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+        classDiscriminatorMode = ClassDiscriminatorMode.NONE
+    }
+
+    inline fun <reified T> encode(data: T, omitClassDiscriminator: Boolean = false): String {
+        val json = if (omitClassDiscriminator) jsonOmittingClassDiscriminator else json
         return json.encodeToString(data)
     }
 
-    inline fun <reified T> encodeToByteArray(data: T): ByteArray {
+    inline fun <reified T> encodeToByteArray(data: T, omitClassDiscriminator: Boolean = false): ByteArray {
+        val json = if (omitClassDiscriminator) jsonOmittingClassDiscriminator else json
         return json.encodeToString(data).encodeToByteArray()
+    }
+
+    inline fun <reified T> encodeToMap(data: T, omitClassDiscriminator: Boolean = false): Map<String, *> {
+        val json = if (omitClassDiscriminator) jsonOmittingClassDiscriminator else json
+        return json.encodeToJsonElement(data).jsonObject
     }
 
     inline fun <reified T> decode(serializedData: String): T {

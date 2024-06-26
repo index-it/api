@@ -25,7 +25,8 @@ data class WebsocketEventData(
     val inclusive: Boolean,
     val content: WebsocketEventContent
 ) {
-    @Serializable data class WebsocketEventSanitizedData(
+    @Serializable
+    data class WebsocketEventSanitizedData(
         @Contextual val fromSessionId: IxId<UserAuthSessionData>?,
         @Contextual val fromUserId: IxId<UserData>?,
         val type: WebsocketEventType,

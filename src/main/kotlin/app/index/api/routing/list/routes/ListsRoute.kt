@@ -1,12 +1,15 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ListDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ListData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
@@ -20,6 +23,7 @@ import org.koin.ktor.ext.inject
 fun Route.listsRoute() {
     val listDao by inject<ListDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     get<ListsRoute>({
         tags = listOf("lists")
@@ -54,9 +58,10 @@ fun Route.listsRoute() {
             }
         }
     }) {
+        val userId = userIdFromSessionOrThrow()
         val newList = call.receive<ListData.ListCreateRequestData>()
 
-        val created = listDao.create(userIdFromSessionOrThrow(), newList)
+        val created = listDao.create(userId, newList)
 
         call.respond(created)
 
@@ -64,6 +69,13 @@ fun Route.listsRoute() {
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.LIST_CREATED,
             content = WebsocketEventContent.ListCreateOrUpdateEventContent(created)
+        )
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.ListCreationEventData(
+                user_id = userId
+            )
         )
     }
 }
