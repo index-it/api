@@ -24,7 +24,7 @@ private val log = KotlinLogging.logger { }
 class BigQueryClient(
     private val objectMapper: ObjectMapper
 ) : IClosableComponent {
-    private val bigQueryWriteClient = run {
+    private val bigQueryClient = run {
         if (!BigQueryConfig.enabled) {
             null
         } else {
@@ -56,7 +56,7 @@ class BigQueryClient(
      * otherwise the event will be added to a pool that gets pushed following a schedule
      */
     fun pushAnalyticsEvent(event: AnalyticsEvent.BigQueryConsumableAnalyticsEvent) {
-        if (bigQueryWriteClient != null) {
+        if (bigQueryClient != null) {
             eventsPool.add(event)
             if (eventsPool.size >= BigQueryConfig.maxEventsEntry) {
                 executor.submit { pushAnalyticsEvents() }
@@ -68,7 +68,7 @@ class BigQueryClient(
     }
 
     private fun pushAnalyticsEvents() {
-        if (bigQueryWriteClient == null || eventsPool.isEmpty()) {
+        if (bigQueryClient == null || eventsPool.isEmpty()) {
             log.debug { "bigquery enabled: ${BigQueryConfig.enabled} - no events to dispatch: ${eventsPool.isEmpty()}" }
             return
         }
@@ -87,14 +87,13 @@ class BigQueryClient(
                 .filterKeys { it != null }
                 .forEach { (type, listOfData) ->
                     // asserting type is ugly, but unfortunately it doesn't recognize we filtered null types
-                    println(type!!.name)
                     val builder = InsertAllRequest.newBuilder(BigQueryConfig.datasetName, type!!.name)
 
                     listOfData
                         .map { data -> objectMapper.encodeToMap(data, omitClassDiscriminator = true) }
-                        .forEach { serializedData -> println(serializedData); println(serializedData["timestamp"]); builder.addRow(serializedData) }
+                        .forEach { serializedData -> builder.addRow(serializedData) }
 
-                    val response = bigQueryWriteClient.insertAll(builder.build())
+                    val response = bigQueryClient.insertAll(builder.build())
                     if (response.hasErrors()) {
                         response.insertErrors.values.forEach { errors ->
                             log.error { "Failed while inserting analytics event in bigquery: $errors" }

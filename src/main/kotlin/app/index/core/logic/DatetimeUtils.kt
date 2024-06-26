@@ -29,8 +29,7 @@ object DatetimeUtils {
      *
      * @return a correct utc timestamp string representation
      */
-//    fun currentLocalDateTimeString(): String = currentLocalDateTime().toString()
-    fun currentLocalDateTimeString(): String = java.time.LocalDateTime.now(ZoneOffset.UTC).atOffset(ZoneOffset.UTC).toString()
+    fun currentLocalDateTimeString(): String = currentLocalDateTime().toString()
 
     fun currentInstant() = Clock.System.now()
 
