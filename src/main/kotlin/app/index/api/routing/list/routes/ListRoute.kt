@@ -10,6 +10,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ListDao
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -81,6 +82,9 @@ fun Route.listRoute() {
             }
             HttpStatusCode.Unauthorized to {
                 description = "not authorized to perform this action on the list"
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.List.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.NotFound to {
                 description = "list not found"

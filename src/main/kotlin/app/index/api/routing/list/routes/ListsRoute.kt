@@ -11,6 +11,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ListDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ListData
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -55,6 +56,9 @@ fun Route.listsRoute() {
                 body<ListData> {
                     description = "the created list"
                 }
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.List.VALIDATIONS_SUMMARY}"
             }
         }
     }) {

@@ -10,6 +10,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -93,6 +94,9 @@ fun Route.taskRoute() {
             HttpStatusCode.OK to {
                 description = "the updated task"
                 body<TaskData>()
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.NotFound to {
                 description = "task or item to connect not found"

@@ -12,6 +12,7 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.tasks.TaskData
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -75,7 +76,7 @@ fun Route.tasksRoute() {
                 body<TaskData>()
             }
             HttpStatusCode.BadRequest to {
-                description = "invalid parameters, see error message"
+                description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.NotFound to {
                 description = "did not find the item provided for connection with this new task"

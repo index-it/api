@@ -13,6 +13,7 @@ import app.index.data.daos.list.CategoryDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ListAuthorizationLevel
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -77,6 +78,9 @@ fun Route.categoriesRoute() {
             HttpStatusCode.OK to {
                 description = "category created"
                 body<CategoryData>()
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.Category.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
                 description = "not authorized to perform this action on the list"

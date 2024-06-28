@@ -14,6 +14,7 @@ import app.index.data.daos.list.ItemDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -86,6 +87,9 @@ fun Route.itemsRoute() {
             HttpStatusCode.OK to {
                 description = "item created"
                 body<ItemData>()
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.Item.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
                 description = "not authorized to perform this action on the list"
