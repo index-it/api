@@ -1,18 +1,17 @@
 package app.index.core.logic.websocket
 
 import app.index.core.logic.ObjectMapper
+import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventData
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.queue.WebsocketEventsQueueManager
 import app.index.data.models.auth.UserAuthSessionData
+import app.index.data.models.user.UserData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.websocket.*
-import io.ktor.util.pipeline.*
 import org.koin.core.annotation.Single
 
 private val log = KotlinLogging.logger {}
@@ -39,24 +38,25 @@ class WebsocketEventManager(
 
     private suspend fun consume(websocketEventData: WebsocketEventData) {
         if (websocketEventData.type == WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED) {
-            websocketConnectionsManager.closeAllSessionsOfUser(websocketEventData.fromUserId)
+            if (websocketEventData.fromUserId == null) {
+                throw IllegalArgumentException("Emitted a USER_AUTH_SESSIONS_INVALIDATED websocket event but the event payload FROM_USER_ID property is null")
+            } else {
+                websocketConnectionsManager.closeAllSessionsOfUser(websocketEventData.fromUserId)
+            }
             return
         }
 
-        val websocketConnectionsOfUser = if (websocketEventData.inclusive) {
-            websocketConnectionsManager.getConnectionsOfUser(
-                userId = websocketEventData.fromUserId
-            )
-        } else {
-            websocketConnectionsManager.getConnectionsOfUserExcludingSession(
-                userId = websocketEventData.fromUserId,
-                excludedSessionId = websocketEventData.fromSessionId
-            )
+        val targetWebsocketConnections  = websocketEventData.targetUsers.map {
+            websocketConnectionsManager.getConnectionsOfUser(it)
+        }.flatten().toMutableSet()
+
+        if (!websocketEventData.inclusive) {
+            targetWebsocketConnections.removeIf { it.sessionId == websocketEventData.fromSessionId }
         }
 
-        websocketConnectionsOfUser.forEach {
+        targetWebsocketConnections.forEach {
             try {
-                it.connection.sendSerialized(websocketEventData)
+                it.connection.sendSerialized(websocketEventData.sanitize())
                 log.debug { "Sent websocket event to websocket connection: $it" }
             } catch (e: IllegalStateException) {
                 // Websocket connection is closed already
@@ -68,16 +68,29 @@ class WebsocketEventManager(
     }
 
     /**
-     * @throws IllegalArgumentException missing [UserAuthSessionData] principal in [context]
+     * Emits a websocket event to all [users]
+     *
+     * @param fromSessionId null if websocket event was not triggered by a logged in user
+     * @param fromUserId null if websocket event was not triggered by a logged in user
+     * @param eventType
+     * @param eventData
+     * @param users the users to emit the event to if they have an active websocket connection
+     * @param includeCurrentSession whether to emit the event to the session of the user who triggered the event
+     *
      * @throws Exception other exceptions handling the event
      */
-    fun emit(context: PipelineContext<Unit, ApplicationCall>, eventType: WebsocketEventType, eventData: WebsocketEventContent, includeCurrentSession: Boolean) {
-        val authSession = context.call.principal<UserAuthSessionData>()
-            ?: throw IllegalArgumentException("Session ID missing when trying to emitting websocket event")
-
+    fun emit(
+        fromSessionId: IxId<UserAuthSessionData>?,
+        fromUserId: IxId<UserData>?,
+        eventType: WebsocketEventType,
+        eventData: WebsocketEventContent,
+        users: List<IxId<UserData>>,
+        includeCurrentSession: Boolean
+    ) {
         val websocketEventData = WebsocketEventData(
-            fromSessionId = authSession.id,
-            fromUserId = authSession.userId,
+            fromSessionId = fromSessionId,
+            fromUserId = fromUserId,
+            targetUsers = users,
             type = eventType,
             inclusive = includeCurrentSession,
             content = eventData

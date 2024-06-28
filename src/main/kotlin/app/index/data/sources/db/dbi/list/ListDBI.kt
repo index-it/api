@@ -8,21 +8,41 @@ import app.index.data.sources.db.dbi.DBI
 interface ListDBI : DBI {
     suspend fun create(listData: ListData)
 
-    suspend fun get(id: IxId<UserData>): List<ListData>
+    suspend fun getAllOfUser(id: IxId<UserData>): List<ListData>
 
-    suspend fun get(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ): ListData?
+    /**
+     * Gets all lists that the user has access to
+     */
+    suspend fun getListsAccessibleByUser(id: IxId<UserData>): List<ListData>
+
+    /**
+     * Gets a single list by its [listId]
+     */
+    suspend fun get(listId: IxId<ListData>): ListData?
+
 
     suspend fun update(
-        userId: IxId<UserData>,
         listId: IxId<ListData>,
-        listUpdateRequestData: ListData.ListUpdateRequestData,
-    ): Boolean
+        listUpdateRequestData: ListData.ListUpdateRequestData
+    ): ListData?
 
-    suspend fun delete(
-        userId: IxId<UserData>,
+    /**
+     * Gives user permission to either view or edit a list
+     * This already handles mutual exclusiveness between viewers and editors
+     */
+    suspend fun addPermissionToUser(
         listId: IxId<ListData>,
-    ) : Boolean
+        userToAddId: IxId<UserData>,
+        editor: Boolean
+    )
+
+    /**
+     * Removes a user access to a list completely (both viewing and editing)
+     */
+    suspend fun removePermissionFromUser(
+        listId: IxId<ListData>,
+        userToRemoveId: IxId<UserData>
+    )
+
+    suspend fun delete(listId: IxId<ListData>) : Boolean
 }

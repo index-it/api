@@ -5,24 +5,18 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.ListData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.list.ListDBI
-import app.index.data.sources.db.schemas.lists.ListEntity
-import app.index.data.sources.db.schemas.lists.ListTable
-import app.index.data.sources.db.schemas.lists.fromData
-import app.index.data.sources.db.schemas.lists.toData
+import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class ListDBIImpl : ListDBI {
-    private fun userAndListFilter(
-        userId: IxId<UserData>,
-        listId: IxId<ListData>,
-    ) = Op.build { (ListTable.id eq listId.toEntityId(ListTable)) and (ListTable.user eq userId.toEntityId(UsersTable)) }
+    private fun listFilter(listId: IxId<ListData>) = Op.build {
+        ListTable.id eq listId.toEntityId(ListTable)
+    }
 
     override suspend fun create(listData: ListData) {
         dbQuery {
@@ -32,43 +26,90 @@ class ListDBIImpl : ListDBI {
         }
     }
 
-    override suspend fun get(id: IxId<UserData>): List<ListData> =
+    override suspend fun getAllOfUser(id: IxId<UserData>): List<ListData> =
         dbQuery {
             ListEntity
                 .find { ListTable.user eq id.toEntityId(UsersTable) }
                 .map { it.toData() }
         }
 
+    override suspend fun getListsAccessibleByUser(id: IxId<UserData>): List<ListData> =
+        dbQuery {
+            val userId = id.toEntityId(UsersTable)
+
+            ListEntity.find {
+                (ListTable.user eq userId) or
+                        (ListTable.id inSubQuery ListViewerTable.select(ListViewerTable.list).where { ListViewerTable.user eq userId }) or
+                        (ListTable.id inSubQuery ListEditorTable.select(ListEditorTable.list).where { ListEditorTable.user eq userId })
+            }.map { it.toData() }
+        }
+
     override suspend fun get(
-        userId: IxId<UserData>,
         listId: IxId<ListData>,
     ): ListData? =
         dbQuery {
             ListEntity
-                .find { userAndListFilter(userId, listId) }
+                .find { listFilter(listId) }
                 .limit(1)
                 .firstOrNull()
                 ?.toData()
         }
 
     override suspend fun update(
-        userId: IxId<UserData>,
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,
-    ): Boolean =
+    ): ListData? =
         dbQuery {
-            ListTable.update({ userAndListFilter(userId, listId) }) {
+            ListTable.updateReturning(where = { listFilter(listId) }) {
                 it[name] = listUpdateRequestData.name
                 it[emoji] = listUpdateRequestData.icon
                 it[color] = listUpdateRequestData.color
+                it[public] = listUpdateRequestData.public
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
-            } > 0
+            }.firstOrNull()?.let {
+                ListEntity.wrapRow(it).toData()
+            }
         }
 
-    override suspend fun delete(
-        userId: IxId<UserData>,
+    override suspend fun addPermissionToUser(
         listId: IxId<ListData>,
-    ) : Boolean = dbQuery {
-        ListTable.deleteWhere { userAndListFilter(userId, listId) } > 0
+        userToAddId: IxId<UserData>,
+        editor: Boolean
+    ): Unit =
+        dbQuery {
+            if (editor) {
+                ListViewerTable.deleteWhere {
+                    (user eq userToAddId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+                }
+                ListEditorTable.upsert {
+                    it[user] = userToAddId.toEntityId(UsersTable)
+                    it[list] = listId.toEntityId(ListTable)
+                }
+            } else {
+                ListEditorTable.deleteWhere {
+                    (user eq userToAddId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+                }
+                ListViewerTable.upsert {
+                    it[user] = userToAddId.toEntityId(UsersTable)
+                    it[list] = listId.toEntityId(ListTable)
+                }
+            }
+        }
+
+    override suspend fun removePermissionFromUser(
+        listId: IxId<ListData>,
+        userToRemoveId: IxId<UserData>
+    ): Unit =
+        dbQuery {
+            ListViewerTable.deleteWhere {
+                (user eq userToRemoveId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+            }
+            ListEditorTable.deleteWhere {
+                (user eq userToRemoveId.toEntityId(UsersTable)) and (list eq listId.toEntityId(ListTable))
+            }
+        }
+
+    override suspend fun delete(listId: IxId<ListData>) : Boolean = dbQuery {
+        ListTable.deleteWhere { listFilter(listId) } > 0
     }
 }

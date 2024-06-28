@@ -1,5 +1,6 @@
 package app.index.config.core
 
+import app.index.config.core.models.ApplicationEnvironment
 import ch.qos.logback.classic.Level
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.DotenvException
@@ -41,6 +42,15 @@ object ConfigurationReader {
                     } catch (_: IllegalArgumentException) {
                         throw IllegalArgumentException(
                             "Tried to read a value of type 'Level' for key '$key' but casting failed, value: $value",
+                        )
+                    }
+                }
+                ApplicationEnvironment::class -> {
+                    try {
+                        value?.uppercase()?.let { ApplicationEnvironment.valueOf(it) }
+                    } catch (_: IllegalArgumentException) {
+                        throw IllegalArgumentException(
+                            "Tried to read a value of type 'ApplicationEnvironment' for key '$key' but casting failed, value: $value",
                         )
                     }
                 }

@@ -1,8 +1,10 @@
 package app.index.core.clients
 
 import app.index.config.BrevoConfig
-import app.index.data.models.email.BrevoGenericRequestBody
 import app.index.data.models.email.BrevoOperationRequestBody
+import app.index.data.models.email.BrevoUrlOperationRequestBody
+import app.index.data.models.email.BrevoEmailField
+import app.index.data.models.email.BrevoListInviteRequestBody
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -54,16 +56,16 @@ class BrevoClient : IClosableComponent {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
                 setBody(
-                    BrevoOperationRequestBody(
+                    BrevoUrlOperationRequestBody(
                         to =
                         listOf(
-                            BrevoGenericRequestBody.To(
+                            BrevoEmailField(
                                 email = email,
                             ),
                         ),
                         templateId = BrevoConfig.emailVerificationTemplateId,
                         params =
-                        BrevoOperationRequestBody.Params(
+                        BrevoUrlOperationRequestBody.Params(
                             url = "${BrevoConfig.emailVerificationUrl}?email=${
                                 URLEncoder.encode(
                                     email,
@@ -101,16 +103,16 @@ class BrevoClient : IClosableComponent {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
                 setBody(
-                    BrevoOperationRequestBody(
+                    BrevoUrlOperationRequestBody(
                         to =
                         listOf(
-                            BrevoGenericRequestBody.To(
+                            BrevoEmailField(
                                 email = email,
                             ),
                         ),
                         templateId = BrevoConfig.passwordResetTemplateId,
                         params =
-                        BrevoOperationRequestBody.Params(
+                        BrevoUrlOperationRequestBody.Params(
                             url = "${BrevoConfig.passwordResetUrl}?token=$token",
                         ),
                     ),
@@ -135,10 +137,10 @@ class BrevoClient : IClosableComponent {
         val response: HttpResponse =
             httpClient.post("smtp/email") {
                 setBody(
-                    BrevoGenericRequestBody(
+                    BrevoOperationRequestBody(
                         to =
                         listOf(
-                            BrevoGenericRequestBody.To(
+                            BrevoEmailField(
                                 email = email,
                             ),
                         ),
@@ -151,6 +153,56 @@ class BrevoClient : IClosableComponent {
             log.debug { "Sent password reset success email to $email" }
         } else {
             log.error { "Failed to send password reset success email\nResponse: $response" }
+        }
+
+        return response.status.isSuccess()
+    }
+
+    /**
+     * Sends an email to [emailTo] indicating that the user [inviterEmail] has invited him to participate in the list
+     * named [listName], either as [editor] or just viewer
+     *
+     * @param inviterEmail email of the user that sent the invitation
+     * @param listName name of the list to which the user is invited
+     * @param emailTo email of the invited user
+     * @param editor whether he has been invited as editor if true, or viewer if false
+     * @param token to authenticate to invitation acceptance
+     *
+     * @return true if the email has been sent successful, false otherwise
+     */
+    suspend fun sendListInvitationEmail(
+        inviterEmail: String,
+        listName: String,
+        emailTo: String,
+        editor: Boolean,
+        token: String,
+    ): Boolean {
+        val response: HttpResponse =
+            httpClient.post("smtp/email") {
+                setBody(
+                    BrevoListInviteRequestBody(
+                        to =
+                        listOf(
+                            BrevoEmailField(
+                                email = emailTo,
+                            ),
+                        ),
+                        templateId = BrevoConfig.listInvitationTemplateId,
+                        params =
+                        BrevoListInviteRequestBody.Params(
+                            url = "${BrevoConfig.listInviteUrl}?token=$token",
+                            inviter = inviterEmail,
+                            list_name = listName,
+                            role = if (editor) "editor" else "viewer"
+                        ),
+                    ),
+                )
+            }
+
+        if (response.status.isSuccess()) {
+            log.debug { "Sent list ($listName) invitation to $emailTo" }
+        } else {
+            log.error { "Failed to send list invitation email\nResponse: $response" }
         }
 
         return response.status.isSuccess()

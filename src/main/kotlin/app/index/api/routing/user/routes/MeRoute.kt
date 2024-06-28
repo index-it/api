@@ -1,8 +1,7 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.plugins.authSessionData
 import app.index.api.plugins.authSessionDataOrThrow
-import app.index.api.plugins.emitWebsocketEvent
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.user.MeRoute
 import app.index.core.exceptions.AuthenticationException
@@ -81,7 +80,7 @@ fun Route.meRoutes() {
         )
 
         // Invalidate all other user websocket connections
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
             content = WebsocketEventContent.EmptyEventContent
@@ -112,7 +111,7 @@ fun Route.meRoutes() {
 
         call.respond(HttpStatusCode.OK)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
             content = WebsocketEventContent.EmptyEventContent

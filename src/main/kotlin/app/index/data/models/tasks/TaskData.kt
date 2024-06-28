@@ -10,6 +10,7 @@ import io.konform.validation.Invalid
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.*
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -36,18 +37,25 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Suppress("Unused")
 data class TaskData(
+    @field:Schema(required = true)
     @Contextual val id: IxId<TaskData>,
+    @field:Schema(required = true)
     @Contextual val user_id: IxId<UserData>,
     @Contextual val item_id: IxId<ItemData>? = null,
+    @field:Schema(required = true)
     val name: String,
     val description: String? = null,
+    @field:Schema(required = true)
     val subtasks: List<SubTaskData> = emptyList(),
     val due_date: LocalDate? = null,
     val rrule: String? = null,
+    @field:Schema(required = true)
     val completed: Boolean = false,
     val priority: Int? = null,
+    @field:Schema(required = true)
     val reminders: List<TaskReminderData> = emptyList(),
     @SerialName("created_at")
+    @field:Schema(required = true)
     val created_at: Long = DatetimeUtils.currentMillis(),
     @SerialName("edited_at")
     val edited_at: Long? = null,
@@ -56,11 +64,14 @@ data class TaskData(
 ) {
     @Serializable
     data class TaskCreateRequestData(
+        @field:Schema(required = true)
         val name: String,
         val description: String? = null,
         val due_date: LocalDate? = null,
         val rrule: String? = null,
+        @field:Schema(required = true)
         val reminders: List<TaskReminderData> = emptyList(),
+        @field:Schema(required = true)
         val subtasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
         @Contextual val item_id: IxId<ItemData>? = null,
@@ -107,11 +118,14 @@ data class TaskData(
 
     @Serializable
     data class TaskUpdateRequestData(
+        @field:Schema(required = true)
         val name: String,
         val description: String? = null,
         val due_date: LocalDate? = null,
         val rrule: String? = null,
+        @field:Schema(required = true)
         val reminders: List<TaskReminderData> = emptyList(),
+        @field:Schema(required = true)
         val subtasks: List<SubTaskData> = emptyList(),
         val priority: Int? = null,
         @Contextual val item_id: IxId<ItemData>? = null,
@@ -158,13 +172,16 @@ data class TaskData(
 
     @Serializable
     data class TaskTemplateResponseData(
+        @field:Schema(required = true)
         val name: String,
     )
 }
 
 @Serializable
 data class SubTaskData(
+    @field:Schema(required = true)
     val name: String,
+    @field:Schema(required = true)
     var completed: Boolean,
 )
 
@@ -179,6 +196,8 @@ data class SubTaskData(
  */
 @Serializable
 data class TaskReminderData(
+    @field:Schema(required = true)
     val days_before: Int,
+    @field:Schema(required = true)
     val time_offset: Long
 )

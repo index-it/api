@@ -1,6 +1,5 @@
 package app.index.data.sources.db.schemas.suggestions
 
-import app.index.data.sources.db.core.array
 import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable.description
 import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable.id
 import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable.locale

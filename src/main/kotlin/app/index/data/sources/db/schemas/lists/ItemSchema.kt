@@ -54,6 +54,7 @@ object ItemTable : UUIDTable() {
         foreign = CategoryTable,
         onDelete = ReferenceOption.CASCADE,
     ).index().nullable()
+    @Deprecated("Now multiple tasks can be connected to the same item because of lists sharing")
     val task = reference(
         name = "id_task",
         foreign = TaskTable,
@@ -82,7 +83,6 @@ object ItemTable : UUIDTable() {
  * @property userEntity
  * @property listEntity
  * @property categoryEntity
- * @property taskEntity
  */
 class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ItemEntity>(ItemTable)
@@ -90,6 +90,7 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var user by ItemTable.user
     var list by ItemTable.list
     var category by ItemTable.category
+    @Deprecated("Now multiple tasks can be connected to the same item because of lists sharing")
     var task by ItemTable.task
     var name by ItemTable.name
     var completed by ItemTable.completed
@@ -105,6 +106,7 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     @Suppress("MemberVisibilityCanBePrivate")
     val categoryEntity by CategoryEntity optionalReferencedOn ItemTable.category
     @Suppress("MemberVisibilityCanBePrivate")
+    @Deprecated("Now multiple tasks can be connected to the same item because of lists sharing")
     val taskEntity by TaskEntity optionalReferencedOn ItemTable.task
 }
 

@@ -1,15 +1,16 @@
 package app.index.api.routing.task.routes
 
-import app.index.api.plugins.emitWebsocketEvent
-import app.index.api.plugins.userIdFromSession
+import app.index.api.plugins.emitAnalyticsEvent
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
-import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.tasks.TaskData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
@@ -22,8 +23,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.tasksRoute() {
     val taskDao by inject<TaskDao>()
-    val itemDao by inject<ItemDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     get<TasksRoute>({
         tags = listOf("tasks")
@@ -97,26 +98,7 @@ fun Route.tasksRoute() {
         /// TASK CREATION ///
         /////////////////////
 
-        val task = if (itemIdToConnect != null) {
-            ////////////////////
-            /// CONNECT ITEM ///
-            ////////////////////
-            val task = taskDao.create(userIdFromSession()!!, newTask)
-
-            val updatedItem = itemDao.setTaskConnection(userId, itemIdToConnect, task.id)
-                ?: return@post call.respond(HttpStatusCode.NotFound)
-
-            emitWebsocketEvent(
-                websocketEventManager = websocketEventManager,
-                type = WebsocketEventType.ITEM_UPDATED,
-                content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem),
-                includeCurrentSession = true
-            )
-
-            task
-        } else {
-            taskDao.create(userIdFromSession()!!, newTask)
-        }
+        val task = taskDao.create(userId, newTask)
 
         /////////////////
         /// REMINDERS ///
@@ -125,10 +107,22 @@ fun Route.tasksRoute() {
 
         call.respond(task)
 
-        emitWebsocketEvent(
+        emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.TASK_CREATED,
             content = WebsocketEventContent.TaskCreateOrUpdateEventContent(task)
+        )
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.TaskCreationEventData(
+                user_id = userId,
+                item_id = task.item_id,
+                sub_tasks_count = task.subtasks.size,
+                reminders_count = task.reminders.size,
+                is_recurring = task.rrule != null,
+                priority = task.priority
+            )
         )
     }
 }

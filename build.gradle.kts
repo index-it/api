@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.google.api.client)
     implementation(libs.google.cloud.tasks)
     implementation(libs.google.cloud.scheduler)
+    implementation(libs.google.cloud.bigquery)
 
     implementation(libs.firebase.admin)
     implementation(libs.librecur)

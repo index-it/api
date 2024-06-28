@@ -4,12 +4,15 @@ import app.index.api.plugins.*
 import app.index.api.routing.configureRouting
 import app.index.config.ApiConfig
 import app.index.config.ApplicationConfig
+import app.index.config.SentryConfig
 import app.index.config.core.ConfigurationManager
 import app.index.config.core.ConfigurationReader
+import app.index.config.core.models.ApplicationEnvironment
 import ch.qos.logback.classic.Logger
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.sentry.Sentry
 import org.slf4j.LoggerFactory
 
 fun main() {
@@ -23,6 +26,17 @@ fun main() {
         )
 
     configInitializer.initialize()
+
+    /**
+     * Configure Sentry environment
+     */
+    val isSentryEnabled = ApplicationConfig.environment != ApplicationEnvironment.LOCAL
+
+    Sentry.init { options ->
+        options.environment = ApplicationConfig.environment.sentryName
+        options.isEnabled = isSentryEnabled
+        options.dsn = if (isSentryEnabled) SentryConfig.dsn else null
+    }
 
     /**
      * Configure logging

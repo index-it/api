@@ -27,10 +27,6 @@ class WebsocketConnectionsManager : IClosableComponent {
         return connections.filter { it.userId == userId }
     }
 
-    fun getConnectionsOfUserExcludingSession(userId: IxId<UserData>, excludedSessionId: IxId<UserAuthSessionData>): List<WebsocketConnection> {
-        return connections.filter { it.userId == userId && it.sessionId != excludedSessionId }
-    }
-
     fun removeConnection(websocketConnection: WebsocketConnection) {
         connections.remove(websocketConnection)
         log.debug { "Not handling the following websocket connection anymore: $websocketConnection" }

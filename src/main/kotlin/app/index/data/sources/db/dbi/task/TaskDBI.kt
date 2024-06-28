@@ -1,6 +1,7 @@
 package app.index.data.sources.db.dbi.task
 
 import app.index.core.logic.typedId.impl.IxId
+import app.index.data.models.lists.ItemData
 import app.index.data.models.tasks.TaskData
 import app.index.data.models.user.UserData
 import app.index.data.sources.db.dbi.DBI
@@ -13,6 +14,8 @@ interface TaskDBI : DBI {
     suspend fun getUncompleted(userId: IxId<UserData>): List<TaskData>
 
     suspend fun getCompleted(userId: IxId<UserData>): List<TaskData>
+
+    suspend fun getConnectedToItem(itemId: IxId<ItemData>): List<TaskData>
 
     suspend fun get(
         userId: IxId<UserData>,
@@ -28,7 +31,12 @@ interface TaskDBI : DBI {
         userId: IxId<UserData>,
         taskId: IxId<TaskData>,
         completed: Boolean,
-    ): Boolean
+    ): TaskData?
+
+    suspend fun setCompletionOfAllTasksConnectedToItem(
+        itemId: IxId<ItemData>,
+        completed: Boolean
+    ): List<TaskData>
 
     suspend fun update(
         userId: IxId<UserData>,

@@ -6,14 +6,15 @@ import app.index.data.models.suggestions.NameSuggestionsData
 import app.index.data.sources.db.dbi.suggestion.SuggestionNamesDBI
 import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class SuggestionNamesDBIImpl : SuggestionNamesDBI {
     override suspend fun get(id: IxIntId<NameSuggestionsData>, locale: String): NameSuggestionsData? {
         return dbQuery {
-            NameSuggestionTable.select { (NameSuggestionTable.id eq id.id) and (NameSuggestionTable.locale eq locale) }
+            NameSuggestionTable.selectAll()
+                .where { (NameSuggestionTable.id eq id.id) and (NameSuggestionTable.locale eq locale) }
                 .limit(1)
                 .firstOrNull()
         }?.let {
