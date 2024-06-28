@@ -12,6 +12,7 @@ import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -92,6 +93,9 @@ fun Route.itemRoute() {
             HttpStatusCode.OK to {
                 description = "item data"
                 body<ItemData>()
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.Item.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
                 description = "not authorized to perform this action on the list"

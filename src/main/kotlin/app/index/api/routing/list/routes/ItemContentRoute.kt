@@ -6,6 +6,7 @@ import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.data.daos.list.ItemContentDao
 import app.index.data.models.lists.ItemContentData
 import app.index.data.models.lists.ListAuthorizationLevel
+import app.index.data.validation.Validations
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
@@ -80,6 +81,9 @@ fun Route.itemContentRoute() {
             HttpStatusCode.OK to {
                 description = "item content"
                 body<ItemContentData>()
+            }
+            HttpStatusCode.BadRequest to {
+                description = "invalid parameters\n${Validations.ItemContent.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
                 description = "not authorized to perform this action on the list"

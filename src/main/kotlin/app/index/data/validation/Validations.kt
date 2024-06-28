@@ -4,11 +4,21 @@ object Validations {
     object List {
         const val MIN_NAME_LENGTH = 1
         const val MAX_NAME_LENGTH = 100
+
+        const val VALIDATIONS_SUMMARY = """
+            - name min length: $MIN_NAME_LENGTH
+            - name max length: $MAX_NAME_LENGTH
+        """
     }
 
     object Category {
         const val MIN_NAME_LENGTH = 1
         const val MAX_NAME_LENGTH = 100
+
+        const val VALIDATIONS_SUMMARY = """
+            - name min length: $MIN_NAME_LENGTH
+            - name max length: $MAX_NAME_LENGTH
+        """
     }
 
     object Item {
@@ -16,11 +26,22 @@ object Validations {
         const val MAX_NAME_LENGTH = 200
 
         const val MAX_LINK_LENGTH = 200
+
+        const val VALIDATIONS_SUMMARY = """
+            - name min length: $MIN_NAME_LENGTH
+            - name max length: $MAX_NAME_LENGTH
+            - link max length: $MAX_LINK_LENGTH
+        """
     }
 
     object ItemContent {
         const val MIN_CONTENT_LENGTH = 0
         const val MAX_CONTENT_LENGTH = 20000
+
+        const val VALIDATIONS_SUMMARY = """
+            - content min length: $MIN_CONTENT_LENGTH
+            - content max length: $MAX_CONTENT_LENGTH
+        """
     }
 
     object Task {
@@ -36,5 +57,17 @@ object Validations {
 
         const val MINIMUM_PRIORITY = 0
         const val MAXIMUM_PRIORITY = 4
+
+        const val VALIDATIONS_SUMMARY = """
+            - name min length: $MIN_NAME_LENGTH
+            - name max length: $MAX_NAME_LENGTH
+            - description min length: $MIN_DESCRIPTION_LENGTH
+            - description max length: $MAX_DESCRIPTION_LENGTH
+            - max subtask count: $MAX_SUBTASK_COUNT
+            - subtask name max length: $MAX_SUBTASK_NAME_LENGTH
+            - max reminders count: $MAX_REMINDERS_COUNT
+            - minimum priority: $MINIMUM_PRIORITY
+            - maximum priority: $MAXIMUM_PRIORITY
+        """
     }
 }
