@@ -35,6 +35,7 @@ object ListViewerTable : IntIdTable() {
  * @property user
  *
  * @property listEntity
+ * @property userEntity
  */
 class ListViewerEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ListViewerEntity>(ListViewerTable)

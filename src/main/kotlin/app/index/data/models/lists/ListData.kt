@@ -112,4 +112,14 @@ data class ListData(
         @field:Schema(required = true)
         val color: String,
     )
+
+    @Serializable
+    data class ListSingleUserAccessInfoResponseData(
+        @field:Schema(required = true)
+        @Contextual val user_id: IxId<UserData>,
+        @field:Schema(required = true)
+        val email: String,
+        @field:Schema(required = true)
+        val editor: Boolean,
+    )
 }

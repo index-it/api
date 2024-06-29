@@ -21,6 +21,9 @@ class ListsRoute {
     ) {
         @Resource("access")
         class AccessRoute(val parent: ListRoute) {
+            @Resource("users")
+            class UsersRoute(val parent: AccessRoute)
+
             @Resource("leave")
             class LeaveRoute(val parent: AccessRoute)
         }
