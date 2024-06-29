@@ -36,6 +36,7 @@ object ListEditorTable : IntIdTable() {
  * @property user
  *
  * @property listEntity
+ * @property userEntity
  */
 class ListEditorEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ListEditorEntity>(ListEditorTable)

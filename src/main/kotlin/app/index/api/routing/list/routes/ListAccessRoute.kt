@@ -36,6 +36,45 @@ fun Route.listAccessRoute() {
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
 
+        get<ListsRoute.ListRoute.AccessRoute.UsersRoute>({
+            tags = listOf("lists-access")
+            operationId = "get-user-access-info"
+            summary = "gives informations about the users that have access to the list"
+            request {
+                pathParameter<String>("list_id") {
+                    required = true
+                    description = "the id of the list"
+                }
+            }
+            response {
+                HttpStatusCode.OK to {
+                    description = "info about the users that have access to the list"
+                    body<List<ListData.ListSingleUserAccessInfoResponseData>> {
+                        description = "a list of users that have access to the list, with their id, email and whether they are an editor"
+                    }
+                }
+                HttpStatusCode.Unauthorized to {
+                    description = "not authorized to perform this action on the list"
+                }
+                HttpStatusCode.NotFound to {
+                    description = "list not found"
+                }
+            }
+        }) {
+            val listId = it.parent.parent.list_id
+
+            ListAuthorizationUseCase.getListIfAuthorized(
+                listId = listId,
+                userId = userIdFromSessionOrThrow(),
+                authorizationLevel = ListAuthorizationLevel.OWNER
+            ) ?: return@get call.respond(HttpStatusCode.NotFound)
+
+            val userAccessInfo = listDao.getListUserAccessInfo(listId)
+                ?: return@get call.respond(HttpStatusCode.NotFound)
+
+            call.respond(userAccessInfo)
+        }
+
         post<ListsRoute.ListRoute.AccessRoute>({
             tags = listOf("lists-access")
             operationId = "add-user"

@@ -20,6 +20,11 @@ interface ListDBI : DBI {
      */
     suspend fun get(listId: IxId<ListData>): ListData?
 
+    /**
+     * Gets infos about the users that have access to a list, null if the list does not exist
+     */
+    suspend fun getListUserAccessInfo(listId: IxId<ListData>): List<ListData.ListSingleUserAccessInfoResponseData>?
+
 
     suspend fun update(
         listId: IxId<ListData>,

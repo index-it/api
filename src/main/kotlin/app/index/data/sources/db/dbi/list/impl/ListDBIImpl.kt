@@ -55,6 +55,16 @@ class ListDBIImpl : ListDBI {
                 ?.toData()
         }
 
+    override suspend fun getListUserAccessInfo(
+        listId: IxId<ListData>
+    ): List<ListData.ListSingleUserAccessInfoResponseData>? = dbQuery {
+        ListEntity
+            .find { listFilter(listId) }
+            .limit(1)
+            .firstOrNull()
+            ?.toListSingleUserAccessInfo()
+    }
+
     override suspend fun update(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,

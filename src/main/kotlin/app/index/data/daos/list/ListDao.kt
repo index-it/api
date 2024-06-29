@@ -52,6 +52,13 @@ class ListDao(
         return listDBI.get(listId)
     }
 
+    /**
+     * Gets infos about the users that have access to a list, null if the list does not exist
+     */
+    suspend fun getListUserAccessInfo(listId: IxId<ListData>): List<ListData.ListSingleUserAccessInfoResponseData>? {
+        return listDBI.getListUserAccessInfo(listId)
+    }
+
     suspend fun update(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,

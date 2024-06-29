@@ -94,3 +94,17 @@ fun ListEntity.toData() =
         created_at = created_at.toEpochMilli(),
         edited_at = edited_at?.toEpochMilli(),
     )
+
+fun ListEntity.toListSingleUserAccessInfo() = viewers.map { viewer ->
+    ListData.ListSingleUserAccessInfoResponseData(
+        user_id = viewer.user.toIxId(),
+        email = viewer.userEntity.email,
+        editor = false
+    )
+} + editors.map { editor ->
+    ListData.ListSingleUserAccessInfoResponseData(
+        user_id = editor.user.toIxId(),
+        email = editor.userEntity.email,
+        editor = true
+    )
+}
