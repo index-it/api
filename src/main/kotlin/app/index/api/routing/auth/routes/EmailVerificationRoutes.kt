@@ -2,13 +2,16 @@ package app.index.api.routing.auth.routes
 
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.plugins.UserIdPrincipalForEmailVerificationAuth
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.routing.auth.IsEmailVerifiedRoute
 import app.index.api.routing.auth.SendVerificationEmailRoute
 import app.index.api.routing.auth.VerifyEmailRoute
 import app.index.config.BrevoConfig
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.usecases.EmailVerificationUseCase
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.user.UserDao
+import app.index.data.models.analytics.AnalyticsEventData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -21,6 +24,7 @@ import org.koin.ktor.ext.inject
 fun Route.emailVerificationRoutes() {
     val userDao by inject<UserDao>()
     val emailVerificationDao by inject<EmailVerificationDao>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
         post<SendVerificationEmailRoute>({
@@ -137,5 +141,12 @@ fun Route.emailVerificationRoutes() {
         userDao.verifyEmail(userDto.id)
         emailVerificationDao.deleteAllOfUser(userDto.id)
         call.respondRedirect(BrevoConfig.emailVerificationSuccessUrl)
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.UserRegistrationEventData(
+                creation_source = userDto.creationSource
+            )
+        )
     }
 }

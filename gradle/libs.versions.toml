@@ -4,6 +4,7 @@ kotlinxCoroutines="1.7.3"
 kotlinxDatetime="0.5.0"
 reflections="0.10.2"
 ksp="1.9.0-1.0.13"
+serialization="1.6.3"
 
 sentry="4.2.0"
 sentryLogback="7.2.0"
@@ -78,6 +79,7 @@ flyway-postgres = { group = "org.flywaydb", name = "flyway-database-postgresql",
 jedis = { group = "redis.clients", name = "jedis", version.ref = "jedis" }
 amqp-client = { group = "com.rabbitmq", name = "amqp-client", version.ref = "amqpClient" }
 
+serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
@@ -112,6 +114,7 @@ google-cloud-bom = { group = "com.google.cloud", name = "libraries-bom", version
 google-api-client = { group = "com.google.api-client", name = "google-api-client", version.ref = "googleApiClient" }
 google-cloud-scheduler = { group = "com.google.cloud", name = "google-cloud-scheduler" }
 google-cloud-tasks = { group = "com.google.cloud", name = "google-cloud-tasks" }
+google-cloud-bigquery = { group = "com.google.cloud", name = "google-cloud-bigquery" }
 firebase-admin = { group = "com.google.firebase", name = "firebase-admin", version.ref = "firebaseAdmin" }
 
 spring-security-crypto = { group = "org.springframework.security", name = "spring-security-crypto", version.ref = "springSecurityCrypto" }
@@ -150,6 +153,7 @@ ktor-server = [
     "ktor-server-call-logging",
     "ktor-server-status-pages",
     "ktor-serialization",
+    "serialization",
     "ktor-server-content-negotiation",
     "ktor-server-cors",
     "ktor-server-auth",
@@ -169,6 +173,7 @@ ktor-client = [
     "ktor-client-apache",
     "ktor-client-logging",
     "ktor-serialization",
+    "serialization",
     "ktor-client-content-negotiation",
 ]
 
