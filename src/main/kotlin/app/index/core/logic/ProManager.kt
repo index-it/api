@@ -2,12 +2,14 @@ package app.index.core.logic
 
 import app.index.core.clients.StripeClient
 import app.index.core.logic.typedId.impl.IxId
+import app.index.data.daos.user.UserDao
 import app.index.data.models.user.UserData
 import com.stripe.exception.StripeException
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class ProManager(
+    private val userDao: UserDao,
     private val stripeClient: StripeClient
 ) {
     /**
@@ -24,17 +26,21 @@ class ProManager(
      *
      * @return the client_secret for the subscription payment intent
      */
-    fun createSubscription(
+    suspend fun createSubscription(
         customerId: String?,
         userId: IxId<UserData>,
         email: String,
         priceId: String
     ): String {
-        val customer = stripeClient.getCustomerOrCreateIfMissing(
+        val (created, customer) = stripeClient.getCustomerOrCreateIfMissing(
             customerId = customerId,
             userId = userId,
             email = email
         )
+
+        if (created) {
+            userDao.setStripeCustomerId(userId, customer.id)
+        }
 
         return stripeClient.createSubscription(customer.id, priceId)
     }

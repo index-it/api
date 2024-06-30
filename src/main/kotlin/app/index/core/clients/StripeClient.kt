@@ -14,6 +14,10 @@ import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class StripeClient {
+    object MetadataKeys {
+        const val INDEX_USER_ID = "index_user_id"
+    }
+
     init {
         Stripe.apiKey = StripeConfig.apiKey
     }
@@ -80,17 +84,17 @@ class StripeClient {
      *
      * @throws StripeException
      *
-     * @return the [Customer] or null if a customer with the provided id doesn't exist
+     * @return a pair with a boolean indicating if the customer has been created and the [Customer] itself
      */
-    fun getCustomerOrCreateIfMissing(customerId: String?, userId: IxId<UserData>, email: String): Customer {
+    fun getCustomerOrCreateIfMissing(customerId: String?, userId: IxId<UserData>, email: String): Pair<Boolean, Customer> {
         return if (customerId == null) {
-            createCustomer(userId, email)
+            true to createCustomer(userId, email)
         } else {
             try {
-                Customer.retrieve(customerId)
+                false to Customer.retrieve(customerId)
             } catch (e: StripeException) {
                 if (e.code == "resource_missing") {
-                    createCustomer(userId, email)
+                    true to createCustomer(userId, email)
                 } else {
                     throw e
                 }
@@ -107,6 +111,7 @@ class StripeClient {
      *
      * @return the [Customer] or null if a customer with the provided id doesn't exist
      */
+    @Suppress("UNUSED")
     private fun getCustomer(customerId: String): Customer? {
         return try {
             Customer.retrieve(customerId)
@@ -135,7 +140,7 @@ class StripeClient {
     private fun createCustomer(userId: IxId<UserData>, email: String): Customer {
         val params = CustomerCreateParams.builder()
             .setEmail(email)
-            .setMetadata(mapOf("index_user_id" to userId.toString()))
+            .setMetadata(mapOf(MetadataKeys.INDEX_USER_ID to userId.toString()))
             .build()
 
         return Customer.create(params)
