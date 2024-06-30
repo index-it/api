@@ -1,6 +1,7 @@
 package app.index.api.routing.web
 
 import app.index.api.routing.web.routes.notifyRoute
+import app.index.api.routing.web.routes.stripeWebhookRoute
 import app.index.api.routing.web.routes.webhookRoute
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.tasks.TaskReminderJobData
@@ -21,9 +22,13 @@ class WebhookRoute {
 
     @Resource("/daily-job")
     class DailyJobRoute(val parent: WebhookRoute)
+
+    @Resource("/stripe")
+    class StripeWebhookRoute(val parent: WebhookRoute)
 }
 
 fun Route.webRoutes() {
     notifyRoute()
     webhookRoute()
+    stripeWebhookRoute()
 }

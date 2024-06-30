@@ -28,6 +28,7 @@ object AuthenticationMethods {
     const val EMAIL_VERIFICATION_FORM_AUTH = "email_verification_form_auth"
     const val USER_SESSION_AUTH = "user_session_auth"
     const val ADMIN_BEARER_AUTH = "admin_bearer_auth"
+    const val STRIPE_WEBHOOK_AUTH = "stripe_webhook_auth"
 }
 
 /**
@@ -103,6 +104,8 @@ fun Application.configureSecurity() {
                 }
             }
         }
+
+
     }
 }
 
