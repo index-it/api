@@ -8,6 +8,7 @@ import app.index.core.logic.typedId.toIxId
 import app.index.data.daos.user.UserDao
 import com.stripe.exception.SignatureVerificationException
 import com.stripe.model.Customer
+import com.stripe.model.Subscription
 import com.stripe.model.checkout.Session
 import com.stripe.net.RequestOptions
 import com.stripe.net.Webhook
@@ -100,7 +101,36 @@ fun Route.stripeWebhookRoute() {
                 // here we could also send a nice email with a bunch of info or properly setup stripe emails instead
             }
             "customer.subscription.deleted" -> {
-                // TODO
+                val sub = Subscription.retrieve(stripeObject.rawJsonObject.get("id").asString)
+                val subId = sub.id
+                val customerId = sub.customer
+                val customer = Customer.retrieve(sub.customer)
+
+                val user = customer.metadata[StripeClient.MetadataKeys.INDEX_USER_ID]?.let { userId -> userDao.get(userId.toIxId()) }
+                    ?: run {
+                        val configurationExceptionMessage = "Stripe customer missing required metadata key: ${StripeClient.MetadataKeys.INDEX_USER_ID}"
+
+                        log.error { configurationExceptionMessage }
+                        Sentry.captureException(ConfigurationException(configurationExceptionMessage))
+
+                        userDao.getFromStripeCustomerId(customerId)
+                    }
+
+                // This should logically never occur
+                if (user == null) {
+                    log.error { "Couldn't find index user for stripe customer with id $customerId" }
+                    return@post call.respond(HttpStatusCode.NotFound)
+                }
+
+                if (user.stripe_subscription_id == subId) {
+                    userDao.setStripeSubscriptionData(
+                        id = user.id,
+                        subscriptionId = null,
+                        priceId = null
+                    )
+                } else {
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }
