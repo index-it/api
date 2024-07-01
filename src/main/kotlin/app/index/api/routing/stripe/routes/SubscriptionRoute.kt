@@ -3,7 +3,7 @@ package app.index.api.routing.stripe.routes
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.stripe.StripeRoute
 import app.index.core.exceptions.AuthenticationException
-import app.index.core.logic.ProManager
+import app.index.core.logic.pro.ProManager
 import app.index.data.daos.user.UserDao
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*

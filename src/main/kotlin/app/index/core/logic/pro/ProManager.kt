@@ -1,4 +1,4 @@
-package app.index.core.logic
+package app.index.core.logic.pro
 
 import app.index.core.clients.StripeClient
 import app.index.core.logic.typedId.impl.IxId
@@ -12,6 +12,21 @@ class ProManager(
     private val userDao: UserDao,
     private val stripeClient: StripeClient
 ) {
+
+    /**
+     * @param priceId
+     * @param proFeature
+     *
+     * @return true if the user has access to the [proFeature], false otherwise
+     */
+    fun hasAccessToProFeature(
+        priceId: String?,
+        proFeature: ProFeature
+    ): Boolean {
+        // atm there is only one plan and no specific logic is needed
+        return priceId != null
+    }
+
     /**
      * Creates a subscription for the customer with the specified [customerId]
      *

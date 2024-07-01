@@ -3,11 +3,14 @@ package app.index.api.routing.task.routes
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
+import app.index.core.logic.pro.ProFeature
+import app.index.core.logic.pro.ProManager
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.task.TaskDao
+import app.index.data.daos.user.UserDao
 import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
 import app.index.data.validation.Validations
@@ -24,6 +27,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.taskRoute() {
     val taskDao by inject<TaskDao>()
+    val userDao by inject<UserDao>()
+    val proManager by inject<ProManager>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<TasksRoute.TaskRoute>({
@@ -98,6 +103,9 @@ fun Route.taskRoute() {
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
             }
+            HttpStatusCode.PaymentRequired to {
+                description = "pro required to have multiple reminders"
+            }
             HttpStatusCode.NotFound to {
                 description = "task or item to connect not found"
             }
@@ -109,6 +117,15 @@ fun Route.taskRoute() {
         val updateData = call.receive<TaskData.TaskUpdateRequestData>()
         val userId = userIdFromSessionOrThrow()
         val taskId = it.task_id
+
+        if (updateData.reminders.size > 1) {
+            val user = userDao.get(userId)
+                ?: return@put call.respond(HttpStatusCode.Unauthorized)
+
+            if (!proManager.hasAccessToProFeature(user.stripe_price_id, ProFeature.MULTIPLE_REMINDERS)) {
+                return@put call.respond(HttpStatusCode.PaymentRequired)
+            }
+        }
 
         val task = taskDao.get(userId, it.task_id)
             ?: return@put call.respond(HttpStatusCode.NotFound)

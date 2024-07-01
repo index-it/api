@@ -59,6 +59,13 @@ class ListDao(
         return listDBI.getListUserAccessInfo(listId)
     }
 
+    /**
+     * Counts the number of lists the user with the specified [id] has
+     */
+    suspend fun count(userId: IxId<UserData>): Long {
+        return listDBI.count(userId)
+    }
+
     suspend fun update(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,

@@ -65,6 +65,12 @@ class ListDBIImpl : ListDBI {
             ?.toListSingleUserAccessInfo()
     }
 
+    override suspend fun count(id: IxId<UserData>): Long = dbQuery {
+        ListEntity
+            .find { ListTable.user eq id.toEntityId(UsersTable) }
+            .count()
+    }
+
     override suspend fun update(
         listId: IxId<ListData>,
         listUpdateRequestData: ListData.ListUpdateRequestData,
