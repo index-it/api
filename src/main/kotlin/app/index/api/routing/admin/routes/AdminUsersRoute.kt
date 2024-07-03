@@ -53,6 +53,9 @@ fun Route.adminUsersRoute() {
             emailVerified = userData.email_verified,
             creationTimestamp = DatetimeUtils.currentMillis(),
             creationSource = userData.creation_source,
+            stripe_customer_id = null,
+            stripe_subscription_id = null,
+            stripe_price_id = null
         )
 
         userDao.create(user)

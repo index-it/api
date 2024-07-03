@@ -14,6 +14,9 @@ data class UserData(
     val emailVerified: Boolean, // Always true when user created with oauth, otherwise needs to be verified
     val creationTimestamp: Long,
     val creationSource: CreationSource,
+    val stripe_customer_id: String?,
+    val stripe_subscription_id: String?,
+    val stripe_price_id: String?
 ) {
     @Serializable
     enum class CreationSource {
@@ -32,7 +35,15 @@ data class UserData(
         NONE,
     }
 
-    fun getResponseDto() = UserResponseDto(id, email, creationTimestamp, creationSource)
+    fun getResponseDto() = UserResponseDto(
+        id = id,
+        email = email,
+        creation_timestamp = creationTimestamp,
+        creation_source = creationSource,
+        stripe_customer_id = stripe_customer_id,
+        stripe_subscription_id = stripe_subscription_id,
+        stripe_price_id = stripe_price_id
+    )
 
     @Serializable
     data class UserResponseDto(
@@ -44,6 +55,12 @@ data class UserData(
         val creation_timestamp: Long,
         @field:Schema(required = true)
         val creation_source: CreationSource,
+        @field:Schema(required = true)
+        val stripe_customer_id: String?,
+        @field:Schema(required = true)
+        val stripe_subscription_id: String?,
+        @field:Schema(required = true)
+        val stripe_price_id: String?
     )
 
     @Serializable
@@ -55,6 +72,6 @@ data class UserData(
         @field:Schema(required = true)
         val email_verified: Boolean,
         @field:Schema(required = true)
-        val creation_source: CreationSource
+        val creation_source: CreationSource,
     )
 }

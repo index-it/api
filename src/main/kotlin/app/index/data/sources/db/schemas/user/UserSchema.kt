@@ -31,6 +31,9 @@ object UsersTable : UUIDTable() {
     val email_verified = bool("email_verified")
     val created_at = timestamp("created_at")
     val creation_source = enumerationByName<UserData.CreationSource>("creation_source", 10)
+    val stripe_customer_id = varchar("stripe_customer_id", 255).nullable()
+    val stripe_subscription_id = varchar("stripe_subscription_id", 255).nullable()
+    val stripe_price_id = varchar("stripe_price_id", 255).nullable()
 }
 
 /**
@@ -49,6 +52,9 @@ class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var email_verified by UsersTable.email_verified
     var created_at by UsersTable.created_at
     var creation_source by UsersTable.creation_source
+    var stripe_customer_id by UsersTable.stripe_customer_id
+    var stripe_subscription_id by UsersTable.stripe_subscription_id
+    var stripe_price_id by UsersTable.stripe_price_id
 }
 
 fun UserEntity.fromData(userData: UserData) {
@@ -57,6 +63,9 @@ fun UserEntity.fromData(userData: UserData) {
     email_verified = userData.emailVerified
     created_at = Instant.ofEpochMilli(userData.creationTimestamp)
     creation_source = userData.creationSource
+    stripe_customer_id = userData.stripe_customer_id
+    stripe_subscription_id = userData.stripe_subscription_id
+    stripe_price_id = userData.stripe_price_id
 }
 
 fun UserEntity.toData() =
@@ -67,4 +76,7 @@ fun UserEntity.toData() =
         emailVerified = email_verified,
         creationTimestamp = created_at.toEpochMilli(),
         creationSource = creation_source,
+        stripe_customer_id = stripe_customer_id,
+        stripe_subscription_id = stripe_subscription_id,
+        stripe_price_id = stripe_price_id
     )

@@ -47,6 +47,12 @@ A developer account for Index can be created by running the `CreateDevUser.kt` i
 email: `giuliopime@gmail.com`  
 password: `Password1!`  
 
+### Stripe
+To receive Stripe webhooks on the api running on your device use:
+```shell
+stripe listen --forward-to localhost:8080/webhook/stripe
+```
+
 ### Grafana
 ##### Security
 When connecting to the [Grafana dashboard](http://localhost:3000) you will be prompted to change the password!  

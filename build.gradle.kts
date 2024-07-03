@@ -57,6 +57,7 @@ dependencies {
 
     implementation(libs.firebase.admin)
     implementation(libs.librecur)
+    implementation(libs.stripe)
 
     testImplementation(libs.junit)
     testImplementation(kotlin("test"))

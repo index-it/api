@@ -37,6 +37,14 @@ class UserDBIImpl : UserDBI {
                 ?.toData()
         }
 
+    override suspend fun getFromStripeCustomerId(customerId: String): UserData? = dbQuery {
+        UserEntity
+            .find { UsersTable.stripe_customer_id eq customerId }
+            .limit(1)
+            .firstOrNull()
+            ?.toData()
+    }
+
     override suspend fun verifyEmail(id: IxId<UserData>) {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
@@ -64,6 +72,23 @@ class UserDBIImpl : UserDBI {
                     it[email_verified] = true
                 }
                 it[password_hash] = newPasswordHashed
+            }
+        }
+    }
+
+    override suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String) {
+        dbQuery {
+            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
+                it[stripe_customer_id] = customerId
+            }
+        }
+    }
+
+    override suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?) {
+        dbQuery {
+            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
+                it[stripe_subscription_id] = subscriptionId
+                it[stripe_price_id] = priceId
             }
         }
     }

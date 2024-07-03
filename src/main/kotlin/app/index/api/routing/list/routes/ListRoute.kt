@@ -3,11 +3,14 @@ package app.index.api.routing.list.routes
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.pro.ProFeature
+import app.index.core.logic.pro.ProManager
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ListDao
+import app.index.data.daos.user.UserDao
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
 import app.index.data.validation.Validations
@@ -23,6 +26,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.listRoute() {
     val listDao by inject<ListDao>()
+    val userDao by inject<UserDao>()
+    val proManager by inject<ProManager>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute>({
@@ -86,18 +91,30 @@ fun Route.listRoute() {
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters\n${Validations.List.VALIDATIONS_SUMMARY}"
             }
+            HttpStatusCode.PaymentRequired to {
+                description = "pro required for lists to be public"
+            }
             HttpStatusCode.NotFound to {
                 description = "list not found"
             }
         }
     }) {
-        ListAuthorizationUseCase.getListIfAuthorized(
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.list_id,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.EDITOR
         ) ?: return@put call.respond(HttpStatusCode.NotFound)
 
         val updatedList = call.receive<ListData.ListUpdateRequestData>()
+
+        if (updatedList.public) {
+            val owner = userDao.get(list.user_id)
+                ?: return@put call.respond(HttpStatusCode.NotFound)
+
+            if (!proManager.hasAccessToProFeature(owner.stripe_price_id, ProFeature.PUBLIC_LIST)) {
+                return@put call.respond(HttpStatusCode.PaymentRequired)
+            }
+        }
 
         val newList = listDao.update(it.list_id, updatedList)
             ?: return@put call.respond(HttpStatusCode.NotFound)

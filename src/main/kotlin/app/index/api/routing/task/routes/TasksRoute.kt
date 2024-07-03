@@ -5,11 +5,14 @@ import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.logic.AnalyticsEventManager
+import app.index.core.logic.pro.ProFeature
+import app.index.core.logic.pro.ProManager
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.task.TaskDao
+import app.index.data.daos.user.UserDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.tasks.TaskData
 import app.index.data.validation.Validations
@@ -24,6 +27,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.tasksRoute() {
     val taskDao by inject<TaskDao>()
+    val userDao by inject<UserDao>()
+    val proManager by inject<ProManager>()
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
@@ -78,6 +83,9 @@ fun Route.tasksRoute() {
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
             }
+            HttpStatusCode.PaymentRequired to {
+                description = "pro required to have multiple reminders"
+            }
             HttpStatusCode.NotFound to {
                 description = "did not find the item provided for connection with this new task"
             }
@@ -93,6 +101,15 @@ fun Route.tasksRoute() {
 
         if (itemIdToConnect != null && newTask.rrule != null) {
             return@post call.respond(HttpStatusCode.BadRequest, "cannot create recurring connected task")
+        }
+
+        if (newTask.reminders.size > 1) {
+            val user = userDao.get(userId)
+                ?: return@post call.respond(HttpStatusCode.Unauthorized)
+
+            if (!proManager.hasAccessToProFeature(user.stripe_price_id, ProFeature.MULTIPLE_REMINDERS)) {
+                return@post call.respond(HttpStatusCode.PaymentRequired)
+            }
         }
 
         /////////////////////

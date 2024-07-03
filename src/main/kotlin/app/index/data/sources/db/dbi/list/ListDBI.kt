@@ -25,6 +25,10 @@ interface ListDBI : DBI {
      */
     suspend fun getListUserAccessInfo(listId: IxId<ListData>): List<ListData.ListSingleUserAccessInfoResponseData>?
 
+    /**
+     * Counts the number of lists the user with the specified [id] has
+     */
+    suspend fun count(id: IxId<UserData>): Long
 
     suspend fun update(
         listId: IxId<ListData>,
