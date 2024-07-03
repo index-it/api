@@ -21,9 +21,9 @@ fun Route.stripeSubscriptionRoute() {
         operationId = "stripe-create-subscription"
         summary = "creates a payment intent that allows the user to purchase a subscription to the pro version"
         request {
-            pathParameter<String>("plan_id") {
+            queryParameter<String>("price_id") {
                 required = true
-                description = "the id of the plan the user wants to subscribe to"
+                description = "the id of the price the user wants to subscribe to"
             }
         }
         response {
