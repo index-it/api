@@ -32,7 +32,5 @@ class WebhookRoute {
 fun Route.webRoutes() {
     notifyRoute()
     webhookRoute()
-    authenticate(AuthenticationMethods.STRIPE_WEBHOOK_AUTH) {
-        stripeWebhookRoute()
-    }
+    stripeWebhookRoute()
 }
