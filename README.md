@@ -45,7 +45,7 @@ There is a pre-made `.env` file for development located in `/env/.env.developmen
 #### Developer database user
 A developer account for Index can be created by running the `CreateDevUser.kt` in `/scripts/`:  
 email: `giuliopime@gmail.com`  
-password: `Password1!`  
+password: `Password1!`
 
 ### Stripe
 To receive Stripe webhooks on the api running on your device use:
@@ -69,6 +69,10 @@ My go to is [this one](https://grafana.com/grafana/dashboards/4701-jvm-micromete
 
 ##### Swagger UI
 Swagger is available at [localhost:$PORT/swagger](http://localhost:8080/swagger)
+
+### Git
+Use `[ci skip]` in a commit message to skip circleci process.  
+Also please create a new branch for new features or substantial bug fixes
 
 ## App review
 email: `index-review@gmail.com`  
