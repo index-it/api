@@ -1,12 +1,15 @@
 package app.index.api.routing.auth.routes
 
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.routing.auth.LoginWithGoogle
 import app.index.core.clients.oauth.GoogleOAuthClient
 import app.index.core.exceptions.AuthenticationException
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.newIxId
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.user.UserData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
@@ -26,6 +29,7 @@ fun Route.oauthLoginRoutes() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
     val googleOAuthClient by inject<GoogleOAuthClient>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     get<LoginWithGoogle>({
         tags = listOf("auth")
@@ -65,6 +69,7 @@ fun Route.oauthLoginRoutes() {
 
         // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)
         var userG = userDao.getFromEmail(userInfo.email)
+        val isFirstLogin = userG == null || !userG.emailVerified
 
         if (userG == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
@@ -75,6 +80,9 @@ fun Route.oauthLoginRoutes() {
                 emailVerified = true,
                 creationTimestamp = DatetimeUtils.currentMillis(),
                 creationSource = UserData.CreationSource.GOOGLE,
+                stripe_customer_id = null,
+                stripe_subscription_id = null,
+                stripe_price_id = null
             )
 
             userDao.create(userG)
@@ -91,6 +99,23 @@ fun Route.oauthLoginRoutes() {
 
         call.sessions.set(sessionId)
         call.respond(HttpStatusCode.OK)
+
+        if (isFirstLogin) {
+            emitAnalyticsEvent(
+                analyticsEventManager = analyticsEventManager,
+                analyticsEventData = AnalyticsEventData.UserRegistrationEventData(
+                    creation_source = userG.creationSource
+                )
+            )
+        } else {
+            emitAnalyticsEvent(
+                analyticsEventManager = analyticsEventManager,
+                analyticsEventData = AnalyticsEventData.UserLoginEventData(
+                    user_id = userG.id,
+                    login_source = UserData.CreationSource.GOOGLE,
+                )
+            )
+        }
     }
 
     /*

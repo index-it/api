@@ -27,6 +27,9 @@ suspend fun main() {
         emailVerified = true,
         creationTimestamp = DatetimeUtils.currentMillis(),
         creationSource = UserData.CreationSource.NONE,
+        stripe_customer_id = null,
+        stripe_subscription_id = null,
+        stripe_price_id = null
     )
 
     try {

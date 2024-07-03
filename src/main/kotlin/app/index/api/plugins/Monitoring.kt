@@ -4,6 +4,7 @@ import app.index.config.ApplicationConfig
 import io.ktor.server.application.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.plugins.callloging.*
+import io.ktor.server.request.*
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
@@ -20,6 +21,9 @@ val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 fun Application.configureMonitoring() {
     install(CallLogging) {
         level = Level.valueOf(ApplicationConfig.logLevel.levelStr)
+        filter { call ->
+            !call.request.path().startsWith("/monitoring")
+        }
     }
 
     install(MicrometerMetrics) {

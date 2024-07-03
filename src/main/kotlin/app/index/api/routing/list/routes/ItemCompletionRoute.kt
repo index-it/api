@@ -1,14 +1,17 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -22,6 +25,7 @@ fun Route.itemCompletionRoute() {
     val itemDao by inject<ItemDao>()
     val taskDao by inject<TaskDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.CompletionRoute>({
         tags = listOf("items")
@@ -73,6 +77,16 @@ fun Route.itemCompletionRoute() {
             type = WebsocketEventType.ITEM_UPDATED,
             content = WebsocketEventContent.ItemCreateOrUpdateEventContent(updatedItem),
             users = list.getUsersWithAccess()
+        )
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.ItemCompletionEventData(
+                user_id = userId,
+                list_id = list.id,
+                category_id = updatedItem.category_id,
+                completed = it.completed
+            )
         )
 
         // update all connected tasks (multiple users might have a task connected to this item if the list is shared)

@@ -1,0 +1,4 @@
+ALTER TABLE users
+    ADD COLUMN stripe_customer_id VARCHAR(255) NULL DEFAULT NULL,
+    ADD COLUMN stripe_subscription_id VARCHAR(255) NULL DEFAULT NULL,
+    ADD COLUMN stripe_price_id VARCHAR(255) NULL DEFAULT NULL;

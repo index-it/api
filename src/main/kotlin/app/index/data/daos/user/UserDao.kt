@@ -24,6 +24,10 @@ class UserDao(
         return userDBI.get(email)
     }
 
+    suspend fun getFromStripeCustomerId(customerId: String): UserData? {
+        return userDBI.getFromStripeCustomerId(customerId)
+    }
+
     suspend fun verifyEmail(id: IxId<UserData>) {
         userDBI.verifyEmail(id)
     }
@@ -41,6 +45,14 @@ class UserDao(
         verifyEmail: Boolean,
     ) {
         userDBI.resetPassword(id, newPasswordHashed, verifyEmail)
+    }
+
+    suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String) {
+        userDBI.setStripeCustomerId(id, customerId)
+    }
+
+    suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?) {
+        userDBI.setStripeSubscriptionData(id, subscriptionId, priceId)
     }
 
     suspend fun delete(id: IxId<UserData>) {

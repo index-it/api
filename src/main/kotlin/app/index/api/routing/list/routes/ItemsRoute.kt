@@ -1,14 +1,17 @@
 package app.index.api.routing.list.routes
 
+import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
+import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.validation.Validations
@@ -24,6 +27,7 @@ import org.koin.ktor.ext.inject
 fun Route.itemsRoute() {
     val itemDao by inject<ItemDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
+    val analyticsEventManager by inject<AnalyticsEventManager>()
 
     get<ListsRoute.ListRoute.ItemsRoute>({
         tags = listOf("items")
@@ -111,6 +115,15 @@ fun Route.itemsRoute() {
             type = WebsocketEventType.ITEM_CREATED,
             content = WebsocketEventContent.ItemCreateOrUpdateEventContent(item),
             users = list.getUsersWithAccess()
+        )
+
+        emitAnalyticsEvent(
+            analyticsEventManager = analyticsEventManager,
+            analyticsEventData = AnalyticsEventData.ItemCreationEventData(
+                user_id = userId,
+                list_id = list.id,
+                category_id = newItem.category_id
+            )
         )
     }
 }
