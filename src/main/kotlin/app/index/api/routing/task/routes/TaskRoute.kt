@@ -46,6 +46,9 @@ fun Route.taskRoute() {
                 description = "the task"
                 body<TaskData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
             HttpStatusCode.NotFound to {
                 description = "task not found"
             }
@@ -102,6 +105,9 @@ fun Route.taskRoute() {
             }
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
             HttpStatusCode.PaymentRequired to {
                 description = "pro required to have multiple reminders"
@@ -165,6 +171,9 @@ fun Route.taskRoute() {
         response {
             HttpStatusCode.OK to {
                 description = "task deleted"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
         }
     }) {

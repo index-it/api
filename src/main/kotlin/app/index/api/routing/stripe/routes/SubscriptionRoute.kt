@@ -34,7 +34,7 @@ fun Route.stripeSubscriptionRoute() {
                 }
             }
             HttpStatusCode.Unauthorized to {
-                description = "user not logged in"
+                description = "user not authenticated"
             }
             HttpStatusCode.BadRequest to {
                 description = "invalid plan_id"
@@ -65,10 +65,7 @@ fun Route.stripeSubscriptionRoute() {
                 description = "subscription canceled"
             }
             HttpStatusCode.Unauthorized to {
-                description = "user not logged in"
-            }
-            HttpStatusCode.NotFound to {
-                description = "subscription with the provided id not found"
+                description = "user not authenticated"
             }
             HttpStatusCode.MethodNotAllowed to {
                 description = "user doesn't have an active subscription"

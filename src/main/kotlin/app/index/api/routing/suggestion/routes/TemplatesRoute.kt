@@ -31,6 +31,9 @@ fun Route.templatesRoute() {
                 description = "the list template"
                 body<ListData.ListTemplateResponseData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getListNames(it.locale))
@@ -53,6 +56,9 @@ fun Route.templatesRoute() {
             HttpStatusCode.OK to {
                 description = "the category template"
                 body<CategoryData.CategoryTemplateResponseData>()
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
         }
     }) {
@@ -77,6 +83,9 @@ fun Route.templatesRoute() {
                 description = "the item template"
                 body<ItemData.ItemTemplateResponseData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getItemNames(it.locale))
@@ -98,6 +107,9 @@ fun Route.templatesRoute() {
             HttpStatusCode.OK to {
                 description = "the task template"
                 body<TaskData.TaskTemplateResponseData>()
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
         }
     }) {

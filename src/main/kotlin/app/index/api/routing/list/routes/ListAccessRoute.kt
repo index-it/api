@@ -54,7 +54,10 @@ fun Route.listAccessRoute() {
                     }
                 }
                 HttpStatusCode.Unauthorized to {
-                    description = "not authorized to perform this action on the list"
+                    description = "user not authenticated"
+                }
+                HttpStatusCode.Forbidden to {
+                    description = "missing required list permission: owner"
                 }
                 HttpStatusCode.NotFound to {
                     description = "list not found"
@@ -110,7 +113,10 @@ fun Route.listAccessRoute() {
                     description = "you cannot invite yourself to a list"
                 }
                 HttpStatusCode.Unauthorized to {
-                    description = "not authorized to perform this action on the list"
+                    description = "user not authenticated"
+                }
+                HttpStatusCode.Forbidden to {
+                    description = "missing required list permission: owner"
                 }
                 HttpStatusCode.NotFound to {
                     description = "list not found"
@@ -210,7 +216,10 @@ fun Route.listAccessRoute() {
                     }
                 }
                 HttpStatusCode.Unauthorized to {
-                    description = "not authorized to perform this action on the list"
+                    description = "user not authenticated"
+                }
+                HttpStatusCode.Forbidden to {
+                    description = "missing required list permission: owner"
                 }
                 HttpStatusCode.NotFound to {
                     description = "list not found"
@@ -323,7 +332,7 @@ fun Route.listAccessRoute() {
                 description = "list deleted"
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
             }
             HttpStatusCode.MethodNotAllowed to {
                 description = "the owner cannot leave the list"

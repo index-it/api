@@ -38,6 +38,9 @@ fun Route.meRoutes() {
             HttpStatusCode.OK to {
                 description = "user data"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val user = userDao.get(userIdFromSessionOrThrow())
@@ -62,6 +65,9 @@ fun Route.meRoutes() {
             }
             HttpStatusCode.BadRequest to {
                 description = "password doesn't conform to rules, see response message"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
             HttpStatusCode.NotFound to {
                 description = "something went wrong"
@@ -100,6 +106,9 @@ fun Route.meRoutes() {
         response {
             HttpStatusCode.OK to {
                 description = "user data deleted and session terminated"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
         }
     }) {
