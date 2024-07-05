@@ -26,9 +26,9 @@ interface UserDBI : DBI {
         verifyEmail: Boolean,
     )
 
-    suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String)
+    suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String): UserData?
 
-    suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?)
+    suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?): UserData?
 
     suspend fun delete(id: IxId<UserData>)
 }

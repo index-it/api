@@ -5,6 +5,7 @@ enum class WebsocketEventType {
      * All user auth sessions should be closed
      */
     USER_AUTH_SESSIONS_INVALIDATED,
+    USER_UPDATED,
 
     LIST_CREATED,
     LIST_UPDATED,

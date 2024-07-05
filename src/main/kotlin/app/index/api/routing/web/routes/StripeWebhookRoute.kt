@@ -1,10 +1,14 @@
 package app.index.api.routing.web.routes
 
+import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.routing.web.WebhookRoute
 import app.index.config.StripeConfig
 import app.index.core.clients.StripeClient
 import app.index.core.exceptions.ConfigurationException
 import app.index.core.logic.typedId.toIxId
+import app.index.core.logic.websocket.WebsocketEventManager
+import app.index.core.logic.websocket.event.WebsocketEventContent
+import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.user.UserDao
 import com.stripe.exception.SignatureVerificationException
 import com.stripe.model.Customer
@@ -28,6 +32,7 @@ private val log = KotlinLogging.logger {  }
 
 fun Route.stripeWebhookRoute() {
     val userDao by inject<UserDao>()
+    val websocketEventManager by inject<WebsocketEventManager>()
 
     post<WebhookRoute.StripeWebhookRoute>({
         tags = listOf("web")
@@ -134,13 +139,22 @@ fun Route.stripeWebhookRoute() {
                     return@post call.respond(HttpStatusCode.NotFound)
                 }
 
-                userDao.setStripeSubscriptionData(
+                val userData = userDao.setStripeSubscriptionData(
                     id = user.id,
                     subscriptionId = subId,
                     priceId = priceId
-                )
+                ) ?: return@post call.respond(HttpStatusCode.NotFound)
 
                 log.info { "updated user stripe subscription data with new active subscription" }
+
+                call.respond(HttpStatusCode.OK)
+
+                emitWebsocketEventForCurrentSessionUser(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.USER_UPDATED,
+                    content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto())
+                )
+
                 // here we could also send a nice email with a bunch of info or properly setup stripe emails instead
             }
             "customer.subscription.updated" -> {
@@ -178,13 +192,21 @@ fun Route.stripeWebhookRoute() {
                     return@post call.respond(HttpStatusCode.NotFound)
                 }
 
-                userDao.setStripeSubscriptionData(
+                val userData = userDao.setStripeSubscriptionData(
                     id = user.id,
                     subscriptionId = subId,
                     priceId = priceId
-                )
+                ) ?: return@post call.respond(HttpStatusCode.NotFound)
 
                 log.info { "updated user stripe subscription data with new active subscription" }
+
+                call.respond(HttpStatusCode.OK)
+
+                emitWebsocketEventForCurrentSessionUser(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.USER_UPDATED,
+                    content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto())
+                )
                 // here we could also send a nice email with a bunch of info or properly setup stripe emails instead
             }
             "customer.subscription.deleted" -> {
@@ -210,13 +232,21 @@ fun Route.stripeWebhookRoute() {
                 }
 
                 if (user.stripe_subscription_id == subId) {
-                    userDao.setStripeSubscriptionData(
+                    val userData = userDao.setStripeSubscriptionData(
                         id = user.id,
                         subscriptionId = null,
                         priceId = null
-                    )
+                    ) ?: return@post call.respond(HttpStatusCode.NotFound)
 
                     log.info { "removed user stripe subscription data" }
+
+                    call.respond(HttpStatusCode.OK)
+
+                    emitWebsocketEventForCurrentSessionUser(
+                        websocketEventManager = websocketEventManager,
+                        type = WebsocketEventType.USER_UPDATED,
+                        content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto())
+                    )
                 } else {
                     call.respond(HttpStatusCode.OK)
                 }

@@ -11,6 +11,7 @@ import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -76,19 +77,23 @@ class UserDBIImpl : UserDBI {
         }
     }
 
-    override suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String) {
-        dbQuery {
-            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
+    override suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String): UserData? {
+        return dbQuery {
+            UsersTable.updateReturning(where = { UsersTable.id eq id.toEntityId(UsersTable) }) {
                 it[stripe_customer_id] = customerId
+            }.firstOrNull()?.let {
+                UserEntity.wrapRow(it).toData()
             }
         }
     }
 
-    override suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?) {
-        dbQuery {
-            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
+    override suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?): UserData? {
+        return dbQuery {
+            UsersTable.updateReturning(where = { UsersTable.id eq id.toEntityId(UsersTable) }) {
                 it[stripe_subscription_id] = subscriptionId
                 it[stripe_price_id] = priceId
+            }.firstOrNull()?.let {
+                UserEntity.wrapRow(it).toData()
             }
         }
     }

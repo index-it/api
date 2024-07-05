@@ -1,10 +1,7 @@
 package app.index.core.clients
 
 import app.index.config.BrevoConfig
-import app.index.data.models.email.BrevoOperationRequestBody
-import app.index.data.models.email.BrevoUrlOperationRequestBody
-import app.index.data.models.email.BrevoEmailField
-import app.index.data.models.email.BrevoListInviteRequestBody
+import app.index.data.models.email.*
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -186,6 +183,9 @@ class BrevoClient : IClosableComponent {
                             BrevoEmailField(
                                 email = emailTo,
                             ),
+                        ),
+                        replyTo = BrevoReplyToField(
+                            email = inviterEmail
                         ),
                         templateId = BrevoConfig.listInvitationTemplateId,
                         params =

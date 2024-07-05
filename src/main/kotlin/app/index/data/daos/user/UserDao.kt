@@ -47,12 +47,12 @@ class UserDao(
         userDBI.resetPassword(id, newPasswordHashed, verifyEmail)
     }
 
-    suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String) {
-        userDBI.setStripeCustomerId(id, customerId)
+    suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String): UserData? {
+        return userDBI.setStripeCustomerId(id, customerId)
     }
 
-    suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?) {
-        userDBI.setStripeSubscriptionData(id, subscriptionId, priceId)
+    suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?): UserData? {
+        return userDBI.setStripeSubscriptionData(id, subscriptionId, priceId)
     }
 
     suspend fun delete(id: IxId<UserData>) {

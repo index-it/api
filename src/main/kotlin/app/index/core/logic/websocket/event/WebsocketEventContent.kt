@@ -5,6 +5,7 @@ import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
 import app.index.data.models.tasks.TaskData
+import app.index.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,6 +15,16 @@ sealed class WebsocketEventContent {
     @Serializable
     @SerialName("EMPTY")
     data object EmptyEventContent : WebsocketEventContent()
+
+
+    ////////////
+    /// USER ///
+    ////////////
+    @Serializable
+    @SerialName("USER_UPDATE")
+    data class UserUpdateEventContent(
+        val user: UserData.UserResponseDto
+    ) : WebsocketEventContent()
 
 
     ////////////////

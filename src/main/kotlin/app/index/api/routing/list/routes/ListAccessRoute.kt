@@ -142,10 +142,8 @@ fun Route.listAccessRoute() {
             ) ?: return@post call.respond(HttpStatusCode.NotFound)
 
             // if the user is null it means it doesn't have an index account, so he'll need to create one after accepting the invitation
-            val addAsViewer =
-                invitedUser == null || (!permissionInfo.editor && list.viewers.none { user -> user == invitedUser.id })
-            val addAsEditor =
-                invitedUser == null || (permissionInfo.editor && list.editors.none { user -> user == invitedUser.id })
+            val addAsViewer = !permissionInfo.editor && (invitedUser == null || list.viewers.none { user -> user == invitedUser.id })
+            val addAsEditor = permissionInfo.editor && (invitedUser == null || list.editors.none { user -> user == invitedUser.id })
             val hasAlreadyAcceptedInvitation =
                 invitedUser != null && (list.editors.any { user -> user == invitedUser.id } || list.editors.any { user -> user == invitedUser.id })
 
@@ -248,6 +246,51 @@ fun Route.listAccessRoute() {
 
             call.respond(updatedList)
         }
+
+        get<ListsRoute.ListRoute.AccessRoute.LeaveRoute>({
+            tags = listOf("lists-access")
+            operationId = "leave-list"
+            summary = "removes the user from the viewers or editors of the list"
+            description = "the user will be removed from the viewers or editors of the list"
+            request {
+                pathParameter<String>("list_id") {
+                    required = true
+                    description = "the id of the list"
+                }
+            }
+            response {
+                HttpStatusCode.OK to {
+                    description = "list deleted"
+                }
+                HttpStatusCode.Unauthorized to {
+                    description = "user not authenticated"
+                }
+                HttpStatusCode.MethodNotAllowed to {
+                    description = "the owner cannot leave the list"
+                }
+            }
+        }) {
+            val userId = userIdFromSessionOrThrow()
+            val listId = it.parent.parent.list_id
+            val list = listDao.get(listId)
+                ?: return@get call.respond(HttpStatusCode.NotFound)
+
+            if (list.user_id == userId) {
+                return@get call.respond(HttpStatusCode.MethodNotAllowed, "you cannot leave the list as you are the owner, try deleting it instead")
+            }
+
+            val updatedList = listDao.removePermissionFromUser(listId, userId)
+                ?: return@get call.respond(HttpStatusCode.OK)
+
+            call.respond(HttpStatusCode.OK)
+
+            emitWebsocketEventForUsers(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.LIST_UPDATED,
+                content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList),
+                users = updatedList.getUsersWithAccess()
+            )
+        }
     }
 
     get<ListsRoute.AcceptInvitation>({
@@ -314,50 +357,5 @@ fun Route.listAccessRoute() {
             // user already has permissions
             call.respond(list)
         }
-    }
-
-    get<ListsRoute.ListRoute.AccessRoute.LeaveRoute>({
-        tags = listOf("lists-access")
-        operationId = "leave-list"
-        summary = "removes the user from the viewers or editors of the list"
-        description = "the user will be removed from the viewers or editors of the list"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "list deleted"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "the owner cannot leave the list"
-            }
-        }
-    }) {
-        val userId = userIdFromSessionOrThrow()
-        val listId = it.parent.parent.list_id
-        val list = listDao.get(listId)
-            ?: return@get call.respond(HttpStatusCode.NotFound)
-
-        if (list.user_id == userId) {
-            return@get call.respond(HttpStatusCode.MethodNotAllowed, "you cannot leave the list as you are the owner, try deleting it instead")
-        }
-
-        val updatedList = listDao.removePermissionFromUser(listId, userId)
-            ?: return@get call.respond(HttpStatusCode.OK)
-
-        call.respond(HttpStatusCode.OK)
-
-        emitWebsocketEventForUsers(
-            websocketEventManager = websocketEventManager,
-            type = WebsocketEventType.LIST_UPDATED,
-            content = WebsocketEventContent.ListCreateOrUpdateEventContent(updatedList),
-            users = updatedList.getUsersWithAccess()
-        )
     }
 }

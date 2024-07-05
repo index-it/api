@@ -7,6 +7,7 @@ data class BrevoListInviteRequestBody(
     val to: List<BrevoEmailField>,
     val templateId: Long,
     val params: Params,
+    val replyTo: BrevoReplyToField
 ) {
     @Serializable
     data class Params(
