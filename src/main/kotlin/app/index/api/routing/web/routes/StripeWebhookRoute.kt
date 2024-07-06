@@ -1,6 +1,7 @@
 package app.index.api.routing.web.routes
 
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
+import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.web.WebhookRoute
 import app.index.config.StripeConfig
 import app.index.core.clients.StripeClient
@@ -149,10 +150,11 @@ fun Route.stripeWebhookRoute() {
 
                 call.respond(HttpStatusCode.OK)
 
-                emitWebsocketEventForCurrentSessionUser(
+                emitWebsocketEventForUsers(
                     websocketEventManager = websocketEventManager,
                     type = WebsocketEventType.USER_UPDATED,
-                    content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto())
+                    content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto()),
+                    users = listOf(userData.id)
                 )
 
                 // here we could also send a nice email with a bunch of info or properly setup stripe emails instead
@@ -202,10 +204,11 @@ fun Route.stripeWebhookRoute() {
 
                 call.respond(HttpStatusCode.OK)
 
-                emitWebsocketEventForCurrentSessionUser(
+                emitWebsocketEventForUsers(
                     websocketEventManager = websocketEventManager,
                     type = WebsocketEventType.USER_UPDATED,
-                    content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto())
+                    content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto()),
+                    users = listOf(userData.id)
                 )
                 // here we could also send a nice email with a bunch of info or properly setup stripe emails instead
             }
@@ -242,10 +245,11 @@ fun Route.stripeWebhookRoute() {
 
                     call.respond(HttpStatusCode.OK)
 
-                    emitWebsocketEventForCurrentSessionUser(
+                    emitWebsocketEventForUsers(
                         websocketEventManager = websocketEventManager,
                         type = WebsocketEventType.USER_UPDATED,
-                        content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto())
+                        content = WebsocketEventContent.UserUpdateEventContent(userData.getResponseDto()),
+                        users = listOf(userData.id)
                     )
                 } else {
                     call.respond(HttpStatusCode.OK)
