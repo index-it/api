@@ -190,7 +190,7 @@ class BrevoClient : IClosableComponent {
                         templateId = BrevoConfig.listInvitationTemplateId,
                         params =
                         BrevoListInviteRequestBody.Params(
-                            url = "${BrevoConfig.listInviteUrl}?token=$token",
+                            url = "${BrevoConfig.listInviteUrl}?token=$token&email=${URLEncoder.encode(emailTo, "utf-8")}",
                             inviter = inviterEmail,
                             list_name = listName,
                             role = if (editor) "editor" else "viewer"
