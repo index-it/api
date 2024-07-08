@@ -87,7 +87,7 @@ fun Route.proSubscriptionRoute() {
         val cancellationInfo = try {
             call.receive<ProSubscriptionCancellationRequestData>()
         } catch (e: ContentTransformationException) {
-            null
+            ProSubscriptionCancellationRequestData(null, null)
         }
 
         if (user.stripe_subscription_id == null) {
