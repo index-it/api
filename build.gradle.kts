@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "app.index"
-version = "0.1.4"
+version = "0.1.5"
 application {
     mainClass.set("app.index.ApplicationKt")
 }

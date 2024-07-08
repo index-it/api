@@ -3,6 +3,7 @@ package app.index.core.logic.pro
 import app.index.core.clients.StripeClient
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.daos.user.UserDao
+import app.index.data.models.pro.ProSubscriptionCancellationRequestData
 import app.index.data.models.user.UserData
 import com.stripe.exception.StripeException
 import org.koin.core.annotation.Single
@@ -67,6 +68,6 @@ class ProManager(
      *
      * @return true if the subscription was canceled, false if no subscription matched the [subscriptionId]
      */
-    fun cancelSubscription(subscriptionId: String) =
-        stripeClient.cancelSubscription(subscriptionId)
+    fun cancelSubscription(subscriptionId: String, cancellationInfo: ProSubscriptionCancellationRequestData) =
+        stripeClient.cancelSubscription(subscriptionId, cancellationInfo)
 }

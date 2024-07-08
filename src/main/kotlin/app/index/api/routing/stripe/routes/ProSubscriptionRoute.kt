@@ -1,22 +1,25 @@
 package app.index.api.routing.stripe.routes
 
 import app.index.api.plugins.userIdFromSessionOrThrow
-import app.index.api.routing.stripe.StripeRoute
+import app.index.api.routing.stripe.ProRoute
 import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.pro.ProManager
 import app.index.data.daos.user.UserDao
+import app.index.data.models.pro.ProSubscriptionCancellationRequestData
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Route.stripeSubscriptionRoute() {
+fun Route.proSubscriptionRoute() {
     val userDao by inject<UserDao>()
     val proManager by inject<ProManager>()
 
-    get<StripeRoute.SubscriptionRoute.CreateRoute>({
+    get<ProRoute.SubscriptionRoute.CreateRoute>({
         tags = listOf("stripe")
         operationId = "stripe-create-subscription"
         summary = "creates a payment intent that allows the user to purchase a subscription to the pro version"
@@ -56,10 +59,15 @@ fun Route.stripeSubscriptionRoute() {
         call.respond(paymentIntentClientSecret)
     }
 
-    get<StripeRoute.SubscriptionRoute.CancelRoute>({
+    post<ProRoute.SubscriptionRoute.CancelRoute>({
         tags = listOf("stripe")
         operationId = "stripe-cancel-subscription"
         summary = "cancels the user subscription if he has an active one"
+        request {
+            body<ProSubscriptionCancellationRequestData> {
+                description = "optional additional information about why the user canceled the subscription"
+            }
+        }
         response {
             HttpStatusCode.OK to {
                 description = "subscription canceled"
@@ -76,14 +84,20 @@ fun Route.stripeSubscriptionRoute() {
         val user = userDao.get(userId)
             ?: throw AuthenticationException()
 
-        if (user.stripe_subscription_id == null) {
-            return@get call.respond(HttpStatusCode.MethodNotAllowed)
+        val cancellationInfo = try {
+            call.receive<ProSubscriptionCancellationRequestData>()
+        } catch (e: ContentTransformationException) {
+            null
         }
 
-        val canceled = proManager.cancelSubscription(user.stripe_subscription_id)
+        if (user.stripe_subscription_id == null) {
+            return@post call.respond(HttpStatusCode.MethodNotAllowed)
+        }
+
+        val canceled = proManager.cancelSubscription(user.stripe_subscription_id, cancellationInfo)
 
         if (!canceled) {
-            return@get call.respond(HttpStatusCode.MethodNotAllowed)
+            return@post call.respond(HttpStatusCode.MethodNotAllowed)
         }
 
         call.respond(HttpStatusCode.OK)

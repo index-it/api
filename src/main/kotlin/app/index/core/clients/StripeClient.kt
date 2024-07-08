@@ -2,6 +2,7 @@ package app.index.core.clients
 
 import app.index.config.StripeConfig
 import app.index.core.logic.typedId.impl.IxId
+import app.index.data.models.pro.ProSubscriptionCancellationRequestData
 import app.index.data.models.user.UserData
 import com.stripe.Stripe
 import com.stripe.exception.StripeException
@@ -9,6 +10,8 @@ import com.stripe.model.Customer
 import com.stripe.model.Subscription
 import com.stripe.param.CustomerCreateParams
 import com.stripe.param.SubscriptionCreateParams
+import com.stripe.param.SubscriptionUpdateParams
+import com.stripe.param.SubscriptionUpdateParams.CancellationDetails
 import org.koin.core.annotation.Single
 
 
@@ -65,10 +68,26 @@ class StripeClient {
      *
      * @return true if the subscription was canceled, false if no subscription matched the [subscriptionId]
      */
-    fun cancelSubscription(subscriptionId: String): Boolean {
+    fun cancelSubscription(subscriptionId: String, cancellationInfo: ProSubscriptionCancellationRequestData): Boolean {
         return try {
             val sub = Subscription.retrieve(subscriptionId)
-            sub.cancel()
+
+            val params = SubscriptionUpdateParams.builder()
+                .setCancelAtPeriodEnd(true)
+                .setCancellationDetails(
+                    CancellationDetails.builder()
+                        .apply {
+                            if (cancellationInfo.comment != null)
+                                setComment(cancellationInfo.comment)
+
+                            if (cancellationInfo.feedback != null)
+                                setFeedback(cancellationInfo.feedback.asStripeFeedback())
+                        }
+                        .build()
+                )
+                .build()
+
+            sub.update(params)
             true
         } catch (e: StripeException) {
             if (e.code == "resource_missing") {
