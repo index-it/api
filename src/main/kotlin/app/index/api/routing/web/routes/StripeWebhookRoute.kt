@@ -111,7 +111,7 @@ fun Route.stripeWebhookRoute() {
                 // we only update the user info when the subscription is active (paid)
                 if (sub.status != "active") {
                     log.info { "received non active stripe subscription webhook" }
-                    call.respond(HttpStatusCode.OK)
+                    return@post call.respond(HttpStatusCode.OK)
                 }
 
                 val subId = sub.id
@@ -165,7 +165,7 @@ fun Route.stripeWebhookRoute() {
                 // we only update the user info when the subscription is active (paid)
                 if (sub.status != "active") {
                     log.info { "received non active stripe subscription webhook" }
-                    call.respond(HttpStatusCode.OK)
+                    return@post call.respond(HttpStatusCode.OK)
                 }
 
                 val subId = sub.id
