@@ -13,6 +13,9 @@ class ProRoute {
         @Resource("/create")
         class CreateRoute(val parent: SubscriptionRoute, val price_id: String)
 
+        @Resource("/restore")
+        class RestoreRoute(val parent: SubscriptionRoute)
+
         @Resource("/cancel")
         class CancelRoute(val parent: SubscriptionRoute)
     }

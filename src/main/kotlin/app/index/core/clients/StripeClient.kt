@@ -8,7 +8,9 @@ import com.stripe.Stripe
 import com.stripe.exception.StripeException
 import com.stripe.model.Customer
 import com.stripe.model.Subscription
+import com.stripe.net.RequestOptions
 import com.stripe.param.CustomerCreateParams
+import com.stripe.param.CustomerRetrieveParams
 import com.stripe.param.SubscriptionCreateParams
 import com.stripe.param.SubscriptionUpdateParams
 import com.stripe.param.SubscriptionUpdateParams.CancellationDetails
@@ -23,6 +25,62 @@ class StripeClient {
 
     init {
         Stripe.apiKey = StripeConfig.apiKey
+    }
+
+    /**
+     * @param customerId
+     *
+     * @return true if the customer has an active subscription, false otherwise
+     */
+    fun hasActiveSubscription(customerId: String): Boolean {
+        return try {
+            val params = CustomerRetrieveParams.builder()
+                .addExpand("subscriptions")
+                .build()
+
+            val customer = Customer.retrieve(customerId, params, RequestOptions.getDefault())
+
+            customer.subscriptions.data.any { it.status == "active" }
+        } catch (e: StripeException) {
+            if (e.code == "resource_missing") {
+                false
+            } else {
+                throw e
+            }
+        }
+    }
+
+    /**
+     * @param customerId
+     *
+     * @return null if the customer doesn't have a subscription, a pair with the subscription id and price id otherwise
+     */
+    fun getActiveSubscription(customerId: String): Pair<String, String>? {
+        return try {
+            val params = CustomerRetrieveParams.builder()
+                .addExpand("subscriptions")
+                .build()
+
+            val customer = Customer.retrieve(customerId, params, RequestOptions.getDefault())
+
+            val activeSub = customer.subscriptions.data.firstOrNull { it.status == "active" }
+            if (activeSub == null) {
+                null
+            } else {
+                val priceId = activeSub.items.data.getOrNull(0)?.price?.id
+                if (priceId == null) {
+                    null
+                } else {
+                    activeSub.id to priceId
+                }
+            }
+        } catch (e: StripeException) {
+            if (e.code == "resource_missing") {
+                null
+            } else {
+                throw e
+            }
+        }
     }
 
     /**

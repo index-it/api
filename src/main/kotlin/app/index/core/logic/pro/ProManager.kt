@@ -29,6 +29,24 @@ class ProManager(
     }
 
     /**
+     * @param customerId
+     *
+     * @return true if the customer has an active subscription, false otherwise
+     */
+    fun hasActiveSubscription(customerId: String): Boolean {
+        return stripeClient.hasActiveSubscription(customerId)
+    }
+
+    /**
+     * @param customerId
+     *
+     * @return null if the customer doesn't have a subscription, a pair with the subscription id and price id otherwise
+     */
+    fun getActiveSubscription(customerId: String): Pair<String, String>? {
+        return stripeClient.getActiveSubscription(customerId)
+    }
+
+    /**
      * Creates a subscription for the customer with the specified [customerId]
      *
      * This also creates the customer if missing
