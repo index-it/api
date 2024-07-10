@@ -238,15 +238,9 @@ class StripeClient {
             try {
                 val customer = Customer.retrieve(customerId)
 
-                try {
-                    if (customer.deleted) {
-                        true to createCustomer(userId, email)
-                    } else {
-                        false to customer
-                    }
-                } catch (e: NullPointerException) {
-                    false to customer
-                }
+                // TODO: Handle customer deletion with webhook
+
+                false to customer
             } catch (e: StripeException) {
                 if (e.code == "resource_missing") {
                     true to createCustomer(userId, email)
