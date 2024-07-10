@@ -48,7 +48,10 @@ fun Route.itemRoute() {
                 body<ItemData>()
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: view"
             }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
@@ -98,7 +101,10 @@ fun Route.itemRoute() {
                 description = "invalid parameters\n${Validations.Item.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: edit"
             }
             HttpStatusCode.NotFound to {
                 description = "item or list not found"
@@ -146,7 +152,10 @@ fun Route.itemRoute() {
                 description = "item deleted"
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: edit"
             }
         }
     }) {

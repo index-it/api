@@ -24,6 +24,9 @@ fun Route.suggestionsRoute() {
                 description = "suggested colors"
                 body<ColorSuggestionsData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val colors = suggestionDao.getColors()
@@ -50,6 +53,9 @@ fun Route.suggestionsRoute() {
             HttpStatusCode.OK to {
                 description = "suggested list names"
                 body<NameSuggestionsData>()
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
         }
     }) {
@@ -79,6 +85,9 @@ fun Route.suggestionsRoute() {
                 description = "suggested category names"
                 body<NameSuggestionsData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val names = suggestionDao.getCategoryNames(it.locale)
@@ -107,6 +116,9 @@ fun Route.suggestionsRoute() {
                 description = "suggested item names"
                 body<NameSuggestionsData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val names = suggestionDao.getItemNames(it.locale)
@@ -134,6 +146,9 @@ fun Route.suggestionsRoute() {
             HttpStatusCode.OK to {
                 description = "suggested task names"
                 body<NameSuggestionsData>()
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
         }
     }) {

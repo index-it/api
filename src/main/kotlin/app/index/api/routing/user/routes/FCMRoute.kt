@@ -29,6 +29,9 @@ fun Route.fcmRoutes() {
             HttpStatusCode.OK to {
                 description = "registration token saved"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val fcmRegistrationTokenData = FCMRegistrationTokenData(

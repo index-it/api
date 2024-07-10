@@ -45,7 +45,10 @@ fun Route.categoryRoute() {
                 body<CategoryData>()
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: view"
             }
             HttpStatusCode.NotFound to {
                 description = "category or list not found"
@@ -94,7 +97,10 @@ fun Route.categoryRoute() {
                 description = "invalid parameters\n${Validations.Category.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: edit"
             }
             HttpStatusCode.NotFound to {
                 description = "category or list not found"
@@ -142,7 +148,10 @@ fun Route.categoryRoute() {
                 description = "category deleted"
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: edit"
             }
         }
     }) {

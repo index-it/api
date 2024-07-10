@@ -40,6 +40,9 @@ fun Route.listsRoute() {
                 description = "user lists"
                 body<List<ListData>>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         call.respond(listDao.getListsAccessibleByUser(userIdFromSessionOrThrow()))
@@ -64,6 +67,9 @@ fun Route.listsRoute() {
             }
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters\n${Validations.List.VALIDATIONS_SUMMARY}"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
             HttpStatusCode.PaymentRequired to {
                 description = "pro required in order to have more than 10 lists and for lists to be public"

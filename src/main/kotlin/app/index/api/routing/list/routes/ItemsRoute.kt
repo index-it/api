@@ -49,7 +49,10 @@ fun Route.itemsRoute() {
                 body<List<ItemData>>()
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: view"
             }
         }
     }) {
@@ -92,7 +95,10 @@ fun Route.itemsRoute() {
                 description = "invalid parameters\n${Validations.Item.VALIDATIONS_SUMMARY}"
             }
             HttpStatusCode.Unauthorized to {
-                description = "not authorized to perform this action on the list"
+                description = "user not authenticated"
+            }
+            HttpStatusCode.Forbidden to {
+                description = "missing required list permission: edit"
             }
         }
     }) {

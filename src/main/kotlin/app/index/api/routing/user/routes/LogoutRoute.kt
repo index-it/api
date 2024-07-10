@@ -24,6 +24,9 @@ fun Route.logoutRoutes() {
             HttpStatusCode.OK to {
                 description = "session terminated"
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val session = call.sessions.get<UserSessionCookie>()!!

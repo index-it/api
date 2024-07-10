@@ -48,6 +48,9 @@ fun Route.tasksRoute() {
                 description = "the tasks"
                 body<List<TaskData>>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
         }
     }) {
         val userId = userIdFromSessionOrThrow()
@@ -82,6 +85,9 @@ fun Route.tasksRoute() {
             }
             HttpStatusCode.BadRequest to {
                 description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
+            }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
             }
             HttpStatusCode.PaymentRequired to {
                 description = "pro required to have multiple reminders"

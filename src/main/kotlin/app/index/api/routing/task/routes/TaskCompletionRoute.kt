@@ -51,6 +51,9 @@ fun Route.taskCompletionRoute() {
                 description = "the updated task"
                 body<TaskData>()
             }
+            HttpStatusCode.Unauthorized to {
+                description = "user not authenticated"
+            }
             HttpStatusCode.NotFound to {
                 description = "task not found"
             }
