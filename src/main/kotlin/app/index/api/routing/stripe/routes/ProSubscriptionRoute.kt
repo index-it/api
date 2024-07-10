@@ -70,6 +70,10 @@ fun Route.proSubscriptionRoute() {
             promotionCode = it.promotion_code
         )
 
+        if (paymentIntentClientSecret == null) {
+            return@get call.respond(HttpStatusCode.Created)
+        }
+
         call.respond(paymentIntentClientSecret)
     }
 

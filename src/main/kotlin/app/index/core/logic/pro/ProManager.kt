@@ -65,7 +65,7 @@ class ProManager(
      *
      * @throws StripeException
      *
-     * @return the client_secret for the subscription payment intent
+     * @return the client_secret for the subscription payment intent, or null if the charge amount is $0 and the subscription has successfully been created
      */
     suspend fun createSubscription(
         customerId: String?,
@@ -73,7 +73,7 @@ class ProManager(
         email: String,
         priceId: String,
         promotionCode: String?
-    ): String {
+    ): String? {
         val (created, customer) = stripeClient.getCustomerOrCreateIfMissing(
             customerId = customerId,
             userId = userId,

@@ -142,13 +142,13 @@ class StripeClient {
      *
      * @throws StripeException
      *
-     * @return the client_secret for the subscription payment intent
+     * @return the client_secret for the subscription payment intent, null if the charge amount is $0 and the subscription has already been created
      */
     fun createSubscription(
         customerId: String,
         priceId: String,
         promotionCode: String?
-    ): String {
+    ): String? {
         val paymentSettings = SubscriptionCreateParams.PaymentSettings.builder()
             .setSaveDefaultPaymentMethod(SubscriptionCreateParams.PaymentSettings.SaveDefaultPaymentMethod.ON_SUBSCRIPTION)
             .build()
@@ -179,7 +179,13 @@ class StripeClient {
             .build()
 
         val subscription = Subscription.create(subCreateParams)
-        return subscription.latestInvoiceObject.paymentIntentObject.clientSecret
+        val paymentIntent = subscription.latestInvoiceObject.paymentIntentObject
+
+        if (paymentIntent == null) {
+            return null
+        } else {
+            return paymentIntent.clientSecret
+        }
     }
 
     /**
