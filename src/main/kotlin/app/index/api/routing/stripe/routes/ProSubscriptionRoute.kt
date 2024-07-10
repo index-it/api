@@ -66,7 +66,8 @@ fun Route.proSubscriptionRoute() {
             customerId = user.stripe_customer_id,
             userId = user.id,
             email =  user.email,
-            priceId = priceId
+            priceId = priceId,
+            promotionCode = it.promotion_code
         )
 
         call.respond(paymentIntentClientSecret)

@@ -7,11 +7,14 @@ import app.index.data.models.user.UserData
 import com.stripe.Stripe
 import com.stripe.exception.StripeException
 import com.stripe.model.Customer
+import com.stripe.model.PromotionCode
 import com.stripe.model.Subscription
 import com.stripe.net.RequestOptions
 import com.stripe.param.CustomerCreateParams
 import com.stripe.param.CustomerRetrieveParams
+import com.stripe.param.PromotionCodeListParams
 import com.stripe.param.SubscriptionCreateParams
+import com.stripe.param.SubscriptionCreateParams.PaymentSettings.PaymentMethodOptions
 import com.stripe.param.SubscriptionUpdateParams
 import com.stripe.param.SubscriptionUpdateParams.CancellationDetails
 import org.koin.core.annotation.Single
@@ -25,6 +28,50 @@ class StripeClient {
 
     init {
         Stripe.apiKey = StripeConfig.apiKey
+    }
+
+    /**
+     * @return true if the promotion code is valid, false otherwise
+     */
+    fun isPromotionCodeValid(promotionCode: String): Boolean {
+        return try {
+            val params = PromotionCodeListParams.builder()
+                .setCode(promotionCode)
+                .setLimit(1L)
+                .build()
+
+            val coupons = PromotionCode.list(params).data
+
+            return coupons.isNotEmpty()
+        } catch (e: StripeException) {
+            if (e.code == "resource_missing") {
+                false
+            } else {
+                throw e
+            }
+        }
+    }
+
+    /**
+     * @return the promotion code matching the customer facing [code], null if no promotion code matched
+     */
+    fun getPromotionCode(code: String): PromotionCode? {
+        return try {
+            val params = PromotionCodeListParams.builder()
+                .setCode(code)
+                .setLimit(1L)
+                .build()
+
+            val promotionCode = PromotionCode.list(params).data.firstOrNull()
+
+            return promotionCode
+        } catch (e: StripeException) {
+            if (e.code == "resource_missing") {
+                null
+            } else {
+                throw e
+            }
+        }
     }
 
     /**
@@ -95,7 +142,8 @@ class StripeClient {
      */
     fun createSubscription(
         customerId: String,
-        priceId: String
+        priceId: String,
+        promotionCode: String?
     ): String {
         val paymentSettings = SubscriptionCreateParams.PaymentSettings.builder()
             .setSaveDefaultPaymentMethod(SubscriptionCreateParams.PaymentSettings.SaveDefaultPaymentMethod.ON_SUBSCRIPTION)
@@ -113,6 +161,17 @@ class StripeClient {
             .setPaymentSettings(paymentSettings)
             .setPaymentBehavior(SubscriptionCreateParams.PaymentBehavior.DEFAULT_INCOMPLETE)
             .addAllExpand(listOf("latest_invoice.payment_intent"))
+            .apply {
+                if (promotionCode != null) {
+                    val promotionCodeId = getPromotionCode(promotionCode)?.id
+
+                    val discount = SubscriptionCreateParams.Discount.builder()
+                        .setPromotionCode(promotionCodeId)
+                        .build()
+
+                    setDiscounts(listOf(discount))
+                }
+            }
             .build()
 
         val subscription = Subscription.create(subCreateParams)

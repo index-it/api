@@ -15,6 +15,13 @@ class ProManager(
 ) {
 
     /**
+     * @return true if the promotion code is valid, false otherwise
+     */
+    fun isPromotionCodeValid(promotionCode: String): Boolean {
+        return stripeClient.isPromotionCodeValid(promotionCode)
+    }
+
+    /**
      * @param priceId
      * @param proFeature
      *
@@ -64,7 +71,8 @@ class ProManager(
         customerId: String?,
         userId: IxId<UserData>,
         email: String,
-        priceId: String
+        priceId: String,
+        promotionCode: String?
     ): String {
         val (created, customer) = stripeClient.getCustomerOrCreateIfMissing(
             customerId = customerId,
@@ -76,7 +84,7 @@ class ProManager(
             userDao.setStripeCustomerId(userId, customer.id)
         }
 
-        return stripeClient.createSubscription(customer.id, priceId)
+        return stripeClient.createSubscription(customer.id, priceId, promotionCode)
     }
 
     /**
