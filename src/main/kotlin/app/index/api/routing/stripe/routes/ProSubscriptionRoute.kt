@@ -42,6 +42,9 @@ fun Route.proSubscriptionRoute() {
                     description = "the client_secret from the subscription’s first payment intent"
                 }
             }
+            HttpStatusCode.Created to {
+                description = "the invoice amount is $0 so the subscription has already been created"
+            }
             HttpStatusCode.Unauthorized to {
                 description = "user not authenticated"
             }

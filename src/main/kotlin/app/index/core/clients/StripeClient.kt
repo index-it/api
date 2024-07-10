@@ -142,7 +142,7 @@ class StripeClient {
      *
      * @throws StripeException
      *
-     * @return the client_secret for the subscription payment intent, null if the charge amount is $0 and the subscription has already been created
+     * @return the client_secret for the subscription payment intent, null if the invoice amount is $0 and the subscription has already been created
      */
     fun createSubscription(
         customerId: String,
