@@ -87,6 +87,10 @@ class StripeClient {
 
             val customer = Customer.retrieve(customerId, params, RequestOptions.getDefault())
 
+            if (customer.subscriptions == null || customer.subscriptions.data == null) {
+                return false
+            }
+
             customer.subscriptions.data.any { it.status == "active" }
         } catch (e: StripeException) {
             if (e.code == "resource_missing") {
