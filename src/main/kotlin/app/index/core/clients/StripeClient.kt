@@ -231,7 +231,13 @@ class StripeClient {
             true to createCustomer(userId, email)
         } else {
             try {
-                false to Customer.retrieve(customerId)
+                val customer = Customer.retrieve(customerId)
+
+                if (customer.deleted) {
+                    true to createCustomer(userId, email)
+                } else {
+                    false to customer
+                }
             } catch (e: StripeException) {
                 if (e.code == "resource_missing") {
                     true to createCustomer(userId, email)
