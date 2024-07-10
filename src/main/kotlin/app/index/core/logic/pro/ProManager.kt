@@ -65,7 +65,7 @@ class ProManager(
      *
      * @throws StripeException
      *
-     * @return the client_secret for the subscription payment intent, or null if the charge amount is $0 and the subscription has successfully been created
+     * @return the client_secret for the subscription payment intent, or null if the invoice amount is $0 and the subscription has successfully been created
      */
     suspend fun createSubscription(
         customerId: String?,

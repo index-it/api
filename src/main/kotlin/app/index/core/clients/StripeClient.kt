@@ -14,7 +14,6 @@ import com.stripe.param.CustomerCreateParams
 import com.stripe.param.CustomerRetrieveParams
 import com.stripe.param.PromotionCodeListParams
 import com.stripe.param.SubscriptionCreateParams
-import com.stripe.param.SubscriptionCreateParams.PaymentSettings.PaymentMethodOptions
 import com.stripe.param.SubscriptionUpdateParams
 import com.stripe.param.SubscriptionUpdateParams.CancellationDetails
 import org.koin.core.annotation.Single
@@ -142,7 +141,7 @@ class StripeClient {
      *
      * @throws StripeException
      *
-     * @return the client_secret for the subscription payment intent, null if the charge amount is $0 and the subscription has already been created
+     * @return the client_secret for the subscription payment intent, null if the invoice amount is $0 and the subscription has already been created
      */
     fun createSubscription(
         customerId: String,
@@ -239,11 +238,9 @@ class StripeClient {
             try {
                 val customer = Customer.retrieve(customerId)
 
-                if (customer.deleted) {
-                    true to createCustomer(userId, email)
-                } else {
-                    false to customer
-                }
+                // TODO: Handle customer deletion with webhook
+
+                false to customer
             } catch (e: StripeException) {
                 if (e.code == "resource_missing") {
                     true to createCustomer(userId, email)
