@@ -14,7 +14,6 @@ import com.stripe.param.CustomerCreateParams
 import com.stripe.param.CustomerRetrieveParams
 import com.stripe.param.PromotionCodeListParams
 import com.stripe.param.SubscriptionCreateParams
-import com.stripe.param.SubscriptionCreateParams.PaymentSettings.PaymentMethodOptions
 import com.stripe.param.SubscriptionUpdateParams
 import com.stripe.param.SubscriptionUpdateParams.CancellationDetails
 import org.koin.core.annotation.Single
@@ -239,9 +238,13 @@ class StripeClient {
             try {
                 val customer = Customer.retrieve(customerId)
 
-                if (customer.deleted) {
-                    true to createCustomer(userId, email)
-                } else {
+                try {
+                    if (customer.deleted) {
+                        true to createCustomer(userId, email)
+                    } else {
+                        false to customer
+                    }
+                } catch (e: NullPointerException) {
                     false to customer
                 }
             } catch (e: StripeException) {
