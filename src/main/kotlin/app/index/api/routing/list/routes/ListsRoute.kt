@@ -5,7 +5,6 @@ import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.AnalyticsEventManager
-import app.index.core.logic.pro.ProFeature
 import app.index.core.logic.pro.ProManager
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -27,7 +26,6 @@ import org.koin.ktor.ext.inject
 fun Route.listsRoute() {
     val listDao by inject<ListDao>()
     val userDao by inject<UserDao>()
-    val proManager by inject<ProManager>()
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
@@ -83,13 +81,13 @@ fun Route.listsRoute() {
         val newList = call.receive<ListData.ListCreateRequestData>()
 
         val listsCount = listDao.count(userId)
-        val canCreateUnlimitedLists = proManager.hasAccessToProFeature(user.stripe_price_id, ProFeature.UNLIMITED_LISTS)
+        val canCreateUnlimitedLists = user.has_pro
 
         if (listsCount >= 10 && !canCreateUnlimitedLists) {
             return@post call.respond(HttpStatusCode.PaymentRequired)
         }
 
-        if (newList.public && !proManager.hasAccessToProFeature(user.stripe_price_id, ProFeature.PUBLIC_LIST)) {
+        if (newList.public && !user.has_pro) {
             return@post call.respond(HttpStatusCode.PaymentRequired)
         }
 

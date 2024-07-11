@@ -32,6 +32,7 @@ workflows:
     jobs:
       - gradle/test:
           name: test
+          deps_checksum_file: build.gradle.kts
           executor:
             name: gradle/default
             tag: '20.0.1'

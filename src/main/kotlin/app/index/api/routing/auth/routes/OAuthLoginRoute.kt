@@ -80,9 +80,7 @@ fun Route.oauthLoginRoutes() {
                 emailVerified = true,
                 creationTimestamp = DatetimeUtils.currentMillis(),
                 creationSource = UserData.CreationSource.GOOGLE,
-                stripe_customer_id = null,
-                stripe_subscription_id = null,
-                stripe_price_id = null
+                has_pro = false
             )
 
             userDao.create(userG)

@@ -71,9 +71,7 @@ fun Route.registerRoute() {
             emailVerified = false,
             creationTimestamp = DatetimeUtils.currentMillis(),
             creationSource = UserData.CreationSource.NONE,
-            stripe_customer_id = null,
-            stripe_subscription_id = null,
-            stripe_price_id = null
+            has_pro = false
         )
 
         userDao.create(user)

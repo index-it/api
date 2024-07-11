@@ -1,99 +1,51 @@
 package app.index.core.logic.pro
 
-import app.index.core.clients.StripeClient
-import app.index.core.logic.typedId.impl.IxId
+import app.index.core.clients.RevenueCatClient
+import app.index.core.logic.typedId.toIxId
 import app.index.data.daos.user.UserDao
-import app.index.data.models.pro.ProSubscriptionCancellationRequestData
 import app.index.data.models.user.UserData
-import com.stripe.exception.StripeException
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
 class ProManager(
     private val userDao: UserDao,
-    private val stripeClient: StripeClient
+    private val revenueCatClient: RevenueCatClient
 ) {
 
     /**
-     * @return true if the promotion code is valid, false otherwise
+     * Fetches all the users with the given [userIds] and tries to find an entitlement.
+     *
+     * If an entitlement is found, the user's pro status is updated.
+     *
+     * @return the new [UserData] if updated, null if everything was already synced
      */
-    fun isPromotionCodeValid(promotionCode: String): Boolean {
-        return stripeClient.isPromotionCodeValid(promotionCode)
-    }
+   suspend fun refreshProStatus(
+        userIds: List<String>
+    ): UserData? {
+        userIds.forEach { id ->
+            val userId = try {
+                id.toIxId<UserData>()
+            } catch (e: IllegalArgumentException) {
+                null
+            }
 
-    /**
-     * @param priceId
-     * @param proFeature
-     *
-     * @return true if the user has access to the [proFeature], false otherwise
-     */
-    fun hasAccessToProFeature(
-        priceId: String?,
-        proFeature: ProFeature
-    ): Boolean {
-        // atm there is only one plan and no specific logic is needed
-        return priceId != null
-    }
+            if (userId != null) {
+                val userData = userDao.get(userId)
 
-    /**
-     * @param customerId
-     *
-     * @return true if the customer has an active subscription, false otherwise
-     */
-    fun hasActiveSubscription(customerId: String): Boolean {
-        return stripeClient.hasActiveSubscription(customerId)
-    }
+                if (userData != null) {
+                    val hasPro = revenueCatClient.isUserPro(userId.toString())
 
-    /**
-     * @param customerId
-     *
-     * @return null if the customer doesn't have a subscription, a pair with the subscription id and price id otherwise
-     */
-    fun getActiveSubscription(customerId: String): Pair<String, String>? {
-        return stripeClient.getActiveSubscription(customerId)
-    }
+                    if (userData.has_pro != hasPro) {
+                        val newUserData = userDao.setHasPro(userId, hasPro)
 
-    /**
-     * Creates a subscription for the customer with the specified [customerId]
-     *
-     * This also creates the customer if missing
-     *
-     * @param customerId
-     * @param userId
-     * @param email
-     * @param priceId
-     *
-     * @throws StripeException
-     *
-     * @return the client_secret for the subscription payment intent, or null if the invoice amount is $0 and the subscription has successfully been created
-     */
-    suspend fun createSubscription(
-        customerId: String?,
-        userId: IxId<UserData>,
-        email: String,
-        priceId: String,
-        promotionCode: String?
-    ): String? {
-        val (created, customer) = stripeClient.getCustomerOrCreateIfMissing(
-            customerId = customerId,
-            userId = userId,
-            email = email
-        )
-
-        if (created) {
-            userDao.setStripeCustomerId(userId, customer.id)
+                        if (newUserData != null) {
+                            return newUserData
+                        }
+                    }
+                }
+            }
         }
 
-        return stripeClient.createSubscription(customer.id, priceId, promotionCode)
+        return null
     }
-
-    /**
-     * Cancels the subscription that matches the given [subscriptionId]
-     *
-     * @throws StripeException
-     *
-     * @return true if the subscription was canceled, false if no subscription matched the [subscriptionId]
-     */
-    fun cancelSubscription(subscriptionId: String, cancellationInfo: ProSubscriptionCancellationRequestData) =
-        stripeClient.cancelSubscription(subscriptionId, cancellationInfo)
 }
