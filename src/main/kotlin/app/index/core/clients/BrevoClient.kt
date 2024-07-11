@@ -27,7 +27,9 @@ class BrevoClient : IClosableComponent {
         HttpClient(Apache) {
             install(Logging)
             install(ContentNegotiation) {
-                json(Json)
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
             }
             install(HttpRequestRetry) {
                 retryOnServerErrors(maxRetries = 3)
