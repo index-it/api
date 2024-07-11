@@ -1,0 +1,5 @@
+ALTER TABLE users
+    DROP COLUMN is_pro;
+
+ALTER TABLE users
+    ADD COLUMN has_pro BOOLEAN DEFAULT FALSE;
