@@ -45,7 +45,7 @@ fun Route.proSubscriptionRoute() {
             userIds = listOf(userId.toString())
         ) ?: return@get call.respond(HttpStatusCode.NoContent)
 
-        call.respond(updatedUserData)
+        call.respond(updatedUserData.getResponseDto())
 
         emitWebsocketEventForCurrentSessionUser(
             websocketEventManager = websocketEventManager,

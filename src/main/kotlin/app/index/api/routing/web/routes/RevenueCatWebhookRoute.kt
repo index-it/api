@@ -8,6 +8,8 @@ import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.models.pro.RevenueCatWebhookRequestData
+import app.index.data.models.pro.RevenueCatWebhookRequestWrapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -15,6 +17,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+
+private val log = KotlinLogging.logger {  }
 
 fun Route.revenueCatWebhookRoute() {
     val proManager by inject<ProManager>()
@@ -36,8 +40,9 @@ fun Route.revenueCatWebhookRoute() {
         }
     }) {
         val webhookData = try {
-            call.receive<RevenueCatWebhookRequestData>()
+            call.receive<RevenueCatWebhookRequestWrapper>().event
         } catch (e: ContentTransformationException) {
+            log.error { e }
             return@post call.respond(HttpStatusCode.BadRequest)
         }
 
