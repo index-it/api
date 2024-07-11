@@ -2,6 +2,7 @@ package app.index.core.clients
 
 import app.index.config.RevenueCatConfig
 import app.index.data.models.pro.RevenueCatSubscriberData
+import app.index.data.models.pro.RevenueCatSubscriberRequestWrapper
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
@@ -50,8 +51,8 @@ class RevenueCatClient : IClosableComponent {
         val response: HttpResponse = httpClient.get("subscribers/$userId")
 
         return if (response.status.isSuccess()) {
-            val subscriberData: RevenueCatSubscriberData = response.body()
-            return subscriberData.entitlements.isNotEmpty()
+            val subscriberData: RevenueCatSubscriberRequestWrapper = response.body()
+            return subscriberData.subscriber.entitlements.isNotEmpty()
         } else {
             log.debug { "Failed to fetch revenuecat user\nResponse: $response" }
             false
