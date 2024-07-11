@@ -2,6 +2,7 @@ package app.index.api.routing.web.routes
 
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.web.WebhookRoute
+import app.index.config.RevenueCatConfig
 import app.index.core.logic.pro.ProManager
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -38,6 +39,14 @@ fun Route.revenueCatWebhookRoute() {
             call.receive<RevenueCatWebhookRequestData>()
         } catch (e: ContentTransformationException) {
             return@post call.respond(HttpStatusCode.BadRequest)
+        }
+
+        if (webhookData.environment == RevenueCatWebhookRequestData.RevenueCatEnvironment.SANDBOX && !RevenueCatConfig.sandbox) {
+            return@post call.respond(HttpStatusCode.OK)
+        }
+
+        if (webhookData.environment == RevenueCatWebhookRequestData.RevenueCatEnvironment.PRODUCTION && RevenueCatConfig.sandbox) {
+            return@post call.respond(HttpStatusCode.OK)
         }
 
         val updatedUserData = proManager.refreshProStatus(

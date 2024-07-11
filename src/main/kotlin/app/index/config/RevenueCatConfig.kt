@@ -10,4 +10,7 @@ object RevenueCatConfig {
 
     @ConfigurationProperty("webhook.secret")
     lateinit var webhookSecret: String
+
+    @ConfigurationProperty("sandbox")
+    var sandbox: Boolean = false
 }

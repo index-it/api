@@ -37,6 +37,7 @@ class RevenueCatClient : IClosableComponent {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header(HttpHeaders.Authorization, "Bearer ${RevenueCatConfig.apiKey}")
+                header("X-Is-Sandbox", RevenueCatConfig.sandbox)
             }
         }
 
