@@ -5,7 +5,6 @@ import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import app.index.core.logic.AnalyticsEventManager
-import app.index.core.logic.pro.ProFeature
 import app.index.core.logic.pro.ProManager
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -28,7 +27,6 @@ import org.koin.ktor.ext.inject
 fun Route.tasksRoute() {
     val taskDao by inject<TaskDao>()
     val userDao by inject<UserDao>()
-    val proManager by inject<ProManager>()
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
@@ -113,7 +111,7 @@ fun Route.tasksRoute() {
             val user = userDao.get(userId)
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            if (!proManager.hasAccessToProFeature(user.stripe_price_id, ProFeature.MULTIPLE_REMINDERS)) {
+            if (!user.has_pro) {
                 return@post call.respond(HttpStatusCode.PaymentRequired)
             }
         }

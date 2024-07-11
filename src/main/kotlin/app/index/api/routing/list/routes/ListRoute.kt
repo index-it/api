@@ -3,8 +3,6 @@ package app.index.api.routing.list.routes
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
-import app.index.core.logic.pro.ProFeature
-import app.index.core.logic.pro.ProManager
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -27,7 +25,6 @@ import org.koin.ktor.ext.inject
 fun Route.listRoute() {
     val listDao by inject<ListDao>()
     val userDao by inject<UserDao>()
-    val proManager by inject<ProManager>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
     get<ListsRoute.ListRoute>({
@@ -117,7 +114,7 @@ fun Route.listRoute() {
             val owner = userDao.get(list.user_id)
                 ?: return@put call.respond(HttpStatusCode.NotFound)
 
-            if (!proManager.hasAccessToProFeature(owner.stripe_price_id, ProFeature.PUBLIC_LIST)) {
+            if (!owner.has_pro) {
                 return@put call.respond(HttpStatusCode.PaymentRequired)
             }
         }

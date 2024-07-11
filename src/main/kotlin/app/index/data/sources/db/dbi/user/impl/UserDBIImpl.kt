@@ -38,14 +38,6 @@ class UserDBIImpl : UserDBI {
                 ?.toData()
         }
 
-    override suspend fun getFromStripeCustomerId(customerId: String): UserData? = dbQuery {
-        UserEntity
-            .find { UsersTable.stripe_customer_id eq customerId }
-            .limit(1)
-            .firstOrNull()
-            ?.toData()
-    }
-
     override suspend fun verifyEmail(id: IxId<UserData>) {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
@@ -77,21 +69,10 @@ class UserDBIImpl : UserDBI {
         }
     }
 
-    override suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String): UserData? {
+    override suspend fun setHasPro(id: IxId<UserData>, hasPro: Boolean): UserData? {
         return dbQuery {
             UsersTable.updateReturning(where = { UsersTable.id eq id.toEntityId(UsersTable) }) {
-                it[stripe_customer_id] = customerId
-            }.firstOrNull()?.let {
-                UserEntity.wrapRow(it).toData()
-            }
-        }
-    }
-
-    override suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?): UserData? {
-        return dbQuery {
-            UsersTable.updateReturning(where = { UsersTable.id eq id.toEntityId(UsersTable) }) {
-                it[stripe_subscription_id] = subscriptionId
-                it[stripe_price_id] = priceId
+                it[has_pro] = hasPro
             }.firstOrNull()?.let {
                 UserEntity.wrapRow(it).toData()
             }

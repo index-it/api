@@ -11,8 +11,6 @@ interface UserDBI : DBI {
 
     suspend fun get(email: String): UserData?
 
-    suspend fun getFromStripeCustomerId(customerId: String): UserData?
-
     suspend fun verifyEmail(id: IxId<UserData>)
 
     suspend fun changePassword(
@@ -26,9 +24,7 @@ interface UserDBI : DBI {
         verifyEmail: Boolean,
     )
 
-    suspend fun setStripeCustomerId(id: IxId<UserData>, customerId: String): UserData?
-
-    suspend fun setStripeSubscriptionData(id: IxId<UserData>, subscriptionId: String?, priceId: String?): UserData?
+    suspend fun setHasPro(id: IxId<UserData>, hasPro: Boolean): UserData?
 
     suspend fun delete(id: IxId<UserData>)
 }

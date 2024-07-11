@@ -1,6 +1,8 @@
 package app.index.api.plugins
 
+import app.index.api.plugins.custom.apiKey
 import app.index.config.ApiConfig
+import app.index.config.RevenueCatConfig
 import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.PasswordEncoder
@@ -28,6 +30,7 @@ object AuthenticationMethods {
     const val EMAIL_VERIFICATION_FORM_AUTH = "email_verification_form_auth"
     const val USER_SESSION_AUTH = "user_session_auth"
     const val ADMIN_BEARER_AUTH = "admin_bearer_auth"
+    const val REVENUECAT_WEBHOOKS = "revenuecat_webhooks"
 }
 
 /**
@@ -104,7 +107,17 @@ fun Application.configureSecurity() {
             }
         }
 
+        apiKey(AuthenticationMethods.REVENUECAT_WEBHOOKS) {
+            headerName = "Authorization"
 
+            validate { apiKey ->
+                if (apiKey == RevenueCatConfig.webhookSecret || apiKey == "Bearer ${RevenueCatConfig.webhookSecret}") {
+                    UserIdPrincipal("revenuecat")
+                } else {
+                    null
+                }
+            }
+        }
     }
 }
 
