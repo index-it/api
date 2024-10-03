@@ -13,6 +13,7 @@ import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.PasswordResetRequestBody
 import app.index.data.models.auth.UserSessionCookie
+import app.index.data.models.user.UserData
 import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.put
@@ -36,7 +37,10 @@ fun Route.meRoutes() {
         summary = "get the logged in user data"
         response {
             HttpStatusCode.OK to {
-                description = "user data"
+                description = "user found"
+                body<UserData.UserResponseDto> {
+                    description = "the user data excluding sensitive fields like the password"
+                }
             }
             HttpStatusCode.Unauthorized to {
                 description = "user not authenticated"
