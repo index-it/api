@@ -44,6 +44,9 @@ fun Route.loginRoute() {
                 header<String>(HttpHeaders.SetCookie) {
                     description = "header that sets the session cookie via `SetCookie`"
                 }
+                body<UserData.UserResponseDto> {
+                    description = "the user data excluding sensitive fields like the password"
+                }
             }
             HttpStatusCode.Unauthorized to {
                 description = "invalid credentials"
@@ -77,7 +80,7 @@ fun Route.loginRoute() {
         )
 
         call.sessions.set(userSessionId)
-        call.respond(HttpStatusCode.OK)
+        call.respond(user.getResponseDto())
 
         emitAnalyticsEvent(
             analyticsEventManager = analyticsEventManager,

@@ -51,6 +51,9 @@ fun Route.oauthLoginRoutes() {
                 header<String>(HttpHeaders.SetCookie) {
                     description = "header that sets the session cookie via `SetCookie`"
                 }
+                body<UserData.UserResponseDto> {
+                    description = "the user data excluding sensitive fields like the password"
+                }
             }
             HttpStatusCode.Unauthorized to {
                 description = "invalid id token"
@@ -96,7 +99,7 @@ fun Route.oauthLoginRoutes() {
         )
 
         call.sessions.set(sessionId)
-        call.respond(HttpStatusCode.OK)
+        call.respond(userG.getResponseDto())
 
         if (isFirstLogin) {
             emitAnalyticsEvent(
