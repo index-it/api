@@ -41,7 +41,10 @@ fun Route.emailVerificationRoutes() {
             }
             response {
                 HttpStatusCode.OK to {
-                    description = "email sent (unless the email was already verified)"
+                    description = "email already verified"
+                }
+                HttpStatusCode.Created to {
+                    description = "email sent"
                 }
                 HttpStatusCode.Forbidden to {
                     description = "invalid form credentials"
