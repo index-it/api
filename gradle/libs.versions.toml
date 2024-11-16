@@ -38,6 +38,8 @@ googleApiClient="2.2.0"
 firebaseAdmin="9.2.0"
 springSecurityCrypto="6.1.3"
 springLogging="1.2"
+jwksRsa="0.22.1"
+jwt="4.4.0"
 
 micrometerRegistryPrometheus="1.12.0"
 
@@ -120,6 +122,9 @@ firebase-admin = { group = "com.google.firebase", name = "firebase-admin", versi
 spring-security-crypto = { group = "org.springframework.security", name = "spring-security-crypto", version.ref = "springSecurityCrypto" }
 spring-logging = { group = "commons-logging", name = "commons-logging", version.ref = "springLogging" }
 
+jwks-rsa = { module = "com.auth0:jwks-rsa", version.ref = "jwksRsa" }
+jwt = { module = "com.auth0:java-jwt", version.ref = "jwt" }
+
 junit = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 
 [bundles]
@@ -179,7 +184,9 @@ ktor-client = [
 
 spring-security = [
     "spring-security-crypto",
-    "spring-logging"
+    "spring-logging",
+    "jwks-rsa",
+    "jwt"
 ]
 
 monitoring = [

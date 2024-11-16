@@ -26,7 +26,7 @@ class LoginRoute
 class LoginWithGoogle(val token_id: String)
 
 @Resource("/login-with-apple")
-class LoginWithApple(val code: String)
+class LoginWithApple(val token_id: String)
 
 @Resource("/login-with-facebook")
 class LoginWithFacebook(val access_token: String)
