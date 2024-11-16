@@ -1,7 +1,9 @@
 package app.index.api.routing.auth.routes
 
 import app.index.api.plugins.emitAnalyticsEvent
+import app.index.api.routing.auth.LoginWithApple
 import app.index.api.routing.auth.LoginWithGoogle
+import app.index.core.clients.oauth.AppleOAuthClient
 import app.index.core.clients.oauth.GoogleOAuthClient
 import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.AnalyticsEventManager
@@ -29,6 +31,7 @@ fun Route.oauthLoginRoutes() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
     val googleOAuthClient by inject<GoogleOAuthClient>()
+    val appleOAuthClient by inject<AppleOAuthClient>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     get<LoginWithGoogle>({
@@ -119,16 +122,15 @@ fun Route.oauthLoginRoutes() {
         }
     }
 
-    /*
     get<LoginWithApple>({
         tags = listOf("auth")
         operationId = "login-with-apple"
         summary = "apple oauth login"
-        description = "the user needs to get a code with apple oauth and forward it to this endpoint to get authenticated via apple"
+        description = "the user needs to get an id token with apple oauth and forward it to this endpoint to get authenticated via apple"
         protected = false
         request {
-            queryParameter<String>("code") {
-                description = "the code received from apple"
+            queryParameter<String>("token_id") {
+                description = "the id token received from apple"
                 required = true
                 allowEmptyValue = false
                 allowReserved = false
@@ -140,46 +142,75 @@ fun Route.oauthLoginRoutes() {
                 header<String>(HttpHeaders.SetCookie) {
                     description = "header that sets the session cookie via `SetCookie`"
                 }
+                body<UserData.UserResponseDto> {
+                    description = "the user data excluding sensitive fields like the password"
+                }
             }
             HttpStatusCode.Unauthorized to {
-                description = "invalid code"
+                description = "invalid id token"
+            }
+            HttpStatusCode.MethodNotAllowed to {
+                description = "user email not verified"
             }
         }
     }) {
-        // Exchange the code for the token
-        val userInfo = AppleOAuthClient.exchangeCodeAndGetUserInfo(it.code)
+        val userInfo = appleOAuthClient.getUserInfoFromIdTokenIfValid(it.token_id)
             ?: throw AuthenticationException()
 
-        if (userInfo.isPrivateEmail || !userInfo.verifiedEmail)
+        if (!userInfo.emailVerified) {
             return@get call.respond(HttpStatusCode.MethodNotAllowed)
+        }
 
-        // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Apple)
-        // TO DO: Check if email is verified
-        var userA = UserDao.getFromEmail(userInfo.email)
+        // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)
+        var userG = userDao.getFromEmail(userInfo.email)
+        val isFirstLogin = userG == null || !userG!!.emailVerified
 
-        if (userA == null) {
-            // Create the user in the db with a random id, the email gotten from Apple, email verified to true
-            userA = UserDto(
+        if (userG == null) {
+            // Create the user in the db with a random id, the email gotten from Google, email verified to true
+            userG = UserData(
                 id = newIxId(),
                 email = userInfo.email,
                 passwordHash = null,
                 emailVerified = true,
                 creationTimestamp = DatetimeUtils.currentMillis(),
-                creationSource = UserDto.CreationSource.APPLE
+                creationSource = UserData.CreationSource.APPLE,
+                has_pro = false
             )
 
-            UserDao.create(userA)
-        } else if (!userA.emailVerified) {
-            UserDao.verifyEmail(userA.id)
+            userDao.create(userG!!)
+        } else if (!userG!!.emailVerified) {
+            userDao.verifyEmail(userG!!.id)
         }
 
         // Create session
-        val sessionId = UserSessionDao.create(userA.id, call.request.userAgent(), call.request.origin.remoteAddress)
+        val sessionId = userSessionDao.create(
+            userId = userG!!.id,
+            device = call.request.userAgent(),
+            ip = call.request.origin.remoteAddress
+        )
 
         call.sessions.set(sessionId)
-        call.respond(HttpStatusCode.OK)
+        call.respond(userG!!.getResponseDto())
+
+        if (isFirstLogin) {
+            emitAnalyticsEvent(
+                analyticsEventManager = analyticsEventManager,
+                analyticsEventData = AnalyticsEventData.UserRegistrationEventData(
+                    creation_source = userG!!.creationSource
+                )
+            )
+        } else {
+            emitAnalyticsEvent(
+                analyticsEventManager = analyticsEventManager,
+                analyticsEventData = AnalyticsEventData.UserLoginEventData(
+                    user_id = userG!!.id,
+                    login_source = UserData.CreationSource.APPLE,
+                )
+            )
+        }
     }
 
+    /*
     get<LoginWithFacebook>({
         tags = listOf("auth")
         operationId = "login-with-facebook"

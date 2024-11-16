@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppleIdTokenData(
     val email: String,
-    @SerialName("verified_email")
-    val verifiedEmail: Boolean,
+    @SerialName("email_verified")
+    val emailVerified: Boolean,
     @SerialName("is_private_email")
     val isPrivateEmail: Boolean,
 )
