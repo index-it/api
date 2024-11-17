@@ -1,30 +1,21 @@
 package app.index.core.clients.oauth
 
 import app.index.config.AppleConfig
-import app.index.core.logic.ObjectMapper
 import app.index.data.models.oauth.apple.AppleIdTokenData
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.impl.JWTParser
-import com.auth0.jwt.interfaces.JWTPartsParser
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import org.koin.core.annotation.Single
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
-import java.util.*
 
 
 private val log = KotlinLogging.logger {  }
 
 @Single(createdAtStart = true)
-class AppleOAuthClient(
-    private val objectMapper: ObjectMapper
-) {
+class AppleOAuthClient {
     private lateinit var provider: JwkProvider
 
     init {
@@ -51,7 +42,20 @@ class AppleOAuthClient(
 
             verifier.verify(decodedJWT)
 
-            objectMapper.decode<AppleIdTokenData>(decodedJWT.payload)
+            println(decodedJWT.claims)
+
+            // Docs: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/authenticating_users_with_sign_in_with_apple
+            AppleIdTokenData(
+                email = decodedJWT.claims["email"]?.asString() ?: run {
+                    log.warn { "missing email field in apple jwt" }
+                    return null
+                },
+                emailVerified = decodedJWT.claims["email_verified"]?.asBoolean() ?: run {
+                    log.warn { "missing email_verified field in apple jwt" }
+                    return null
+                },
+                isPrivateEmail = decodedJWT.claims["is_private_email"]?.asBoolean() ?: false
+            )
         } catch (e: Exception) {
             log.warn(e) { "failed apple jwt verification" }
             null
