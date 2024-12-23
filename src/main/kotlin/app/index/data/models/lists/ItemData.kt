@@ -39,10 +39,10 @@ data class ItemData(
 ) {
     @Serializable
     data class ItemCreateRequestData(
-        @Contextual val category_id: IxId<CategoryData>?,
+        @Contextual val category_id: IxId<CategoryData>? = null,
         @field:Schema(required = true)
         val name: String,
-        val link: String?
+        val link: String? = null
     ) : Validatable<ItemCreateRequestData> {
         override fun validate() =
             Validation {
@@ -58,10 +58,10 @@ data class ItemData(
 
     @Serializable
     data class ItemUpdateRequestData(
-        @Contextual val category_id: IxId<CategoryData>?,
+        @Contextual val category_id: IxId<CategoryData>? = null,
         @field:Schema(required = true)
         val name: String,
-        val link: String?
+        val link: String? = null
     ) : Validatable<ItemUpdateRequestData> {
         override fun validate() =
             Validation {

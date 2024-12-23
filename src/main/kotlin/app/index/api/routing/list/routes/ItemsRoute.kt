@@ -111,7 +111,6 @@ fun Route.itemsRoute() {
         ) ?: return@post call.respond(HttpStatusCode.NotFound)
 
         val newItem = call.receive<ItemData.ItemCreateRequestData>()
-
         val item = itemDao.create(userId, it.parent.list_id, newItem)
 
         call.respond(item)
