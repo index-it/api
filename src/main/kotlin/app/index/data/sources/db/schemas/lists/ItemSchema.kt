@@ -63,6 +63,7 @@ object ItemTable : UUIDTable() {
     val name = varchar("ix_name", 150)
     val completed = bool("completed")
     val link = varchar("link", 200).nullable()
+    val note = text("note", eagerLoading = true).nullable()
     val created_at = timestamp("created_at")
     val edited_at = timestamp("edited_at").nullable()
     val completed_at = timestamp("completed_at").nullable()
@@ -95,6 +96,7 @@ class ItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by ItemTable.name
     var completed by ItemTable.completed
     var link by ItemTable.link
+    var note by ItemTable.note
     var created_at by ItemTable.created_at
     var edited_at by ItemTable.edited_at
     var completed_at by ItemTable.completed_at
@@ -118,6 +120,7 @@ fun ItemEntity.fromData(itemData: ItemData) {
     name = itemData.name
     completed = itemData.completed
     link = itemData.link
+    note = itemData.note
     created_at = Instant.ofEpochMilli(itemData.created_at)
     edited_at = itemData.edited_at?.let { Instant.ofEpochMilli(it) }
     completed_at = itemData.completed_at?.let { Instant.ofEpochMilli(it) }
@@ -132,6 +135,7 @@ fun ItemEntity.toData() =
         task_id = task?.toIxId(),
         name = name,
         link = link,
+        note = note,
         completed = completed,
         created_at = created_at.toEpochMilli(),
         edited_at = edited_at?.toEpochMilli(),
