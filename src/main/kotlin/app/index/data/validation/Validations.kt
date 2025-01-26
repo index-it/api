@@ -27,10 +27,13 @@ object Validations {
 
         const val MAX_LINK_LENGTH = 200
 
+        const val MAX_NOTE_LENGTH = 3000
+
         const val VALIDATIONS_SUMMARY = """
             - name min length: $MIN_NAME_LENGTH
             - name max length: $MAX_NAME_LENGTH
             - link max length: $MAX_LINK_LENGTH
+            - note max length: $MAX_NOTE_LENGTH
         """
     }
 
