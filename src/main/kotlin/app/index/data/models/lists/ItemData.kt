@@ -55,6 +55,9 @@ data class ItemData(
                 ItemCreateRequestData::link ifPresent {
                     maxLength(Validations.Item.MAX_LINK_LENGTH)
                 }
+                ItemCreateRequestData::note ifPresent {
+                    maxLength(Validations.Item.MAX_NOTE_LENGTH)
+                }
             }.invoke(this)
     }
 
@@ -74,6 +77,9 @@ data class ItemData(
                 }
                 ItemUpdateRequestData::link ifPresent {
                     maxLength(Validations.Item.MAX_LINK_LENGTH)
+                }
+                ItemUpdateRequestData::note ifPresent {
+                    maxLength(Validations.Item.MAX_NOTE_LENGTH)
                 }
             }.invoke(this)
     }
