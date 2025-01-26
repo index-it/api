@@ -32,6 +32,7 @@ data class ItemData(
     @field:Schema(required = true)
     val completed: Boolean = false,
     val link: String? = null,
+    val note: String? = null,
     @field:Schema(required = true)
     val created_at: Long = DatetimeUtils.currentMillis(),
     val edited_at: Long? = null,
@@ -42,7 +43,8 @@ data class ItemData(
         @Contextual val category_id: IxId<CategoryData>? = null,
         @field:Schema(required = true)
         val name: String,
-        val link: String? = null
+        val link: String? = null,
+        val note: String? = null
     ) : Validatable<ItemCreateRequestData> {
         override fun validate() =
             Validation {
@@ -61,7 +63,8 @@ data class ItemData(
         @Contextual val category_id: IxId<CategoryData>? = null,
         @field:Schema(required = true)
         val name: String,
-        val link: String? = null
+        val link: String? = null,
+        val note: String? = null
     ) : Validatable<ItemUpdateRequestData> {
         override fun validate() =
             Validation {

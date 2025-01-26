@@ -93,6 +93,7 @@ class ItemDBIImpl : ItemDBI {
                 it[name] = itemUpdateRequestData.name
                 it[category] = itemUpdateRequestData.category_id?.toEntityId(CategoryTable)
                 it[link] = itemUpdateRequestData.link
+                it[note] = itemUpdateRequestData.name
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
             }.firstOrNull()?.let {
                 ItemEntity.wrapRow(it).toData()
