@@ -1,5 +1,6 @@
 package app.index.api.plugins
 
+import app.index.config.ApiConfig
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -69,7 +70,7 @@ fun Application.configureWebsockets() {
         pingPeriod = Duration.ofSeconds(15)
         timeout = Duration.ofSeconds(15)
         maxFrameSize = Long.MAX_VALUE
-        masking = true
+        masking = ApiConfig.webSocketMasking
 
         contentConverter = KotlinxWebsocketSerializationConverter(
             Json {
