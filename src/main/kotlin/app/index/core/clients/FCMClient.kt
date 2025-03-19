@@ -41,10 +41,15 @@ class FCMClient {
             return
         }
 
+        /*
+        Note for iOS:
+        for supporting localisation of the title we either do it server side by checking the user preferred language
+        or by adding the 'mutable-content': 1 header to the ApnsConfig and then handling the notification on iOS via the UNNotificationServiceExtension class
+         */
         val message =
             MulticastMessage.builder()
                 .addAllTokens(registrationToken)
-                .setNotification(Notification.builder().setTitle("Task reminder").setBody("Handle this in app").build())
+                .setNotification(Notification.builder().setTitle("Task reminder").setBody(taskName).build())
                 .putData("type", "task-reminder")
                 .putData("task-id", taskId.toString())
                 .putData("task-name", taskName)
