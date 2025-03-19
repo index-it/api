@@ -55,6 +55,7 @@ class FCMClient {
                 .putData("task-name", taskName)
                 .setFcmOptions(FcmOptions.withAnalyticsLabel(taskReminderAnalyticsLabel))
                 .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
+                .setApnsConfig(ApnsConfig.builder().setAps(Aps.builder().putCustomData("interruption-level", "time-sensitive").build()).build())
                 .build()
 
         firebaseMessaging.sendEachForMulticast(message)
