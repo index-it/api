@@ -55,7 +55,6 @@ class FCMClient {
                 .putData("task-name", taskName)
                 .setFcmOptions(FcmOptions.withAnalyticsLabel(taskReminderAnalyticsLabel))
                 .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
-                .setApnsConfig(ApnsConfig.builder().putHeader("priority", "high").build())
                 .build()
 
         firebaseMessaging.sendEachForMulticast(message)
