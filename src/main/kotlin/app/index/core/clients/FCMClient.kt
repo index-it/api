@@ -49,7 +49,7 @@ class FCMClient {
         val message =
             MulticastMessage.builder()
                 .addAllTokens(registrationToken)
-                .setNotification(Notification.builder().setTitle("Task reminder").setBody(taskName).build())
+                .setNotification(Notification.builder().setTitle("Index").setBody(taskName).build())
                 .putData("type", "task-reminder")
                 .putData("task-id", taskId.toString())
                 .putData("task-name", taskName)
