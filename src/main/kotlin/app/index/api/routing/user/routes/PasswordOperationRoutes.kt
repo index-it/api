@@ -1,6 +1,5 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.routing.user.PasswordForgottenRoute
 import app.index.api.routing.user.ResetPasswordRoute
 import app.index.core.clients.BrevoClient
@@ -13,6 +12,7 @@ import app.index.data.daos.auth.PasswordResetDao
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.PasswordResetRequestBody
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
@@ -21,6 +21,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+
+private val log = KotlinLogging.logger {  }
 
 fun Route.passwordOperationRoutes() {
     val userDao by inject<UserDao>()
@@ -120,11 +122,18 @@ fun Route.passwordOperationRoutes() {
         )
 
         // Invalidate all other user websocket connections
-        emitWebsocketEventForCurrentSessionUser(
-            websocketEventManager = websocketEventManager,
-            type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
-            content = WebsocketEventContent.EmptyEventContent
-        )
+        try {
+            websocketEventManager.emit(
+                fromSessionId = null,
+                fromUserId = user.id,
+                eventType = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
+                eventData = WebsocketEventContent.EmptyEventContent,
+                users = listOf(user.id),
+                includeCurrentSession = false
+            )
+        } catch (e: Exception) {
+            log.error(e) { "Error emitting websocket event for invalidating all user sessions after password reset" }
+        }
 
         // Invalidate all other user active sessions
         userSessionDao.deleteAllOfUser(passwordResetDto.userId)
