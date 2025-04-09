@@ -83,7 +83,7 @@ fun Route.listsRoute() {
         val listsCount = listDao.count(userId)
         val canCreateUnlimitedLists = user.has_pro
 
-        if (listsCount >= 10 && !canCreateUnlimitedLists) {
+        if (listsCount >= 7 && !canCreateUnlimitedLists) {
             return@post call.respond(HttpStatusCode.PaymentRequired)
         }
 
