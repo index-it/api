@@ -22,6 +22,7 @@ class ListDao(
             name = listCreateRequestData.name,
             icon = listCreateRequestData.icon,
             color = listCreateRequestData.color,
+            archived = listCreateRequestData.archived,
             public = listCreateRequestData.public,
             viewers = emptyList(),
             editors = emptyList(),

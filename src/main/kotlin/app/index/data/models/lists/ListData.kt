@@ -30,6 +30,8 @@ data class ListData(
     @field:Schema(required = true)
     var color: String, // Represented as #RRGGBB hex color
     @field:Schema(required = true)
+    var archived: Boolean,
+    @field:Schema(required = true)
     var public: Boolean,
     @field:Schema(required = true)
     val viewers: List<@Contextual IxId<UserData>>,
@@ -53,6 +55,8 @@ data class ListData(
         @field:Schema(required = true)
         var color: String,
         @field:Schema(required = true)
+        var archived: Boolean = false,
+        @field:Schema(required = true)
         var public: Boolean = false,
     ) : Validatable<ListCreateRequestData> {
         override fun validate() =
@@ -75,6 +79,8 @@ data class ListData(
         var icon: String,
         @field:Schema(required = true)
         var color: String,
+        @field:Schema(required = true)
+        var archived: Boolean = false,
         @field:Schema(required = true)
         var public: Boolean = false,
     ) : Validatable<ListUpdateRequestData> {
