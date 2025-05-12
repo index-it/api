@@ -81,6 +81,7 @@ class ListDBIImpl : ListDBI {
                 it[name] = listUpdateRequestData.name
                 it[emoji] = listUpdateRequestData.icon
                 it[color] = listUpdateRequestData.color
+                it[archived] = listUpdateRequestData.archived
                 it[public] = listUpdateRequestData.public
                 it[edited_at] = DatetimeUtils.currentJavaInstant()
             }.firstOrNull()?.let {

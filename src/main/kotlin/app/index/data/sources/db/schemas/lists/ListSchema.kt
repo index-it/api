@@ -39,6 +39,7 @@ object ListTable : UUIDTable() {
     val name = varchar("ix_name", 100)
     val emoji = varchar("emoji", 10)
     val color = varchar("color", 9)
+    val archived = bool("archived")
     val public = bool("public")
     val created_at = timestamp("created_at")
     val edited_at = timestamp("edited_at").nullable()
@@ -61,6 +62,7 @@ class ListEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by ListTable.name
     var emoji by ListTable.emoji
     var color by ListTable.color
+    var archived by ListTable.archived
     var public by ListTable.public
     var created_at by ListTable.created_at
     var edited_at by ListTable.edited_at
@@ -76,6 +78,7 @@ fun ListEntity.fromData(listData: ListData) {
     name = listData.name
     emoji = listData.icon
     color = listData.color
+    archived = listData.archived
     public = listData.public
     created_at = Instant.ofEpochMilli(listData.created_at)
     edited_at = listData.edited_at?.let { Instant.ofEpochMilli(it) }
@@ -88,6 +91,7 @@ fun ListEntity.toData() =
         name = name,
         icon = emoji,
         color = color,
+        archived = archived,
         public = public,
         viewers = viewers.map { it.user.toIxId() },
         editors = editors.map { it.user.toIxId() },
