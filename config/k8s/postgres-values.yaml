@@ -1,0 +1,22 @@
+global:
+  defaultStorageClass: "longhorn"
+
+auth:
+  existingSecret: "postgrescreds"
+  existingSecretPasswordKey: "postgres-password"
+  database: indexprod
+  username: postgres
+
+primary:
+  persistence:
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+replica:
+  replicaCount: 0

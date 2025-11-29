@@ -3,7 +3,6 @@ package app.index.data.sources.db.schemas.user
 import app.index.data.models.user.PasswordResetData
 import app.index.data.sources.db.schemas.user.PasswordResetTable.created_at
 import app.index.data.sources.db.schemas.user.PasswordResetTable.expires_at
-import app.index.data.sources.db.schemas.user.PasswordResetTable.id
 import app.index.data.sources.db.schemas.user.PasswordResetTable.token
 import app.index.data.sources.db.schemas.user.PasswordResetTable.user
 import app.index.data.sources.db.toEntityId

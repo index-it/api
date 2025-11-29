@@ -4,7 +4,6 @@ import app.index.data.models.lists.CategoryData
 import app.index.data.sources.db.schemas.lists.CategoryTable.color
 import app.index.data.sources.db.schemas.lists.CategoryTable.created_at
 import app.index.data.sources.db.schemas.lists.CategoryTable.edited_at
-import app.index.data.sources.db.schemas.lists.CategoryTable.id
 import app.index.data.sources.db.schemas.lists.CategoryTable.list
 import app.index.data.sources.db.schemas.lists.CategoryTable.name
 import app.index.data.sources.db.schemas.user.UserEntity

@@ -12,14 +12,14 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
-import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 private val log = KotlinLogging.logger {}
 
-fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEventForCurrentSessionUser(
+fun RoutingContext.emitWebsocketEventForCurrentSessionUser(
     websocketEventManager: WebsocketEventManager,
     type: WebsocketEventType,
     content: WebsocketEventContent,
@@ -42,7 +42,7 @@ fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEventForCurrentSessionUs
     }
 }
 
-fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEventForUsers(
+fun RoutingContext.emitWebsocketEventForUsers(
     websocketEventManager: WebsocketEventManager,
     type: WebsocketEventType,
     content: WebsocketEventContent,
@@ -67,8 +67,8 @@ fun PipelineContext<Unit, ApplicationCall>.emitWebsocketEventForUsers(
 
 fun Application.configureWebsockets() {
     install(WebSockets) {
-        pingPeriod = Duration.ofSeconds(15)
-        timeout = Duration.ofSeconds(15)
+        pingPeriod = 15.seconds
+        timeout = 15.seconds
         maxFrameSize = Long.MAX_VALUE
         masking = ApiConfig.webSocketMasking
 

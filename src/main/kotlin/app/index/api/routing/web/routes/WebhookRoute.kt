@@ -7,9 +7,8 @@ import app.index.data.daos.auth.PasswordResetDao
 import app.index.data.daos.list.ListInvitationDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.daos.user.FCMRegistrationTokenDao
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -22,22 +21,15 @@ fun Route.webhookRoute() {
     val passwordResetDao by inject<PasswordResetDao>()
     val listInvitationDao by inject<ListInvitationDao>()
 
-    get<WebhookRoute.TaskReminderJobRoute>({
-        tags = listOf("web")
-        operationId = "task-reminder-job-webhook"
-        summary = "receives webhooks for task reminder jobs"
-        request {
-            pathParameter<String>("id") {
-                description = "job id"
-                required = true
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "handled"
-            }
-        }
-    }) {
+    /**
+     * receives webhooks for task reminder jobs
+     *
+     * @tag web
+     * @operationId task-reminder-job-webhook
+     * @path id job id
+     * @response 200 handled
+     */
+    get<WebhookRoute.TaskReminderJobRoute> {
         // Get the job related data
         val taskReminderJobDto = taskReminderJobDao.get(it.id)
             ?: return@get call.respond(HttpStatusCode.OK)
@@ -62,16 +54,14 @@ fun Route.webhookRoute() {
         taskReminderJobDao.delete(taskReminderJobDto.id)
     }
 
-    get<WebhookRoute.DailyJobRoute>({
-        tags = listOf("web")
-        operationId = "daily-job"
-        summary = "receives webhooks for actions that should be executed daily (cleaning up expired db data for example)"
-        response {
-            HttpStatusCode.OK to {
-                description = "handled"
-            }
-        }
-    }) {
+    /**
+     * receives webhooks for actions that should be executed daily (cleaning up expired db data for example)
+     *
+     * @tag web
+     * @operationId daily-job
+     * @response 200 handled
+     */
+    get<WebhookRoute.DailyJobRoute> {
         fcmRegistrationTokenDao.deleteExpired()
         emailVerificationDao.deleteExpired()
         passwordResetDao.deleteExpired()

@@ -1,10 +1,9 @@
-package app.index.api.routing.list.routes
+ package app.index.api.routing.list.routes
 
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
-import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.usecases.ListInvitationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -15,19 +14,16 @@ import app.index.data.daos.list.ListInvitationDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import java.util.*
 
-fun Route.listAccessRoute() {
+ fun Route.listAccessRoute() {
     val listDao by inject<ListDao>()
     val userDao by inject<UserDao>()
     val listInvitationDao by inject<ListInvitationDao>()
@@ -36,34 +32,18 @@ fun Route.listAccessRoute() {
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
 
-        get<ListsRoute.ListRoute.AccessRoute.UsersRoute>({
-            tags = listOf("lists-access")
-            operationId = "get-user-access-info"
-            summary = "gives informations about the users that have access to the list"
-            request {
-                pathParameter<String>("list_id") {
-                    required = true
-                    description = "the id of the list"
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "info about the users that have access to the list"
-                    body<List<ListData.ListSingleUserAccessInfoResponseData>> {
-                        description = "a list of users that have access to the list, with their id, email and whether they are an editor"
-                    }
-                }
-                HttpStatusCode.Unauthorized to {
-                    description = "user not authenticated"
-                }
-                HttpStatusCode.Forbidden to {
-                    description = "missing required list permission: owner"
-                }
-                HttpStatusCode.NotFound to {
-                    description = "list not found"
-                }
-            }
-        }) {
+        /**
+         * gives informations about the users that have access to the list
+         *
+         * @tag lists-access
+         * @operationId get-user-access-info
+         * @path list_id the id of the list
+         * @response 200 info about the users that have access to the list
+         * @response 401 user not authenticated
+         * @response 403 missing required list permission: owner
+         * @response 404 list not found
+         */
+        get<ListsRoute.ListRoute.AccessRoute.UsersRoute> {
             val listId = it.parent.parent.list_id
 
             ListAuthorizationUseCase.getListIfAuthorized(
@@ -78,51 +58,21 @@ fun Route.listAccessRoute() {
             call.respond(userAccessInfo)
         }
 
-        post<ListsRoute.ListRoute.AccessRoute>({
-            tags = listOf("lists-access")
-            operationId = "add-user"
-            summary = "invites a user to have access to a list or changes his permissions if he was already added"
-            request {
-                pathParameter<String>("list_id") {
-                    required = true
-                    description = "the id of the list"
-                }
-                body<ListData.ListPermissionAddRequestData> {
-                    description =
-                        "the user to invite and whether to grant him edit permission, otherwise if editor is set to false he will be invited as a viewer"
-                    required = true
-                    example(
-                        "sample-user-permission-update", ListData.ListPermissionAddRequestData(
-                            email = "j@index-it.app",
-                            editor = false
-                        )
-                    )
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "user already had permissions and they were updated successfully"
-                    body<ListData> {
-                        description = "the updated list"
-                    }
-                }
-                HttpStatusCode.Created to {
-                    description = "user invited successfully"
-                }
-                HttpStatusCode.BadRequest to {
-                    description = "you cannot invite yourself to a list"
-                }
-                HttpStatusCode.Unauthorized to {
-                    description = "user not authenticated"
-                }
-                HttpStatusCode.Forbidden to {
-                    description = "missing required list permission: owner"
-                }
-                HttpStatusCode.NotFound to {
-                    description = "list not found"
-                }
-            }
-        }) {
+        /**
+         * invites a user to have access to a list or changes his permissions if he was already added
+         *
+         * @tag lists-access
+         * @operationId add-user
+         * @path list_id the id of the list
+         * @requestBody application/json the user to invite and whether to grant him edit permission, otherwise if editor is set to false he will be invited as a viewer
+         * @response 200 user already had permissions and they were updated successfully
+         * @response 201 user invited successfully
+         * @response 400 you cannot invite yourself to a list
+         * @response 401 user not authenticated
+         * @response 403 missing required list permission: owner
+         * @response 404 list not found
+         */
+        post<ListsRoute.ListRoute.AccessRoute> {
             val userId = userIdFromSessionOrThrow()
             val listId = it.parent.list_id
 
@@ -153,9 +103,9 @@ fun Route.listAccessRoute() {
             } else if (hasAlreadyAcceptedInvitation) {
                 // user has already accepted the invitation, just update the permission
                 val updatedList = if (permissionInfo.editor) {
-                    listDao.addPermissionToUser(listId, invitedUser!!.id, true)
+                    listDao.addPermissionToUser(listId, invitedUser.id, true)
                 } else {
-                    listDao.addPermissionToUser(listId, invitedUser!!.id, false)
+                    listDao.addPermissionToUser(listId, invitedUser.id, false)
                 }
 
                 if (updatedList == null) {
@@ -187,43 +137,19 @@ fun Route.listAccessRoute() {
             }
         }
 
-        delete<ListsRoute.ListRoute.AccessRoute>({
-            tags = listOf("lists-access")
-            operationId = "remove-user"
-            summary = "removes access to a user from the list"
-            request {
-                pathParameter<String>("list_id") {
-                    required = true
-                    description = "the id of the list"
-                }
-                body<ListData.ListPermissionRemoveRequestData> {
-                    description = "the user to remove from the list"
-                    required = true
-                    example(
-                        "sample-user-permission-remove", ListData.ListPermissionRemoveRequestData(
-                            user_id = IxId(UUID.randomUUID()),
-                        )
-                    )
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "user removed successfully"
-                    body<ListData> {
-                        description = "the updated list"
-                    }
-                }
-                HttpStatusCode.Unauthorized to {
-                    description = "user not authenticated"
-                }
-                HttpStatusCode.Forbidden to {
-                    description = "missing required list permission: owner"
-                }
-                HttpStatusCode.NotFound to {
-                    description = "list not found"
-                }
-            }
-        }) {
+        /**
+         * removes access to a user from the list
+         *
+         * @tag lists-access
+         * @operationId remove-user
+         * @path list_id the id of the list
+         * @requestBody application/json the user to remove from the list
+         * @response 200 user removed successfully
+         * @response 401 user not authenticated
+         * @response 403 missing required list permission: owner
+         * @response 404 list not found
+         */
+        delete<ListsRoute.ListRoute.AccessRoute> {
             val listId = it.parent.list_id
 
             ListAuthorizationUseCase.getListIfAuthorized(
@@ -247,29 +173,19 @@ fun Route.listAccessRoute() {
             call.respond(updatedList)
         }
 
-        get<ListsRoute.ListRoute.AccessRoute.LeaveRoute>({
-            tags = listOf("lists-access")
-            operationId = "leave-list"
-            summary = "removes the user from the viewers or editors of the list"
-            description = "the user will be removed from the viewers or editors of the list"
-            request {
-                pathParameter<String>("list_id") {
-                    required = true
-                    description = "the id of the list"
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "list deleted"
-                }
-                HttpStatusCode.Unauthorized to {
-                    description = "user not authenticated"
-                }
-                HttpStatusCode.MethodNotAllowed to {
-                    description = "the owner cannot leave the list"
-                }
-            }
-        }) {
+        /**
+         * removes the user from the viewers or editors of the list
+         *
+         * the user will be removed from the viewers or editors of the list
+         *
+         * @tag lists-access
+         * @operationId leave-list
+         * @path list_id the id of the list
+         * @response 200 list deleted
+         * @response 401 user not authenticated
+         * @response 405 the owner cannot leave the list
+         */
+        get<ListsRoute.ListRoute.AccessRoute.LeaveRoute> {
             val userId = userIdFromSessionOrThrow()
             val listId = it.parent.parent.list_id
             val list = listDao.get(listId)
@@ -293,35 +209,19 @@ fun Route.listAccessRoute() {
         }
     }
 
-    get<ListsRoute.AcceptInvitation>({
-        tags = listOf("lists-access")
-        operationId = "accept-list-invitation"
-        summary = "accepts a list invitation via a token"
-        description = "a user can accept a list invitation via a token that is sent via email when he is invited"
-        protected = false
-        request {
-            queryParameter<String>("token") {
-                description = "invitation token"
-                required = true
-                allowEmptyValue = false
-                allowReserved = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "list invitation accepted"
-                body<ListData> {
-                    description = "the updated list"
-                }
-            }
-            HttpStatusCode.NotFound to {
-                description = "something went wrong"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "you need to have an account to accept this invitation"
-            }
-        }
-    }) { request ->
+    /**
+     * accepts a list invitation via a token
+     *
+     * a user can accept a list invitation via a token that is sent via email when he is invited
+     *
+     * @tag lists-access
+     * @operationId accept-list-invitation
+     * @query token invitation token
+     * @response 200 list invitation accepted
+     * @response 404 something went wrong
+     * @response 405 you need to have an account to accept this invitation
+     */
+    get<ListsRoute.AcceptInvitation> { request ->
         val listInvitationData = listInvitationDao.get(request.token)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 

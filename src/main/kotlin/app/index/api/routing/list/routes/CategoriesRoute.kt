@@ -13,12 +13,10 @@ import app.index.data.daos.list.CategoryDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ListAuthorizationLevel
-import app.index.data.validation.Validations
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -28,29 +26,17 @@ fun Route.categoriesRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
-    get<ListsRoute.ListRoute.CategoriesRoute>({
-        tags = listOf("categories")
-        operationId = "get-categories"
-        summary = "gets all categories of a list"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "categories gotten"
-                body<List<CategoryData>>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: view"
-            }
-        }
-    }) {
+    /**
+     * gets all categories of a list
+     *
+     * @tag categories
+     * @operationId get-categories
+     * @path list_id the id of the list
+     * @response 200 categories gotten
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: view
+     */
+    get<ListsRoute.ListRoute.CategoriesRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -62,37 +48,19 @@ fun Route.categoriesRoute() {
         call.respond(categories)
     }
 
-    post<ListsRoute.ListRoute.CategoriesRoute>({
-        tags = listOf("categories")
-        operationId = "create-category"
-        summary = "creates a category"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            body<CategoryData.CategoryCreateRequestData> {
-                description = "category data"
-                required = true
-                example("sample-category", CategoryData.CategoryCreateRequestData("visited", "#228822"))
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "category created"
-                body<CategoryData>()
-            }
-            HttpStatusCode.BadRequest to {
-                description = "invalid parameters\n${Validations.Category.VALIDATIONS_SUMMARY}"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-        }
-    }) {
+    /**
+     * creates a category
+     *
+     * @tag categories
+     * @operationId create-category
+     * @path list_id the id of the list
+     * @requestBody application/json category data
+     * @response 200 category created
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     */
+    post<ListsRoute.ListRoute.CategoriesRoute> {
         val userId = userIdFromSessionOrThrow()
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.list_id,

@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: IndexDevUser
       POSTGRES_PASSWORD: IndexDevPassword
     volumes:
-      - index-dev-pgdata:/var/lib/postgresql/data
+      - index-dev-pgdata:/var/lib/postgresql
     ports:
       - "5432:5432"
     networks:
@@ -49,37 +49,14 @@ services:
     ports:
       - "5672:5672"
       - "8083:15672"
-  prometheus:
-    image: prom/prometheus
-    container_name: ${COMPOSE_PROJECT_NAME}-prometheus
-    restart: no
-    ports:
-      - "9090:9090"
-    volumes:
-      - "../config/prometheus/prometheus-monitoring.yml:/etc/prometheus/prometheus.yml"
-    networks:
-      - index-dev-monitor-network
-  grafana:
-    image: grafana/grafana
-    container_name: ${COMPOSE_PROJECT_NAME}-grafana
-    restart: no
-    ports:
-      - "3000:3000"
-    volumes:
-      - index-dev-grafana-storage:/var/lib/grafana
-    networks:
-      - index-dev-monitor-network
 
 volumes:
   index-dev-redis: {}
   index-dev-pgdata: {}
   index-dev-rabbit: {}
-  index-dev-grafana-storage: {}
 
 networks:
   index-dev-redis-network:
     name: index-dev-redis-network
   index-dev-postgres-network:
     name: index-dev-postgres-network
-  index-dev-monitor-network:
-    name: index-dev-monitor-network

@@ -6,9 +6,7 @@ import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
 import app.index.data.models.tasks.TaskData
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -16,103 +14,63 @@ import org.koin.ktor.ext.inject
 fun Route.templatesRoute() {
     val suggestionsDao by inject<SuggestionsDao>()
 
-    get<SuggestionRoutes.TemplateRoute.ListRoute>({
-        tags = listOf("templates")
-        operationId = "list-template"
-        summary = "gets a list template"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the list template"
-                body<ListData.ListTemplateResponseData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets a list template
+     *
+     * @tag templates
+     * @operationId list-template
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 the list template
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.TemplateRoute.ListRoute> {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getListNames(it.locale))
         val color = suggestionsDao.getRandomColor()
 
         call.respond(ListData.ListTemplateResponseData(name, color))
     }
 
-    get<SuggestionRoutes.TemplateRoute.CategoryRoute>({
-        tags = listOf("templates")
-        operationId = "category-template"
-        summary = "gets a category template"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the category template"
-                body<CategoryData.CategoryTemplateResponseData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets a category template
+     *
+     * @tag templates
+     * @operationId category-template
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 the category template
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.TemplateRoute.CategoryRoute> {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getCategoryNames(it.locale))
         val color = suggestionsDao.getRandomColor()
 
         call.respond(CategoryData.CategoryTemplateResponseData(name, color))
     }
 
-    get<SuggestionRoutes.TemplateRoute.ItemRoute>({
-        tags = listOf("templates")
-        operationId = "item-template"
-        summary = "gets an item template"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the item template"
-                body<ItemData.ItemTemplateResponseData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets an item template
+     *
+     * @tag templates
+     * @operationId item-template
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 the item template
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.TemplateRoute.ItemRoute> {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getItemNames(it.locale))
 
         call.respond(ItemData.ItemTemplateResponseData(name))
     }
 
-    get<SuggestionRoutes.TemplateRoute.TaskRoute>({
-        tags = listOf("templates")
-        operationId = "task-template"
-        summary = "gets a task template"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the task template"
-                body<TaskData.TaskTemplateResponseData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets a task template
+     *
+     * @tag templates
+     * @operationId task-template
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 the task template
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.TemplateRoute.TaskRoute> {
         val name = suggestionsDao.getRandomNameSuggestion(suggestionsDao.getTaskNames(it.locale))
 
         call.respond(TaskData.TaskTemplateResponseData(name))

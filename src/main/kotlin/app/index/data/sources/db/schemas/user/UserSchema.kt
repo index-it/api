@@ -5,7 +5,7 @@ import app.index.data.sources.db.schemas.user.UsersTable.created_at
 import app.index.data.sources.db.schemas.user.UsersTable.creation_source
 import app.index.data.sources.db.schemas.user.UsersTable.email
 import app.index.data.sources.db.schemas.user.UsersTable.email_verified
-import app.index.data.sources.db.schemas.user.UsersTable.id
+import app.index.data.sources.db.schemas.user.UsersTable.has_pro
 import app.index.data.sources.db.schemas.user.UsersTable.password_hash
 import app.index.data.sources.db.toIxId
 import org.jetbrains.exposed.dao.UUIDEntity

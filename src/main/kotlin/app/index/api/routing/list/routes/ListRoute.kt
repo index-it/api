@@ -11,13 +11,10 @@ import app.index.data.daos.list.ListDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListData
-import app.index.data.validation.Validations
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -27,32 +24,18 @@ fun Route.listRoute() {
     val userDao by inject<UserDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
-    get<ListsRoute.ListRoute>({
-        tags = listOf("lists")
-        operationId = "get-list"
-        summary = "gets a single list"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the list"
-                body<ListData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: view"
-            }
-            HttpStatusCode.NotFound to {
-                description = "list not found"
-            }
-        }
-    }) {
+    /**
+     * gets a single list
+     *
+     * @tag lists
+     * @operationId get-list
+     * @path list_id the id of the list
+     * @response 200 the list
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: view
+     * @response 404 list not found
+     */
+    get<ListsRoute.ListRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -63,45 +46,21 @@ fun Route.listRoute() {
         call.respond(list)
     }
 
-    put<ListsRoute.ListRoute>({
-        tags = listOf("lists")
-        operationId = "update-list"
-        summary = "updates a list"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            body<ListData.ListUpdateRequestData> {
-                description = "the new values for the list"
-                required = true
-                example("sample-update", ListData.ListUpdateRequestData("locations", "📍", "#343322"))
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "list updated"
-                body<ListData> {
-                    description = "the updated list"
-                }
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-            HttpStatusCode.BadRequest to {
-                description = "invalid parameters\n${Validations.List.VALIDATIONS_SUMMARY}"
-            }
-            HttpStatusCode.PaymentRequired to {
-                description = "pro required for lists to be public"
-            }
-            HttpStatusCode.NotFound to {
-                description = "list not found"
-            }
-        }
-    }) {
+    /**
+     * updates a list
+     *
+     * @tag lists
+     * @operationId update-list
+     * @path list_id the id of the list
+     * @requestBody application/json the new values for the list
+     * @response 200 list updated
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     * @response 402 pro required for lists to be public
+     * @response 404 list not found
+     */
+    put<ListsRoute.ListRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -132,29 +91,17 @@ fun Route.listRoute() {
         )
     }
 
-    delete<ListsRoute.ListRoute>({
-        tags = listOf("lists")
-        operationId = "delete-list"
-        summary = "deletes a list"
-        description = "this deletes the list and **all** of its content, meaning categories, items and item contents of the list will be deleted"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "list deleted"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: owner"
-            }
-        }
-    }) {
+    /**
+     * deletes a list and all of its content (categories, items and item contents)
+     *
+     * @tag lists
+     * @operationId delete-list
+     * @path list_id the id of the list
+     * @response 200 list deleted
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: owner
+     */
+    delete<ListsRoute.ListRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.list_id,
             userId = userIdFromSessionOrThrow(),

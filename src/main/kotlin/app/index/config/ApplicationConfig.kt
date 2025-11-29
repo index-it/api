@@ -4,7 +4,6 @@ import app.index.config.core.Configuration
 import app.index.config.core.ConfigurationProperty
 import app.index.config.core.models.ApplicationEnvironment
 import ch.qos.logback.classic.Level
-import io.ktor.server.application.*
 
 @Configuration("application")
 object ApplicationConfig {

@@ -1,14 +1,14 @@
 package app.index.api.plugins.custom
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
+import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.auth.AuthenticationConfig
 import io.ktor.server.auth.AuthenticationContext
 import io.ktor.server.auth.AuthenticationFailedCause
 import io.ktor.server.auth.AuthenticationProvider
-import io.ktor.server.auth.Principal
-import io.ktor.server.request.header
-import io.ktor.server.response.respond
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 
 /**
  * Represents an API Key authentication provider.
@@ -68,10 +68,10 @@ class ApiKeyAuthenticationProvider internal constructor(
         var headerName: String = "X-Api-Key"
 
         /**
-         * Sets a validation function that will check given API key retrieved from [headerName] instance and return [Principal],
+         * Sets a validation function that will check given API key retrieved from [headerName] instance and return [UserIdPrincipal],
          * or null if credential does not correspond to an authenticated principal.
          */
-        fun validate(body: suspend ApplicationCall.(String) -> Principal?) {
+        fun validate(body: suspend ApplicationCall.(String) -> UserIdPrincipal?) {
             authenticationFunction = body
         }
 
@@ -98,7 +98,7 @@ fun AuthenticationConfig.apiKey(
 /**
  * Alias for function signature that is invoked when verifying header.
  */
-typealias ApiKeyAuthenticationFunction = suspend ApplicationCall.(String) -> Principal?
+typealias ApiKeyAuthenticationFunction = suspend ApplicationCall.(String) -> UserIdPrincipal?
 
 /**
  * Alias for function signature that is called when authentication fails.

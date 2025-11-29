@@ -2,7 +2,6 @@ package app.index.data.models.user
 
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
-import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -14,7 +13,6 @@ data class FCMRegistrationTokenData(
 ) {
     @Serializable
     data class FCMRegistrationTokenRequestBody(
-        @field:Schema(required = true)
         val token: String,
     )
 }

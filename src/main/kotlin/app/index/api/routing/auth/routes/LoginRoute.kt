@@ -10,11 +10,10 @@ import app.index.data.daos.user.UserDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.auth.LoginCredentialsData
 import app.index.data.models.user.UserData
-import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -26,36 +25,17 @@ fun Route.loginRoute() {
     val passwordEncoder by inject<PasswordEncoder>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
-    post<LoginRoute>({
-        tags = listOf("auth")
-        operationId = "login"
-        summary = "login and create a session"
-        protected = false
-        request {
-            body<LoginCredentialsData> {
-                description = "email and password credentials"
-                required = true
-                example("sample-credentials", LoginCredentialsData("sample@mail.com", "verySecurePwd1234"))
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "user authenticated and session created"
-                header<String>(HttpHeaders.SetCookie) {
-                    description = "header that sets the session cookie via `SetCookie`"
-                }
-                body<UserData.UserResponseDto> {
-                    description = "the user data excluding sensitive fields like the password"
-                }
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "invalid credentials"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "user email is not verified"
-            }
-        }
-    }) {
+    /**
+     * login and create a session
+     *
+     * @tag auth
+     * @operationId login
+     * @requestBody application/json email and password credentials
+     * @response 200 user authenticated and session created
+     * @response 401 invalid credentials
+     * @response 405 user email is not verified
+     */
+    post<LoginRoute> {
         val loginData = call.receive<LoginCredentialsData>()
         val user = userDao.getFromEmail(loginData.email)
             ?: throw AuthenticationException()

@@ -8,7 +8,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Single
-import java.net.URL
+import java.net.URI
 import java.security.interfaces.RSAPublicKey
 
 
@@ -20,7 +20,7 @@ class AppleOAuthClient {
 
     init {
         try {
-            provider = JwkProviderBuilder(URL("https://appleid.apple.com/auth/keys")).build()
+            provider = JwkProviderBuilder(URI("https://appleid.apple.com/auth/keys").toURL()).build()
         } catch (e: Exception) {
             log.error(e) { "failed fetching Apple public keys" }
         }

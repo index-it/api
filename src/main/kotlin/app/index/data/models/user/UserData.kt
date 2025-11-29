@@ -1,7 +1,6 @@
 package app.index.data.models.user
 
 import app.index.core.logic.typedId.impl.IxId
-import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -43,27 +42,18 @@ data class UserData(
 
     @Serializable
     data class UserResponseDto(
-        @field:Schema(required = true)
         @Contextual val id: IxId<UserData>,
-        @field:Schema(required = true)
         val email: String,
-        @field:Schema(required = true)
         val creation_timestamp: Long,
-        @field:Schema(required = true)
         val creation_source: CreationSource,
-        @field:Schema(required = true)
         val has_pro: Boolean,
     )
 
     @Serializable
     data class AdminUserCreateRequestData(
-        @field:Schema(required = true)
         val email: String,
-        @field:Schema(required = true)
         val password: String,
-        @field:Schema(required = true)
         val email_verified: Boolean,
-        @field:Schema(required = true)
         val creation_source: CreationSource,
     )
 }

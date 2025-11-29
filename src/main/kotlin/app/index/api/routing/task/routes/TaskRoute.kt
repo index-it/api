@@ -3,25 +3,19 @@ package app.index.api.routing.task.routes
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
-import app.index.core.logic.pro.ProManager
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.user.UserDao
-import app.index.data.models.tasks.SubTaskData
 import app.index.data.models.tasks.TaskData
-import app.index.data.validation.Validations
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.datetime.LocalDate
 import org.koin.ktor.ext.inject
 
 fun Route.taskRoute() {
@@ -29,95 +23,38 @@ fun Route.taskRoute() {
     val userDao by inject<UserDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
-    get<TasksRoute.TaskRoute>({
-        tags = listOf("tasks")
-        operationId = "get-task"
-        summary = "gets a single task"
-        request {
-            pathParameter<String>("task_id") {
-                required = true
-                description = "the id of the task"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the task"
-                body<TaskData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.NotFound to {
-                description = "task not found"
-            }
-        }
-    }) {
+    /**
+     * gets a single task
+     *
+     * @tag tasks
+     * @operationId get-task
+     * @path task_id the id of the task
+     * @response 200 the task
+     * @response 401 user not authenticated
+     * @response 404 task not found
+     */
+    get<TasksRoute.TaskRoute> {
         val task = taskDao.get(userIdFromSessionOrThrow(), it.task_id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(task)
     }
 
-    put<TasksRoute.TaskRoute>({
-        tags = listOf("tasks")
-        operationId = "update-task"
-        summary = "updates a task"
-        request {
-            pathParameter<String>("task_id") {
-                required = true
-                description = "the id of the task"
-            }
-            body<TaskData.TaskUpdateRequestData> {
-                description = "new task data"
-                required = true
-                example(
-                    name = "sample-task-update",
-                    value =
-                    TaskData.TaskUpdateRequestData(
-                        name = "ski equipment",
-                        description = "find ski equipment for winter",
-                        due_date = LocalDate(2023, 12, 2),
-                        subtasks =
-                        mutableListOf(
-                            SubTaskData(
-                                "skis",
-                                true,
-                            ),
-                            SubTaskData(
-                                "helmet",
-                                false,
-                            ),
-                            SubTaskData(
-                                "goggles",
-                                false,
-                            ),
-                        ),
-                    ),
-                )
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the updated task"
-                body<TaskData>()
-            }
-            HttpStatusCode.BadRequest to {
-                description = "invalid parameters\n${Validations.Task.VALIDATIONS_SUMMARY}"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.PaymentRequired to {
-                description = "pro required to have multiple reminders"
-            }
-            HttpStatusCode.NotFound to {
-                description = "task or item to connect not found"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "cannot set an rrule for a task connected to an item (cannot make task recurrent if connected to an item)"
-            }
-        }
-    }) {
+    /**
+     * updates a task
+     *
+     * @tag tasks
+     * @operationId update-task
+     * @path task_id the id of the task
+     * @requestBody application/json new task data
+     * @response 200 the updated task
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 402 pro required to have multiple reminders
+     * @response 404 task or item to connect not found
+     * @response 405 cannot set an rrule for a task connected to an item (cannot make task recurrent if connected to an item)
+     */
+    put<TasksRoute.TaskRoute> {
         val updateData = call.receive<TaskData.TaskUpdateRequestData>()
         val userId = userIdFromSessionOrThrow()
         val taskId = it.task_id
@@ -152,29 +89,17 @@ fun Route.taskRoute() {
         )
     }
 
-    delete<TasksRoute.TaskRoute>({
-        tags = listOf("tasks")
-        operationId = "delete-task"
-        summary = "deletes a task"
-        request {
-            pathParameter<String>("task_id") {
-                required = true
-                description = "the id of the task"
-            }
-            queryParameter<Boolean>("all") {
-                required = false
-                description = "only useful when a task is recurrent: true for deleting all occurrences, false to keep recurrent tasks"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "task deleted"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * deletes a task
+     *
+     * @tag tasks
+     * @operationId delete-task
+     * @path task_id the id of the task
+     * @query all only useful when a task is recurrent: true for deleting all occurrences, false to keep recurrent tasks
+     * @response 200 task deleted
+     * @response 401 user not authenticated
+     */
+    delete<TasksRoute.TaskRoute> {
         val userId = userIdFromSessionOrThrow()
         val task = taskDao.get(userId, it.task_id)
 

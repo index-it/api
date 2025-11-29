@@ -1,3 +1,5 @@
+import io.ktor.plugin.OpenApiPreview
+
 plugins {
     application
     alias(libs.plugins.kotlin.jvm)
@@ -5,6 +7,7 @@ plugins {
     alias(libs.plugins.ktor)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sentry)
+    alias(libs.plugins.jib)
 }
 
 group = "app.index"
@@ -39,7 +42,6 @@ dependencies {
     implementation(libs.bundles.ktor.server)
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.spring.security)
-    implementation(libs.bundles.monitoring)
 
     implementation(libs.bundles.postgres)
 
@@ -69,11 +71,24 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks {
-    shadowJar {
-        archiveFileName.set("index-api.jar")
-        mergeServiceFiles()
+jib {
+    to {
+        image = "ghcr.io/${project.property("ghcrOrg")}/$name"
+        tags = setOf(System.getenv("CIRCLE_SHA1"), "latest")
+        auth {
+            username = System.getenv("GITHUB_ACTOR")
+            password = System.getenv("GITHUB_TOKEN")
+        }
     }
+}
+
+// TODO: Remove when Sentry fixes it's plugin
+tasks.named("generateSentryBundleIdJava") {
+    dependsOn(":kspKotlin")
+}
+tasks.named("sentryCollectSourcesJava") {
+    dependsOn(":kspKotlin")
+    dependsOn(":kspTestKotlin")
 }
 
 sentry {
@@ -85,4 +100,18 @@ sentry {
     org = "index-cp"
     projectName = "api"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
+
+ktor {
+    @OptIn(OpenApiPreview::class)
+    openApi {
+        title = "Index API"
+        version = "1.0.0"
+        description = "This is the REST api for [Index](https://index-it.app)"
+        termsOfService = "https://index-it.app/terms"
+        contact = "support@index-it.app"
+
+        // Location of the generated specification (defaults to openapi/generated.json)
+        target = project.layout.projectDirectory.file("documentation/openapi.json")
+    }
 }

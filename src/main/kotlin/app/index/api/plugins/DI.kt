@@ -31,11 +31,12 @@ fun Application.configureDI() {
         this.createEagerInstances()
     }
 
-    environment.monitor.subscribe(KoinApplicationStarted) {
+
+    this.monitor.subscribe(KoinApplicationStarted) {
         logger.info { "Koin application started" }
     }
 
-    environment.monitor.subscribe(KoinApplicationStopPreparing) {
+    this.monitor.subscribe(KoinApplicationStopPreparing) {
         logger.info { "Shutdown started" }
 
         val closableComponents by lazy {
@@ -49,7 +50,7 @@ fun Application.configureDI() {
         }
     }
 
-    environment.monitor.subscribe(KoinApplicationStopped) {
+    this.monitor.subscribe(KoinApplicationStopped) {
         logger.info { "Shutdown completed gracefully" }
     }
 }

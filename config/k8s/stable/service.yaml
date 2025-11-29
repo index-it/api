@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: index-api-stable
+  name: index-api
+  namespace: index
   labels:
-    app: index-api-stable
+    app: index-api
 spec:
   selector:
-    app: index-api-stable
+    app: index-api
   ports:
     - protocol: TCP
       port: 80

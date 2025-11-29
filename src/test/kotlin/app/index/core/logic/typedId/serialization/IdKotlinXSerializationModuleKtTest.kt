@@ -7,7 +7,6 @@ import app.index.data.models.email.EmailVerificationData
 import app.index.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
