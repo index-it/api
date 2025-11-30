@@ -14,6 +14,8 @@ interface TaskReminderJobDBI : DBI {
 
     suspend fun getAllOfTask(taskId: IxId<TaskData>): List<TaskReminderJobData>
 
+    suspend fun increaseRescheduleCount(id: IxId<TaskReminderJobData>): TaskReminderJobData?
+
     suspend fun delete(jobId: IxId<TaskReminderJobData>)
 
     suspend fun deleteMultiple(jobIds: List<IxId<TaskReminderJobData>>)

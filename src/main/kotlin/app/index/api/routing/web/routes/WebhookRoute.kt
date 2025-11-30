@@ -2,6 +2,8 @@ package app.index.api.routing.web.routes
 
 import app.index.api.routing.web.WebhookRoute
 import app.index.core.clients.FCMClient
+import app.index.core.clients.GoogleCloudTasksClient
+import app.index.core.logic.DatetimeUtils
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.auth.PasswordResetDao
 import app.index.data.daos.list.ListInvitationDao
@@ -20,6 +22,7 @@ fun Route.webhookRoute() {
     val emailVerificationDao by inject<EmailVerificationDao>()
     val passwordResetDao by inject<PasswordResetDao>()
     val listInvitationDao by inject<ListInvitationDao>()
+    val googleCloudTasksClient by inject<GoogleCloudTasksClient>()
 
     /**
      * receives webhooks for task reminder jobs
@@ -33,6 +36,25 @@ fun Route.webhookRoute() {
         // Get the job related data
         val taskReminderJobDto = taskReminderJobDao.get(it.id)
             ?: return@get call.respond(HttpStatusCode.OK)
+
+        /*
+        Google Cloud Tasks allows a max scheduling time of 30 days
+        so we always schedule reminders with a max time of 30 days in the future
+        here we need to check if the reminder should actually trigger now
+        or if we need to reschedule it as we received this event because of the 30 days limitation
+        */
+
+        // if the reminder is scheduled for more than 1 minute in the future
+        // we create a new job for it, increasing the reschedule count in the db field
+        val taskReminderFutureThresholdMillis = 60000
+        if (taskReminderJobDto.scheduledAt > (DatetimeUtils.currentMillis() + taskReminderFutureThresholdMillis)) {
+            val newJobDto = taskReminderJobDao.increaseRescheduleCount(taskReminderJobDto.id)
+            if (newJobDto != null) {
+                googleCloudTasksClient.createTaskReminderJob(newJobDto.id, newJobDto.scheduledAt, newJobDto.rescheduleCount)
+            }
+
+            return@get call.respond(HttpStatusCode.OK)
+        }
 
         // Get all the notification registration tokens associated with that user
         val notificationRegistrationTokens = fcmRegistrationTokenDao.getOfUser(taskReminderJobDto.userId).map { fcmRegistrationTokenDto ->

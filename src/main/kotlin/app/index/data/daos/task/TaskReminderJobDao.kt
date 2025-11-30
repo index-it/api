@@ -30,6 +30,10 @@ class TaskReminderJobDao(
         return taskReminderJobDBI.getAllOfTask(taskId)
     }
 
+    suspend fun increaseRescheduleCount(id: IxId<TaskReminderJobData>): TaskReminderJobData? {
+        return taskReminderJobDBI.increaseRescheduleCount(id)
+    }
+
     suspend fun delete(jobId: IxId<TaskReminderJobData>) {
         taskReminderJobDBI.delete(jobId)
     }

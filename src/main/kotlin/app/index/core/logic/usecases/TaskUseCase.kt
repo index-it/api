@@ -2,7 +2,6 @@ package app.index.core.logic.usecases
 
 import app.index.core.clients.GoogleCloudTasksClient
 import app.index.core.logic.DatetimeUtils
-import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.TaskUseCase.calculateNextOccurrenceDueDateAndRRule
 import app.index.core.logic.usecases.TaskUseCase.refreshReminders
@@ -132,14 +131,14 @@ object TaskUseCase : KoinComponent {
                     id = newIxId(),
                     taskId = task.id,
                     userId = task.user_id,
-                    scheduledAt = it
+                    scheduledAt = it,
                 )
             }
 
         if (reminderJobs.isNotEmpty()) {
             taskReminderJobDao.createAll(reminderJobs)
             reminderJobs.forEach { reminderJob ->
-                googleCloudTasksClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
+                googleCloudTasksClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt, 0)
             }
         }
     }
@@ -154,19 +153,19 @@ object TaskUseCase : KoinComponent {
         val existingReminderJobs = taskReminderJobDao.getAllOfTask(task.id)
 
         // Find and delete outdated jobs
-        val outdatedReminderJobs = mutableListOf<IxId<TaskReminderJobData>>()
+        val outdatedReminderJobs = mutableListOf<TaskReminderJobData>()
 
         existingReminderJobs.forEach { reminderJobData ->
             if (reminderJobData.scheduledAt !in reminderTimestamps) {
-                outdatedReminderJobs.add(reminderJobData.id)
+                outdatedReminderJobs.add(reminderJobData)
             }
         }
 
         if (outdatedReminderJobs.isNotEmpty()) {
-            taskReminderJobDao.deleteMultiple(outdatedReminderJobs)
-            outdatedReminderJobs.forEach { jobId ->
+            taskReminderJobDao.deleteMultiple(outdatedReminderJobs.map { it.id })
+            outdatedReminderJobs.forEach { job ->
                 try {
-                    googleCloudTasksClient.deleteTaskReminderJob(jobId)
+                    googleCloudTasksClient.deleteTaskReminderJob(job.id, job.rescheduleCount)
                 } catch (e: Exception) {
                     logger.error(e) { "Failed deleting task reminder job" }
                 }
@@ -186,7 +185,7 @@ object TaskUseCase : KoinComponent {
                             id = newIxId(),
                             taskId = task.id,
                             userId = task.user_id,
-                            scheduledAt = timestamp
+                            scheduledAt = timestamp,
                         )
                     )
                 }
@@ -195,7 +194,7 @@ object TaskUseCase : KoinComponent {
         if (missingReminderJobs.isNotEmpty()) {
             taskReminderJobDao.createAll(missingReminderJobs)
             missingReminderJobs.forEach { reminderJob ->
-                googleCloudTasksClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt)
+                googleCloudTasksClient.createTaskReminderJob(reminderJob.id, reminderJob.scheduledAt, reminderJob.scheduledAt)
             }
         }
     }
