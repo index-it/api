@@ -1,0 +1,1 @@
+ALTER TABLE taskreminderjob ADD COLUMN reschedule_count BIGINT DEFAULT 0;

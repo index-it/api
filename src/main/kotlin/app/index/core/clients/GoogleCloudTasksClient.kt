@@ -2,6 +2,7 @@ package app.index.core.clients
 
 import app.index.config.GoogleCloudConfig
 import app.index.config.JobConfig
+import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.tasks.TaskReminderJobData
 import com.google.cloud.tasks.v2beta3.*
@@ -18,6 +19,11 @@ private val logger = KotlinLogging.logger {  }
  */
 @Single(createdAtStart = true)
 class GoogleCloudTasksClient {
+    companion object {
+        private val SCHEDULE_MAX_MILLIS = 2505600000L  // 29 days
+    }
+
+
     private val cloudTasksClient =
         CloudTasksClient.create(
             CloudTasksSettings.newBuilder()
@@ -60,12 +66,14 @@ class GoogleCloudTasksClient {
      *
      * @param id
      * @param reminderTimestamp
+     * @param rescheduleCount the number of times the job has been rescheduled
      *
      * @throws Exception failed to create job
      */
     fun createTaskReminderJob(
         id: IxId<TaskReminderJobData>,
         reminderTimestamp: Long,
+        rescheduleCount: Long
     ) {
         val webhookUrl = "${JobConfig.taskReminderJobWebhookUrl}/$id"
         val httpRequest = HttpRequest.newBuilder()
@@ -74,34 +82,37 @@ class GoogleCloudTasksClient {
             .putHeaders("Content-Type", "application/json")
 
         val parent = QueueName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName).toString()
-        val jobName = TaskName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName, id.toString()).toString()
-        // This won't be precise if too far in the future if timezones change
-        val seconds = (reminderTimestamp / 1000) - 1
-        val job = Task.newBuilder()
+        val jobName = TaskName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName, "$id-$rescheduleCount").toString()
+
+        // We schedule at maximum for 30 days from now, this is a Google Cloud Tasks limitation
+        val maxTimestamp = DatetimeUtils.currentMillis() + SCHEDULE_MAX_MILLIS
+        val seconds = ((reminderTimestamp).coerceAtMost(maxTimestamp) / 1000) - 1
+        val task = Task.newBuilder()
             .setName(jobName)
             .setHttpRequest(httpRequest)
             .setScheduleTime(Timestamp.newBuilder().setSeconds(seconds).build())
             .build()
 
-        cloudTasksClient.createTask(
+        val createdTask = cloudTasksClient.createTask(
             CreateTaskRequest.newBuilder()
                 .setParent(parent)
-                .setTask(job)
+                .setTask(task)
                 .build()
         )
 
-        logger.debug { "Created task reminder job with name ${job.name}" }
+        logger.debug { "Created task reminder job with name ${createdTask.name}" }
     }
 
     /**
      * Deletes a job by its id
      *
      * @param id job id
+     * @param rescheduleCount the number of times the job has been rescheduled
      *
      * @throws Exception
      */
-    fun deleteTaskReminderJob(id: IxId<TaskReminderJobData>) {
-        val name = TaskName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName, id.toString())
+    fun deleteTaskReminderJob(id: IxId<TaskReminderJobData>, rescheduleCount: Long) {
+        val name = TaskName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName, "$id-$rescheduleCount")
         cloudTasksClient.deleteTask(name)
 
         logger.debug { "Deleted task reminder job with name $name" }

@@ -35,6 +35,7 @@ object TaskReminderJobTable : UUIDTable() {
         onDelete = ReferenceOption.CASCADE,
     ).index()
     val scheduledAt = timestamp("scheduled_at")
+    val rescheduleCount = long("reschedule_count").default(0L)
 }
 
 /**
@@ -51,6 +52,7 @@ class TaskReminderJobEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var task by TaskReminderJobTable.task
     var user by TaskReminderJobTable.user
     var scheduledAt by TaskReminderJobTable.scheduledAt
+    var rescheduleCount by TaskReminderJobTable.rescheduleCount
 
     val taskEntity by TaskEntity referencedOn TaskReminderJobTable.task
     @Suppress("MemberVisibilityCanBePrivate")
@@ -61,5 +63,6 @@ fun TaskReminderJobEntity.toData() = TaskReminderJobData(
     id = id.toIxId(),
     task = taskEntity.toData(),
     userId = user.toIxId(),
-    scheduledAt = scheduledAt.toEpochMilli()
+    scheduledAt = scheduledAt.toEpochMilli(),
+    rescheduleCount = rescheduleCount
 )

@@ -12,8 +12,10 @@ import app.index.data.sources.db.schemas.user.UsersTable
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
 import java.time.Instant
 
@@ -27,6 +29,7 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 task = taskReminderJobCreateData.taskId.toEntityId(TaskTable)
                 user = taskReminderJobCreateData.userId.toEntityId(UsersTable)
                 scheduledAt = Instant.ofEpochMilli(taskReminderJobCreateData.scheduledAt)
+                rescheduleCount = 0
             }
         }
     }
@@ -38,6 +41,7 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
                 this[TaskReminderJobTable.task] = it.taskId.toEntityId(TaskTable)
                 this[TaskReminderJobTable.user] = it.userId.toEntityId(UsersTable)
                 this[TaskReminderJobTable.scheduledAt] = Instant.ofEpochMilli(it.scheduledAt)
+                this[TaskReminderJobTable.rescheduleCount] = 0
             }
         }
     }
@@ -56,6 +60,16 @@ class TaskReminderJobDBIImpl : TaskReminderJobDBI {
             TaskReminderJobEntity
                 .find { TaskReminderJobTable.task eq taskId.toEntityId(TaskTable) }
                 .map { it.toData() }
+        }
+
+
+    override suspend fun increaseRescheduleCount(id: IxId<TaskReminderJobData>): TaskReminderJobData? =
+        dbQuery {
+            TaskReminderJobTable.updateReturning(where = { TaskReminderJobTable.id eq id.toEntityId(TaskReminderJobTable) }) {
+                it[this.rescheduleCount] = this.rescheduleCount + 1
+            }
+                .firstOrNull()
+                ?.let { TaskReminderJobEntity.wrapRow(it).toData() }
         }
 
     override suspend fun delete(jobId: IxId<TaskReminderJobData>) {
