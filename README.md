@@ -17,11 +17,9 @@ api
 
 ## Development
 This api requires the following services:
-- PostgreSQL
+- PostgresSQL
 - Redis
 - RabbitMq
-- Prometheus
-- Grafana
 
 A Docker compose file for development purposes is available in the root directory, named `docker-compose-dev.yml`  
 It creates all the required services and their web dashboards:  
@@ -31,10 +29,8 @@ It creates all the required services and their web dashboards:
 | PostgreSQL | IndexDevUser | IndexDevPassword | localhost:5432 | [localhost:8081](http://localhost:8081) |    
 | Redis      |              |                  | localhost:6379 | [localhost:8082](http://localhost:8082) |    
 | RabbitMq   |    guest     |      guest       | localhost:5672 | [localhost:8083](http://localhost:8083) |
-| Prometheus |              |                  | localhost:9090 |                                         |
-| Grafana    |    admin     |      admin       |                | [localhost:3000](http://localhost:3000) |
 
-There is a pre-made `.env` file for development located in `/env/.env.development`, just copy it to the root directory and adjust it as needed
+There is a pre-made `.env` file for development located in `config/env/.env.local`, just copy it to the root directory and adjust it as needed
 
 > To connect to the Postgres database via the web dashboard
 > put as the `Server` the name that you gave to the postgres container,
@@ -47,22 +43,9 @@ A developer account for Index can be created by running the `CreateDevUser.kt` i
 email: `giuliopime@gmail.com`  
 password: `Password1!`
 
-### Grafana
-##### Security
-When connecting to the [Grafana dashboard](http://localhost:3000) you will be prompted to change the password!  
-For development purposes it's fine to keep `admin` as the password, please set a strong password in public facing environments instead  
-
-##### Adding Prometheus datasource
-From the Grafana homepage, click `Add your first datasource` and select Prometheus or navigate to `Connections > Add new connection > Prometheus` and click `Add new datasource`.  
-
-Choose a `name` (can be whatever you like), provide the url which with the dev docker compose setup would be `http://localhost:9090`, scroll to the bottom and hit `Save & Test`  
-
-##### Creating a dashboard for api monitoring
-There are various pre-made dashboards you can use.  
-My go to is [this one](https://grafana.com/grafana/dashboards/4701-jvm-micrometer/)
-
-##### Swagger UI
-Swagger is available at [localhost:$PORT/swagger](http://localhost:8080/swagger)
+### OpenAPI & Swagger
+OpenAPI documentation is available at [localhost:$PORT/docs/openapi](http://localhost:8080/docs/openapi)  
+Swagger is available at [localhost:$PORT/docs/swagger](http://localhost:8080/docs/swagger)  
 
 ### Git
 Use `[ci skip]` in a commit message to skip circleci process.  

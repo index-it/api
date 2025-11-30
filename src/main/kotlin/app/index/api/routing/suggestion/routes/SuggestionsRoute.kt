@@ -5,9 +5,7 @@ import app.index.core.logic.typedId.newIxIntId
 import app.index.data.daos.suggestions.SuggestionsDao
 import app.index.data.models.suggestions.ColorSuggestionsData
 import app.index.data.models.suggestions.NameSuggestionsData
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -15,20 +13,15 @@ import org.koin.ktor.ext.inject
 fun Route.suggestionsRoute() {
     val suggestionDao by inject<SuggestionsDao>()
 
-    get<SuggestionRoutes.ColorsRoute>({
-        tags = listOf("suggestions")
-        operationId = "colors-suggestion"
-        summary = "gets color suggestions"
-        response {
-            HttpStatusCode.OK to {
-                description = "suggested colors"
-                body<ColorSuggestionsData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets color suggestions
+     *
+     * @tag suggestions
+     * @operationId colors-suggestion
+     * @response 200 suggested colors
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.ColorsRoute> {
         val colors = suggestionDao.getColors()
             ?: ColorSuggestionsData(
                 id = newIxIntId(),
@@ -39,26 +32,16 @@ fun Route.suggestionsRoute() {
         call.respond(colors)
     }
 
-    get<SuggestionRoutes.ListNamesRoute>({
-        tags = listOf("suggestions")
-        operationId = "list-names-suggestion"
-        summary = "gets list name suggestions"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "suggested list names"
-                body<NameSuggestionsData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets list name suggestions
+     *
+     * @tag suggestions
+     * @operationId list-names-suggestion
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 suggested list names
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.ListNamesRoute> {
         val names = suggestionDao.getListNames(it.locale)
             ?: NameSuggestionsData(
                 id = newIxIntId(),
@@ -70,26 +53,16 @@ fun Route.suggestionsRoute() {
         call.respond(names)
     }
 
-    get<SuggestionRoutes.CategoryNamesRoute>({
-        tags = listOf("suggestions")
-        operationId = "category-names-suggestion"
-        summary = "gets category name suggestions"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "suggested category names"
-                body<NameSuggestionsData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets category name suggestions
+     *
+     * @tag suggestions
+     * @operationId category-names-suggestion
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 suggested category names
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.CategoryNamesRoute> {
         val names = suggestionDao.getCategoryNames(it.locale)
             ?: NameSuggestionsData(
                 id = newIxIntId(),
@@ -101,26 +74,16 @@ fun Route.suggestionsRoute() {
         call.respond(names)
     }
 
-    get<SuggestionRoutes.ItemNamesRoute>({
-        tags = listOf("suggestions")
-        operationId = "item-names-suggestion"
-        summary = "gets item name suggestions"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "suggested item names"
-                body<NameSuggestionsData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets item name suggestions
+     *
+     * @tag suggestions
+     * @operationId item-names-suggestion
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 suggested item names
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.ItemNamesRoute> {
         val names = suggestionDao.getItemNames(it.locale)
             ?: NameSuggestionsData(
                 id = newIxIntId(),
@@ -132,26 +95,16 @@ fun Route.suggestionsRoute() {
         call.respond(names)
     }
 
-    get<SuggestionRoutes.TaskNamesRoute>({
-        tags = listOf("suggestions")
-        operationId = "task-names-suggestion"
-        summary = "gets task name suggestions"
-        request {
-            queryParameter<String>("locale") {
-                description = "ISO 639 set 1 language code, `en` by default"
-                required = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "suggested task names"
-                body<NameSuggestionsData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * gets task name suggestions
+     *
+     * @tag suggestions
+     * @operationId task-names-suggestion
+     * @query locale ISO 639 set 1 language code, `en` by default
+     * @response 200 suggested task names
+     * @response 401 user not authenticated
+     */
+    get<SuggestionRoutes.TaskNamesRoute> {
         val names = suggestionDao.getTaskNames(it.locale)
             ?: NameSuggestionsData(
                 id = newIxIntId(),

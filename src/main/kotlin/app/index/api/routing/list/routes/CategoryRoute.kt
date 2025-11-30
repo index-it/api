@@ -10,13 +10,10 @@ import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.CategoryDao
 import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ListAuthorizationLevel
-import app.index.data.validation.Validations
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -25,36 +22,19 @@ fun Route.categoryRoute() {
     val categoryDao by inject<CategoryDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
-    get<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
-        tags = listOf("categories")
-        operationId = "get-category"
-        summary = "gets a single category"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("category_id") {
-                required = true
-                description = "the id of the category"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "category found"
-                body<CategoryData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: view"
-            }
-            HttpStatusCode.NotFound to {
-                description = "category or list not found"
-            }
-        }
-    }) {
+    /**
+     * gets a single category
+     *
+     * @tag categories
+     * @operationId get-category
+     * @path list_id the id of the list
+     * @path category_id the id of the category
+     * @response 200 category found
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: view
+     * @response 404 category or list not found
+     */
+    get<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -67,46 +47,21 @@ fun Route.categoryRoute() {
         call.respond(category)
     }
 
-    put<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
-        tags = listOf("categories")
-        operationId = "update-category"
-        summary = "updates a category"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("category_id") {
-                required = true
-                description = "the id of the category"
-            }
-            body<CategoryData.CategoryUpdateRequestData> {
-                required = true
-                description = "new data for the category"
-                example("sample-category-update", CategoryData.CategoryUpdateRequestData("loved places", "#228822"))
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "category updated"
-                body<CategoryData> {
-                    description = "the new category data"
-                }
-            }
-            HttpStatusCode.BadRequest to {
-                description = "invalid parameters\n${Validations.Category.VALIDATIONS_SUMMARY}"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-            HttpStatusCode.NotFound to {
-                description = "category or list not found"
-            }
-        }
-    }) {
+    /**
+     * updates a category
+     *
+     * @tag categories
+     * @operationId update-category
+     * @path list_id the id of the list
+     * @path category_id the id of the category
+     * @requestBody application/json new data for the category
+     * @response 200 category updated
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     * @response 404 category or list not found
+     */
+    put<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -128,33 +83,18 @@ fun Route.categoryRoute() {
         )
     }
 
-    delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute>({
-        tags = listOf("categories")
-        operationId = "delete-category"
-        summary = "deletes a category"
-        description = "deletes a category and *+all** the items and item contents inside it"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("category_id") {
-                required = true
-                description = "the id of the category"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "category deleted"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-        }
-    }) {
+    /**
+     * deletes a category and all the items and item contents inside it
+     *
+     * @tag categories
+     * @operationId delete-category
+     * @path list_id the id of the list
+     * @path category_id the id of the category
+     * @response 200 category deleted
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     */
+    delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),

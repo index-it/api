@@ -2,7 +2,6 @@ package app.index.data.sources.db.schemas.tasks
 
 import app.index.data.models.tasks.TaskReminderData
 import app.index.data.sources.db.schemas.tasks.TaskReminderTable.days_before
-import app.index.data.sources.db.schemas.tasks.TaskReminderTable.id
 import app.index.data.sources.db.schemas.tasks.TaskReminderTable.task
 import app.index.data.sources.db.schemas.tasks.TaskReminderTable.time_offset
 import org.jetbrains.exposed.dao.IntEntity

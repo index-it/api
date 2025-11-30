@@ -1,9 +1,8 @@
 package app.index.api.routing.kube
 
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
 import io.ktor.resources.*
-import io.ktor.server.application.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -23,21 +22,30 @@ class KubeRoute {
 }
 
 fun Route.kubeRoutes() {
-    get<KubeRoute.StartupRoute>({
-        hidden = true
-    }) {
+    /**
+     * Kubernetes startup probe
+     *
+     * @hidden
+     */
+    get<KubeRoute.StartupRoute> {
         call.respond(HttpStatusCode.OK)
     }
 
-    get<KubeRoute.ReadinessRoute>({
-        hidden = true
-    }) {
+    /**
+     * Kubernetes readiness probe
+     *
+     * @hidden
+     */
+    get<KubeRoute.ReadinessRoute> {
         call.respond(HttpStatusCode.OK)
     }
 
-    get<KubeRoute.LivenessRoute>({
-        hidden = true
-    }) {
+    /**
+     * Kubernetes liveness probe
+     *
+     * @hidden
+     */
+    get<KubeRoute.LivenessRoute> {
         call.respond(HttpStatusCode.OK)
     }
 }

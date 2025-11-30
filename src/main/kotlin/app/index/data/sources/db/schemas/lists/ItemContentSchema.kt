@@ -2,7 +2,6 @@ package app.index.data.sources.db.schemas.lists
 
 import app.index.data.models.lists.ItemContentData
 import app.index.data.sources.db.schemas.lists.ItemContentTable.content
-import app.index.data.sources.db.schemas.lists.ItemContentTable.id
 import app.index.data.sources.db.schemas.lists.ItemContentTable.item
 import app.index.data.sources.db.schemas.lists.ItemContentTable.user
 import app.index.data.sources.db.schemas.user.UserEntity

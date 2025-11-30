@@ -4,6 +4,8 @@ import app.index.core.clients.GoogleCloudTasksClient
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.typedId.newIxId
+import app.index.core.logic.usecases.TaskUseCase.calculateNextOccurrenceDueDateAndRRule
+import app.index.core.logic.usecases.TaskUseCase.refreshReminders
 import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.tasks.TaskData
@@ -15,9 +17,11 @@ import org.dmfs.rfc5545.recur.RecurrenceRule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.math.max
+import kotlin.time.ExperimentalTime
 
 private val logger = KotlinLogging.logger {  }
 
+@OptIn(ExperimentalTime::class)
 object TaskUseCase : KoinComponent {
     private val taskDao by inject<TaskDao>()
     private val taskReminderJobDao by inject<TaskReminderJobDao>()

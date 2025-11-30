@@ -4,4 +4,3 @@ plugins {
 rootProject.name = "index_api"
 
 include("scripts")
-include("fcm-registration-tokens-expiration-job")

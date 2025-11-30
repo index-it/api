@@ -1,7 +1,6 @@
 package app.index.core.clients
 
 import app.index.config.RevenueCatConfig
-import app.index.data.models.pro.RevenueCatSubscriberData
 import app.index.data.models.pro.RevenueCatSubscriberRequestWrapper
 import app.index.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging

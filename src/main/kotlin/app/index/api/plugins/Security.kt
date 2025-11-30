@@ -17,9 +17,9 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.sessions.serialization.*
-import io.ktor.util.pipeline.*
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 
@@ -36,7 +36,7 @@ object AuthenticationMethods {
 /**
  * Used to store the Id in the email verification routes (that cannot use proper session authentication)
  */
-data class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserData>) : Principal
+class UserIdPrincipalForEmailVerificationAuth(val id: IxId<UserData>)
 
 fun Application.configureSecurity() {
     val userDao by inject<UserDao>()
@@ -124,24 +124,24 @@ fun Application.configureSecurity() {
 /**
  * Gets the current [UserAuthSessionData]
  */
-fun PipelineContext<Unit, ApplicationCall>.authSessionData(): UserAuthSessionData? = call.principal<UserAuthSessionData>()
+fun RoutingContext.authSessionData(): UserAuthSessionData? = call.principal<UserAuthSessionData>()
 
 /**
  * Gets the current [UserAuthSessionData]
  *
  * @throws AuthenticationException if not authenticated
  */
-fun PipelineContext<Unit, ApplicationCall>.authSessionDataOrThrow(): UserAuthSessionData = authSessionData() ?: throw AuthenticationException()
+fun RoutingContext.authSessionDataOrThrow(): UserAuthSessionData = authSessionData() ?: throw AuthenticationException()
 
 
 /**
  * Gets the [IxId] of the session authenticated [UserData]
  */
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): IxId<UserData>? = call.principal<UserAuthSessionData>()?.userId
+fun RoutingContext.userIdFromSession(): IxId<UserData>? = call.principal<UserAuthSessionData>()?.userId
 
 /**
  * Gets the [IxId] of the session authenticated [UserData]
  *
  * @throws AuthenticationException if not authenticated
  */
-fun PipelineContext<Unit, ApplicationCall>.userIdFromSessionOrThrow(): IxId<UserData> = userIdFromSession() ?: throw AuthenticationException()
+fun RoutingContext.userIdFromSessionOrThrow(): IxId<UserData> = userIdFromSession() ?: throw AuthenticationException()

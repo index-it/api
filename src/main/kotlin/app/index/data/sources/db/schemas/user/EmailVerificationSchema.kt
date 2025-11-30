@@ -3,7 +3,6 @@ package app.index.data.sources.db.schemas.user
 import app.index.data.models.email.EmailVerificationData
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.created_at
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.expires_at
-import app.index.data.sources.db.schemas.user.EmailVerificationTable.id
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.token
 import app.index.data.sources.db.schemas.user.EmailVerificationTable.user
 import app.index.data.sources.db.toEntityId

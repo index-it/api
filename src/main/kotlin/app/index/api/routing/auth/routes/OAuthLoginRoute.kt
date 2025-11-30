@@ -13,11 +13,10 @@ import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.user.UserData
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -34,38 +33,19 @@ fun Route.oauthLoginRoutes() {
     val appleOAuthClient by inject<AppleOAuthClient>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
-    get<LoginWithGoogle>({
-        tags = listOf("auth")
-        operationId = "login-with-google"
-        summary = "google oauth login"
-        description = "the user needs to get an id token with google oauth and forward it to this endpoint to get authenticated via google"
-        protected = false
-        request {
-            queryParameter<String>("token_id") {
-                description = "the id token received from google"
-                required = true
-                allowEmptyValue = false
-                allowReserved = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "user authenticated and session created"
-                header<String>(HttpHeaders.SetCookie) {
-                    description = "header that sets the session cookie via `SetCookie`"
-                }
-                body<UserData.UserResponseDto> {
-                    description = "the user data excluding sensitive fields like the password"
-                }
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "invalid id token"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "user email not verified"
-            }
-        }
-    }) {
+    /**
+     * google oauth login
+     *
+     * the user needs to get an id token with google oauth and forward it to this endpoint to get authenticated via google
+     *
+     * @tag auth
+     * @operationId login-with-google
+     * @query token_id the id token received from google
+     * @response 200 user authenticated and session created
+     * @response 401 invalid id token
+     * @response 405 user email not verified
+     */
+    get<LoginWithGoogle> {
         val userInfo = googleOAuthClient.getUserInfoFromIdTokenIfValid(it.token_id)
             ?: throw AuthenticationException()
 
@@ -122,38 +102,19 @@ fun Route.oauthLoginRoutes() {
         }
     }
 
-    get<LoginWithApple>({
-        tags = listOf("auth")
-        operationId = "login-with-apple"
-        summary = "apple oauth login"
-        description = "the user needs to get an id token with apple oauth and forward it to this endpoint to get authenticated via apple"
-        protected = false
-        request {
-            queryParameter<String>("token_id") {
-                description = "the id token received from apple"
-                required = true
-                allowEmptyValue = false
-                allowReserved = false
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "user authenticated and session created"
-                header<String>(HttpHeaders.SetCookie) {
-                    description = "header that sets the session cookie via `SetCookie`"
-                }
-                body<UserData.UserResponseDto> {
-                    description = "the user data excluding sensitive fields like the password"
-                }
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "invalid id token"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "user email not verified"
-            }
-        }
-    }) {
+    /**
+     * apple oauth login
+     *
+     * the user needs to get an id token with apple oauth and forward it to this endpoint to get authenticated via apple
+     *
+     * @tag auth
+     * @operationId login-with-apple
+     * @query token_id the id token received from apple
+     * @response 200 user authenticated and session created
+     * @response 401 invalid id token
+     * @response 405 user email not verified
+     */
+    get<LoginWithApple> {
         val userInfo = appleOAuthClient.getUserInfoFromIdTokenIfValid(it.token_id)
             ?: throw AuthenticationException()
 
@@ -163,7 +124,7 @@ fun Route.oauthLoginRoutes() {
 
         // If the email is already registered then log them in into that account directly (even if the account wasn't registered with Google)
         var userG = userDao.getFromEmail(userInfo.email)
-        val isFirstLogin = userG == null || !userG!!.emailVerified
+        val isFirstLogin = userG == null || !userG.emailVerified
 
         if (userG == null) {
             // Create the user in the db with a random id, the email gotten from Google, email verified to true
@@ -177,33 +138,33 @@ fun Route.oauthLoginRoutes() {
                 has_pro = false
             )
 
-            userDao.create(userG!!)
-        } else if (!userG!!.emailVerified) {
-            userDao.verifyEmail(userG!!.id)
+            userDao.create(userG)
+        } else if (!userG.emailVerified) {
+            userDao.verifyEmail(userG.id)
         }
 
         // Create session
         val sessionId = userSessionDao.create(
-            userId = userG!!.id,
+            userId = userG.id,
             device = call.request.userAgent(),
             ip = call.request.origin.remoteAddress
         )
 
         call.sessions.set(sessionId)
-        call.respond(userG!!.getResponseDto())
+        call.respond(userG.getResponseDto())
 
         if (isFirstLogin) {
             emitAnalyticsEvent(
                 analyticsEventManager = analyticsEventManager,
                 analyticsEventData = AnalyticsEventData.UserRegistrationEventData(
-                    creation_source = userG!!.creationSource
+                    creation_source = userG.creationSource
                 )
             )
         } else {
             emitAnalyticsEvent(
                 analyticsEventManager = analyticsEventManager,
                 analyticsEventData = AnalyticsEventData.UserLoginEventData(
-                    user_id = userG!!.id,
+                    user_id = userG.id,
                     login_source = UserData.CreationSource.APPLE,
                 )
             )

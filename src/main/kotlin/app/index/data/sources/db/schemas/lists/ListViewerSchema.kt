@@ -1,6 +1,5 @@
 package app.index.data.sources.db.schemas.lists
 
-import app.index.data.sources.db.schemas.lists.ListViewerTable.id
 import app.index.data.sources.db.schemas.lists.ListViewerTable.list
 import app.index.data.sources.db.schemas.lists.ListViewerTable.user
 import app.index.data.sources.db.schemas.user.UserEntity

@@ -13,13 +13,10 @@ import app.index.data.daos.auth.UserSessionDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.PasswordResetRequestBody
 import app.index.data.models.auth.UserSessionCookie
-import app.index.data.models.user.UserData
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -31,53 +28,33 @@ fun Route.meRoutes() {
     val websocketEventManager by inject<WebsocketEventManager>()
     val passwordEncoder by inject<PasswordEncoder>()
 
-    get<MeRoute>({
-        tags = listOf("user")
-        operationId = "me"
-        summary = "get the logged in user data"
-        response {
-            HttpStatusCode.OK to {
-                description = "user found"
-                body<UserData.UserResponseDto> {
-                    description = "the user data excluding sensitive fields like the password"
-                }
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * get the logged in user data
+     *
+     * @tag user
+     * @operationId me
+     * @response 200 user found
+     * @response 401 user not authenticated
+     */
+    get<MeRoute> {
         val user = userDao.get(userIdFromSessionOrThrow())
             ?: throw AuthenticationException()
 
         call.respond(user.getResponseDto())
     }
 
-    put<MeRoute.ChangePasswordRoute>({
-        tags = listOf("user")
-        operationId = "change-password"
-        summary = "changes the password of the user"
-        request {
-            body<PasswordResetRequestBody> {
-                description = "contains the new password"
-                required = true
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "password changed"
-            }
-            HttpStatusCode.BadRequest to {
-                description = "password doesn't conform to rules, see response message"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.NotFound to {
-                description = "something went wrong"
-            }
-        }
-    }) {
+    /**
+     * changes the password of the user
+     *
+     * @tag user
+     * @operationId change-password
+     * @requestBody application/json contains the new password
+     * @response 200 password changed
+     * @response 400 password doesn't conform to rules, see response message
+     * @response 401 user not authenticated
+     * @response 404 something went wrong
+     */
+    put<MeRoute.ChangePasswordRoute> {
         val authSession = authSessionDataOrThrow()
         val userId = authSession.userId
         val newPassword = call.receive<PasswordResetRequestBody>().password
@@ -102,20 +79,15 @@ fun Route.meRoutes() {
         call.respond(HttpStatusCode.OK)
     }
 
-    delete<MeRoute>({
-        tags = listOf("user")
-        operationId = "delete-account"
-        summary = "delete the logged in user account"
-        description = "this deletes **all** the data of the logged in user from index systems, it's irreversible"
-        response {
-            HttpStatusCode.OK to {
-                description = "user data deleted and session terminated"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * delete the logged in user account and all their data (irreversible)
+     *
+     * @tag user
+     * @operationId delete-account
+     * @response 200 user data deleted and session terminated
+     * @response 401 user not authenticated
+     */
+    delete<MeRoute> {
         val userId = userIdFromSessionOrThrow()
         call.sessions.clear<UserSessionCookie>()
 

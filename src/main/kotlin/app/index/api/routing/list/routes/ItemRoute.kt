@@ -3,7 +3,6 @@ package app.index.api.routing.list.routes
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
-import app.index.core.logic.typedId.newIxId
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -12,13 +11,10 @@ import app.index.data.daos.list.ItemDao
 import app.index.data.daos.task.TaskDao
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
-import app.index.data.validation.Validations
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -28,36 +24,19 @@ fun Route.itemRoute() {
     val taskDao by inject<TaskDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
 
-    get<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
-        tags = listOf("items")
-        operationId = "get-item"
-        summary = "gets a single item"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("item_id") {
-                required = true
-                description = "the id of the item"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "item data"
-                body<ItemData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: view"
-            }
-            HttpStatusCode.NotFound to {
-                description = "item or list not found"
-            }
-        }
-    }) {
+    /**
+     * gets a single item
+     *
+     * @tag items
+     * @operationId get-item
+     * @path list_id the id of the list
+     * @path item_id the id of the item
+     * @response 200 item data
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: view
+     * @response 404 item or list not found
+     */
+    get<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -70,47 +49,21 @@ fun Route.itemRoute() {
         call.respond(item)
     }
 
-    put<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
-        tags = listOf("items")
-        operationId = "update-item"
-        summary = "updates an item"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("item_id") {
-                required = true
-                description = "the id of the item"
-            }
-            body<ItemData.ItemUpdateRequestData> {
-                required = true
-                description = "new item data"
-                example(
-                    "sample-item-update",
-                    ItemData.ItemUpdateRequestData(newIxId(), "Milos 🧿", null),
-                )
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "item data"
-                body<ItemData>()
-            }
-            HttpStatusCode.BadRequest to {
-                description = "invalid parameters\n${Validations.Item.VALIDATIONS_SUMMARY}"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-            HttpStatusCode.NotFound to {
-                description = "item or list not found"
-            }
-        }
-    }) {
+    /**
+     * updates an item
+     *
+     * @tag items
+     * @operationId update-item
+     * @path list_id the id of the list
+     * @path item_id the id of the item
+     * @requestBody application/json new item data
+     * @response 200 item data
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     * @response 404 item or list not found
+     */
+    put<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -132,33 +85,18 @@ fun Route.itemRoute() {
         )
     }
 
-    delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute>({
-        tags = listOf("items")
-        operationId = "delete-item"
-        summary = "deletes an item"
-        description = "deletes an item and its content"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("item_id") {
-                required = true
-                description = "the id of the item"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "item deleted"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-        }
-    }) {
+    /**
+     * deletes an item and its content
+     *
+     * @tag items
+     * @operationId delete-item
+     * @path list_id the id of the list
+     * @path item_id the id of the item
+     * @response 200 item deleted
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     */
+    delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         val userId = userIdFromSessionOrThrow()
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.list_id,

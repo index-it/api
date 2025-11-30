@@ -9,7 +9,6 @@ import app.index.data.sources.db.schemas.tasks.TaskTable.created_at
 import app.index.data.sources.db.schemas.tasks.TaskTable.description
 import app.index.data.sources.db.schemas.tasks.TaskTable.due_date
 import app.index.data.sources.db.schemas.tasks.TaskTable.edited_at
-import app.index.data.sources.db.schemas.tasks.TaskTable.id
 import app.index.data.sources.db.schemas.tasks.TaskTable.item
 import app.index.data.sources.db.schemas.tasks.TaskTable.name
 import app.index.data.sources.db.schemas.tasks.TaskTable.priority

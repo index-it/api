@@ -4,9 +4,8 @@ import app.index.api.routing.user.LogoutRoute
 import app.index.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.data.daos.auth.UserSessionDao
 import app.index.data.models.auth.UserSessionCookie
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -16,19 +15,15 @@ fun Route.logoutRoutes() {
     val userSessionDao by inject<UserSessionDao>()
     val websocketConnectionsManager by inject<WebsocketConnectionsManager>()
 
-    get<LogoutRoute>({
-        tags = listOf("auth")
-        operationId = "logout"
-        summary = "terminates the auth session"
-        response {
-            HttpStatusCode.OK to {
-                description = "session terminated"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-        }
-    }) {
+    /**
+     * terminates the auth session
+     *
+     * @tag auth
+     * @operationId logout
+     * @response 200 session terminated
+     * @response 401 user not authenticated
+     */
+    get<LogoutRoute> {
         val session = call.sessions.get<UserSessionCookie>()!!
 
         userSessionDao.delete(session.user_id, session.session_id)

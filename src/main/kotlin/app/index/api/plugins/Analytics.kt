@@ -5,10 +5,9 @@ import app.index.core.logic.AnalyticsEventManager
 import app.index.data.models.analytics.AnalyticsEvent
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.analytics.AnalyticsEventReceiver
-import io.ktor.server.application.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.*
 
-fun PipelineContext<Unit, ApplicationCall>.emitAnalyticsEvent(
+fun RoutingContext.emitAnalyticsEvent(
     analyticsEventManager: AnalyticsEventManager,
     analyticsEventData: AnalyticsEventData
 ) {

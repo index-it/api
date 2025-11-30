@@ -2,7 +2,6 @@ package app.index.core.logic
 
 import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.annotation.Factory
 

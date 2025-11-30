@@ -6,12 +6,10 @@ import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.data.daos.list.ItemContentDao
 import app.index.data.models.lists.ItemContentData
 import app.index.data.models.lists.ListAuthorizationLevel
-import app.index.data.validation.Validations
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -19,37 +17,19 @@ import org.koin.ktor.ext.inject
 fun Route.itemContentRoute() {
     val itemContentDao by inject<ItemContentDao>()
 
-    get<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute>({
-        tags = listOf("item-contents")
-        operationId = "get item content"
-        summary = "gets the content of an item"
-        description = "get the content of an item, if the content doesn't yet exist it gets created"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("item_id") {
-                required = true
-                description = "the id of the item"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "item content"
-                body<ItemContentData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: view"
-            }
-            HttpStatusCode.NotFound to {
-                description = "item not found"
-            }
-        }
-    }) {
+    /**
+     * gets the content of an item; if the content doesn't yet exist it gets created
+     *
+     * @tag item-contents
+     * @operationId get item content
+     * @path list_id the id of the list
+     * @path item_id the id of the item
+     * @response 200 item content
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: view
+     * @response 404 item not found
+     */
+    get<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -62,43 +42,21 @@ fun Route.itemContentRoute() {
         call.respond(content)
     }
 
-    put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute>({
-        tags = listOf("item-contents")
-        operationId = "update item content"
-        summary = "updates the content of an item"
-        request {
-            pathParameter<String>("list_id") {
-                required = true
-                description = "the id of the list"
-            }
-            pathParameter<String>("item_id") {
-                required = true
-                description = "the id of the item"
-            }
-            body<ItemContentData.ItemContentCreateOrUpdateRequestData> {
-                required = true
-                description = "the new item content"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "item content"
-                body<ItemContentData>()
-            }
-            HttpStatusCode.BadRequest to {
-                description = "invalid parameters\n${Validations.ItemContent.VALIDATIONS_SUMMARY}"
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.Forbidden to {
-                description = "missing required list permission: edit"
-            }
-            HttpStatusCode.NotFound to {
-                description = "item not found"
-            }
-        }
-    }) {
+    /**
+     * updates the content of an item
+     *
+     * @tag item-contents
+     * @operationId update item content
+     * @path list_id the id of the list
+     * @path item_id the id of the item
+     * @requestBody application/json the new item content
+     * @response 200 item content
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     * @response 404 item not found
+     */
+    put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
             listId = it.parent.parent.parent.list_id,
             userId = userIdFromSessionOrThrow(),
@@ -111,7 +69,6 @@ fun Route.itemContentRoute() {
             ?: return@put call.respond(HttpStatusCode.NotFound)
 
         call.respond(newContent)
-
 
     }
 }

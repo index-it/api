@@ -16,10 +16,8 @@ import app.index.data.daos.task.TaskDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ListAuthorizationLevel
-import app.index.data.models.tasks.TaskData
-import io.github.smiley4.ktorswaggerui.dsl.resources.put
 import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -31,37 +29,19 @@ fun Route.taskCompletionRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
-    put<TasksRoute.TaskRoute.CompletionRoute>({
-        tags = listOf("tasks")
-        operationId = "task-completion"
-        summary = "completes or un-completes a task"
-        description = "this completes or un-completes a task and a related item if existing"
-        request {
-            pathParameter<String>("task_id") {
-                required = true
-                description = "the id of the task"
-            }
-            queryParameter<Boolean>("completed") {
-                required = true
-                description = "true for completed, false for un-completed"
-            }
-        }
-        response {
-            HttpStatusCode.OK to {
-                description = "the updated task"
-                body<TaskData>()
-            }
-            HttpStatusCode.Unauthorized to {
-                description = "user not authenticated"
-            }
-            HttpStatusCode.NotFound to {
-                description = "task not found"
-            }
-            HttpStatusCode.MethodNotAllowed to {
-                description = "cannot un-complete a recurring task"
-            }
-        }
-    }) {
+    /**
+     * completes or un-completes a task and a related item if existing
+     *
+     * @tag tasks
+     * @operationId task-completion
+     * @path task_id the id of the task
+     * @query completed true for completed, false for un-completed
+     * @response 200 the updated task
+     * @response 401 user not authenticated
+     * @response 404 task not found
+     * @response 405 cannot un-complete a recurring task
+     */
+    put<TasksRoute.TaskRoute.CompletionRoute> {
         val userId = userIdFromSessionOrThrow()
 
         val updatedTask = taskDao.setCompletion(userId, it.parent.task_id, it.completed)

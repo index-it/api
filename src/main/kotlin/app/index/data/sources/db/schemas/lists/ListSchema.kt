@@ -5,7 +5,6 @@ import app.index.data.sources.db.schemas.lists.ListTable.color
 import app.index.data.sources.db.schemas.lists.ListTable.created_at
 import app.index.data.sources.db.schemas.lists.ListTable.edited_at
 import app.index.data.sources.db.schemas.lists.ListTable.emoji
-import app.index.data.sources.db.schemas.lists.ListTable.id
 import app.index.data.sources.db.schemas.lists.ListTable.name
 import app.index.data.sources.db.schemas.lists.ListTable.user
 import app.index.data.sources.db.schemas.user.UserEntity

@@ -12,11 +12,10 @@ import app.index.core.logic.usecases.EmailVerificationUseCase
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.analytics.AnalyticsEventData
-import io.github.smiley4.ktorswaggerui.dsl.resources.get
-import io.github.smiley4.ktorswaggerui.dsl.resources.post
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -27,30 +26,19 @@ fun Route.emailVerificationRoutes() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
-        post<SendVerificationEmailRoute>({
-            tags = listOf("auth")
-            operationId = "send-verification-email"
-            summary = "sends a verification email to the email of the user"
-            description = "sends a verification email to the user, unless the user is rate limited on this endpoint"
-            protected = false
-            request {
-                body("EmailVerificationAuthForm") {
-                    description = "email and password with which the user registered"
-                    mediaType(ContentType.Application.FormUrlEncoded)
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "email already verified"
-                }
-                HttpStatusCode.Created to {
-                    description = "email sent"
-                }
-                HttpStatusCode.Forbidden to {
-                    description = "invalid form credentials"
-                }
-            }
-        }) {
+        /**
+         * sends a verification email to the email of the user
+         *
+         * sends a verification email to the user, unless the user is rate limited on this endpoint
+         *
+         * @tag auth
+         * @operationId send-verification-email
+         * @requestBody application/x-www-form-urlencoded email and password with which the user registered
+         * @response 200 email already verified
+         * @response 201 email sent
+         * @response 403 invalid form credentials
+         */
+        post<SendVerificationEmailRoute> {
             val userDto = call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
                 userDao.get(it)
             } ?: return@post call.respond(HttpStatusCode.Forbidden)
@@ -72,29 +60,17 @@ fun Route.emailVerificationRoutes() {
             }
         }
 
-        post<IsEmailVerifiedRoute>({
-            tags = listOf("auth")
-            operationId = "is-email-verified"
-            summary = "tells if an email has been verified"
-            protected = false
-            request {
-                body("EmailVerificationAuthForm") {
-                    description = "email and password with which the user registered"
-                    mediaType(ContentType.Application.FormUrlEncoded)
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "email is verified"
-                }
-                HttpStatusCode.Forbidden to {
-                    description = "invalid form credentials"
-                }
-                HttpStatusCode.NotFound to {
-                    description = "for sure not verified, might be not found neither"
-                }
-            }
-        }) {
+        /**
+         * tells if an email has been verified
+         *
+         * @tag auth
+         * @operationId is-email-verified
+         * @requestBody application/x-www-form-urlencoded email and password with which the user registered
+         * @response 200 email is verified
+         * @response 403 invalid form credentials
+         * @response 404 for sure not verified, might be not found neither
+         */
+        post<IsEmailVerifiedRoute> {
             val userDto =
                 call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
                     userDao.get(it)
@@ -108,28 +84,16 @@ fun Route.emailVerificationRoutes() {
         }
     }
 
-    get<VerifyEmailRoute>({
-        tags = listOf("auth")
-        operationId = "verify-email"
-        summary = "verifies the email via the token received in the email"
-        protected = false
-        request {
-            queryParameter<String>("token") {
-                description = "encoded verification token"
-                required = true
-                allowEmptyValue = false
-                allowReserved = false
-            }
-        }
-        response {
-            HttpStatusCode.TemporaryRedirect to {
-                description = "redirects to either a success or failure page"
-            }
-            HttpStatusCode.BadRequest to {
-                description = "token is likely expired"
-            }
-        }
-    }) { request ->
+    /**
+     * verifies the email via the token received in the email
+     *
+     * @tag auth
+     * @operationId verify-email
+     * @query token encoded verification token
+     * @response 307 redirects to either a success or failure page
+     * @response 400 token is likely expired
+     */
+    get<VerifyEmailRoute> { request ->
         val emailVerificationDto = emailVerificationDao.get(request.token)
             ?: return@get call.respondRedirect(BrevoConfig.emailVerificationErrorUrl)
 

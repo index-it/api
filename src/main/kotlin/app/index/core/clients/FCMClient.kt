@@ -5,13 +5,7 @@ import app.index.data.models.tasks.TaskData
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import com.google.firebase.messaging.AndroidConfig
-import com.google.firebase.messaging.ApnsConfig
-import com.google.firebase.messaging.Aps
-import com.google.firebase.messaging.FcmOptions
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.MulticastMessage
-import com.google.firebase.messaging.Notification
+import com.google.firebase.messaging.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Single
 

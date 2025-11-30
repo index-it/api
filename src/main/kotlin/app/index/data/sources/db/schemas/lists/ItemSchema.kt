@@ -6,7 +6,6 @@ import app.index.data.sources.db.schemas.lists.ItemTable.completed
 import app.index.data.sources.db.schemas.lists.ItemTable.completed_at
 import app.index.data.sources.db.schemas.lists.ItemTable.created_at
 import app.index.data.sources.db.schemas.lists.ItemTable.edited_at
-import app.index.data.sources.db.schemas.lists.ItemTable.id
 import app.index.data.sources.db.schemas.lists.ItemTable.link
 import app.index.data.sources.db.schemas.lists.ItemTable.list
 import app.index.data.sources.db.schemas.lists.ItemTable.name

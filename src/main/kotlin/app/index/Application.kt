@@ -53,12 +53,10 @@ fun main() {
 private fun Application.indexApplicationModule() {
     configureDI()
     configureHTTP()
-    configureMonitoring()
     configureSerialization()
     configureSecurity()
     configureStatusPages()
     configureValidator()
     configureWebsockets()
     configureRouting()
-    configureSwagger()
 }

@@ -4,15 +4,13 @@ import app.index.data.validation.RegexPatterns
 import app.index.data.validation.Validatable
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
-import io.konform.validation.jsonschema.maxLength
-import io.konform.validation.jsonschema.minLength
-import io.konform.validation.jsonschema.pattern
-import io.swagger.v3.oas.annotations.media.Schema
+import io.konform.validation.constraints.maxLength
+import io.konform.validation.constraints.minLength
+import io.konform.validation.constraints.pattern
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PasswordResetRequestBody(
-    @field:Schema(required = true)
     val password: String,
 ) : Validatable<PasswordResetRequestBody> {
     override fun validate(): ValidationResult<PasswordResetRequestBody> =
