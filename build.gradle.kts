@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "app.index"
-version = "0.1.5"
+version = "0.1.6"
 application {
     mainClass.set("app.index.ApplicationKt")
 }
@@ -74,7 +74,7 @@ tasks.test {
 jib {
     to {
         image = "ghcr.io/${project.property("ghcrOrg")}/$name"
-        tags = setOf(System.getenv("CIRCLE_SHA1"), "latest")
+        tags = setOf(System.getenv("CIRCLE_SHA1"), version.toString(), "latest")
         auth {
             username = System.getenv("GITHUB_ACTOR")
             password = System.getenv("GITHUB_TOKEN")
