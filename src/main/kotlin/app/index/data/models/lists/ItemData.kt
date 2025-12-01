@@ -8,7 +8,6 @@ import app.index.data.validation.Validatable
 import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.constraints.maxLength
-import io.konform.validation.constraints.minItems
 import io.konform.validation.constraints.minLength
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

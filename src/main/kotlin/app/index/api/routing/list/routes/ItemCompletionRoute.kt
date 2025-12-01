@@ -77,15 +77,13 @@ fun Route.itemCompletionRoute() {
         // update all connected tasks (multiple users might have a task connected to this item if the list is shared)
         val updatedTasks = itemIds.map { itemId -> taskDao.setCompletionOfAllTasksConnectedToItem(itemId, it.completed) }.flatten()
 
-        updatedTasks.forEach { updateTask ->
-            emitWebsocketEventForUsers(
-                websocketEventManager = websocketEventManager,
-                type = WebsocketEventType.TASKS_UPDATED,
-                content = WebsocketEventContent.TasksUpdatedEventContent(updatedTasks),
-                users = updatedTasks.map { task -> task.user_id },
-                includeCurrentSession = updatedTasks.any { task -> task.user_id == userId }
-            )
-        }
+        emitWebsocketEventForUsers(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.TASKS_UPDATED,
+            content = WebsocketEventContent.TasksUpdatedEventContent(updatedTasks),
+            users = updatedTasks.map { task -> task.user_id },
+            includeCurrentSession = updatedTasks.any { task -> task.user_id == userId }
+        )
     }
 
 

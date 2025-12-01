@@ -1,0 +1,6 @@
+- [x] fix max 30 days reminders
+- [ ] multiple items actions
+- [ ] custom ordering
+- [ ] calendar integration
+- [ ] location based reminders
+- [ ] deploy with ArgoCD

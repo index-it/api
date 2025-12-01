@@ -141,7 +141,7 @@ fun Route.itemsRoute() {
      * @tag items
      * @operationId delete-items
      * @path list_id the id of the list
-     * @requestBody [ItemData.ItemsDeleteRequestData]
+     * @requestBody list of [IxId<ItemData>]
      * @response 200 items deleted
      * @response 401 user not authenticated
      * @response 403 missing required list permission: edit

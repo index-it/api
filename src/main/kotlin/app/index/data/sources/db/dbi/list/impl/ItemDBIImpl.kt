@@ -8,10 +8,7 @@ import app.index.data.sources.db.dbi.list.ItemDBI
 import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.batchUpsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
