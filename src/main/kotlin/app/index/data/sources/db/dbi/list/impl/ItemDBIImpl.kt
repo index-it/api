@@ -8,7 +8,10 @@ import app.index.data.sources.db.dbi.list.ItemDBI
 import app.index.data.sources.db.schemas.lists.*
 import app.index.data.sources.db.toEntityId
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.batchUpsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
@@ -19,6 +22,12 @@ class ItemDBIImpl : ItemDBI {
         itemId: IxId<ItemData>,
     ) = Op.build {
         (ItemTable.id eq itemId.toEntityId(ItemTable))
+    }
+
+    private fun itemsFilter(
+        itemIds: List<IxId<ItemData>>,
+    ) = Op.build {
+        ItemTable.id inList itemIds.map { it.toEntityId(ItemTable) }
     }
 
     override suspend fun create(itemData: ItemData) {
@@ -87,6 +96,19 @@ class ItemDBIImpl : ItemDBI {
             }
         }
 
+    override suspend fun setCompletion(
+        itemIds: List<IxId<ItemData>>,
+        completed: Boolean,
+    ): List<ItemData> =
+        dbQuery {
+            ItemTable.updateReturning(where = { itemsFilter(itemIds) }) {
+                it[this.completed] = completed
+                it[this.completed_at] = if (completed) DatetimeUtils.currentJavaInstant() else null
+            }.map {
+                ItemEntity.wrapRow(it).toData()
+            }
+        }
+
     override suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
@@ -103,9 +125,40 @@ class ItemDBIImpl : ItemDBI {
             }
         }
 
+    override suspend fun update(
+        items: List<ItemData.MultipleItemUpdateRequestData>
+    ): List<ItemData> {
+        val updatedItems = mutableListOf<ItemData>()
+
+        dbQuery {
+            items.forEach { item ->
+                ItemTable.updateReturning(where = { itemFilter(item.id) }) {
+                    it[category] = item.category_id?.toEntityId(CategoryTable)
+                }
+                    .firstOrNull()
+                    ?.let { updatedItems.add(ItemEntity.wrapRow(it).toData()) }
+            }
+
+            // we could otherwise use batchUpsert but I wanna avoid risking inserting
+//            return ItemTable.batchUpsert(items) { item ->
+//                this[ItemTable.id] = item.id.toEntityId(ItemTable)
+//                this[ItemTable.category] = item.category_id?.toEntityId(CategoryTable)
+//            }.map { ItemEntity.wrapRow(it).toData() }
+        }
+
+        return updatedItems
+    }
+
+
     override suspend fun delete(
         itemId: IxId<ItemData>,
     ) : Boolean = dbQuery {
         ItemTable.deleteWhere { itemFilter(itemId) } > 0
+    }
+
+    override suspend fun delete(
+        itemIds: List<IxId<ItemData>>
+    ) : Boolean = dbQuery {
+        ItemTable.deleteWhere { itemsFilter(itemIds) } } > 0
     }
 }

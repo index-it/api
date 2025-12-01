@@ -17,13 +17,16 @@ enum class WebsocketEventType {
 
     ITEM_CREATED,
     ITEM_UPDATED,
+    ITEMS_UPDATED,
     ITEM_DELETED,
+    ITEMS_DELETED,
 
     // NOTE: Not enabled as it would consume much network and computation power to send those events
     // ITEM_CONTENT_UPDATED,
 
     TASK_CREATED,
     TASK_UPDATED,
+    TASKS_UPDATED,
     TASK_DELETED
 }
 

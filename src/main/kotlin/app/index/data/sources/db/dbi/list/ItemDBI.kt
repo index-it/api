@@ -33,12 +33,25 @@ interface ItemDBI : DBI {
         completed: Boolean,
     ): ItemData?
 
+    suspend fun setCompletion(
+        itemIds: List<IxId<ItemData>>,
+        completed: Boolean,
+    ): List<ItemData>
+
     suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
     ): ItemData?
 
+    suspend fun update(
+        items: List<ItemData.MultipleItemUpdateRequestData>
+    ): List<ItemData>
+
     suspend fun delete(
         itemId: IxId<ItemData>,
+    ): Boolean
+
+    suspend fun delete(
+        itemIds: List<IxId<ItemData>>,
     ): Boolean
 }

@@ -8,6 +8,7 @@ import app.index.data.validation.Validatable
 import app.index.data.validation.Validations
 import io.konform.validation.Validation
 import io.konform.validation.constraints.maxLength
+import io.konform.validation.constraints.minItems
 import io.konform.validation.constraints.minLength
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -74,6 +75,12 @@ data class ItemData(
                 }
             }.invoke(this)
     }
+
+    @Serializable
+    data class MultipleItemUpdateRequestData(
+        @Contextual val id: IxId<ItemData>,
+        @Contextual val category_id: IxId<CategoryData>? = null,
+    )
 
     @Serializable
     data class ItemTemplateResponseData(

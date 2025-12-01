@@ -5,11 +5,13 @@ import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
 import app.index.core.logic.AnalyticsEventManager
+import app.index.core.logic.typedId.impl.IxId
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
 import app.index.data.daos.list.ItemDao
+import app.index.data.daos.task.TaskDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListAuthorizationLevel
@@ -17,12 +19,14 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.itemsRoute() {
     val itemDao by inject<ItemDao>()
+    val taskDao by inject<TaskDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
@@ -94,5 +98,86 @@ fun Route.itemsRoute() {
                 category_id = newItem.category_id
             )
         )
+    }
+
+    /**
+     * updates multiple items
+     *
+     * @tag items
+     * @operationId update-item
+     * @path list_id the id of the list
+     * @path item_id the id of the item
+     * @requestBody [List] of [ItemData.MultipleItemUpdateRequestData]
+     * @response 200 item data
+     * @response 400 invalid parameters
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     * @response 404 item or list not found
+     */
+    put<ListsRoute.ListRoute.ItemsRoute> {
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.list_id,
+            userId = userIdFromSessionOrThrow(),
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@put call.respond(HttpStatusCode.NotFound)
+
+        val itemsToUpdate = call.receive<List<ItemData.MultipleItemUpdateRequestData>>()
+
+        val newItems = itemDao.update(itemsToUpdate)
+
+        call.respond(newItems)
+
+        emitWebsocketEventForUsers(
+            websocketEventManager = websocketEventManager,
+            type = WebsocketEventType.ITEMS_UPDATED,
+            content = WebsocketEventContent.ItemsCreateOrUpdateEventContent(newItems),
+            users = list.getUsersWithAccess()
+        )
+    }
+
+    /**
+     * deletes multiple items
+     *
+     * @tag items
+     * @operationId delete-items
+     * @path list_id the id of the list
+     * @requestBody [ItemData.ItemsDeleteRequestData]
+     * @response 200 items deleted
+     * @response 401 user not authenticated
+     * @response 403 missing required list permission: edit
+     */
+    delete<ListsRoute.ListRoute.ItemsRoute> {
+        val userId = userIdFromSessionOrThrow()
+        val list = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.list_id,
+            userId = userId,
+            authorizationLevel = ListAuthorizationLevel.EDITOR
+        ) ?: return@delete call.respond(HttpStatusCode.NotFound)
+
+        val itemIds = call.receive<List<IxId<ItemData>>>()
+        if (itemIds.isEmpty())
+            return@delete call.respond(HttpStatusCode.BadRequest, "you didn't provide any item id, provide at least one")
+
+        val deleted = itemDao.delete(itemIds)
+
+        call.respond(HttpStatusCode.OK)
+
+        if (deleted) {
+            emitWebsocketEventForUsers(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.ITEMS_DELETED,
+                content = WebsocketEventContent.ItemsDeleteEventContent(itemIds),
+                users = list.getUsersWithAccess()
+            )
+
+            val unconnectedTasks = itemIds.map { itemId -> taskDao.getAllConnectedToItem(itemId) }.flatten()
+            emitWebsocketEventForUsers(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.TASKS_UPDATED,
+                content = WebsocketEventContent.TasksUpdatedEventContent(unconnectedTasks),
+                users = unconnectedTasks.map { task -> task.user_id }.distinct(),
+                includeCurrentSession = unconnectedTasks.any { task -> task.user_id == userId }
+            )
+        }
     }
 }

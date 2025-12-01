@@ -55,9 +55,21 @@ sealed class WebsocketEventContent {
     ) : WebsocketEventContent()
 
     @Serializable
+    @SerialName("ITEMS_CREATE_OR_UPDATE")
+    data class ItemsCreateOrUpdateEventContent(
+        val items: List<ItemData>
+    ) : WebsocketEventContent()
+
+    @Serializable
     @SerialName("ITEM_DELETE")
     data class ItemDeleteEventContent(
         @Contextual val itemId: IxId<ItemData>
+    ) : WebsocketEventContent()
+
+    @Serializable
+    @SerialName("ITEMS_DELETE")
+    data class ItemsDeleteEventContent(
+        @Contextual val itemIds: List<IxId<ItemData>>
     ) : WebsocketEventContent()
 
 
@@ -86,6 +98,12 @@ sealed class WebsocketEventContent {
     @SerialName("TASK_CREATE_OR_UPDATE")
     data class TaskCreateOrUpdateEventContent(
         val task: TaskData
+    ) : WebsocketEventContent()
+
+    @Serializable
+    @SerialName("TASKS_CREATE_OR_UPDATE")
+    data class TasksUpdatedEventContent(
+        val tasks: List<TaskData>
     ) : WebsocketEventContent()
 
     @Serializable

@@ -64,6 +64,13 @@ class ItemDao(
         return itemDBI.setCompletion(itemId, completed)
     }
 
+    suspend fun setCompletion(
+        itemIds: List<IxId<ItemData>>,
+        completed: Boolean,
+    ): List<ItemData> {
+        return itemDBI.setCompletion(itemIds, completed)
+    }
+
     suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
@@ -71,8 +78,20 @@ class ItemDao(
         return itemDBI.update(itemId, itemUpdateRequestData)
     }
 
+    suspend fun update(
+        items: List<ItemData.MultipleItemUpdateRequestData>,
+    ): List<ItemData> {
+        return itemDBI.update(items)
+    }
+
     suspend fun delete(itemId: IxId<ItemData>): Boolean {
         val deleted = itemDBI.delete(itemId)
+
+        return deleted
+    }
+
+    suspend fun delete(itemIds: List<IxId<ItemData>>): Boolean {
+        val deleted = itemDBI.delete(itemIds)
 
         return deleted
     }
