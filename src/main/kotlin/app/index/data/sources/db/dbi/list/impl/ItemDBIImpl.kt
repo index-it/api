@@ -136,7 +136,7 @@ class ItemDBIImpl : ItemDBI {
                     ?.let { updatedItems.add(ItemEntity.wrapRow(it).toData()) }
             }
 
-            // we could otherwise use batchUpsert but I wanna avoid risking inserting
+            // we could otherwise use batchUpsert, but I wanna avoid risking inserting
 //            return ItemTable.batchUpsert(items) { item ->
 //                this[ItemTable.id] = item.id.toEntityId(ItemTable)
 //                this[ItemTable.category] = item.category_id?.toEntityId(CategoryTable)
@@ -156,6 +156,6 @@ class ItemDBIImpl : ItemDBI {
     override suspend fun delete(
         itemIds: List<IxId<ItemData>>
     ) : Boolean = dbQuery {
-        ItemTable.deleteWhere { itemsFilter(itemIds) } } > 0
+        ItemTable.deleteWhere { itemsFilter(itemIds) } > 0
     }
 }
