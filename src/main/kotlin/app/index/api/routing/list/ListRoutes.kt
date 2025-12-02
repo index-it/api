@@ -42,6 +42,9 @@ class ListsRoute {
             @Resource("completion")
             class CompletionRoute(val parent: ItemRoute, val completed: Boolean)
 
+            @Resource("move")
+            class MoveRoute(val parent: ItemsRoute)
+
             @Resource("{item_id}")
             class ItemRoute(
                 val parent: ItemsRoute,

@@ -78,10 +78,10 @@ class ItemDao(
         return itemDBI.update(itemId, itemUpdateRequestData)
     }
 
-    suspend fun update(
-        items: List<ItemData.MultipleItemUpdateRequestData>,
+    suspend fun move(
+        data: ItemData.ItemsMoveRequestData,
     ): List<ItemData> {
-        return itemDBI.update(items)
+        return itemDBI.move(data)
     }
 
     suspend fun delete(itemId: IxId<ItemData>): Boolean {

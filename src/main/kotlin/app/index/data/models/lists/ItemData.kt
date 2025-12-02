@@ -55,6 +55,7 @@ data class ItemData(
 
     @Serializable
     data class ItemUpdateRequestData(
+        @Contextual val list_id: IxId<ListData>? = null,
         @Contextual val category_id: IxId<CategoryData>? = null,
         val name: String,
         val link: String? = null,
@@ -76,8 +77,9 @@ data class ItemData(
     }
 
     @Serializable
-    data class MultipleItemUpdateRequestData(
-        @Contextual val id: IxId<ItemData>,
+    data class ItemsMoveRequestData(
+        val ids: List<@Contextual IxId<ItemData>>,
+        @Contextual val list_id: IxId<ListData>? = null,
         @Contextual val category_id: IxId<CategoryData>? = null,
     )
 

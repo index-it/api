@@ -122,25 +122,19 @@ class ItemDBIImpl : ItemDBI {
             }
         }
 
-    override suspend fun update(
-        items: List<ItemData.MultipleItemUpdateRequestData>
+    override suspend fun move(
+        data: ItemData.ItemsMoveRequestData
     ): List<ItemData> {
         val updatedItems = mutableListOf<ItemData>()
 
         dbQuery {
-            items.forEach { item ->
-                ItemTable.updateReturning(where = { itemFilter(item.id) }) {
-                    it[category] = item.category_id?.toEntityId(CategoryTable)
-                }
-                    .firstOrNull()
-                    ?.let { updatedItems.add(ItemEntity.wrapRow(it).toData()) }
+            ItemTable.updateReturning(where = { itemsFilter(data.ids) }) {
+                if (data.list_id != null)
+                    it[list] = data.list_id.toEntityId(ListTable)
+                it[category] = data.category_id?.toEntityId(CategoryTable)
+            }.map {
+                ItemEntity.wrapRow(it).toData()
             }
-
-            // we could otherwise use batchUpsert, but I wanna avoid risking inserting
-//            return ItemTable.batchUpsert(items) { item ->
-//                this[ItemTable.id] = item.id.toEntityId(ItemTable)
-//                this[ItemTable.category] = item.category_id?.toEntityId(CategoryTable)
-//            }.map { ItemEntity.wrapRow(it).toData() }
         }
 
         return updatedItems

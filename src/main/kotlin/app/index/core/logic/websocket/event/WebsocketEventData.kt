@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 data class WebsocketEventData(
     @Contextual val fromSessionId: IxId<UserAuthSessionData>?,
     @Contextual val fromUserId: IxId<UserData>?,
-    val targetUsers: List<@Contextual IxId<UserData>>,
+    val targetUsers: Set<@Contextual IxId<UserData>>,
     val type: WebsocketEventType,
     val inclusive: Boolean,
     val content: WebsocketEventContent

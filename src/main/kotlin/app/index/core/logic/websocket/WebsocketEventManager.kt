@@ -84,7 +84,7 @@ class WebsocketEventManager(
         fromUserId: IxId<UserData>?,
         eventType: WebsocketEventType,
         eventData: WebsocketEventContent,
-        users: List<IxId<UserData>>,
+        users: Set<IxId<UserData>>,
         includeCurrentSession: Boolean
     ) {
         val websocketEventData = WebsocketEventData(

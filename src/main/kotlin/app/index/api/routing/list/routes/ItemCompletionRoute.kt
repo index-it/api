@@ -81,7 +81,7 @@ fun Route.itemCompletionRoute() {
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.TASKS_UPDATED,
             content = WebsocketEventContent.TasksUpdatedEventContent(updatedTasks),
-            users = updatedTasks.map { task -> task.user_id },
+            users = updatedTasks.map { task -> task.user_id }.toSet(),
             includeCurrentSession = updatedTasks.any { task -> task.user_id == userId }
         )
     }
@@ -142,7 +142,7 @@ fun Route.itemCompletionRoute() {
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.TASK_UPDATED,
                 content = WebsocketEventContent.TaskCreateOrUpdateEventContent(updateTask),
-                users = listOf(updateTask.user_id),
+                users = setOf(updateTask.user_id),
                 includeCurrentSession = updateTask.user_id == userId
             )
         }

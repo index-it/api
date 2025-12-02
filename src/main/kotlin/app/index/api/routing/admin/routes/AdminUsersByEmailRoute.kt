@@ -76,7 +76,7 @@ fun Route.adminUsersByEmailRoute() {
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
             content = WebsocketEventContent.EmptyEventContent,
-            users = listOf(userId)
+            users = setOf(userId)
         )
     }
 }

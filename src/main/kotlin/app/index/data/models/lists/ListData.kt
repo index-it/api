@@ -33,7 +33,7 @@ data class ListData(
     /**
      * Returns a list of user ids that have access to this list
      */
-    fun getUsersWithAccess() = viewers + editors + user_id
+    fun getUsersWithAccess() = (viewers + editors + user_id).toSet()
 
     @Serializable
     data class ListCreateRequestData(

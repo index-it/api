@@ -43,8 +43,8 @@ interface ItemDBI : DBI {
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
     ): ItemData?
 
-    suspend fun update(
-        items: List<ItemData.MultipleItemUpdateRequestData>
+    suspend fun move(
+        data: ItemData.ItemsMoveRequestData
     ): List<ItemData>
 
     suspend fun delete(

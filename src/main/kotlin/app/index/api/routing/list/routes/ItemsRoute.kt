@@ -101,38 +101,71 @@ fun Route.itemsRoute() {
     }
 
     /**
-     * updates multiple items
+     * move items to a different list
      *
      * @tag items
      * @operationId update-item
      * @path list_id the id of the list
      * @path item_id the id of the item
-     * @requestBody [List] of [ItemData.MultipleItemUpdateRequestData]
+     * @requestBody [ItemData.ItemsMoveRequestData]
      * @response 200 item data
      * @response 400 invalid parameters
      * @response 401 user not authenticated
      * @response 403 missing required list permission: edit
      * @response 404 item or list not found
      */
-    put<ListsRoute.ListRoute.ItemsRoute> {
-        val list = ListAuthorizationUseCase.getListIfAuthorized(
-            listId = it.parent.list_id,
-            userId = userIdFromSessionOrThrow(),
+    put<ListsRoute.ListRoute.ItemsRoute.MoveRoute> {
+        val userId = userIdFromSessionOrThrow()
+        val originalList = ListAuthorizationUseCase.getListIfAuthorized(
+            listId = it.parent.parent.list_id,
+            userId = userId,
             authorizationLevel = ListAuthorizationLevel.EDITOR
         ) ?: return@put call.respond(HttpStatusCode.NotFound)
 
-        val itemsToUpdate = call.receive<List<ItemData.MultipleItemUpdateRequestData>>()
+        val updateData = call.receive<ItemData.ItemsMoveRequestData>()
 
-        val newItems = itemDao.update(itemsToUpdate)
+        val newList = if (updateData.list_id != null && updateData.list_id != it.parent.parent.list_id) {
+            ListAuthorizationUseCase.getListIfAuthorized(
+                listId = updateData.list_id,
+                userId = userId,
+                authorizationLevel = ListAuthorizationLevel.EDITOR
+            ) ?: return@put call.respond(HttpStatusCode.NotFound)
+        } else null
+
+        val newItems = itemDao.move(updateData)
 
         call.respond(newItems)
 
-        emitWebsocketEventForUsers(
-            websocketEventManager = websocketEventManager,
-            type = WebsocketEventType.ITEMS_UPDATED,
-            content = WebsocketEventContent.ItemsCreateOrUpdateEventContent(newItems),
-            users = list.getUsersWithAccess()
-        )
+        if (newList != null) {
+            val usersWithAccessToNewList = newList.getUsersWithAccess()
+            val usersOnlyInOriginalList = originalList.getUsersWithAccess() - usersWithAccessToNewList
+
+            if (usersWithAccessToNewList.isNotEmpty()) {
+                emitWebsocketEventForUsers(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.ITEMS_UPDATED,
+                    content = WebsocketEventContent.ItemsCreateOrUpdateEventContent(newItems),
+                    users = usersWithAccessToNewList
+                )
+            }
+
+            if (usersOnlyInOriginalList.isNotEmpty()) {
+                emitWebsocketEventForUsers(
+                    websocketEventManager = websocketEventManager,
+                    type = WebsocketEventType.ITEMS_DELETED,
+                    content = WebsocketEventContent.ItemsDeleteEventContent(newItems.map { it.id }),
+                    users = usersOnlyInOriginalList
+                )
+            }
+        } else {
+            emitWebsocketEventForUsers(
+                websocketEventManager = websocketEventManager,
+                type = WebsocketEventType.ITEMS_UPDATED,
+                content = WebsocketEventContent.ItemsCreateOrUpdateEventContent(newItems),
+                users = originalList.getUsersWithAccess()
+            )
+        }
+
     }
 
     /**
@@ -175,7 +208,7 @@ fun Route.itemsRoute() {
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.TASKS_UPDATED,
                 content = WebsocketEventContent.TasksUpdatedEventContent(unconnectedTasks),
-                users = unconnectedTasks.map { task -> task.user_id }.distinct(),
+                users = unconnectedTasks.map { task -> task.user_id }.toSet(),
                 includeCurrentSession = unconnectedTasks.any { task -> task.user_id == userId }
             )
         }
