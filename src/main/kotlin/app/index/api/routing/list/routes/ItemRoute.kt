@@ -121,7 +121,7 @@ fun Route.itemRoute() {
                     websocketEventManager = websocketEventManager,
                     type = WebsocketEventType.TASK_UPDATED,
                     content = WebsocketEventContent.TaskCreateOrUpdateEventContent(unconnectedTask),
-                    users = listOf(unconnectedTask.user_id),
+                    users = setOf(unconnectedTask.user_id),
                     includeCurrentSession = unconnectedTask.user_id == userId
                 )
             }

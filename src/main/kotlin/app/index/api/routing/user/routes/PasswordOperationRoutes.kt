@@ -97,7 +97,7 @@ fun Route.passwordOperationRoutes() {
                 fromUserId = user.id,
                 eventType = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
                 eventData = WebsocketEventContent.EmptyEventContent,
-                users = listOf(user.id),
+                users = setOf(user.id),
                 includeCurrentSession = false
             )
         } catch (e: Exception) {

@@ -21,6 +21,12 @@ class ItemDBIImpl : ItemDBI {
         (ItemTable.id eq itemId.toEntityId(ItemTable))
     }
 
+    private fun itemsFilter(
+        itemIds: List<IxId<ItemData>>,
+    ) = Op.build {
+        ItemTable.id inList itemIds.map { it.toEntityId(ItemTable) }
+    }
+
     override suspend fun create(itemData: ItemData) {
         dbQuery {
             ItemEntity.new(itemData.id.id) {
@@ -87,6 +93,19 @@ class ItemDBIImpl : ItemDBI {
             }
         }
 
+    override suspend fun setCompletion(
+        itemIds: List<IxId<ItemData>>,
+        completed: Boolean,
+    ): List<ItemData> =
+        dbQuery {
+            ItemTable.updateReturning(where = { itemsFilter(itemIds) }) {
+                it[this.completed] = completed
+                it[this.completed_at] = if (completed) DatetimeUtils.currentJavaInstant() else null
+            }.map {
+                ItemEntity.wrapRow(it).toData()
+            }
+        }
+
     override suspend fun update(
         itemId: IxId<ItemData>,
         itemUpdateRequestData: ItemData.ItemUpdateRequestData,
@@ -103,9 +122,34 @@ class ItemDBIImpl : ItemDBI {
             }
         }
 
+    override suspend fun move(
+        data: ItemData.ItemsMoveRequestData
+    ): List<ItemData> {
+        val updatedItems = mutableListOf<ItemData>()
+
+        dbQuery {
+            ItemTable.updateReturning(where = { itemsFilter(data.ids) }) {
+                if (data.list_id != null)
+                    it[list] = data.list_id.toEntityId(ListTable)
+                it[category] = data.category_id?.toEntityId(CategoryTable)
+            }.map {
+                ItemEntity.wrapRow(it).toData()
+            }
+        }
+
+        return updatedItems
+    }
+
+
     override suspend fun delete(
         itemId: IxId<ItemData>,
     ) : Boolean = dbQuery {
         ItemTable.deleteWhere { itemFilter(itemId) } > 0
+    }
+
+    override suspend fun delete(
+        itemIds: List<IxId<ItemData>>
+    ) : Boolean = dbQuery {
+        ItemTable.deleteWhere { itemsFilter(itemIds) } > 0
     }
 }

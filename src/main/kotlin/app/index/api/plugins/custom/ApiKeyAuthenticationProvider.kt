@@ -2,11 +2,7 @@ package app.index.api.plugins.custom
 
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.AuthenticationConfig
-import io.ktor.server.auth.AuthenticationContext
-import io.ktor.server.auth.AuthenticationFailedCause
-import io.ktor.server.auth.AuthenticationProvider
-import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 

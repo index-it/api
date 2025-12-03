@@ -58,7 +58,7 @@ fun Route.revenueCatWebhookRoute() {
                 websocketEventManager = websocketEventManager,
                 type = WebsocketEventType.USER_UPDATED,
                 content = WebsocketEventContent.UserUpdateEventContent(updatedUserData.getResponseDto()),
-                users = listOf(updatedUserData.id)
+                users = setOf(updatedUserData.id)
             )
         }
     }

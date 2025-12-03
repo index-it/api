@@ -34,7 +34,7 @@ fun RoutingContext.emitWebsocketEventForCurrentSessionUser(
             fromUserId = authSession.userId,
             eventType = type,
             eventData = content,
-            users = listOf(authSession.userId),
+            users = setOf(authSession.userId),
             includeCurrentSession = includeCurrentSession
         )
     } catch (e: Exception) {
@@ -46,7 +46,7 @@ fun RoutingContext.emitWebsocketEventForUsers(
     websocketEventManager: WebsocketEventManager,
     type: WebsocketEventType,
     content: WebsocketEventContent,
-    users: List<IxId<UserData>>,
+    users: Set<IxId<UserData>>,
     includeCurrentSession: Boolean = false
 ) {
     val authSession = this.call.principal<UserAuthSessionData>()

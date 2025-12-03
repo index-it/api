@@ -52,7 +52,7 @@ fun Route.adminUsersByIdRoute() {
             websocketEventManager = websocketEventManager,
             type = WebsocketEventType.USER_AUTH_SESSIONS_INVALIDATED,
             content = WebsocketEventContent.EmptyEventContent,
-            users = listOf(it.user_id)
+            users = setOf(it.user_id)
         )
     }
 }
