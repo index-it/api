@@ -69,7 +69,7 @@ sealed class WebsocketEventContent {
     @Serializable
     @SerialName("ITEMS_DELETE")
     data class ItemsDeleteEventContent(
-        @Contextual val itemIds: List<IxId<ItemData>>
+        val itemIds: List<@Contextual IxId<ItemData>>
     ) : WebsocketEventContent()
 
 

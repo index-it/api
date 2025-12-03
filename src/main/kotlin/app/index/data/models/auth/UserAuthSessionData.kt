@@ -13,4 +13,4 @@ data class UserAuthSessionData(
     val iat: Long,
     val deviceName: String?,
     val ip: String,
-) : Principal
+)
