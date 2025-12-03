@@ -12,6 +12,18 @@ object GoogleCloudConfig {
     var location: String = "us-east1"
 
     /**
+     * When creating jobs or tasks using Google Cloud Tasks / Scheduler
+     * we configure authentication using OIDC tokens.
+     * Se when we receive an http request from a task or a job,
+     * we validate the token received by checking the email and audience correspond.
+     */
+    @ConfigurationProperty("auth.token.email")
+    lateinit var authTokenEmail: String
+    @ConfigurationProperty("auth.token.audience")
+    lateinit var authTokenAudience: String
+
+
+    /**
      * This **must be set as an environment variable** in order to work with FCM and Google Cloud services in production.
      *
      * For example:

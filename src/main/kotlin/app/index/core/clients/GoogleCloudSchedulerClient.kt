@@ -42,6 +42,10 @@ class GoogleCloudSchedulerClient {
         if (!jobExists) {
             val httpTarget = HttpTarget.newBuilder()
                 .setHttpMethod(HttpMethod.GET)
+                .setOidcToken(OidcToken.newBuilder()
+                    .setServiceAccountEmail(GoogleCloudConfig.authTokenEmail)
+                    .setAudience(GoogleCloudConfig.authTokenAudience)
+                )
                 .setUri(JobConfig.dailyJobWebhookUrl)
 
             val parent = LocationName.of(GoogleCloudConfig.project, GoogleCloudConfig.location).toString()

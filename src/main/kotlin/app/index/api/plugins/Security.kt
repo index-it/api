@@ -2,6 +2,7 @@ package app.index.api.plugins
 
 import app.index.api.plugins.custom.apiKey
 import app.index.config.ApiConfig
+import app.index.config.GoogleCloudConfig
 import app.index.config.RevenueCatConfig
 import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.DatetimeUtils
@@ -13,6 +14,9 @@ import app.index.data.daos.user.UserDao
 import app.index.data.models.auth.UserAuthSessionData
 import app.index.data.models.auth.UserSessionCookie
 import app.index.data.models.user.UserData
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
+import com.google.api.client.http.apache.v2.ApacheHttpTransport
+import com.google.api.client.json.gson.GsonFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -31,6 +35,7 @@ object AuthenticationMethods {
     const val USER_SESSION_AUTH = "user_session_auth"
     const val ADMIN_BEARER_AUTH = "admin_bearer_auth"
     const val REVENUECAT_WEBHOOKS = "revenuecat_webhooks"
+    const val GOOGLE_CLOUD_OIDC = "google_cloud_oidc"
 }
 
 /**
@@ -42,6 +47,10 @@ fun Application.configureSecurity() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
     val passwordEncoder by inject<PasswordEncoder>()
+
+    val googleIdTokenVerifier = GoogleIdTokenVerifier.Builder(ApacheHttpTransport(), GsonFactory())
+        .setAudience(listOf(GoogleCloudConfig.authTokenAudience))
+        .build()
 
     install(Sessions) {
         cookie<UserSessionCookie>("user_session_id") {
@@ -104,6 +113,17 @@ fun Application.configureSecurity() {
                 } else {
                     null
                 }
+            }
+        }
+
+        bearer(AuthenticationMethods.GOOGLE_CLOUD_OIDC) {
+            authenticate { authData ->
+                val idToken = googleIdTokenVerifier.verify(authData.token) ?: return@authenticate null
+
+                if (idToken.payload.email == GoogleCloudConfig.authTokenEmail)
+                    UserIdPrincipal("google_cloud_oidc")
+                else
+                    null
             }
         }
 
