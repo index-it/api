@@ -80,6 +80,11 @@ class GoogleCloudTasksClient {
             .setHttpMethod(HttpMethod.GET)
             .setUrl(webhookUrl)
             .putHeaders("Content-Type", "application/json")
+            .setOidcToken(
+                OidcToken.newBuilder()
+                    .setServiceAccountEmail(GoogleCloudConfig.authTokenEmail)
+                    .setAudience(GoogleCloudConfig.authTokenAudience)
+            )
 
         val parent = QueueName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName).toString()
         val jobName = TaskName.of(GoogleCloudConfig.project, GoogleCloudConfig.location, JobConfig.taskReminderJobQueueName, "$id-$rescheduleCount").toString()

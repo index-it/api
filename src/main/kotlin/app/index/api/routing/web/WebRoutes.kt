@@ -31,7 +31,9 @@ class WebhookRoute {
 
 fun Route.webRoutes() {
     notifyRoute()
-    webhookRoute()
+    authenticate(AuthenticationMethods.GOOGLE_CLOUD_OIDC) {
+        webhookRoute()
+    }
     authenticate(AuthenticationMethods.REVENUECAT_WEBHOOKS) {
         revenueCatWebhookRoute()
     }
