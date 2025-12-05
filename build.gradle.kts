@@ -75,6 +75,9 @@ tasks {
     shadowJar {
         archiveFileName.set("index-api.jar")
         mergeServiceFiles()
+        // TODO: Remove once ktor fixes this
+        // https://github.com/flyway/flyway/issues/4170
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }
 
