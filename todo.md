@@ -1,6 +1,5 @@
 - [x] fix max 30 days reminders
-- [ ] multiple items actions
-- [ ] custom ordering
-- [ ] calendar integration
-- [ ] location based reminders
+- [x] multiple items actions
+- [x] calendar integration: handled by frontend
+- [x] location based reminders: this will also be handled by frontend directly
 - [ ] deploy with ArgoCD
