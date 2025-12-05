@@ -71,6 +71,13 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks {
+    shadowJar {
+        archiveFileName.set("index-api.jar")
+        mergeServiceFiles()
+    }
+}
+
 jib {
     to {
         image = "ghcr.io/${project.property("ghcrOrg")}/$name"
