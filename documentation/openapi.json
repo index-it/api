@@ -1569,6 +1569,169 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "summary": "deletes multiple items",
+                "tags": [
+                    "items"
+                ],
+                "operationId": "delete-items",
+                "parameters": [
+                    {
+                        "name": "list_id",
+                        "in": "path",
+                        "description": "the id of the list",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "list_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/IxId"
+                        }
+                    },
+                    {
+                        "name": "completed",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "items deleted"
+                    },
+                    "401": {
+                        "description": "user not authenticated"
+                    },
+                    "403": {
+                        "description": "missing required list permission: edit"
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "user_session_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/IxId"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lists/{list_id}/items/move": {
+            "put": {
+                "summary": "move items to a different list",
+                "tags": [
+                    "items"
+                ],
+                "operationId": "update-item",
+                "parameters": [
+                    {
+                        "name": "list_id",
+                        "in": "path",
+                        "description": "the id of the list",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "item_id",
+                        "in": "path",
+                        "description": "the id of the item",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "list_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/IxId"
+                        }
+                    },
+                    {
+                        "name": "completed",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "item data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ItemData"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid parameters"
+                    },
+                    "401": {
+                        "description": "user not authenticated"
+                    },
+                    "403": {
+                        "description": "missing required list permission: edit"
+                    },
+                    "404": {
+                        "description": "item or list not found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_session_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ItemsMoveRequestData"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/lists/{list_id}/access/users": {
@@ -3314,7 +3477,12 @@
                     "200": {
                         "description": "handled"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "google_cloud_oidc": []
+                    }
+                ]
             }
         },
         "/webhook/daily-job": {
@@ -3328,7 +3496,12 @@
                     "200": {
                         "description": "handled"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "google_cloud_oidc": []
+                    }
+                ]
             }
         }
     },
@@ -3497,6 +3670,22 @@
                     }
                 }
             },
+            "IxId": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "object",
+                        "properties": {
+                            "mostSigBits": {
+                                "type": "integer"
+                            },
+                            "leastSigBits": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
             "ItemData": {
                 "type": "object",
                 "properties": {
@@ -3550,6 +3739,7 @@
             "ItemUpdateRequestData": {
                 "type": "object",
                 "properties": {
+                    "list_id": {},
                     "category_id": {},
                     "name": {
                         "type": "string"
@@ -3575,6 +3765,32 @@
                     "note": {
                         "type": "string"
                     }
+                }
+            },
+            "ItemsMoveRequestData": {
+                "type": "object",
+                "properties": {
+                    "ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "object",
+                                    "properties": {
+                                        "mostSigBits": {
+                                            "type": "integer"
+                                        },
+                                        "leastSigBits": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "list_id": {},
+                    "category_id": {}
                 }
             },
             "ListSingleUserAccessInfoResponseData": {
