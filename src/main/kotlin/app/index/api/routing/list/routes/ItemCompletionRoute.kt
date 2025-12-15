@@ -45,7 +45,7 @@ fun Route.itemCompletionRoute() {
         val userId = userIdFromSessionOrThrow()
 
         val list = ListAuthorizationUseCase.getListIfAuthorized(
-            listId = it.parent.parent.parent.list_id,
+            listId = it.parent.parent.list_id,
             userId = userId,
             authorizationLevel = ListAuthorizationLevel.EDITOR
         ) ?: return@put call.respond(HttpStatusCode.NotFound)

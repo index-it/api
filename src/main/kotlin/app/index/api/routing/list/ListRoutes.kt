@@ -40,7 +40,7 @@ class ListsRoute {
         @Resource("items")
         class ItemsRoute(val parent: ListRoute, val completed: Boolean? = null) {
             @Resource("completion")
-            class CompletionRoute(val parent: ItemRoute, val completed: Boolean)
+            class CompletionRoute(val parent: ItemsRoute, val completed: Boolean)
 
             @Resource("move")
             class MoveRoute(val parent: ItemsRoute)
