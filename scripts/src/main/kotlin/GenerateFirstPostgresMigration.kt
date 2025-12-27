@@ -2,8 +2,6 @@ import app.index.config.PostgresConfig
 import app.index.config.core.ConfigurationManager
 import app.index.config.core.ConfigurationReader
 import app.index.data.sources.db.schemas.lists.*
-import app.index.data.sources.db.schemas.suggestions.ColorSuggestionTable
-import app.index.data.sources.db.schemas.suggestions.NameSuggestionTable
 import app.index.data.sources.db.schemas.tasks.SubTaskTable
 import app.index.data.sources.db.schemas.tasks.TaskReminderJobTable
 import app.index.data.sources.db.schemas.tasks.TaskReminderTable
@@ -52,8 +50,6 @@ fun main() {
             TaskReminderJobTable,
             SubTaskTable,
             ReleaseNotifyTable,
-            ColorSuggestionTable,
-            NameSuggestionTable,
             FCMRegistrationTokenTable
         )
     }
