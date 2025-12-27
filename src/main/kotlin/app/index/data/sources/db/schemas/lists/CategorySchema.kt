@@ -39,7 +39,7 @@ object CategoryTable : UUIDTable() {
         onDelete = ReferenceOption.CASCADE,
     ).index()
     val name = varchar("ix_name", 50)
-    val color = varchar("color", 9)
+    val color = varchar("color", 9).nullable()
     val created_at = timestamp("created_at")
     val edited_at = timestamp("edited_at").nullable()
 }

@@ -22,14 +22,14 @@ data class CategoryData(
     @Contextual val user_id: IxId<UserData>,
     @Contextual val list_id: IxId<ListData>,
     var name: String,
-    var color: String, // Represented as #010101 hex color
+    var color: String?, // Represented as #010101 hex color
     val created_at: Long = DatetimeUtils.currentMillis(),
     val edited_at: Long? = null,
 ) {
     @Serializable
     data class CategoryCreateRequestData(
         val name: String,
-        val color: String,
+        val color: String? = null,
     ) : Validatable<CategoryCreateRequestData> {
         override fun validate() =
             Validation {
@@ -37,7 +37,7 @@ data class CategoryData(
                     minLength(Validations.Category.MIN_NAME_LENGTH)
                     maxLength(Validations.Category.MAX_NAME_LENGTH)
                 }
-                CategoryCreateRequestData::color {
+                CategoryCreateRequestData::color ifPresent {
                     pattern(RegexPatterns.colorPattern)
                 }
             }.invoke(this)
@@ -46,7 +46,7 @@ data class CategoryData(
     @Serializable
     data class CategoryUpdateRequestData(
         val name: String,
-        val color: String,
+        val color: String? = null,
     ) : Validatable<CategoryUpdateRequestData> {
         override fun validate() =
             Validation {
@@ -54,7 +54,7 @@ data class CategoryData(
                     minLength(Validations.Category.MIN_NAME_LENGTH)
                     maxLength(Validations.Category.MAX_NAME_LENGTH)
                 }
-                CategoryUpdateRequestData::color {
+                CategoryUpdateRequestData::color ifPresent {
                     pattern(RegexPatterns.colorPattern)
                 }
             }.invoke(this)

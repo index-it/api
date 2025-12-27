@@ -1,0 +1,1 @@
+ALTER TABLE category ALTER COLUMN color DROP NOT NULL;
