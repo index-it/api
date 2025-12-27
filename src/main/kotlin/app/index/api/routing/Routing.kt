@@ -5,7 +5,6 @@ import app.index.api.routing.auth.authRoutes
 import app.index.api.routing.kube.kubeRoutes
 import app.index.api.routing.list.listRoutes
 import app.index.api.routing.pro.proRoutes
-import app.index.api.routing.suggestion.suggestionRoutes
 import app.index.api.routing.task.taskRoutes
 import app.index.api.routing.user.userRoutes
 import app.index.api.routing.web.webRoutes
@@ -31,7 +30,6 @@ fun Application.configureRouting() {
         userRoutes()
         listRoutes()
         taskRoutes()
-        suggestionRoutes()
         proRoutes()
         websocketRoutes()
     }
