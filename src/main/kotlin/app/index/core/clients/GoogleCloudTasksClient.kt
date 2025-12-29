@@ -81,6 +81,8 @@ class GoogleCloudTasksClient {
             .setUrl(webhookUrl)
             .putHeaders("Content-Type", "application/json")
             .setOidcToken(
+                // this requires 'iam.serviceAccounts.actAs' permission
+                // even if the email is the same as the one used for authentication to gcp
                 OidcToken.newBuilder()
                     .setServiceAccountEmail(GoogleCloudConfig.authTokenEmail)
                     .setAudience(GoogleCloudConfig.authTokenAudience)

@@ -42,6 +42,8 @@ class GoogleCloudSchedulerClient {
         if (!jobExists) {
             val httpTarget = HttpTarget.newBuilder()
                 .setHttpMethod(HttpMethod.GET)
+                // this requires 'iam.serviceAccounts.actAs' permission
+                // even if the email is the same as the one used for authentication to gcp
                 .setOidcToken(OidcToken.newBuilder()
                     .setServiceAccountEmail(GoogleCloudConfig.authTokenEmail)
                     .setAudience(GoogleCloudConfig.authTokenAudience)
