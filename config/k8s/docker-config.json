@@ -1,0 +1,21 @@
+{
+	"auths": {
+		"eu.gcr.io": {}
+	},
+	"credsStore": "desktop",
+	"credHelpers": {
+		"europe-docker.pkg.dev": "gcloud"
+	},
+	"currentContext": "desktop-linux",
+	"plugins": {
+		"debug": {
+			"hooks": "exec"
+		},
+		"scout": {
+			"hooks": "pull,buildx build"
+		}
+	},
+	"features": {
+		"hooks": "true"
+	}
+}
