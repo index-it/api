@@ -25,7 +25,7 @@ object Validations {
         const val MIN_NAME_LENGTH = 1
         const val MAX_NAME_LENGTH = 200
 
-        const val MAX_LINK_LENGTH = 200
+        const val MAX_LINK_LENGTH = 500
 
         const val MAX_NOTE_LENGTH = 3000
 
