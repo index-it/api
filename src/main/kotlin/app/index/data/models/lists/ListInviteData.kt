@@ -30,13 +30,13 @@ data class ListInviteData(
     @Serializable
     data class ListInviteCreateRequestData(
         var editor: Boolean,
-        var maxUsages: Int? = null,
-        var expiresAt: LocalDateTime? = null,
+        var max_usages: Int? = null,
+        var expires_at: LocalDateTime? = null,
         val description: String? = null,
     ) : Validatable<ListInviteCreateRequestData> {
         override fun validate() =
             Validation {
-                ListInviteCreateRequestData::maxUsages ifPresent {
+                ListInviteCreateRequestData::max_usages ifPresent {
                     minimum(Validations.ListInvite.MINIMUM_USAGES)
                     maximum(Validations.ListInvite.MAXIMUM_USAGES)
                 }

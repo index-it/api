@@ -79,9 +79,9 @@ fun Route.listAccessInvitesRoute() {
             token = hashedToken,
             listId = listId,
             editor = inviteData.editor,
-            maxUsages = inviteData.maxUsages,
+            maxUsages = inviteData.max_usages,
             description = inviteData.description,
-            expiresAt = inviteData.expiresAt
+            expiresAt = inviteData.expires_at
         )
 
         listInviteDao.create(listInviteData)
