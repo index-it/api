@@ -5,6 +5,7 @@ USER root
 # Create the shadowjar (chmod +x makes the gradlew script executable)
 RUN chmod +x ./gradlew
 RUN ./gradlew shadowJar --no-daemon
+# TODO: Readd when working
 # RUN ./gradlew buildOpenApi --no-daemon
 
 FROM eclipse-temurin:20

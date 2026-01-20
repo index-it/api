@@ -1,6 +1,7 @@
 package app.index.api.routing.list
 
 import app.index.api.plugins.AuthenticationMethods
+import app.index.api.routing.list.ListsRoute.ListRoute.AccessRoute.InvitesRoute
 import app.index.api.routing.list.routes.*
 import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.CategoryData
@@ -29,12 +30,6 @@ class ListsRoute {
                     val parent: InvitesRoute,
                     @Contextual val invite_id: IxId<ListInviteData>,
                 )
-
-                @Resource("accept-user")
-                class AcceptUserInvite(val parent: InvitesRoute, val token: String)
-
-                @Resource("accept")
-                class AcceptInvite(val parent: InvitesRoute, val token: String)
             }
 
             @Resource("users")
@@ -75,6 +70,12 @@ class ListsRoute {
             }
         }
     }
+
+    @Resource("accept-user-invite")
+    class AcceptUserInvite(val parent: InvitesRoute, val token: String)
+
+    @Resource("accept-invite")
+    class AcceptInvite(val parent: InvitesRoute, val token: String)
 }
 
 fun Route.listRoutes() {

@@ -39,7 +39,7 @@ import org.koin.ktor.ext.inject
      * @response 404 something went wrong
      * @response 405 you need to have an account to accept this invitation
      */
-    get<ListsRoute.ListRoute.AccessRoute.InvitesRoute.AcceptUserInvite> { request ->
+    get<ListsRoute.AcceptUserInvite> { request ->
         val listUserInviteData = listUserInviteDao.get(request.token)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
@@ -77,7 +77,7 @@ import org.koin.ktor.ext.inject
           * @response 404 invite either not found, expired, or already used
           * @response 405 invite expired or already used
           */
-         get<ListsRoute.ListRoute.AccessRoute.InvitesRoute.AcceptInvite> { request ->
+         get<ListsRoute.AcceptInvite> { request ->
              val userId = userIdFromSessionOrThrow()
 
              val listInviteData = listInviteDao.get(request.token)

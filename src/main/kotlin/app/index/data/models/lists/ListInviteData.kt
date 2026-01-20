@@ -46,4 +46,25 @@ data class ListInviteData(
                 }
             }.invoke(this)
     }
+
+    @Serializable
+    data class ListInviteResponseData(
+        @Contextual val id: IxId<ListInviteData>,
+        @Contextual val listId: IxId<ListData>,
+        val editor: Boolean,
+        val maxUsages: Int?,
+        val description: String?,
+        @Contextual val expiresAt: LocalDateTime?,
+        @Contextual val createdAt: Long = DatetimeUtils.currentMillis(),
+    )
+
+    fun asResponseData() = ListInviteResponseData(
+        id = id,
+        listId = listId,
+        editor = editor,
+        maxUsages = maxUsages,
+        description = description,
+        expiresAt = expiresAt,
+        createdAt = createdAt
+    )
 }

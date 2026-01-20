@@ -49,4 +49,4 @@ app-engine/app.yaml
 **-service-account.json
 
 docs
-.kotlin/errors
+.kotlin/

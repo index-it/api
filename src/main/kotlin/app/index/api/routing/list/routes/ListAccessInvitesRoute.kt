@@ -40,7 +40,7 @@ fun Route.listAccessInvitesRoute() {
             authorizationLevel = ListAuthorizationLevel.OWNER
         ) ?: return@get call.respond(HttpStatusCode.NotFound)
 
-        call.respond(listInviteDao.get(listId))
+        call.respond(listInviteDao.get(listId).map { invite -> invite.asResponseData() })
     }
 
     /**
