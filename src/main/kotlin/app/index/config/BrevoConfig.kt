@@ -32,6 +32,6 @@ object BrevoConfig {
     @ConfigurationProperty("reset.password.url")
     var passwordResetUrl: String = "https://index-it.app/reset-password"
 
-    @ConfigurationProperty("list.invite.url")
-    var listInviteUrl: String = "https://index-it.app/list-invite"
+    @ConfigurationProperty("list.user.invite.url")
+    var listUserInviteUrl: String = "https://index-it.app/callback/lists/accept-user-invitation"
 }
