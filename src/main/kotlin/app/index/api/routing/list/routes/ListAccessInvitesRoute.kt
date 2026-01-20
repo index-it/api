@@ -8,14 +8,17 @@ import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.data.daos.list.ListInviteDao
 import app.index.data.models.lists.ListAuthorizationLevel
 import app.index.data.models.lists.ListInviteData
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.delete
 import io.ktor.server.resources.get
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.routing.post
+import io.ktor.server.resources.post
 import org.koin.ktor.ext.inject
+
+private val logger = KotlinLogging.logger {  }
 
 fun Route.listAccessInvitesRoute() {
     val listInviteDao by inject<ListInviteDao>()
@@ -56,14 +59,19 @@ fun Route.listAccessInvitesRoute() {
      * @response 404 list not found
      */
     post<ListsRoute.ListRoute.AccessRoute.InvitesRoute> {
+        logger.info { "we here" }
         val listId = it.parent.parent.list_id
         val inviteData = call.receive<ListInviteData.ListInviteCreateRequestData>()
+
+        logger.info { "inviteData: $inviteData" }
 
         ListAuthorizationUseCase.getListIfAuthorized(
             listId = listId,
             userId = userIdFromSessionOrThrow(),
             authorizationLevel = ListAuthorizationLevel.OWNER
         ) ?: return@post call.respond(HttpStatusCode.NotFound)
+
+        logger.info { "we here 2" }
 
         val (token, hashedToken) = tokenGenerator.generate()
         val listInviteData = ListInviteData(
