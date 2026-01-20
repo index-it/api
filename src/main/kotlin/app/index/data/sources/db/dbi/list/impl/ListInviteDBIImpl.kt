@@ -7,13 +7,18 @@ import app.index.data.models.lists.ListData
 import app.index.data.models.lists.ListInviteData
 import app.index.data.sources.db.dbi.list.ListInviteDBI
 import app.index.data.sources.db.schemas.lists.*
+import app.index.data.sources.db.schemas.tasks.TaskEntity
+import app.index.data.sources.db.schemas.tasks.TaskTable
+import app.index.data.sources.db.schemas.tasks.toData
 import app.index.data.sources.db.toEntityId
 import kotlinx.datetime.toJavaLocalDateTime
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.minus
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.updateReturning
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
@@ -28,6 +33,13 @@ class ListInviteDBIImpl(
             }
         }
     }
+
+    override suspend fun decreaseUsages(id: IxId<ListInviteData>): ListInviteData? =
+        dbQuery {
+            ListInviteTable.updateReturning(where = { ListInviteTable.id eq id.toEntityId(ListInviteTable) }) {
+                it[this.max_usages] = max_usages - 1
+            }.firstOrNull()?.let { ListInviteEntity.wrapRow(it).toData() }
+        }
 
     override suspend fun get(token: String) =
         dbQuery {
@@ -45,8 +57,8 @@ class ListInviteDBIImpl(
                 .map { it.toData() }
         }
 
-    override suspend fun delete(inviteId: IxId<ListInviteData>) = dbQuery {
-        ListInviteTable.deleteWhere { ListInviteTable.id eq inviteId.toEntityId(ListInviteTable) } > 0
+    override suspend fun delete(id: IxId<ListInviteData>) = dbQuery {
+        ListInviteTable.deleteWhere { ListInviteTable.id eq id.toEntityId(ListInviteTable) } > 0
     }
 
     override suspend fun deleteExpired() {

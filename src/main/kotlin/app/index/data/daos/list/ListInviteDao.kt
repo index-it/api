@@ -12,11 +12,13 @@ class ListInviteDao(
 ) {
     suspend fun create(listInviteData: ListInviteData) = listInviteDBI.create(listInviteData)
 
+    suspend fun decreaseUsages(id: IxId<ListInviteData>) = listInviteDBI.decreaseUsages(id)
+
     suspend fun get(token: String): ListInviteData? = listInviteDBI.get(token)
 
     suspend fun get(listId: IxId<ListData>): List<ListInviteData> = listInviteDBI.get(listId)
 
-    suspend fun delete(inviteId: IxId<ListInviteData>): Boolean = listInviteDBI.delete(inviteId)
+    suspend fun delete(id: IxId<ListInviteData>): Boolean = listInviteDBI.delete(id)
 
     suspend fun deleteExpired() = listInviteDBI.deleteExpired()
 }

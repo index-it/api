@@ -102,6 +102,11 @@ import org.koin.ktor.ext.inject
              call.respond(updatedList)
 
              if (added) {
+                 val updatedInvite = listInviteDao.decreaseUsages(listInviteData.id)
+                 if (updatedInvite?.maxUsages != null && updatedInvite.maxUsages < 1) {
+                     listInviteDao.delete(listInviteData.id)
+                 }
+
                  emitWebsocketEventForUsers(
                      websocketEventManager = websocketEventManager,
                      type = WebsocketEventType.LIST_UPDATED,
