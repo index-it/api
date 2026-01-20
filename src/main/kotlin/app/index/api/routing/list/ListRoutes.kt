@@ -6,6 +6,7 @@ import app.index.core.logic.typedId.impl.IxId
 import app.index.data.models.lists.CategoryData
 import app.index.data.models.lists.ItemData
 import app.index.data.models.lists.ListData
+import app.index.data.models.lists.ListInviteData
 import io.ktor.resources.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
@@ -21,6 +22,15 @@ class ListsRoute {
     ) {
         @Resource("access")
         class AccessRoute(val parent: ListRoute) {
+            @Resource("invites")
+            class InvitesRoute(val parent: AccessRoute) {
+                @Resource("{invite_id}")
+                class InviteRoute(
+                    val parent: InvitesRoute,
+                    @Contextual val invite_id: IxId<ListInviteData>,
+                )
+            }
+
             @Resource("users")
             class UsersRoute(val parent: AccessRoute)
 
@@ -64,11 +74,13 @@ class ListsRoute {
 }
 
 fun Route.listRoutes() {
-    listAccessRoute()
+    listAcceptInvitationRoute()
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         listsRoute()
         listRoute()
+        listAccessInvitesRoute()
+        listAccessUsersRoute()
 
         categoriesRoute()
         categoryRoute()

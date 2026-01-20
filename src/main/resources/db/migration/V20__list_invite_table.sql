@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS listinvite (id uuid PRIMARY KEY, token VARCHAR(100) NOT NULL, id_list uuid NOT NULL, editor BOOLEAN NOT NULL, max_usages INT NULL, description VARCHAR(100) NULL, expires_at TIMESTAMP NULL, created_at TIMESTAMP NOT NULL, CONSTRAINT fk_listinvite_id_list__id FOREIGN KEY (id_list) REFERENCES list(id) ON DELETE CASCADE ON UPDATE RESTRICT);
+ALTER TABLE listinvite ADD CONSTRAINT listinvite_token_unique UNIQUE (token);
+CREATE INDEX listinvite_id_list ON listinvite (id_list);

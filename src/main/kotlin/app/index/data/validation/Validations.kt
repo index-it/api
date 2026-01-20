@@ -11,6 +11,21 @@ object Validations {
         """
     }
 
+    object ListInvite {
+        const val MIN_DESCRIPTION_LENGTH = 1
+        const val MAX_DESCRIPTION_LENGTH = 500
+
+        const val MINIMUM_USAGES = 1
+        const val MAXIMUM_USAGES = 10000
+
+        const val VALIDATIONS_SUMMARY = """
+            - description min length: $MIN_DESCRIPTION_LENGTH
+            - description max length: $MAX_DESCRIPTION_LENGTH
+            - minimum usages: $MINIMUM_USAGES
+            - maximum usages: $MAXIMUM_USAGES
+        """
+    }
+
     object Category {
         const val MIN_NAME_LENGTH = 1
         const val MAX_NAME_LENGTH = 100

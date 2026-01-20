@@ -6,7 +6,8 @@ import app.index.core.clients.GoogleCloudTasksClient
 import app.index.core.logic.DatetimeUtils
 import app.index.data.daos.auth.EmailVerificationDao
 import app.index.data.daos.auth.PasswordResetDao
-import app.index.data.daos.list.ListInvitationDao
+import app.index.data.daos.list.ListInviteDao
+import app.index.data.daos.list.ListUserInviteDao
 import app.index.data.daos.task.TaskReminderJobDao
 import app.index.data.daos.user.FCMRegistrationTokenDao
 import io.ktor.http.*
@@ -21,7 +22,8 @@ fun Route.webhookRoute() {
     val fcmClient by inject<FCMClient>()
     val emailVerificationDao by inject<EmailVerificationDao>()
     val passwordResetDao by inject<PasswordResetDao>()
-    val listInvitationDao by inject<ListInvitationDao>()
+    val listUserInviteDao by inject<ListUserInviteDao>()
+    val listInviteDao by inject<ListInviteDao>()
     val googleCloudTasksClient by inject<GoogleCloudTasksClient>()
 
     /**
@@ -87,7 +89,8 @@ fun Route.webhookRoute() {
         fcmRegistrationTokenDao.deleteExpired()
         emailVerificationDao.deleteExpired()
         passwordResetDao.deleteExpired()
-        listInvitationDao.deleteExpired()
+        listUserInviteDao.deleteExpired()
+        listInviteDao.deleteExpired()
 
         call.respond(HttpStatusCode.OK)
     }

@@ -4,14 +4,14 @@ import app.index.core.clients.BrevoClient
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.TokenGenerator
 import app.index.core.logic.typedId.impl.IxId
-import app.index.data.daos.list.ListInvitationDao
+import app.index.data.daos.list.ListUserInviteDao
 import app.index.data.models.lists.ListData
-import app.index.data.models.lists.ListInvitationData
+import app.index.data.models.lists.ListUserInviteData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 object ListInvitationUseCase : KoinComponent {
-    private val listInvitationDao by inject<ListInvitationDao>()
+    private val listUserInviteDao by inject<ListUserInviteDao>()
     private val tokenGenerator by inject<TokenGenerator>()
     private val brevoClient by inject<BrevoClient>()
 
@@ -35,7 +35,7 @@ object ListInvitationUseCase : KoinComponent {
     ): Boolean {
         val (token, hashedToken) = tokenGenerator.generate()
 
-        val listInvitationData = ListInvitationData(
+        val listUserInviteData = ListUserInviteData(
             token = hashedToken,
             email = toUserEmail,
             listId = listId,
@@ -52,7 +52,7 @@ object ListInvitationUseCase : KoinComponent {
         )
 
         if (sent) {
-            listInvitationDao.create(listInvitationData)
+            listUserInviteDao.create(listUserInviteData)
         }
 
         return sent

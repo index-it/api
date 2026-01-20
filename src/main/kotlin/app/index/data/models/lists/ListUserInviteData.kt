@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * @param email is the user that the invitation is for
  */
 @Serializable
-data class ListInvitationData(
+data class ListUserInviteData(
     val token: String,
     val email: String,
     @Contextual val listId: IxId<ListData>,
