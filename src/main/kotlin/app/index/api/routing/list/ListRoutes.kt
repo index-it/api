@@ -29,10 +29,17 @@ class ListsRoute {
                     val parent: InvitesRoute,
                     @Contextual val invite_id: IxId<ListInviteData>,
                 )
+
+                @Resource("accept-user")
+                class AcceptUserInvite(val parent: InvitesRoute, val token: String)
+
+                @Resource("accept")
+                class AcceptInvite(val parent: InvitesRoute, val token: String)
             }
 
             @Resource("users")
             class UsersRoute(val parent: AccessRoute)
+
 
             @Resource("leave")
             class LeaveRoute(val parent: AccessRoute)
@@ -68,13 +75,10 @@ class ListsRoute {
             }
         }
     }
-
-    @Resource("accept-invitation")
-    class AcceptInvitation(val parent: ListsRoute = ListsRoute(), val token: String)
 }
 
 fun Route.listRoutes() {
-    listAcceptInvitationRoute()
+    listAcceptInviteRoute()
 
     authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
         listsRoute()
