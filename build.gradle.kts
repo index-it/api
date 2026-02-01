@@ -109,3 +109,9 @@ sentry {
     projectName = "api"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
+
+ktor {
+    openApi {
+        enabled = true
+    }
+}
