@@ -55,6 +55,13 @@ class ListDBIImpl : ListDBI {
                 ?.toData()
         }
 
+    override suspend fun get(listIds: List<IxId<ListData>>): List<ListData> =
+        dbQuery {
+            ListEntity
+                .find { ListTable.id inList listIds.map { it.toEntityId(ListTable) } }
+                .map { it.toData() }
+        }
+
     override suspend fun getListUserAccessInfo(
         listId: IxId<ListData>
     ): List<ListData.ListSingleUserAccessInfoResponseData>? = dbQuery {

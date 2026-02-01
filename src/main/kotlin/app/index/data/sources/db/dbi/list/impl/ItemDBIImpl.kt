@@ -46,6 +46,15 @@ class ItemDBIImpl : ItemDBI {
                 ?.toData()
         }
 
+    override suspend fun get(
+        itemIds: List<IxId<ItemData>>
+    ): List<ItemData> =
+        dbQuery {
+            ItemEntity
+                .find { itemsFilter(itemIds) }
+                .map { it.toData() }
+        }
+
     override suspend fun exists(
         itemId: IxId<ItemData>,
     ): Boolean =

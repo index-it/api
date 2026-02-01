@@ -33,6 +33,10 @@ class ItemDao(
         return itemDBI.get(itemId)
     }
 
+    suspend fun get(itemIds: List<IxId<ItemData>>): List<ItemData> {
+        return itemDBI.get(itemIds)
+    }
+
     suspend fun create(
         userId: IxId<UserData>,
         listId: IxId<ListData>,

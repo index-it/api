@@ -1,5 +1,3 @@
-import io.ktor.plugin.OpenApiPreview
-
 plugins {
     application
     alias(libs.plugins.kotlin.jvm)
@@ -110,18 +108,4 @@ sentry {
     org = "index-cp"
     projectName = "api"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
-}
-
-ktor {
-    @OptIn(OpenApiPreview::class)
-    openApi {
-        title = "Index API"
-        version = "1.0.0"
-        description = "This is the REST api for [Index](https://index-it.app)"
-        termsOfService = "https://index-it.app/terms"
-        contact = "support@index-it.app"
-
-        // Location of the generated specification (defaults to openapi/generated.json)
-        target = project.layout.projectDirectory.file("documentation/openapi.json")
-    }
 }

@@ -53,6 +53,10 @@ class ListDao(
         return listDBI.get(listId)
     }
 
+    suspend fun get(listIds: List<IxId<ListData>>): List<ListData> {
+        return listDBI.get(listIds)
+    }
+
     /**
      * Gets infos about the users that have access to a list, null if the list does not exist
      */

@@ -10,6 +10,8 @@ interface CategoryDBI : DBI {
 
     suspend fun get(categoryId: IxId<CategoryData>): CategoryData?
 
+    suspend fun get(categoryIds: List<IxId<CategoryData>>): List<CategoryData>
+
     suspend fun getOfList(listId: IxId<ListData>): List<CategoryData>
 
     /**

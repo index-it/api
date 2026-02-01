@@ -34,6 +34,12 @@ class CategoryDBIImpl : CategoryDBI {
                 ?.toData()
         }
 
+    override suspend fun get(categoryIds: List<IxId<CategoryData>>): List<CategoryData> =
+        dbQuery {
+            CategoryEntity.find { CategoryTable.id inList categoryIds.map { it.toEntityId(CategoryTable) } }
+                .map { it.toData() }
+        }
+
     override suspend fun getOfList(listId: IxId<ListData>): List<CategoryData> =
         dbQuery {
             CategoryEntity

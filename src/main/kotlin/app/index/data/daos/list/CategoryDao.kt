@@ -20,6 +20,10 @@ class CategoryDao(
         return categoryDBI.get(categoryId)
     }
 
+    suspend fun get(categoryIds: List<IxId<CategoryData>>): List<CategoryData> {
+        return categoryDBI.get(categoryIds)
+    }
+
     suspend fun create(
         userId: IxId<UserData>,
         listId: IxId<ListData>,

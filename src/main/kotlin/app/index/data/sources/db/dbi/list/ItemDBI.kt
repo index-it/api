@@ -16,6 +16,10 @@ interface ItemDBI : DBI {
         itemId: IxId<ItemData>,
     ): ItemData?
 
+    suspend fun get(
+        itemIds: List<IxId<ItemData>>,
+    ): List<ItemData>
+
     suspend fun getOfList(
         listId: IxId<ListData>,
     ): List<ItemData>
