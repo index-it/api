@@ -20,7 +20,7 @@ private val logger = KotlinLogging.logger {  }
 @Single(createdAtStart = true)
 class GoogleCloudTasksClient {
     companion object {
-        private val SCHEDULE_MAX_MILLIS = 2505600000L  // 29 days
+        private const val SCHEDULE_MAX_MILLIS = 2505600000L  // 29 days
     }
 
 

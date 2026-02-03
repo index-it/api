@@ -26,6 +26,8 @@ class FCMClient {
 
     private val taskReminderAnalyticsLabel = "task-reminder"
 
+    private val taskReminderNotificationCategory = "task-reminder"
+
     fun sendTaskReminderNotification(
         taskId: IxId<TaskData>,
         taskName: String,
@@ -35,11 +37,6 @@ class FCMClient {
             return
         }
 
-        /*
-        Note for iOS:
-        for supporting localisation of the title we either do it server side by checking the user preferred language
-        or by adding the 'mutable-content': 1 header to the ApnsConfig and then handling the notification on iOS via the UNNotificationServiceExtension class
-         */
         val message =
             MulticastMessage.builder()
                 .addAllTokens(registrationToken)
@@ -48,8 +45,20 @@ class FCMClient {
                 .putData("task-id", taskId.toString())
                 .putData("task-name", taskName)
                 .setFcmOptions(FcmOptions.withAnalyticsLabel(taskReminderAnalyticsLabel))
-                .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
-                .setApnsConfig(ApnsConfig.builder().setAps(Aps.builder().putCustomData("interruption-level", "time-sensitive").build()).build())
+                .setAndroidConfig(
+                    AndroidConfig.builder()
+                        .setPriority(AndroidConfig.Priority.HIGH)
+                        .setCollapseKey(taskId.toString())
+                        .build()
+                )
+                .setApnsConfig(
+                    ApnsConfig.builder().setAps(
+                        Aps.builder()
+                            .putCustomData("interruption-level", "time-sensitive")
+                            .setCategory(taskReminderNotificationCategory)
+                            .build()
+                    ).build()
+                )
                 .build()
 
         firebaseMessaging.sendEachForMulticast(message)
