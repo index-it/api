@@ -8,10 +8,13 @@ import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
 import app.index.core.logic.websocket.event.WebsocketEventType
+import app.index.data.daos.list.CategoryDao
+import app.index.data.daos.list.ItemDao
 import app.index.data.daos.list.ListDao
 import app.index.data.daos.user.UserDao
 import app.index.data.models.analytics.AnalyticsEventData
 import app.index.data.models.lists.ListData
+import app.index.data.models.lists.ListsSyncResponse
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
@@ -22,6 +25,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.listsRoute() {
     val listDao by inject<ListDao>()
+    val categoryDao by inject<CategoryDao>()
+    val itemDao by inject<ItemDao>()
     val userDao by inject<UserDao>()
     val websocketEventManager by inject<WebsocketEventManager>()
     val analyticsEventManager by inject<AnalyticsEventManager>()
@@ -36,6 +41,20 @@ fun Route.listsRoute() {
      */
     get<ListsRoute> {
         call.respond(listDao.getListsAccessibleByUser(userIdFromSessionOrThrow()))
+    }
+
+    /**
+     * gets all lists, categories, and items
+     *
+     * @tag lists
+     */
+    get<ListsRoute.SyncRoute> {
+        val userId = userIdFromSessionOrThrow()
+        val lists = listDao.getListsAccessibleByUser(userId)
+        val categories = lists.flatMap { categoryDao.getAll(it.id) }
+        val items = lists.flatMap { itemDao.getAll(it.id) }
+
+        call.respond(ListsSyncResponse(lists, categories, items))
     }
 
     /**

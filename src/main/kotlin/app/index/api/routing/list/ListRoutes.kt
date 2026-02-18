@@ -16,6 +16,9 @@ import kotlinx.serialization.Contextual
 @Resource("/lists")
 @Suppress("unused")
 class ListsRoute {
+    @Resource("sync")
+    class SyncRoute(val parent: ListsRoute)
+
     @Resource("{list_id}")
     class ListRoute(
         val parent: ListsRoute = ListsRoute(),
