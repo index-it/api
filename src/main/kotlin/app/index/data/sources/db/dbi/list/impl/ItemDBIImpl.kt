@@ -133,9 +133,7 @@ class ItemDBIImpl : ItemDBI {
 
     override suspend fun move(
         data: ItemData.ItemsMoveRequestData
-    ): List<ItemData> {
-        val updatedItems = mutableListOf<ItemData>()
-
+    ): List<ItemData> =
         dbQuery {
             ItemTable.updateReturning(where = { itemsFilter(data.ids) }) {
                 if (data.list_id != null)
@@ -145,9 +143,6 @@ class ItemDBIImpl : ItemDBI {
                 ItemEntity.wrapRow(it).toData()
             }
         }
-
-        return updatedItems
-    }
 
 
     override suspend fun delete(
