@@ -48,11 +48,17 @@ fun Route.listsRoute() {
      *
      * @tag lists
      */
-    get<ListsRoute.SyncRoute> {
+    get<ListsRoute.SyncRoute> { req ->
         val userId = userIdFromSessionOrThrow()
         val lists = listDao.getListsAccessibleByUser(userId)
         val categories = lists.flatMap { categoryDao.getAll(it.id) }
-        val items = lists.flatMap { itemDao.getAll(it.id) }
+        val items = if (req.exclude_items) emptyList() else lists.flatMap {
+            when(req.items_completion) {
+                true -> itemDao.getAllCompleted(it.id)
+                false -> itemDao.getAllUncompleted(it.id)
+                null -> itemDao.getAll(it.id)
+            }
+        }
 
         call.respond(ListsSyncResponse(lists, categories, items))
     }

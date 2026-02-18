@@ -17,7 +17,7 @@ import kotlinx.serialization.Contextual
 @Suppress("unused")
 class ListsRoute {
     @Resource("sync")
-    class SyncRoute(val parent: ListsRoute)
+    class SyncRoute(val exclude_items: Boolean = false, val items_completion: Boolean? = null, val parent: ListsRoute)
 
     @Resource("{list_id}")
     class ListRoute(
