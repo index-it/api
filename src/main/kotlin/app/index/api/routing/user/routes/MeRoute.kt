@@ -29,12 +29,11 @@ fun Route.meRoutes() {
     val passwordEncoder by inject<PasswordEncoder>()
 
     /**
-     * get the logged in user data
+     * Get the logged in user data.
      *
-     * @tag user
-     * @operationId me
-     * @response 200 user found
-     * @response 401 user not authenticated
+     * Tag: user
+     *
+     * Security: session
      */
     get<MeRoute> {
         val user = userDao.get(userIdFromSessionOrThrow())
@@ -44,15 +43,11 @@ fun Route.meRoutes() {
     }
 
     /**
-     * changes the password of the user
+     * Changes the password of the user.
      *
-     * @tag user
-     * @operationId change-password
-     * @requestBody application/json contains the new password
-     * @response 200 password changed
-     * @response 400 password doesn't conform to rules, see response message
-     * @response 401 user not authenticated
-     * @response 404 something went wrong
+     * Tag: user
+     *
+     * Security: session
      */
     put<MeRoute.ChangePasswordRoute> {
         val authSession = authSessionDataOrThrow()
@@ -80,12 +75,11 @@ fun Route.meRoutes() {
     }
 
     /**
-     * delete the logged in user account and all their data (irreversible)
+     * Delete the logged in user account and all their data.
      *
-     * @tag user
-     * @operationId delete-account
-     * @response 200 user data deleted and session terminated
-     * @response 401 user not authenticated
+     * Tag: user
+     *
+     * Security: session
      */
     delete<MeRoute> {
         val userId = userIdFromSessionOrThrow()

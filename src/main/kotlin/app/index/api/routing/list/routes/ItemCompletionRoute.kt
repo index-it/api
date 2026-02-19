@@ -29,17 +29,11 @@ fun Route.itemCompletionRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * completes or un-completes multiple items and a related tasks
+     * Completes or un-completes multiple items and related tasks.
      *
-     * @tag items
-     * @operationId item-completion
-     * @path list_id the id of the list
-     * @query completed true for completed, false for un-completed
-     * @requestBody list of [IxId<ItemData.ItemsCompletionRequestData>]
-     * @response 200 item completed
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
-     * @response 404 item or list not found
+     * Tag: items
+     *
+     * Security: session
      */
     put<ListsRoute.ListRoute.ItemsRoute.CompletionRoute> {
         val userId = userIdFromSessionOrThrow()
@@ -88,17 +82,11 @@ fun Route.itemCompletionRoute() {
 
 
     /**
-     * completes or un-completes an item and a related task if existing
+     * Completes or un-completes an item and a related task if existing.
      *
-     * @tag items
-     * @operationId item-completion
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @query completed true for completed, false for un-completed
-     * @response 200 item completed
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
-     * @response 404 item or list not found
+     * Tag: items
+     *
+     * Security: session
      */
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.CompletionRoute> {
         val userId = userIdFromSessionOrThrow()

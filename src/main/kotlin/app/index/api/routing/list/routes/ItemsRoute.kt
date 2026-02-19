@@ -31,15 +31,11 @@ fun Route.itemsRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * gets all the items of a list
+     * Gets all the items of a list.
      *
-     * @tag items
-     * @operationId get list items
-     * @path list_id the id of the list
-     * @query completed completed filter: true means only completed, false only uncompleted, null or missing means all
-     * @response 200 list items
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: view
+     * Tag: items
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.ItemsRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
@@ -58,16 +54,11 @@ fun Route.itemsRoute() {
     }
 
     /**
-     * creates a new item in a list
+     * Creates a new item in a list.
      *
-     * @tag items
-     * @operationId create-item
-     * @path list_id the id of the list
-     * @requestBody application/json item data
-     * @response 200 item created
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
+     * Tag: items
+     *
+     * Security: session
      */
     post<ListsRoute.ListRoute.ItemsRoute> {
         val userId = userIdFromSessionOrThrow()
@@ -101,18 +92,11 @@ fun Route.itemsRoute() {
     }
 
     /**
-     * move items to a different list
+     * Move items to a different list.
      *
-     * @tag items
-     * @operationId update-item
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @requestBody [ItemData.ItemsMoveRequestData]
-     * @response 200 item data
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
-     * @response 404 item or list not found
+     * Tag: items
+     *
+     * Security: session
      */
     put<ListsRoute.ListRoute.ItemsRoute.MoveRoute> {
         val userId = userIdFromSessionOrThrow()
@@ -169,15 +153,11 @@ fun Route.itemsRoute() {
     }
 
     /**
-     * deletes multiple items
+     * Deletes multiple items.
      *
-     * @tag items
-     * @operationId delete-items
-     * @path list_id the id of the list
-     * @requestBody list of [IxId<ItemData>]
-     * @response 200 items deleted
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
+     * Tag: items
+     *
+     * Security: session
      */
     delete<ListsRoute.ListRoute.ItemsRoute> {
         val userId = userIdFromSessionOrThrow()

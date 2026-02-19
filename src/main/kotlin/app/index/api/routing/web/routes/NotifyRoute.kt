@@ -13,12 +13,11 @@ fun Route.notifyRoute() {
     val notifyDBI by inject<NotifyDBI>()
 
     /**
-     * adds the user email to the newsletter for the alpha release
+     * Adds the user email to the newsletter for the alpha release.
      *
-     * @tag web
-     * @operationId subscribe-user-to-newsletter
-     * @path email email of the user
-     * @response 200 subscribed
+     * Tag: web
+     *
+     * Security: bearer
      */
     get<NotifyRoute> {
         notifyDBI.create(NotifyDto(it.email))

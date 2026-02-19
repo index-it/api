@@ -24,14 +24,11 @@ fun Route.taskRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * gets a single task
+     * Gets a single task.
      *
-     * @tag tasks
-     * @operationId get-task
-     * @path task_id the id of the task
-     * @response 200 the task
-     * @response 401 user not authenticated
-     * @response 404 task not found
+     * Tag: tasks
+     *
+     * Security: session
      */
     get<TasksRoute.TaskRoute> {
         val task = taskDao.get(userIdFromSessionOrThrow(), it.task_id)
@@ -41,18 +38,11 @@ fun Route.taskRoute() {
     }
 
     /**
-     * updates a task
+     * Updates a task.
      *
-     * @tag tasks
-     * @operationId update-task
-     * @path task_id the id of the task
-     * @requestBody application/json new task data
-     * @response 200 the updated task
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 402 pro required to have multiple reminders
-     * @response 404 task or item to connect not found
-     * @response 405 cannot set an rrule for a task connected to an item (cannot make task recurrent if connected to an item)
+     * Tag: tasks
+     *
+     * Security: session
      */
     put<TasksRoute.TaskRoute> {
         val updateData = call.receive<TaskData.TaskUpdateRequestData>()
@@ -90,14 +80,11 @@ fun Route.taskRoute() {
     }
 
     /**
-     * deletes a task
+     * Deletes a task.
      *
-     * @tag tasks
-     * @operationId delete-task
-     * @path task_id the id of the task
-     * @query all only useful when a task is recurrent: true for deleting all occurrences, false to keep recurrent tasks
-     * @response 200 task deleted
-     * @response 401 user not authenticated
+     * Tag: tasks
+     *
+     * Security: session
      */
     delete<TasksRoute.TaskRoute> {
         val userId = userIdFromSessionOrThrow()

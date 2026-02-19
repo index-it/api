@@ -16,12 +16,11 @@ fun Route.logoutRoutes() {
     val websocketConnectionsManager by inject<WebsocketConnectionsManager>()
 
     /**
-     * terminates the auth session
+     * Terminates the auth session.
      *
-     * @tag auth
-     * @operationId logout
-     * @response 200 session terminated
-     * @response 401 user not authenticated
+     * Tag: auth
+     *
+     * Security: session
      */
     get<LogoutRoute> {
         val session = call.sessions.get<UserSessionCookie>()!!

@@ -23,16 +23,11 @@ fun Route.categoryRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * gets a single category
+     * Gets a single category.
      *
-     * @tag categories
-     * @operationId get-category
-     * @path list_id the id of the list
-     * @path category_id the id of the category
-     * @response 200 category found
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: view
-     * @response 404 category or list not found
+     * Tag: categories
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
@@ -48,18 +43,11 @@ fun Route.categoryRoute() {
     }
 
     /**
-     * updates a category
+     * Updates a category.
      *
-     * @tag categories
-     * @operationId update-category
-     * @path list_id the id of the list
-     * @path category_id the id of the category
-     * @requestBody application/json new data for the category
-     * @response 200 category updated
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
-     * @response 404 category or list not found
+     * Tag: categories
+     *
+     * Security: session
      */
     put<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
@@ -84,15 +72,11 @@ fun Route.categoryRoute() {
     }
 
     /**
-     * deletes a category and all the items and item contents inside it
+     * Deletes a category and all the items and item contents inside it.
      *
-     * @tag categories
-     * @operationId delete-category
-     * @path list_id the id of the list
-     * @path category_id the id of the category
-     * @response 200 category deleted
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
+     * Tag: categories
+     *
+     * Security: session
      */
     delete<ListsRoute.ListRoute.CategoriesRoute.CategoryRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(

@@ -28,16 +28,9 @@ import org.koin.ktor.ext.inject
      val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * accepts a user list invitation via a token
+     * Accepts a user list invitation via a token.
      *
-     * a user can accept a list invitation via a token that is sent via email when he is invited
-     *
-     * @tag lists-access
-     * @operationId accept-list-user-invite
-     * @query token invitation token
-     * @response 200 list invitation accepted
-     * @response 404 something went wrong
-     * @response 405 you need to have an account to accept this invitation
+     * Tag: lists-access
      */
     get<ListsRoute.AcceptUserInvite> { request ->
         val listUserInviteData = listUserInviteDao.get(request.token)
@@ -65,18 +58,13 @@ import org.koin.ktor.ext.inject
     }
 
      authenticate(AuthenticationMethods.USER_SESSION_AUTH) {
-         /**
-          * accepts a list invitation via a token
-          *
-          * a user can accept a list invitation via a token that has been shared with him
-          *
-          * @tag lists-access
-          * @operationId accept-list-invite
-          * @query token invitation token
-          * @response 200 list invitation accepted
-          * @response 404 invite either not found, expired, or already used
-          * @response 405 invite expired or already used
-          */
+          /**
+           * Accepts a list invitation via a token.
+           *
+           * Tag: lists-access
+           *
+           * Security: session
+           */
          get<ListsRoute.AcceptInvite> { request ->
              val userId = userIdFromSessionOrThrow()
 

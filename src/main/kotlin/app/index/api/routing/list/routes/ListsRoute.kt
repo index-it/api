@@ -32,21 +32,22 @@ fun Route.listsRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * gets all the lists the user has access to
+     * Gets all the lists the user has access to.
      *
-     * @tag lists
-     * @operationId get-lists
-     * @response 200 user lists
-     * @response 401 user not authenticated
+     * Tag: lists
+     *
+     * Security: session
      */
     get<ListsRoute> {
         call.respond(listDao.getListsAccessibleByUser(userIdFromSessionOrThrow()))
     }
 
     /**
-     * gets all lists, categories, and items
+     * Gets all lists, categories, and items.
      *
-     * @tag lists
+     * Tag: lists
+     *
+     * Security: session
      */
     get<ListsRoute.SyncRoute> { req ->
         val userId = userIdFromSessionOrThrow()
@@ -64,15 +65,11 @@ fun Route.listsRoute() {
     }
 
     /**
-     * create a new list
+     * Creates a new list.
      *
-     * @tag lists
-     * @operationId create-list
-     * @requestBody application/json list create request body
-     * @response 200 list created
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 402 pro required in order to have more than 10 lists and for lists to be public
+     * Tag: lists
+     *
+     * Security: session
      */
     post<ListsRoute> {
         val userId = userIdFromSessionOrThrow()

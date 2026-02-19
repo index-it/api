@@ -32,16 +32,9 @@ fun Route.passwordOperationRoutes() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * request a password reset email
+     * Request a password reset email.
      *
-     * will send an email with instructions on how to reset the password, this is subject to rate limits as with all email operations
-     *
-     * @tag auth
-     * @operationId password-forgotten
-     * @query email the encoded email of the user
-     * @response 200 email sent
-     * @response 404 something went wrong
-     * @response 429 action rate limited
+     * Tag: auth
      */
     get<PasswordForgottenRoute> { request ->
         val user = userDao.getFromEmail(request.email)
@@ -61,17 +54,9 @@ fun Route.passwordOperationRoutes() {
     }
 
     /**
-     * reset the password via an auth token
+     * Reset the password via an auth token.
      *
-     * a user can reset its password via a token that is sent via email when he requests it
-     *
-     * @tag auth
-     * @operationId reset-password
-     * @query token reset token
-     * @requestBody application/json contains the new password
-     * @response 200 password reset
-     * @response 400 password doesn't conform to rules, see response message
-     * @response 404 something went wrong
+     * Tag: auth
      */
     post<ResetPasswordRoute> { request ->
         val passwordResetDto = passwordResetDao.get(request.token)

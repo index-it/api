@@ -26,14 +26,9 @@ fun Route.loginRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * login and create a session
+     * Login and create a session.
      *
-     * @tag auth
-     * @operationId login
-     * @requestBody application/json email and password credentials
-     * @response 200 user authenticated and session created
-     * @response 401 invalid credentials
-     * @response 405 user email is not verified
+     * Tag: auth
      */
     post<LoginRoute> {
         val loginData = call.receive<LoginCredentialsData>()

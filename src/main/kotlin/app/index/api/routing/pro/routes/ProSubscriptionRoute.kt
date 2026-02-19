@@ -19,13 +19,11 @@ fun Route.proSubscriptionRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * restores a user subscription if it is somehow missing in the Index system
+     * Restores a user subscription if it is somehow missing in the Index system.
      *
-     * @tag pro
-     * @operationId pro-restore-subscription
-     * @response 200 subscription restored
-     * @response 204 user status is already up to date
-     * @response 401 user not authenticated
+     * Tag: pro
+     *
+     * Security: session
      */
     get<ProRoute.SubscriptionRoute.RestoreRoute> {
         val userId = userIdFromSessionOrThrow()

@@ -27,16 +27,11 @@ fun Route.emailVerificationRoutes() {
 
     authenticate(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
         /**
-         * sends a verification email to the email of the user
-         *
-         * sends a verification email to the user, unless the user is rate limited on this endpoint
+         * Sends a verification email to the email of the user.
          *
          * Tag: auth
-         * @operationId send-verification-email
-         * @requestBody application/x-www-form-urlencoded email and password with which the user registered
-         * @response 200 email already verified
-         * @response 201 email sent
-         * @response 403 invalid form credentials
+         *
+         * Security: form
          */
         post<SendVerificationEmailRoute> {
             val userDto = call.principal<UserIdPrincipalForEmailVerificationAuth>()?.id?.let {
@@ -61,14 +56,11 @@ fun Route.emailVerificationRoutes() {
         }
 
         /**
-         * tells if an email has been verified
+         * Tells if an email has been verified.
          *
-         * @tag auth
-         * @operationId is-email-verified
-         * @requestBody application/x-www-form-urlencoded email and password with which the user registered
-         * @response 200 email is verified
-         * @response 403 invalid form credentials
-         * @response 404 for sure not verified, might be not found neither
+         * Tag: auth
+         *
+         * Security: form
          */
         post<IsEmailVerifiedRoute> {
             val userDto =
@@ -85,13 +77,9 @@ fun Route.emailVerificationRoutes() {
     }
 
     /**
-     * verifies the email via the token received in the email
+     * Verifies the email via the token received in the email.
      *
-     * @tag auth
-     * @operationId verify-email
-     * @query token encoded verification token
-     * @response 307 redirects to either a success or failure page
-     * @response 400 token is likely expired
+     * Tag: auth
      */
     get<VerifyEmailRoute> { request ->
         val emailVerificationDto = emailVerificationDao.get(request.token)

@@ -24,12 +24,11 @@ fun Route.revenueCatWebhookRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * receives webhooks for revenuecat events
+     * Receives webhooks for revenuecat events.
      *
-     * @tag web
-     * @operationId revenuecat-webhook
-     * @requestBody application/json the webhook data
-     * @response 200 handled
+     * Tag: web
+     *
+     * Security: apiKey
      */
     post<WebhookRoute.RevenueCatWebhookRoute> {
         val webhookData = try {

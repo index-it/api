@@ -23,13 +23,11 @@ fun Route.connectedTaskItemsRoute() {
     val itemDao by inject<ItemDao>()
 
     /**
-     * gets all the tasks of a user with an optional completion filter
+     * Gets all the tasks of a user with an optional completion filter.
      *
-     * @tag tasks
-     * @operationId get-tasks
-     * @query completed completion filter: true only completed, false only uncompleted, null or missing means all
-     * @response 200 the tasks
-     * @response 401 user not authenticated
+     * Tag: tasks
+     *
+     * Security: session
      */
     get<TasksRoute.ConnectedItemsRoute> {
         val userId = userIdFromSessionOrThrow()

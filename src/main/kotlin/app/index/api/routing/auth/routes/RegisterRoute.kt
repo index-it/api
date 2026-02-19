@@ -21,20 +21,9 @@ fun Route.registerRoute() {
     val passwordEncoder by inject<PasswordEncoder>()
 
     /**
-     * When a user registers, he needs to set an email and password,
-     * and he will be able to log in into his account only once he has verified the email
-     */
-    /**
-     * register with an email and password
+     * Register with an email and password.
      *
-     * a user can register with an email and password and will be able to login only after email verification
-     *
-     * @tag auth
-     * @operationId register
-     * @requestBody application/json email and password, password requirements: 8-100 chars with at least an uppercase, lowercase and number character
-     * @response 200 user registered, an email has been sent for verification
-     * @response 201 user registered, no email has been sent (for rate limiting reasons) but it still might be needed to verify the email
-     * @response 403 can't register with those credentials
+     * Tag: auth
      */
     post<RegisterRoute> {
         val signupData = call.receive<RegistrationCredentials>()

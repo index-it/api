@@ -25,15 +25,11 @@ fun Route.listAccessInvitesRoute() {
     val tokenGenerator by inject<TokenGenerator>()
 
     /**
-     * retrieve all existing invites for a list
+     * Retrieve all existing invites for a list.
      *
-     * @tag lists-access
-     * @operationId get-list-access-invites
-     * @path list_id the id of the list
-     * @response 200 list of active invites
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: owner
-     * @response 404 list not found
+     * Tag: lists-access
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.AccessRoute.InvitesRoute> {
         val listId = it.parent.parent.list_id
@@ -47,16 +43,11 @@ fun Route.listAccessInvitesRoute() {
     }
 
     /**
-     * create a new invite for a list
+     * Creates a new invite for a list.
      *
-     * @tag lists-access
-     * @operationId create-list-access-invite
-     * @path list_id the id of the list
-     * @requestBody application/json invite parameters
-     * @response 200 invite created
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: owner
-     * @response 404 list not found
+     * Tag: lists-access
+     *
+     * Security: session
      */
     post<ListsRoute.ListRoute.AccessRoute.InvitesRoute> {
         logger.info { "we here" }
@@ -90,16 +81,11 @@ fun Route.listAccessInvitesRoute() {
     }
 
     /**
-     * delete an existing invite for a list
+     * Deletes an existing invite for a list.
      *
-     * @tag lists-access
-     * @operationId delete-list-access-invite
-     * @path list_id the id of the list
-     * @path invite_id the id of the invite
-     * @response 200 invite deleted
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: owner
-     * @response 404 list or invite not found
+     * Tag: lists-access
+     *
+     * Security: session
      */
     delete<ListsRoute.ListRoute.AccessRoute.InvitesRoute.InviteRoute> {
         val listId = it.parent.parent.parent.list_id

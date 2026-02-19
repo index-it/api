@@ -34,16 +34,9 @@ fun Route.oauthLoginRoutes() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * google oauth login
+     * Google oauth login.
      *
-     * the user needs to get an id token with google oauth and forward it to this endpoint to get authenticated via google
-     *
-     * @tag auth
-     * @operationId login-with-google
-     * @query token_id the id token received from google
-     * @response 200 user authenticated and session created
-     * @response 401 invalid id token
-     * @response 405 user email not verified
+     * Tag: auth
      */
     get<LoginWithGoogle> {
         val userInfo = googleOAuthClient.getUserInfoFromIdTokenIfValid(it.token_id)
@@ -103,16 +96,9 @@ fun Route.oauthLoginRoutes() {
     }
 
     /**
-     * apple oauth login
+     * Apple oauth login.
      *
-     * the user needs to get an id token with apple oauth and forward it to this endpoint to get authenticated via apple
-     *
-     * @tag auth
-     * @operationId login-with-apple
-     * @query token_id the id token received from apple
-     * @response 200 user authenticated and session created
-     * @response 401 invalid id token
-     * @response 405 user email not verified
+     * Tag: auth
      */
     get<LoginWithApple> {
         val userInfo = appleOAuthClient.getUserInfoFromIdTokenIfValid(it.token_id)

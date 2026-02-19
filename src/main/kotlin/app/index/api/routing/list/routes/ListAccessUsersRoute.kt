@@ -26,15 +26,11 @@ fun Route.listAccessUsersRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * gives informations about the users that have access to the list
+     * Gives informations about the users that have access to the list.
      *
-     * @tag lists-access
-     * @operationId get-user-access-info
-     * @path list_id the id of the list
-     * @response 200 info about the users that have access to the list
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: owner
-     * @response 404 list not found
+     * Tag: lists-access
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.AccessRoute.UsersRoute> {
         val listId = it.parent.parent.list_id
@@ -52,18 +48,11 @@ fun Route.listAccessUsersRoute() {
     }
 
     /**
-     * invites a user to have access to a list or changes his permissions if he was already added
+     * Invites a user to have access to a list or changes their permissions if already added.
      *
-     * @tag lists-access
-     * @operationId add-user
-     * @path list_id the id of the list
-     * @requestBody application/json the user to invite and whether to grant him edit permission, otherwise if editor is set to false he will be invited as a viewer
-     * @response 200 user already had permissions and they were updated successfully
-     * @response 201 user invited successfully
-     * @response 400 you cannot invite yourself to a list
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: owner
-     * @response 404 list not found
+     * Tag: lists-access
+     *
+     * Security: session
      */
     post<ListsRoute.ListRoute.AccessRoute.UsersRoute> {
         val userId = userIdFromSessionOrThrow()
@@ -133,16 +122,11 @@ fun Route.listAccessUsersRoute() {
     }
 
     /**
-     * removes access to a user from the list
+     * Removes access from a user to the list.
      *
-     * @tag lists-access
-     * @operationId remove-user
-     * @path list_id the id of the list
-     * @requestBody application/json the user to remove from the list
-     * @response 200 user removed successfully
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: owner
-     * @response 404 list not found
+     * Tag: lists-access
+     *
+     * Security: session
      */
     delete<ListsRoute.ListRoute.AccessRoute.UsersRoute> {
         val listId = it.parent.parent.list_id
@@ -169,16 +153,11 @@ fun Route.listAccessUsersRoute() {
     }
 
     /**
-     * removes the user from the viewers or editors of the list
+     * Removes the user from the viewers or editors of the list.
      *
-     * the user will be removed from the viewers or editors of the list
+     * Tag: lists-access
      *
-     * @tag lists-access
-     * @operationId leave-list
-     * @path list_id the id of the list
-     * @response 200 list deleted
-     * @response 401 user not authenticated
-     * @response 405 the owner cannot leave the list
+     * Security: session
      */
     get<ListsRoute.ListRoute.AccessRoute.LeaveRoute> {
         val userId = userIdFromSessionOrThrow()

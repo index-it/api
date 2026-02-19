@@ -27,12 +27,9 @@ fun Route.webhookRoute() {
     val googleCloudTasksClient by inject<GoogleCloudTasksClient>()
 
     /**
-     * receives webhooks for task reminder jobs
+     * Receives webhooks for task reminder jobs.
      *
-     * @tag web
-     * @operationId task-reminder-job-webhook
-     * @path id job id
-     * @response 200 handled
+     * Tag: web
      */
     get<WebhookRoute.TaskReminderJobRoute> {
         // Get the job related data
@@ -79,11 +76,9 @@ fun Route.webhookRoute() {
     }
 
     /**
-     * receives webhooks for actions that should be executed daily (cleaning up expired db data for example)
+     * Receives webhooks for actions that should be executed daily.
      *
-     * @tag web
-     * @operationId daily-job
-     * @response 200 handled
+     * Tag: web
      */
     get<WebhookRoute.DailyJobRoute> {
         fcmRegistrationTokenDao.deleteExpired()

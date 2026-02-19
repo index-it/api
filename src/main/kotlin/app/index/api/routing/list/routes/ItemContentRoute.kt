@@ -18,16 +18,13 @@ fun Route.itemContentRoute() {
     val itemContentDao by inject<ItemContentDao>()
 
     /**
-     * gets the content of an item; if the content doesn't yet exist it gets created
+     * Gets the content of an item.
      *
-     * @tag item-contents
-     * @operationId get item content
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @response 200 item content
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: view
-     * @response 404 item not found
+     * Description: If the content doesn't yet exist it gets created.
+     *
+     * Tag: item-contents
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
@@ -43,18 +40,11 @@ fun Route.itemContentRoute() {
     }
 
     /**
-     * updates the content of an item
+     * Updates the content of an item.
      *
-     * @tag item-contents
-     * @operationId update item content
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @requestBody application/json the new item content
-     * @response 200 item content
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
-     * @response 404 item not found
+     * Tag: item-contents
+     *
+     * Security: session
      */
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute.ContentRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(

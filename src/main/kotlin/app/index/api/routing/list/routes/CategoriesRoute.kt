@@ -27,14 +27,11 @@ fun Route.categoriesRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * gets all categories of a list
+     * Gets all categories of a list.
      *
-     * @tag categories
-     * @operationId get-categories
-     * @path list_id the id of the list
-     * @response 200 categories gotten
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: view
+     * Tag: categories
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.CategoriesRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
@@ -49,16 +46,11 @@ fun Route.categoriesRoute() {
     }
 
     /**
-     * creates a category
+     * Creates a category.
      *
-     * @tag categories
-     * @operationId create-category
-     * @path list_id the id of the list
-     * @requestBody application/json category data
-     * @response 200 category created
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
+     * Tag: categories
+     *
+     * Security: session
      */
     post<ListsRoute.ListRoute.CategoriesRoute> {
         val userId = userIdFromSessionOrThrow()

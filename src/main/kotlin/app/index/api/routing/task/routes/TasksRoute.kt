@@ -28,13 +28,11 @@ fun Route.tasksRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * gets all the tasks of a user with an optional completion filter
+     * Gets all the tasks of a user with an optional completion filter.
      *
-     * @tag tasks
-     * @operationId get-tasks
-     * @query completed completion filter: true only completed, false only uncompleted, null or missing means all
-     * @response 200 the tasks
-     * @response 401 user not authenticated
+     * Tag: tasks
+     *
+     * Security: session
      */
     get<TasksRoute> {
         val userId = userIdFromSessionOrThrow()
@@ -49,16 +47,11 @@ fun Route.tasksRoute() {
     }
 
     /**
-     * creates a new task
+     * Creates a new task.
      *
-     * @tag tasks
-     * @operationId create-task
-     * @requestBody application/json task data
-     * @response 200 the task
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 402 pro required to have multiple reminders
-     * @response 404 did not find the item provided for connection with this new task
+     * Tag: tasks
+     *
+     * Security: session
      */
     post<TasksRoute> {
         val userId = userIdFromSessionOrThrow()

@@ -16,13 +16,11 @@ fun Route.fcmRoutes() {
     val fcmRegistrationTokenDao by inject<FCMRegistrationTokenDao>()
 
     /**
-     * saves a user device notification token
+     * Saves a user device notification token.
      *
-     * @tag user
-     * @operationId notification-token
-     * @requestBody application/json the new registration token
-     * @response 200 registration token saved
-     * @response 401 user not authenticated
+     * Tag: user
+     *
+     * Security: session
      */
     post<MeRoute.NotificationsRoute.RegistrationRoute> {
         val fcmRegistrationTokenData = FCMRegistrationTokenData(

@@ -30,16 +30,11 @@ fun Route.taskCompletionRoute() {
     val analyticsEventManager by inject<AnalyticsEventManager>()
 
     /**
-     * completes or un-completes a task and a related item if existing
+     * Completes or un-completes a task and a related item if existing.
      *
-     * @tag tasks
-     * @operationId task-completion
-     * @path task_id the id of the task
-     * @query completed true for completed, false for un-completed
-     * @response 200 the updated task
-     * @response 401 user not authenticated
-     * @response 404 task not found
-     * @response 405 cannot un-complete a recurring task
+     * Tag: tasks
+     *
+     * Security: session
      */
     put<TasksRoute.TaskRoute.CompletionRoute> {
         val userId = userIdFromSessionOrThrow()

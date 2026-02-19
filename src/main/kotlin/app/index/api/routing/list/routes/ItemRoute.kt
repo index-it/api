@@ -25,16 +25,11 @@ fun Route.itemRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * gets a single item
+     * Gets a single item.
      *
-     * @tag items
-     * @operationId get-item
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @response 200 item data
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: view
-     * @response 404 item or list not found
+     * Tag: items
+     *
+     * Security: session
      */
     get<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         ListAuthorizationUseCase.getListIfAuthorized(
@@ -50,18 +45,11 @@ fun Route.itemRoute() {
     }
 
     /**
-     * updates an item
+     * Updates an item.
      *
-     * @tag items
-     * @operationId update-item
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @requestBody application/json new item data
-     * @response 200 item data
-     * @response 400 invalid parameters
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
-     * @response 404 item or list not found
+     * Tag: items
+     *
+     * Security: session
      */
     put<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         val list = ListAuthorizationUseCase.getListIfAuthorized(
@@ -86,15 +74,11 @@ fun Route.itemRoute() {
     }
 
     /**
-     * deletes an item and its content
+     * Deletes an item and its content.
      *
-     * @tag items
-     * @operationId delete-item
-     * @path list_id the id of the list
-     * @path item_id the id of the item
-     * @response 200 item deleted
-     * @response 401 user not authenticated
-     * @response 403 missing required list permission: edit
+     * Tag: items
+     *
+     * Security: session
      */
     delete<ListsRoute.ListRoute.ItemsRoute.ItemRoute> {
         val userId = userIdFromSessionOrThrow()
