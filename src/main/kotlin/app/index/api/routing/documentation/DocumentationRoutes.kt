@@ -7,17 +7,23 @@ import io.ktor.server.plugins.swagger.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.openapi.OpenApiDocSource
 
+private val openApiInfo = OpenApiInfo(
+    title = "Index API",
+    termsOfService = "https://index-it.app/terms",
+    contact = OpenApiInfo.Contact(email = "hello@index-it.app"),
+    version = "1.0"
+)
+
 fun Route.documentationRoutes() {
     swaggerUI("/docs/swagger") {
-        // TODO: Improve
-        info = OpenApiInfo("Index API", "1.0")
+        info = openApiInfo
         source = OpenApiDocSource.Routing(ContentType.Application.Json) {
             routingRoot.descendants()
         }
     }
 
     openAPI(path = "/docs/openapi") {
-        info = OpenApiInfo("Index API", "1.0")
+        info = openApiInfo
         source = OpenApiDocSource.Routing {
             routingRoot.descendants()
         }

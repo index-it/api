@@ -17,13 +17,9 @@ fun Route.adminUsersRoute() {
     val userDao by inject<UserDao>()
 
     /**
-     * creates a user
+     * Creates a new user.
      *
-     * @tag admin
-     * @operationId create-user
-     * @requestBody application/json the data to create the user (password will be hashed)
-     * @response 200 user created
-     * @response 409 user with the provided email already exists
+     * Tag: admin
      */
     post<AdminRoute.UsersRoute> {
         val userData = call.receive<UserData.AdminUserCreateRequestData>()

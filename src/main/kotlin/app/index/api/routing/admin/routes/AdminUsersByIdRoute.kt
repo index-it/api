@@ -19,13 +19,9 @@ fun Route.adminUsersByIdRoute() {
     val websocketEventManager by inject<WebsocketEventManager>()
 
     /**
-     * gets a user by its id
+     * Gets a user by its ID
      *
-     * @tag admin
-     * @operationId get-user-by-id
-     * @query user_id the id of the user
-     * @response 200 user found
-     * @response 404 user with the provided id not found
+     * Tag: admin
      */
     get<AdminRoute.UsersRoute.UserByIdRoute> {
         val user = userDao.get(it.user_id)
@@ -35,12 +31,9 @@ fun Route.adminUsersByIdRoute() {
     }
 
     /**
-     * deletes an user by its id
+     * Deletes a user by its ID
      *
-     * @tag admin
-     * @operationId delete-user-by-id
-     * @query user_id the id of the user
-     * @response 200 user deleted
+     * Tag: admin
      */
     delete<AdminRoute.UsersRoute.UserByIdRoute> {
         userDao.delete(it.user_id)

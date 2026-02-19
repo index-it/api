@@ -44,8 +44,8 @@ email: `giuliopime@gmail.com`
 password: `Password1!`
 
 ### OpenAPI & Swagger
-OpenAPI documentation is available at [localhost:$PORT/docs/openapi](http://localhost:8080/docs/openapi)  
-Swagger is available at [localhost:$PORT/docs/swagger](http://localhost:8080/docs/swagger)  
+OpenAPI documentation is available at [localhost:8080/docs/openapi](http://localhost:8080/docs/openapi)  
+Swagger is available at [localhost:8080/docs/swagger](http://localhost:8080/docs/swagger)  
 
 ### Git
 Use `[ci skip]` in a commit message to skip circleci process.  

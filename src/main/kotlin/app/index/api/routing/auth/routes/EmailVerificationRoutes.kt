@@ -31,7 +31,7 @@ fun Route.emailVerificationRoutes() {
          *
          * sends a verification email to the user, unless the user is rate limited on this endpoint
          *
-         * @tag auth
+         * Tag: auth
          * @operationId send-verification-email
          * @requestBody application/x-www-form-urlencoded email and password with which the user registered
          * @response 200 email already verified
