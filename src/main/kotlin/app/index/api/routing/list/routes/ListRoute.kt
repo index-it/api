@@ -3,6 +3,7 @@ package app.index.api.routing.list.routes
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.config.ProConfig
 import app.index.core.logic.usecases.ListAuthorizationUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -62,7 +63,7 @@ fun Route.listRoute() {
             val owner = userDao.get(list.user_id)
                 ?: return@put call.respond(HttpStatusCode.NotFound)
 
-            if (!owner.has_pro) {
+            if (!owner.has_pro && !ProConfig.bypass) {
                 return@put call.respond(HttpStatusCode.PaymentRequired)
             }
         }

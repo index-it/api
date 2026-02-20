@@ -4,6 +4,7 @@ import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute
+import app.index.config.ProConfig
 import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.websocket.WebsocketEventManager
 import app.index.core.logic.websocket.event.WebsocketEventContent
@@ -79,13 +80,13 @@ fun Route.listsRoute() {
         val newList = call.receive<ListData.ListCreateRequestData>()
 
         val listsCount = listDao.count(userId)
-        val canCreateUnlimitedLists = user.has_pro
+        val canCreateUnlimitedLists = user.has_pro || ProConfig.bypass
 
         if (listsCount >= 7 && !canCreateUnlimitedLists) {
             return@post call.respond(HttpStatusCode.PaymentRequired)
         }
 
-        if (newList.public && !user.has_pro) {
+        if (newList.public && !user.has_pro && !ProConfig.bypass) {
             return@post call.respond(HttpStatusCode.PaymentRequired)
         }
 

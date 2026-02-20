@@ -4,6 +4,7 @@ import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
+import app.index.config.ProConfig
 import app.index.core.logic.AnalyticsEventManager
 import app.index.core.logic.usecases.TaskUseCase
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -70,7 +71,7 @@ fun Route.tasksRoute() {
             val user = userDao.get(userId)
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            if (!user.has_pro) {
+            if (!user.has_pro && !ProConfig.bypass) {
                 return@post call.respond(HttpStatusCode.PaymentRequired)
             }
         }
