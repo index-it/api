@@ -25,16 +25,19 @@ jobs:
 workflows:
   test-build-publish:
     jobs:
-#      - gradle/test:
-#          name: test
-#          deps_checksum_file: build.gradle.kts
+      - gradle/test:
+          name: test
+          deps_checksum_file: build.gradle.kts
+          executor:
+            name: gradle/default
+            tag: '17.0'
       - gradle/run:
+          name: build-and-push-image
           command: jib
           executor:
             name: gradle/default
             tag: '17.0'
-#          requires: [test]
-
+          requires: [test]
           filters:
             branches:
               only:
