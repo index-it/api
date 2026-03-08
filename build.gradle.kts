@@ -15,7 +15,7 @@ application {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 // Use KSP Generated sources

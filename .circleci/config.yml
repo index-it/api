@@ -32,7 +32,7 @@ workflows:
           command: jib
           executor:
             name: gradle/default
-            tag: '25.0'
+            tag: '17.0'
 #          requires: [test]
 
           filters:
