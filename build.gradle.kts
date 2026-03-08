@@ -80,6 +80,10 @@ tasks {
 }
 
 jib {
+    from {
+        image = "amazoncorretto:25-al2023-headless"
+    }
+
     to {
         image = "ghcr.io/${project.property("ghcrOrg")}/$name"
         tags = setOf(System.getenv("CIRCLE_SHA1"), version.toString(), "latest")
@@ -87,6 +91,17 @@ jib {
             username = System.getenv("GITHUB_ACTOR")
             password = System.getenv("GITHUB_TOKEN")
         }
+    }
+
+    container {
+        jvmFlags = listOf(
+            "-XX:+PrintCommandLineFlags",
+            "-XshowSettings:vm",
+            "-XX:MinRAMPercentage=50.0",
+            "-XX:MaxRAMPercentage=50.0"
+//            "-XX:+PrintFlagsFinal",
+//            "-Xlog:os+container=trace"
+        )
     }
 }
 

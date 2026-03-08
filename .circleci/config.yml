@@ -7,17 +7,13 @@ orbs:
 
 jobs:
   build-and-push-image:
-    executor: gcp-gcr/default
+    docker:
+      - image: cimg/openjdk:25.0
     steps:
       - checkout
-      - gcp-gcr/gcr-auth
-      - gcp-gcr/build-image:
-          image: 'index-api-<< pipeline.git.branch >>'
-          no_output_timeout: 20m
-          registry-url: eu.gcr.io
-      - gcp-gcr/push-image:
-          image: 'index-api-<< pipeline.git.branch >>'
-          registry-url: eu.gcr.io
+      - run:
+          name: Build and push image
+          command: ./gradlew :services:bot:jib -Djib.httpTimeout=60000
       - slack/notify:
           event: fail
           template: basic_fail_1
