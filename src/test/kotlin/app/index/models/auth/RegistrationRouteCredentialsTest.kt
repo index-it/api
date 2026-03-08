@@ -33,9 +33,14 @@ class TokenCredentialsTest {
 
         val validCredentials2 =
             RegistrationCredentials(
-                "test@gmail.com",
+                "hello@giuliopime.dev",
                 "vAli4Passw0rD987",
             )
+
+        val bruno = RegistrationCredentials(
+            "index.detest750@simplelogin.com",
+            "katia2roll.TOPOLOGY"
+        )
 
         assert(invalidCredentials1.validate() !is Valid)
         assert(invalidCredentials2.validate() !is Valid)
@@ -43,5 +48,6 @@ class TokenCredentialsTest {
 
         assert(validCredentials.validate() is Valid)
         assert(validCredentials2.validate() is Valid)
+        assert(bruno.validate() is Valid)
     }
 }
