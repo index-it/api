@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Build and push image
-          command: ./gradlew :services:bot:jib -Djib.httpTimeout=60000
+          command: ./gradlew jib -Djib.httpTimeout=60000
       - slack/notify:
           event: fail
           template: basic_fail_1
