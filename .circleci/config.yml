@@ -30,7 +30,11 @@ workflows:
 #          deps_checksum_file: build.gradle.kts
       - gradle/run:
           command: jib
+          executor:
+            name: gradle/default
+            tag: 25.0
 #          requires: [test]
+
           filters:
             branches:
               only:
