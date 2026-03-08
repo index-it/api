@@ -109,6 +109,6 @@ class BigQueryClient(
 
     override suspend fun close() {
         executor.submit { pushAnalyticsEvents() }
-        executor.close()
+        executor.shutdown()
     }
 }
