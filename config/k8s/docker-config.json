@@ -5,7 +5,7 @@
 	"credsStore": "desktop",
 	"credHelpers": {
 		"europe-docker.pkg.dev": "gcloud"
-	},
+	}oc,
 	"currentContext": "desktop-linux",
 	"plugins": {
 		"debug": {

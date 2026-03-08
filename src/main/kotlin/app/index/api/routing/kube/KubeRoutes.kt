@@ -6,7 +6,7 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-@Resource("/kube")
+@Resource("kube")
 class KubeRoute {
     @Resource("startup")
     @Suppress("unused")

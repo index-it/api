@@ -36,7 +36,7 @@ class BrevoClient : IClosableComponent {
                 exponentialDelay()
             }
             defaultRequest {
-                url("https://api.sendinblue.com/v3/")
+                url("https://api.brevo.com/v3/")
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header("api-key", BrevoConfig.apiKey)
