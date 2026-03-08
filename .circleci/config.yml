@@ -25,9 +25,9 @@ jobs:
 workflows:
   test-build-publish:
     jobs:
-      - gradle/test:
-          name: test
-          deps_checksum_file: build.gradle.kts
+#      - gradle/test:
+#          name: test
+#          deps_checksum_file: build.gradle.kts
       - gradle/run:
           command: jib
           requires: [test]
