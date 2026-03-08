@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(20)
+    jvmToolchain(17)
 }
 
 repositories {
@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation(platform(libs.sentry.bom))
     implementation(libs.bundles.postgres)
     implementation(libs.bundles.logging)
 

@@ -28,6 +28,7 @@ repositories {
 }
 
 dependencies {
+    implementation(platform(libs.sentry.bom))
     implementation(libs.bundles.logging)
     implementation(libs.reflections)
     api(libs.slf4j.api)
