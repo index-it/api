@@ -2,25 +2,6 @@ version: 2.1
 
 orbs:
   gradle: circleci/gradle@4.1.0
-  slack: circleci/slack@4.12.5
-
-jobs:
-  build-and-push-image:
-    docker:
-      - image: cimg/openjdk:25.0
-    steps:
-      - checkout
-      - run:
-          name: Build and push image
-          command: ./gradlew jib -Djib.httpTimeout=60000
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-          mentions: <@U04NVUWQE93>
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-          mentions: <@U04NVUWQE93>
 
 workflows:
   test-build-publish:
