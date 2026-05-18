@@ -24,13 +24,28 @@ class WebsocketEventsQueueManager(
     private val consumerCoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var websocketEventChannel: Channel = rabbitMqClient.connection.createChannel()
 
+    private val podQueueName: String
+
     init {
-        websocketEventChannel.exchangeDeclare(RabbitMQConfig.exchangeName, BuiltinExchangeType.DIRECT, false)
-        websocketEventChannel.queueDeclare(RabbitMQConfig.websocketsQueueName, false, false, false, null)
+        websocketEventChannel.exchangeDeclare(
+            /* exchange = */ RabbitMQConfig.websocketExchangeName,
+            /* type = */ BuiltinExchangeType.FANOUT,
+            /* durable = */ false
+        )
+
+        val declaredQueue = websocketEventChannel.queueDeclare(
+            /* queue = */ "", // auto generates a unique name
+            /* durable = */ false, // doesn't survive broker restarts
+            /* exclusive = */ true, // only this connection uses it
+            /* autoDelete = */ true, // delete when last consumer unsubscribes
+            /* arguments = */ null
+        )
+        podQueueName = declaredQueue.queue
+
         websocketEventChannel.queueBind(
-            RabbitMQConfig.websocketsQueueName,
-            RabbitMQConfig.exchangeName,
-            RabbitMQConfig.websocketsRoutingKey
+            /* queue = */ podQueueName,
+            /* exchange = */ RabbitMQConfig.websocketExchangeName,
+            /* routingKey = */ ""
         )
     }
 
@@ -51,9 +66,9 @@ class WebsocketEventsQueueManager(
         }
 
         websocketEventChannel.basicConsume(
-            RabbitMQConfig.websocketsQueueName,
-            true,
-            websocketEventConsumer
+            /* queue = */ podQueueName,
+            /* autoAck = */ true,
+            /* callback = */ websocketEventConsumer
         )
 
         log.info { "Listening to RabbitMq websockets queue messages! "}
@@ -63,10 +78,10 @@ class WebsocketEventsQueueManager(
         log.debug { "Publishing RabbitMQ websocket event: $websocketEventData" }
 
         websocketEventChannel.basicPublish(
-            RabbitMQConfig.exchangeName,
-            RabbitMQConfig.websocketsRoutingKey,
-            AMQP.BasicProperties(),
-            objectMapper.encodeToByteArray(websocketEventData)
+            /* exchange = */ RabbitMQConfig.websocketExchangeName,
+            /* routingKey = */ "",
+            /* props = */ AMQP.BasicProperties(),
+            /* body = */ objectMapper.encodeToByteArray(websocketEventData)
         )
     }
 

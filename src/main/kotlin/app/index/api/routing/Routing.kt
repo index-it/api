@@ -14,6 +14,8 @@ import app.index.core.logic.typedId.serialization.IdKotlinXSerializationModule
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.openapi.OperationHiddenAttributeKey
+import io.ktor.utils.io.ExperimentalKtorApi
 
 fun Application.configureRouting() {
     // Needed for typed queries

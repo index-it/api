@@ -1,5 +1,6 @@
 package app.index.api.routing.web.routes
 
+import app.index.api.plugins.custom.internal
 import app.index.api.routing.web.WebhookRoute
 import app.index.core.clients.FCMClient
 import app.index.core.clients.GoogleCloudTasksClient
@@ -73,7 +74,7 @@ fun Route.webhookRoute() {
 
         // Delete the job as it has been fulfilled
         taskReminderJobDao.delete(taskReminderJobDto.id)
-    }
+    }.internal()
 
     /**
      * Receives webhooks for actions that should be executed daily.
@@ -88,5 +89,5 @@ fun Route.webhookRoute() {
         listInviteDao.deleteExpired()
 
         call.respond(HttpStatusCode.OK)
-    }
+    }.internal()
 }

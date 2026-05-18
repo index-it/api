@@ -1,6 +1,7 @@
 package app.index.api.routing.admin
 
 import app.index.api.plugins.AuthenticationMethods
+import app.index.api.plugins.custom.internal
 import app.index.api.routing.admin.routes.adminUsersByEmailRoute
 import app.index.api.routing.admin.routes.adminUsersByIdRoute
 import app.index.api.routing.admin.routes.adminUsersRoute

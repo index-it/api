@@ -1,5 +1,6 @@
 package app.index.api.routing.kube
 
+import app.index.api.plugins.custom.internal
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.resources.*
@@ -25,27 +26,30 @@ fun Route.kubeRoutes() {
     /**
      * Kubernetes startup probe
      *
-     * @hidden
+     * Tag: k8s
+     *
      */
     get<KubeRoute.StartupRoute> {
         call.respond(HttpStatusCode.OK)
-    }
+    }.internal()
 
     /**
      * Kubernetes readiness probe
      *
-     * @hidden
+     * Tag: k8s
+     *
      */
     get<KubeRoute.ReadinessRoute> {
         call.respond(HttpStatusCode.OK)
-    }
+    }.internal()
 
     /**
      * Kubernetes liveness probe
      *
-     * @hidden
+     * Tag: k8s
+     *
      */
     get<KubeRoute.LivenessRoute> {
         call.respond(HttpStatusCode.OK)
-    }
+    }.internal()
 }

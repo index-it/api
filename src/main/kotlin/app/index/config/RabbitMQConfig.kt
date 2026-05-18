@@ -9,11 +9,5 @@ object RabbitMQConfig {
     var connectionString: String = "amqp://guest:guest@localhost:5672"
 
     @ConfigurationProperty("exchange.name")
-    var exchangeName: String = "indexexchange"
-
-    @ConfigurationProperty("websockets.queue.name")
-    var websocketsQueueName: String = "websocketqueue"
-
-    @ConfigurationProperty("websockets.routing.key")
-    var websocketsRoutingKey: String = "websocketroutingkey"
+    var websocketExchangeName: String = "websockets"
 }

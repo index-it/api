@@ -3,6 +3,7 @@ package app.index.api.plugins
 import app.index.api.plugins.custom.apiKey
 import app.index.config.ApiConfig
 import app.index.config.GoogleCloudConfig
+import app.index.config.OpenApiConfig
 import app.index.config.RevenueCatConfig
 import app.index.core.exceptions.AuthenticationException
 import app.index.core.logic.DatetimeUtils
@@ -31,6 +32,7 @@ import org.koin.ktor.ext.inject
  * Available authentication methods for api routes
  */
 object AuthenticationMethods {
+    const val INTERNAL_OPENAPI_DOCS = "internal_openapi_docs"
     const val EMAIL_VERIFICATION_FORM_AUTH = "email_verification_form_auth"
     const val USER_SESSION_AUTH = "user_session_auth"
     const val ADMIN_BEARER_AUTH = "admin_bearer_auth"
@@ -70,6 +72,17 @@ fun Application.configureSecurity() {
     }
 
     install(Authentication) {
+        // used only to authenticate internal openapi documentation requests
+        basic(AuthenticationMethods.INTERNAL_OPENAPI_DOCS) {
+            realm = "Internal OpenApi documentation"
+            validate { credentials ->
+                if (credentials.name == OpenApiConfig.internalUsername && credentials.password == OpenApiConfig.internalPassword)
+                    UserIdPrincipal("internal_openapi_docs")
+                else
+                    null
+            }
+        }
+
         // Used only for email verification operation
         form(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
             userParamName = "email"

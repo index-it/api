@@ -9,13 +9,16 @@ plugins {
 }
 
 group = "app.index"
-version = "0.1.10"
+version = "0.1.11"
 application {
     mainClass.set("app.index.ApplicationKt")
 }
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        optIn.add("io.ktor.utils.io.ExperimentalKtorApi")
+    }
 }
 
 // Use KSP Generated sources

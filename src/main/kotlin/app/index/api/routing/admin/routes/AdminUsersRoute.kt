@@ -1,5 +1,6 @@
 package app.index.api.routing.admin.routes
 
+import app.index.api.plugins.custom.internal
 import app.index.api.routing.admin.AdminRoute
 import app.index.core.logic.DatetimeUtils
 import app.index.core.logic.PasswordEncoder
@@ -41,5 +42,5 @@ fun Route.adminUsersRoute() {
         userDao.create(user)
 
         call.respond(user)
-    }
+    }.internal()
 }

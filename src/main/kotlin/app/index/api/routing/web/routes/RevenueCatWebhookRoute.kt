@@ -1,5 +1,6 @@
 package app.index.api.routing.web.routes
 
+import app.index.api.plugins.custom.internal
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.web.WebhookRoute
 import app.index.config.RevenueCatConfig
@@ -60,5 +61,5 @@ fun Route.revenueCatWebhookRoute() {
                 users = setOf(updatedUserData.id)
             )
         }
-    }
+    }.internal()
 }

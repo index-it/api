@@ -1,5 +1,6 @@
 package app.index.api.routing.admin.routes
 
+import app.index.api.plugins.custom.internal
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.admin.AdminRoute
 import app.index.core.logic.websocket.WebsocketEventManager
@@ -33,7 +34,7 @@ fun Route.adminUsersByEmailRoute() {
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(user)
-    }
+    }.internal()
 
     /**
      * verifies the email on behalf of a user
@@ -51,7 +52,7 @@ fun Route.adminUsersByEmailRoute() {
         } ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(HttpStatusCode.OK)
-    }
+    }.internal()
 
     /**
      * deletes an user by its email
@@ -78,5 +79,5 @@ fun Route.adminUsersByEmailRoute() {
             content = WebsocketEventContent.EmptyEventContent,
             users = setOf(userId)
         )
-    }
+    }.internal()
 }

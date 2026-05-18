@@ -25,7 +25,8 @@ flyway="11.18.0"
 jedis="7.1.0"
 amqpClient="5.27.1"
 
-ktor="3.4.0"
+ktor="3.5.0"
+scalar="0.6.37"
 konform="0.11.1"
 libRecur="0.17.1"
 
@@ -94,7 +95,8 @@ ktor-server-websockets = { group = "io.ktor", name = "ktor-server-websockets", v
 ktor-server-rate-limit = { group = "io.ktor", name = "ktor-server-rate-limit", version.ref = "ktor" }
 ktor-server-swagger = { group = "io.ktor", name = "ktor-server-swagger", version.ref = "ktor" }
 ktor-server-openapi = { group = "io.ktor", name = "ktor-server-openapi", version.ref = "ktor" }
-ktor-server-routing-openapi = { group = "io.ktor", name = "ktor-server-routing-openapi", version.ref = "ktor" }
+
+scalar = { module = "com.scalar.maven:scalar-core", version.ref = "scalar" }
 
 konform = { group = "io.konform", name = "konform-jvm", version.ref = "konform" }
 
@@ -162,7 +164,7 @@ ktor-server = [
     "ktor-server-rate-limit",
     "ktor-server-swagger",
     "ktor-server-openapi",
-    "ktor-server-routing-openapi", # TODO: Remove once update to ktor 3.4.1
+    "scalar",
     "konform"
 ]
 

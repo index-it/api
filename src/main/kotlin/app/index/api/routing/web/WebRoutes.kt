@@ -1,7 +1,6 @@
 package app.index.api.routing.web
 
 import app.index.api.plugins.AuthenticationMethods
-import app.index.api.routing.web.routes.notifyRoute
 import app.index.api.routing.web.routes.revenueCatWebhookRoute
 import app.index.api.routing.web.routes.webhookRoute
 import app.index.core.logic.typedId.impl.IxId
@@ -11,8 +10,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Contextual
 
-@Resource("/notify/{email}")
-class NotifyRoute(val email: String)
 
 @Resource("/webhook")
 class WebhookRoute {
@@ -30,7 +27,6 @@ class WebhookRoute {
 }
 
 fun Route.webRoutes() {
-    notifyRoute()
     authenticate(AuthenticationMethods.GOOGLE_CLOUD_OIDC) {
         webhookRoute()
     }

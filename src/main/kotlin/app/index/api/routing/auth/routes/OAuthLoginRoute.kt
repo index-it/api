@@ -1,5 +1,6 @@
 package app.index.api.routing.auth.routes
 
+import app.index.api.plugins.custom.internal
 import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.routing.auth.LoginWithApple
 import app.index.api.routing.auth.LoginWithGoogle
@@ -19,13 +20,16 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.openapi.hide
 import io.ktor.server.sessions.*
+import io.ktor.utils.io.ExperimentalKtorApi
 import org.koin.ktor.ext.inject
 
 /**
  * A user can register / sign-in with Google, Facebook and Apple
  * Different services where the user has the same email are all linked to the same account
  */
+@OptIn(ExperimentalKtorApi::class)
 fun Route.oauthLoginRoutes() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
