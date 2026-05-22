@@ -5,7 +5,7 @@ import app.index.api.core.logic.usecases.ListAuthorizationUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.daos.list.CategoryDao
+import app.index.shared.core.data.daos.list.CategoryDao
 import app.index.shared.core.data.models.analytics.AnalyticsEventData
 import app.index.shared.core.data.models.lists.CategoryData
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel

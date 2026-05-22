@@ -5,8 +5,8 @@ import app.index.api.core.logic.usecases.ListInvitationUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.daos.list.ListDao
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.data.daos.list.ListDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel
 import app.index.shared.core.data.models.lists.ListData
 import app.index.api.plugins.emitWebsocketEventForUsers

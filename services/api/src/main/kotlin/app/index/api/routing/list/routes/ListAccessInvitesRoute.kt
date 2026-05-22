@@ -1,9 +1,9 @@
 package app.index.api.routing.list.routes
 
-import app.index.api.core.logic.TokenGenerator
+import app.index.shared.core.logic.TokenGenerator
 import app.index.shared.core.typedId.newIxId
 import app.index.api.core.logic.usecases.ListAuthorizationUseCase
-import app.index.api.data.daos.list.ListInviteDao
+import app.index.shared.core.data.daos.list.ListInviteDao
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel
 import app.index.shared.core.data.models.lists.ListInviteData
 import app.index.api.plugins.userIdFromSessionOrThrow

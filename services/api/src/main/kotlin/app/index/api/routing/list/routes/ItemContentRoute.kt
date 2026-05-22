@@ -1,7 +1,7 @@
 package app.index.api.routing.list.routes
 
 import app.index.api.core.logic.usecases.ListAuthorizationUseCase
-import app.index.api.data.daos.list.ItemContentDao
+import app.index.shared.core.data.daos.list.ItemContentDao
 import app.index.shared.core.data.models.lists.ItemContentData
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel
 import app.index.api.plugins.userIdFromSessionOrThrow

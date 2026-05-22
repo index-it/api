@@ -1,9 +1,9 @@
 package app.index.api.routing.task.routes
 
-import app.index.api.data.daos.list.CategoryDao
-import app.index.api.data.daos.list.ItemDao
-import app.index.api.data.daos.list.ListDao
-import app.index.api.data.daos.task.TaskDao
+import app.index.shared.core.data.daos.list.CategoryDao
+import app.index.shared.core.data.daos.list.ItemDao
+import app.index.shared.core.data.daos.list.ListDao
+import app.index.shared.core.data.daos.task.TaskDao
 import app.index.shared.core.data.models.tasks.ConnectedTaskItemsData
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute

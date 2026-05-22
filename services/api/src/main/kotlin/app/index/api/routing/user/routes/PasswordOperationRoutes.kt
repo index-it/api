@@ -1,14 +1,14 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.core.clients.BrevoClient
-import app.index.api.core.logic.PasswordEncoder
+import app.index.shared.core.clients.BrevoClient
+import app.index.shared.core.logic.PasswordEncoder
 import app.index.api.core.logic.usecases.PasswordResetUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.daos.auth.PasswordResetDao
-import app.index.api.data.daos.auth.UserSessionDao
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.data.daos.auth.PasswordResetDao
+import app.index.shared.core.data.daos.auth.UserSessionDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.auth.PasswordResetRequestBody
 import app.index.api.routing.user.PasswordForgottenRoute
 import app.index.api.routing.user.ResetPasswordRoute

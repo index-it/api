@@ -1,6 +1,6 @@
 package app.index.api.core.logic.websocket
 
-import app.index.api.core.logic.ObjectMapper
+import app.index.shared.core.logic.ObjectMapper
 import app.index.shared.core.typedId.impl.IxId
 import app.index.api.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent

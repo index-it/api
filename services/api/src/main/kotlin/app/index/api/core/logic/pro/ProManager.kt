@@ -1,8 +1,8 @@
 package app.index.api.core.logic.pro
 
-import app.index.api.core.clients.RevenueCatClient
+import app.index.shared.core.clients.RevenueCatClient
 import app.index.shared.core.typedId.toIxId
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.user.UserData
 import org.koin.core.annotation.Single
 

@@ -1,6 +1,6 @@
 package app.index.scripts
-import app.index.api.config.core.ConfigurationManager
-import app.index.api.config.core.ConfigurationReader
+import app.index.shared.core.config.core.ConfigurationManager
+import app.index.shared.core.config.core.ConfigurationReader
 import createScriptOutputsFolderIfNotExisting
 import java.io.File
 

@@ -1,6 +1,6 @@
 package app.index.core.logic
 
-import app.index.api.core.logic.TokenGenerator
+import app.index.shared.core.logic.TokenGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

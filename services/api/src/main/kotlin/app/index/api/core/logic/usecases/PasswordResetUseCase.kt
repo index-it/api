@@ -1,9 +1,9 @@
 package app.index.api.core.logic.usecases
 
-import app.index.api.core.clients.BrevoClient
+import app.index.shared.core.clients.BrevoClient
 import app.index.shared.core.logic.DatetimeUtils
-import app.index.api.core.logic.TokenGenerator
-import app.index.api.data.daos.auth.PasswordResetDao
+import app.index.shared.core.logic.TokenGenerator
+import app.index.shared.core.data.daos.auth.PasswordResetDao
 import app.index.shared.core.data.models.user.PasswordResetData
 import app.index.shared.core.data.models.user.UserData
 import org.koin.core.component.KoinComponent

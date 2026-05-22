@@ -1,8 +1,8 @@
 package app.index.scripts
 
-import app.index.api.config.PostgresConfig
-import app.index.api.config.core.ConfigurationManager
-import app.index.api.config.core.ConfigurationReader
+import app.index.shared.core.config.PostgresConfig
+import app.index.shared.core.config.core.ConfigurationManager
+import app.index.shared.core.config.core.ConfigurationReader
 import app.index.api.data.sources.db.schemas.lists.CategoryTable
 import app.index.api.data.sources.db.schemas.lists.ItemContentTable
 import app.index.api.data.sources.db.schemas.lists.ItemTable

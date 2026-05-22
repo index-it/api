@@ -9,6 +9,21 @@ plugins {
 }
 
 dependencies {
+    implementation(platform(libs.google.cloud.bom))
+
+    implementation(libs.bundles.logging)
+    implementation(libs.reflections)
+    implementation(libs.dotenv)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.jedis)
+    implementation(libs.amqp.client)
+    implementation(libs.google.api.client)
+    implementation(libs.google.cloud.tasks)
+    implementation(libs.google.cloud.scheduler)
+    implementation(libs.google.cloud.bigquery)
+    implementation(libs.firebase.admin)
+    implementation(libs.bundles.spring.security)
+
     // SERIALIZATION
     implementation(libs.serialization)
 

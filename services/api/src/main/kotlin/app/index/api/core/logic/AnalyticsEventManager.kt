@@ -1,6 +1,6 @@
 package app.index.api.core.logic
 
-import app.index.api.core.clients.BigQueryClient
+import app.index.shared.core.clients.BigQueryClient
 import app.index.shared.core.data.models.analytics.AnalyticsEvent
 import app.index.shared.core.data.models.analytics.AnalyticsEventReceiver
 import io.github.oshai.kotlinlogging.KotlinLogging

@@ -1,7 +1,7 @@
 package app.index.api.routing.auth.routes
 
 import app.index.api.core.logic.usecases.UserAuthUseCase
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.auth.WelcomeAction
 import app.index.shared.core.data.models.auth.WelcomeActionResponse
 import app.index.api.routing.auth.WelcomeActionRoute

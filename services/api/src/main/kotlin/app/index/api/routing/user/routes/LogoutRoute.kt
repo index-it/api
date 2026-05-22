@@ -1,7 +1,7 @@
 package app.index.api.routing.user.routes
 
 import app.index.api.core.logic.websocket.connection.WebsocketConnectionsManager
-import app.index.api.data.daos.auth.UserSessionDao
+import app.index.shared.core.data.daos.auth.UserSessionDao
 import app.index.shared.core.data.models.auth.UserSessionCookie
 import app.index.api.routing.user.LogoutRoute
 import io.ktor.http.*

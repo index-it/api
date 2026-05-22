@@ -3,8 +3,8 @@ package app.index.api.routing.admin.routes
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.daos.auth.UserSessionDao
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.data.daos.auth.UserSessionDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.api.plugins.custom.internal
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.admin.AdminRoute

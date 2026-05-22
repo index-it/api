@@ -7,9 +7,9 @@ import app.index.api.core.logic.usecases.TaskUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.daos.list.ItemDao
-import app.index.api.data.daos.task.TaskDao
-import app.index.api.data.daos.task.TaskReminderJobDao
+import app.index.shared.core.data.daos.list.ItemDao
+import app.index.shared.core.data.daos.task.TaskDao
+import app.index.shared.core.data.daos.task.TaskReminderJobDao
 import app.index.shared.core.data.models.analytics.AnalyticsEventData
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel
 import app.index.api.plugins.emitAnalyticsEvent

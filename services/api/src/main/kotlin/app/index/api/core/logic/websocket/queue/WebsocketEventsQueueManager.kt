@@ -1,10 +1,10 @@
 package app.index.api.core.logic.websocket.queue
 
-import app.index.api.config.RabbitMQConfig
-import app.index.api.core.clients.RabbitMqClient
-import app.index.api.core.logic.ObjectMapper
+import app.index.shared.core.config.RabbitMQConfig
+import app.index.shared.core.clients.RabbitMqClient
+import app.index.shared.core.logic.ObjectMapper
 import app.index.api.core.logic.websocket.event.WebsocketEventData
-import app.index.api.di.IClosableComponent
+import app.index.shared.core.di.IClosableComponent
 import com.rabbitmq.client.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*

@@ -1,10 +1,10 @@
 package app.index.api.plugins
 
-import app.index.api.config.ApplicationConfig
-import app.index.api.di.ClientModule
-import app.index.api.di.DataModule
-import app.index.api.di.IClosableComponent
-import app.index.api.di.LogicModule
+import app.index.shared.core.config.ApplicationConfig
+import app.index.shared.core.di.ClientModule
+import app.index.shared.core.di.DataModule
+import app.index.shared.core.di.IClosableComponent
+import app.index.shared.core.di.LogicModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
 import kotlinx.coroutines.runBlocking

@@ -24,7 +24,7 @@ dependencies {
     implementation(platform(libs.google.cloud.bom))
 
     // LOGGING
-    implementation(libs.bundles.logging)
+    implementation(libs.bundles.logging.sentry)
     implementation(libs.reflections)
     api(libs.slf4j.api)
 

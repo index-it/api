@@ -1,6 +1,6 @@
 package app.index.api.plugins
 
-import app.index.api.config.BigQueryConfig
+import app.index.shared.core.config.BigQueryConfig
 import app.index.api.core.logic.AnalyticsEventManager
 import app.index.shared.core.data.models.analytics.AnalyticsEvent
 import app.index.shared.core.data.models.analytics.AnalyticsEventData

@@ -1,16 +1,16 @@
 package app.index.api.plugins
 
-import app.index.api.config.ApiConfig
-import app.index.api.config.GoogleCloudConfig
-import app.index.api.config.OpenApiConfig
-import app.index.api.config.RevenueCatConfig
+import app.index.shared.core.config.ApiConfig
+import app.index.shared.core.config.GoogleCloudConfig
+import app.index.shared.core.config.OpenApiConfig
+import app.index.shared.core.config.RevenueCatConfig
 import app.index.api.core.exceptions.AuthenticationException
 import app.index.shared.core.logic.DatetimeUtils
-import app.index.api.core.logic.PasswordEncoder
+import app.index.shared.core.logic.PasswordEncoder
 import app.index.shared.core.typedId.impl.IxId
 import app.index.shared.core.typedId.serialization.IdKotlinXSerializationModule
-import app.index.api.data.daos.auth.UserSessionDao
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.data.daos.auth.UserSessionDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.auth.UserAuthSessionData
 import app.index.shared.core.data.models.auth.UserSessionCookie
 import app.index.shared.core.data.models.user.UserData

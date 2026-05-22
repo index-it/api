@@ -1,6 +1,6 @@
 package app.index.api.routing.web.routes
 
-import app.index.api.config.RevenueCatConfig
+import app.index.shared.core.config.RevenueCatConfig
 import app.index.api.core.logic.pro.ProManager
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent

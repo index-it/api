@@ -2,7 +2,7 @@ package app.index.api.core.logic.usecases
 
 import app.index.api.core.exceptions.AuthorizationException
 import app.index.shared.core.typedId.impl.IxId
-import app.index.api.data.daos.list.ListDao
+import app.index.shared.core.data.daos.list.ListDao
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel
 import app.index.shared.core.data.models.lists.ListData
 import app.index.shared.core.data.models.user.UserData

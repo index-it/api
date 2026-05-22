@@ -2,9 +2,9 @@ package app.index.api.routing.auth.routes
 
 import app.index.api.core.exceptions.AuthenticationException
 import app.index.api.core.logic.AnalyticsEventManager
-import app.index.api.core.logic.PasswordEncoder
-import app.index.api.data.daos.auth.UserSessionDao
-import app.index.api.data.daos.user.UserDao
+import app.index.shared.core.logic.PasswordEncoder
+import app.index.shared.core.data.daos.auth.UserSessionDao
+import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.analytics.AnalyticsEventData
 import app.index.shared.core.data.models.auth.LoginCredentialsData
 import app.index.shared.core.data.models.user.UserData

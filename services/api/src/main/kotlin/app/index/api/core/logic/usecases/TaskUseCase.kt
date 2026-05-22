@@ -1,12 +1,12 @@
 package app.index.api.core.logic.usecases
 
-import app.index.api.core.clients.GoogleCloudTasksClient
+import app.index.shared.core.clients.GoogleCloudTasksClient
 import app.index.shared.core.logic.DatetimeUtils
 import app.index.shared.core.typedId.newIxId
 import app.index.api.core.logic.usecases.TaskUseCase.calculateNextOccurrenceDueDateAndRRule
 import app.index.api.core.logic.usecases.TaskUseCase.refreshReminders
-import app.index.api.data.daos.task.TaskDao
-import app.index.api.data.daos.task.TaskReminderJobDao
+import app.index.shared.core.data.daos.task.TaskDao
+import app.index.shared.core.data.daos.task.TaskReminderJobDao
 import app.index.shared.core.data.models.tasks.TaskData
 import app.index.shared.core.data.models.tasks.TaskReminderData
 import app.index.shared.core.data.models.tasks.TaskReminderJobData

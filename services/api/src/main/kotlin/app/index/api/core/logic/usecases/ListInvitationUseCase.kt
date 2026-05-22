@@ -1,11 +1,11 @@
 package app.index.api.core.logic.usecases
 
-import app.index.api.core.clients.BrevoClient
+import app.index.shared.core.clients.BrevoClient
 import app.index.shared.core.logic.DatetimeUtils
-import app.index.api.core.logic.TokenGenerator
+import app.index.shared.core.logic.TokenGenerator
 import app.index.shared.core.typedId.impl.IxId
-import app.index.api.data.daos.list.ListDao
-import app.index.api.data.daos.list.ListUserInviteDao
+import app.index.shared.core.data.daos.list.ListDao
+import app.index.shared.core.data.daos.list.ListUserInviteDao
 import app.index.shared.core.data.models.lists.ListData
 import app.index.shared.core.data.models.lists.ListUserInviteData
 import app.index.shared.core.data.models.user.UserData

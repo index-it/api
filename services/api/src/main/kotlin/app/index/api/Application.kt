@@ -1,11 +1,12 @@
 package app.index.api
 
-import app.index.api.config.ApiConfig
-import app.index.api.config.ApplicationConfig
-import app.index.api.config.SentryConfig
-import app.index.api.config.core.ConfigurationManager
-import app.index.api.config.core.ConfigurationReader
-import app.index.api.config.core.models.ApplicationEnvironment
+import app.index.shared.core.config.ApiConfig
+import io.ktor.util.reflect.instanceOf
+import app.index.shared.core.config.ApplicationConfig
+import app.index.shared.core.config.SentryConfig
+import app.index.shared.core.config.core.ConfigurationManager
+import app.index.shared.core.config.core.ConfigurationReader
+import app.index.shared.core.config.core.models.ApplicationEnvironment
 import app.index.api.plugins.*
 import app.index.api.routing.configureRouting
 import ch.qos.logback.classic.Logger
@@ -20,9 +21,9 @@ fun main() {
      * Load configuration properties (environment)
      */
     val configInitializer =
-        ConfigurationManager(
-            packageName = ConfigurationManager.DEFAULT_CONFIG_PACKAGE,
-            ConfigurationReader::read,
+        _root_ide_package_.app.index.shared.core.config.core.ConfigurationManager(
+            packageName = _root_ide_package_.app.index.shared.core.config.core.ConfigurationManager.DEFAULT_CONFIG_PACKAGE,
+            _root_ide_package_.app.index.shared.core.config.core.ConfigurationReader::read,
         )
 
     configInitializer.initialize()
@@ -30,7 +31,7 @@ fun main() {
     /**
      * Configure Sentry environment
      */
-    val isSentryEnabled = ApplicationConfig.environment != ApplicationEnvironment.LOCAL
+    val isSentryEnabled = _root_ide_package_.app.index.shared.core.config.ApplicationConfig.environment != ApplicationEnvironment.LOCAL
 
     Sentry.init { options ->
         options.environment = ApplicationConfig.environment.sentryName

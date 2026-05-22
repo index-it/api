@@ -3,7 +3,7 @@ package app.index.api.core.logic.websocket.connection
 import app.index.shared.core.typedId.impl.IxId
 import app.index.shared.core.data.models.auth.UserAuthSessionData
 import app.index.shared.core.data.models.user.UserData
-import app.index.api.di.IClosableComponent
+import app.index.shared.core.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.websocket.*
 import org.koin.core.annotation.Single
