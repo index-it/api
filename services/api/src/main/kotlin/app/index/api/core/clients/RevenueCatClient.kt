@@ -6,7 +6,7 @@ import app.index.api.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.apache5.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -23,7 +23,7 @@ private val log = KotlinLogging.logger {  }
 class RevenueCatClient : IClosableComponent {
 
     private val httpClient =
-        HttpClient(Apache) {
+        HttpClient(Apache5) {
             install(Logging)
             install(ContentNegotiation) {
                 json(Json {
@@ -51,7 +51,7 @@ class RevenueCatClient : IClosableComponent {
 
         return if (response.status.isSuccess()) {
             val subscriberData: RevenueCatSubscriberRequestWrapper = response.body()
-            return subscriberData.subscriber.entitlements.isNotEmpty()
+            subscriberData.subscriber.entitlements.isNotEmpty()
         } else {
             log.debug { "Failed to fetch revenuecat user\nResponse: $response" }
             false

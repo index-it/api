@@ -103,7 +103,7 @@ konform = { group = "io.konform", name = "konform-jvm", version.ref = "konform" 
 librecur = { group = "org.dmfs", name = "lib-recur", version.ref = "libRecur" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-apache = { group = "io.ktor", name = "ktor-client-apache", version.ref = "ktor" }
+ktor-client-apache = { group = "io.ktor", name = "ktor-client-apache5", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 

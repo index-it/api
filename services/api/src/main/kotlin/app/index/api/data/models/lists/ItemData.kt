@@ -82,9 +82,4 @@ data class ItemData(
         @Contextual val list_id: IxId<ListData>? = null,
         @Contextual val category_id: IxId<CategoryData>? = null,
     )
-
-    @Serializable
-    data class ItemTemplateResponseData(
-        val name: String,
-    )
 }

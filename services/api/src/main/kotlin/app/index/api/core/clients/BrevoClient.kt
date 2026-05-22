@@ -5,7 +5,7 @@ import app.index.api.data.models.email.*
 import app.index.api.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.apache5.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -24,7 +24,7 @@ class BrevoClient : IClosableComponent {
 
     // Can't configure further if injected with DI
     private val httpClient =
-        HttpClient(Apache) {
+        HttpClient(Apache5) {
             install(Logging)
             install(ContentNegotiation) {
                 json(Json {

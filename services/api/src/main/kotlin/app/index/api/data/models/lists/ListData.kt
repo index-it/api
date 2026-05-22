@@ -88,12 +88,6 @@ data class ListData(
     )
 
     @Serializable
-    data class ListTemplateResponseData(
-        val name: String,
-        val color: String,
-    )
-
-    @Serializable
     data class ListSingleUserAccessInfoResponseData(
         @Contextual val user_id: IxId<UserData>,
         val email: String,

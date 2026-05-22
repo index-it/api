@@ -9,6 +9,7 @@ import java.util.*
  */
 fun <T> String.toIxId() = IxId<T>(this)
 
+@Suppress("UNUSED")
 fun <T> Int.toIxIntId() = IxIntId<T>(this)
 
 fun <T> newIxId() = IxId<T>(UUID.randomUUID())

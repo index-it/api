@@ -1,7 +1,7 @@
 package app.index.api.di
 
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.apache5.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -18,7 +18,7 @@ import org.koin.core.annotation.Module
 class ClientModule {
     @Factory
     fun httpClient(): HttpClient =
-        HttpClient(Apache) {
+        HttpClient(Apache5) {
             install(Logging)
             install(ContentNegotiation) {
                 json(Json)

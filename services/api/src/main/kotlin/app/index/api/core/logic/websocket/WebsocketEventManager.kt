@@ -58,7 +58,7 @@ class WebsocketEventManager(
             try {
                 it.connection.sendSerialized(websocketEventData.sanitize())
                 log.debug { "Sent websocket event to websocket connection: $it" }
-            } catch (e: IllegalStateException) {
+            } catch (_: IllegalStateException) {
                 // Websocket connection is closed already
                 websocketConnectionsManager.removeConnection(it)
             } catch (e: WebsocketConverterNotFoundException) {

@@ -25,7 +25,7 @@ class ProManager(
         userIds.forEach { id ->
             val userId = try {
                 id.toIxId<UserData>()
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 null
             }
 

@@ -59,10 +59,4 @@ data class CategoryData(
                 }
             }.invoke(this)
     }
-
-    @Serializable
-    data class CategoryTemplateResponseData(
-        val name: String,
-        val color: String,
-    )
 }

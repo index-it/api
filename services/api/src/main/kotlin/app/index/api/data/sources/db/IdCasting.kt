@@ -8,6 +8,7 @@ import java.util.*
 
 fun <T> EntityID<UUID>.toIxId(): IxId<T> = IxId(value)
 
+@Suppress("UNUSED")
 fun <T> EntityID<Int>.toIxIntId(): IxIntId<T> = IxIntId(value)
 
 fun IxId<*>.toEntityId(table: IdTable<UUID>) = EntityID(this.id, table)

@@ -96,7 +96,7 @@ fun Route.taskCompletionRoute() {
                                 includeCurrentSession = true
                             )
                         }
-                } catch (e: AuthorizationException) {
+                } catch (_: AuthorizationException) {
                     // Do not update the item completion if the user is not at least an editor of the list
                 }
             }

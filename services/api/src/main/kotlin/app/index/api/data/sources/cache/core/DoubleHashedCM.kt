@@ -24,6 +24,7 @@ import app.index.api.core.logic.ObjectMapper
  *
  * @param keyBase the base for all the hash keys
  */
+@Suppress("unused")
 abstract class DoubleHashedCM(
     private val keyBase: String,
     val redisClient: RedisClient,
