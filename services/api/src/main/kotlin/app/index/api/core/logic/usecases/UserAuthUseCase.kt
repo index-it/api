@@ -1,7 +1,7 @@
 package app.index.api.core.logic.usecases
 
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.data.models.user.UserData
 import kotlin.time.Duration.Companion.days
 
 object UserAuthUseCase {

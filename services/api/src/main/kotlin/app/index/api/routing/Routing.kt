@@ -1,6 +1,6 @@
 package app.index.api.routing
 
-import app.index.api.core.logic.typedId.serialization.IdKotlinXSerializationModule
+import app.index.shared.core.typedId.serialization.IdKotlinXSerializationModule
 import app.index.api.routing.admin.adminRoutes
 import app.index.api.routing.auth.authRoutes
 import app.index.api.routing.documentation.documentationRoutes

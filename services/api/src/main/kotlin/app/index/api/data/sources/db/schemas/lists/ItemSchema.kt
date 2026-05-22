@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.lists
 
-import app.index.api.data.models.lists.ItemData
+import app.index.shared.core.data.models.lists.ItemData
 import app.index.api.data.sources.db.schemas.lists.ItemTable.category
 import app.index.api.data.sources.db.schemas.lists.ItemTable.completed
 import app.index.api.data.sources.db.schemas.lists.ItemTable.completed_at

@@ -1,9 +1,9 @@
 package app.index.api.data.sources.db.dbi.list.impl
 
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.lists.ListData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.lists.ListData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.db.dbi.list.ListDBI
 import app.index.api.data.sources.db.schemas.lists.*
 import app.index.api.data.sources.db.schemas.user.UsersTable

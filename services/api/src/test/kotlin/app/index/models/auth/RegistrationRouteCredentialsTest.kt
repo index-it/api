@@ -1,6 +1,6 @@
 package app.index.models.auth
 
-import app.index.api.data.models.auth.RegistrationCredentials
+import app.index.shared.core.data.models.auth.RegistrationCredentials
 import io.konform.validation.Valid
 import org.junit.jupiter.api.Test
 

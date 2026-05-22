@@ -2,7 +2,7 @@ package app.index.api.routing.websocket
 
 import app.index.api.core.logic.websocket.connection.WebsocketConnection
 import app.index.api.core.logic.websocket.connection.WebsocketConnectionsManager
-import app.index.api.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.auth.UserAuthSessionData
 import app.index.api.plugins.AuthenticationMethods
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.auth.*

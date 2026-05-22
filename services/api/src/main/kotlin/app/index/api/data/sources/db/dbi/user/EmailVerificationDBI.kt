@@ -1,8 +1,8 @@
 package app.index.api.data.sources.db.dbi.user
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.email.EmailVerificationData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.email.EmailVerificationData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.db.dbi.DBI
 
 interface EmailVerificationDBI : DBI {

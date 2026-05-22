@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.tasks
 
-import app.index.api.data.models.tasks.TaskData
+import app.index.shared.core.data.models.tasks.TaskData
 import app.index.api.data.sources.db.schemas.lists.ItemEntity
 import app.index.api.data.sources.db.schemas.lists.ItemTable
 import app.index.api.data.sources.db.schemas.tasks.TaskTable.completed

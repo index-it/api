@@ -2,8 +2,8 @@ package app.index.api.core.clients
 
 import app.index.api.config.BigQueryConfig
 import app.index.api.core.logic.ObjectMapper
-import app.index.api.data.models.analytics.AnalyticsEvent
-import app.index.api.data.models.analytics.AnalyticsEventType
+import app.index.shared.core.data.models.analytics.AnalyticsEvent
+import app.index.shared.core.data.models.analytics.AnalyticsEventType
 import app.index.api.di.IClosableComponent
 import com.google.cloud.bigquery.BigQueryOptions
 import com.google.cloud.bigquery.InsertAllRequest
@@ -37,7 +37,7 @@ class BigQueryClient(
         }
     }
 
-    private val eventsPool: MutableList<AnalyticsEvent.BigQueryConsumableAnalyticsEvent> = Collections.synchronizedList(ArrayList())
+    private val eventsPool: MutableList<app.index.shared.core.data.models.analytics.AnalyticsEvent.BigQueryConsumableAnalyticsEvent> = Collections.synchronizedList(ArrayList())
     private val executor = Executors.newScheduledThreadPool(BigQueryConfig.poolSize)
 
     init {
@@ -55,7 +55,7 @@ class BigQueryClient(
      * If [BigQueryConfig.enabled] is false, this will log the event in the console,
      * otherwise the event will be added to a pool that gets pushed following a schedule
      */
-    fun pushAnalyticsEvent(event: AnalyticsEvent.BigQueryConsumableAnalyticsEvent) {
+    fun pushAnalyticsEvent(event: app.index.shared.core.data.models.analytics.AnalyticsEvent.BigQueryConsumableAnalyticsEvent) {
         if (bigQueryClient != null) {
             eventsPool.add(event)
             if (eventsPool.size >= BigQueryConfig.maxEventsEntry) {
@@ -73,7 +73,7 @@ class BigQueryClient(
             return
         }
 
-        val events: List<AnalyticsEvent.BigQueryConsumableAnalyticsEvent> = ArrayList(eventsPool)
+        val events: List<app.index.shared.core.data.models.analytics.AnalyticsEvent.BigQueryConsumableAnalyticsEvent> = ArrayList(eventsPool)
         eventsPool.clear()
 
         try {

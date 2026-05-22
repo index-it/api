@@ -2,9 +2,9 @@ package app.index.api.core.clients
 
 import app.index.api.config.GoogleCloudConfig
 import app.index.api.config.JobConfig
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.tasks.TaskReminderJobData
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.tasks.TaskReminderJobData
 import com.google.cloud.tasks.v2beta3.*
 import com.google.protobuf.Timestamp
 import io.github.oshai.kotlinlogging.KotlinLogging

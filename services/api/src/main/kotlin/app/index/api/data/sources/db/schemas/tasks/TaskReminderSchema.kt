@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.tasks
 
-import app.index.api.data.models.tasks.TaskReminderData
+import app.index.shared.core.data.models.tasks.TaskReminderData
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderTable.days_before
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderTable.task
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderTable.time_offset

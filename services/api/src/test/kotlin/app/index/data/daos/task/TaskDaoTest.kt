@@ -1,9 +1,9 @@
 package app.index.data.daos.task
 
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.newIxId
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.newIxId
 import app.index.api.core.logic.usecases.TaskUseCase
-import app.index.api.data.models.tasks.TaskData
+import app.index.shared.core.data.models.tasks.TaskData
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
 import org.junit.jupiter.api.Assertions.assertEquals

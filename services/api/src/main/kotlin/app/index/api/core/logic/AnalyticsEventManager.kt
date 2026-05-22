@@ -1,8 +1,8 @@
 package app.index.api.core.logic
 
 import app.index.api.core.clients.BigQueryClient
-import app.index.api.data.models.analytics.AnalyticsEvent
-import app.index.api.data.models.analytics.AnalyticsEventReceiver
+import app.index.shared.core.data.models.analytics.AnalyticsEvent
+import app.index.shared.core.data.models.analytics.AnalyticsEventReceiver
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.annotation.Single
 

@@ -1,15 +1,15 @@
 package app.index.api.core.logic.usecases
 
 import app.index.api.core.clients.GoogleCloudTasksClient
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.newIxId
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.newIxId
 import app.index.api.core.logic.usecases.TaskUseCase.calculateNextOccurrenceDueDateAndRRule
 import app.index.api.core.logic.usecases.TaskUseCase.refreshReminders
 import app.index.api.data.daos.task.TaskDao
 import app.index.api.data.daos.task.TaskReminderJobDao
-import app.index.api.data.models.tasks.TaskData
-import app.index.api.data.models.tasks.TaskReminderData
-import app.index.api.data.models.tasks.TaskReminderJobData
+import app.index.shared.core.data.models.tasks.TaskData
+import app.index.shared.core.data.models.tasks.TaskReminderData
+import app.index.shared.core.data.models.tasks.TaskReminderJobData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.*
 import org.dmfs.rfc5545.recur.RecurrenceRule

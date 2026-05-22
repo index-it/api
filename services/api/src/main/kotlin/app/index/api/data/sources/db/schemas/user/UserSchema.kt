@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.user
 
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.db.schemas.user.UsersTable.created_at
 import app.index.api.data.sources.db.schemas.user.UsersTable.creation_source
 import app.index.api.data.sources.db.schemas.user.UsersTable.email

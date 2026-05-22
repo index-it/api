@@ -1,10 +1,10 @@
 package app.index.api.data.sources.db.dbi.user.impl
 
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.core.logic.TokenGenerator
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.user.PasswordResetData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.user.PasswordResetData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.db.dbi.user.PasswordResetDBI
 import app.index.api.data.sources.db.schemas.user.*
 import app.index.api.data.sources.db.toEntityId

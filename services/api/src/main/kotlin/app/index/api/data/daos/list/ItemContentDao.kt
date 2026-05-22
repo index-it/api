@@ -1,10 +1,10 @@
 package app.index.api.data.daos.list
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.core.logic.typedId.newIxId
-import app.index.api.data.models.lists.ItemContentData
-import app.index.api.data.models.lists.ItemData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.typedId.newIxId
+import app.index.shared.core.data.models.lists.ItemContentData
+import app.index.shared.core.data.models.lists.ItemData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.db.dbi.list.ItemContentDBI
 import org.koin.core.annotation.Single
 

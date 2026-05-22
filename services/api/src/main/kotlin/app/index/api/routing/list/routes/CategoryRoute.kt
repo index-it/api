@@ -5,8 +5,8 @@ import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
 import app.index.api.data.daos.list.CategoryDao
-import app.index.api.data.models.lists.CategoryData
-import app.index.api.data.models.lists.ListAuthorizationLevel
+import app.index.shared.core.data.models.lists.CategoryData
+import app.index.shared.core.data.models.lists.ListAuthorizationLevel
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.list.ListsRoute

@@ -1,7 +1,7 @@
 package app.index.api.routing.admin
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.routing.admin.routes.adminUsersByEmailRoute
 import app.index.api.routing.admin.routes.adminUsersByIdRoute

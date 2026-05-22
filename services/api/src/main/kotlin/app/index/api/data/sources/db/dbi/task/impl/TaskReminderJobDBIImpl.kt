@@ -1,8 +1,8 @@
 package app.index.api.data.sources.db.dbi.task.impl
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.tasks.TaskData
-import app.index.api.data.models.tasks.TaskReminderJobData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.tasks.TaskData
+import app.index.shared.core.data.models.tasks.TaskReminderJobData
 import app.index.api.data.sources.db.dbi.task.TaskReminderJobDBI
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderJobEntity
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderJobTable

@@ -1,13 +1,13 @@
 package app.index.api.plugins
 
 import app.index.api.config.ApiConfig
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.core.logic.typedId.serialization.IdKotlinXSerializationModule
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.typedId.serialization.IdKotlinXSerializationModule
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.models.auth.UserAuthSessionData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.user.UserData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*

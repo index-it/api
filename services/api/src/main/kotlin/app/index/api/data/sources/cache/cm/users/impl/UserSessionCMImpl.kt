@@ -3,9 +3,9 @@ package app.index.api.data.sources.cache.cm.users.impl
 import app.index.api.config.ApiConfig
 import app.index.api.core.clients.RedisClient
 import app.index.api.core.logic.ObjectMapper
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.auth.UserAuthSessionData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.cache.cm.users.UserSessionCM
 import app.index.api.data.sources.cache.core.ExpiringCM
 import org.koin.core.annotation.Single

@@ -1,11 +1,11 @@
 package app.index.api.data.daos.task
 
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.core.logic.typedId.newIxId
-import app.index.api.data.models.lists.ItemData
-import app.index.api.data.models.tasks.TaskData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.typedId.newIxId
+import app.index.shared.core.data.models.lists.ItemData
+import app.index.shared.core.data.models.tasks.TaskData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.db.dbi.task.TaskDBI
 import kotlinx.datetime.LocalDate
 import org.koin.core.annotation.Single

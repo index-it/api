@@ -1,11 +1,11 @@
 package app.index.api.core.logic.usecases
 
 import app.index.api.core.exceptions.AuthorizationException
-import app.index.api.core.logic.typedId.impl.IxId
+import app.index.shared.core.typedId.impl.IxId
 import app.index.api.data.daos.list.ListDao
-import app.index.api.data.models.lists.ListAuthorizationLevel
-import app.index.api.data.models.lists.ListData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.lists.ListAuthorizationLevel
+import app.index.shared.core.data.models.lists.ListData
+import app.index.shared.core.data.models.user.UserData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

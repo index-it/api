@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.lists
 
-import app.index.api.data.models.lists.CategoryData
+import app.index.shared.core.data.models.lists.CategoryData
 import app.index.api.data.sources.db.schemas.lists.CategoryTable.color
 import app.index.api.data.sources.db.schemas.lists.CategoryTable.created_at
 import app.index.api.data.sources.db.schemas.lists.CategoryTable.edited_at

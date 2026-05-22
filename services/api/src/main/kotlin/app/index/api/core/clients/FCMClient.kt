@@ -1,7 +1,7 @@
 package app.index.api.core.clients
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.tasks.TaskData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.tasks.TaskData
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions

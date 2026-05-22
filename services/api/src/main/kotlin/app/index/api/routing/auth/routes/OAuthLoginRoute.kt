@@ -4,12 +4,12 @@ import app.index.api.core.clients.oauth.AppleOAuthClient
 import app.index.api.core.clients.oauth.GoogleOAuthClient
 import app.index.api.core.exceptions.AuthenticationException
 import app.index.api.core.logic.AnalyticsEventManager
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.newIxId
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.newIxId
 import app.index.api.data.daos.auth.UserSessionDao
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.analytics.AnalyticsEventData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.analytics.AnalyticsEventData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.routing.auth.LoginWithApple
 import app.index.api.routing.auth.LoginWithGoogle

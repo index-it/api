@@ -9,7 +9,7 @@ import app.index.api.core.logic.websocket.event.WebsocketEventType
 import app.index.api.data.daos.auth.PasswordResetDao
 import app.index.api.data.daos.auth.UserSessionDao
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.auth.PasswordResetRequestBody
+import app.index.shared.core.data.models.auth.PasswordResetRequestBody
 import app.index.api.routing.user.PasswordForgottenRoute
 import app.index.api.routing.user.ResetPasswordRoute
 import io.github.oshai.kotlinlogging.KotlinLogging

@@ -63,17 +63,12 @@ kotlin {
     }
 }
 
-sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
-}
-
-
 ksp {
     arg("KOIN_CONFIG_CHECK", "true")
 }
 
 application {
-    mainClass.set("app.index.ApplicationKt")
+    mainClass.set("app.index.api.ApplicationKt")
 }
 
 ktor {

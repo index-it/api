@@ -1,8 +1,8 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.data.daos.user.FCMRegistrationTokenDao
-import app.index.api.data.models.user.FCMRegistrationTokenData
+import app.index.shared.core.data.models.user.FCMRegistrationTokenData
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.user.MeRoute
 import io.ktor.http.*

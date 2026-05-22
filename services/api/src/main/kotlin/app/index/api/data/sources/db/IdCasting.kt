@@ -1,7 +1,7 @@
 package app.index.api.data.sources.db
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.core.logic.typedId.impl.IxIntId
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.typedId.impl.IxIntId
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import java.util.*

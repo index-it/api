@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.user
 
-import app.index.api.data.models.user.PasswordResetData
+import app.index.shared.core.data.models.user.PasswordResetData
 import app.index.api.data.sources.db.schemas.user.PasswordResetTable.created_at
 import app.index.api.data.sources.db.schemas.user.PasswordResetTable.expires_at
 import app.index.api.data.sources.db.schemas.user.PasswordResetTable.token

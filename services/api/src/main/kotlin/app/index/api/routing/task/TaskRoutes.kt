@@ -1,7 +1,7 @@
 package app.index.api.routing.task
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.tasks.TaskData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.tasks.TaskData
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.routing.task.routes.connectedTaskItemsRoute
 import app.index.api.routing.task.routes.taskCompletionRoute

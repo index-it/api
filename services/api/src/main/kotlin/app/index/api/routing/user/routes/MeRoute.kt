@@ -7,8 +7,8 @@ import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
 import app.index.api.data.daos.auth.UserSessionDao
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.auth.PasswordResetRequestBody
-import app.index.api.data.models.auth.UserSessionCookie
+import app.index.shared.core.data.models.auth.PasswordResetRequestBody
+import app.index.shared.core.data.models.auth.UserSessionCookie
 import app.index.api.plugins.authSessionDataOrThrow
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow

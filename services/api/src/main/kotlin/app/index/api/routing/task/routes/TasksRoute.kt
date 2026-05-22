@@ -8,8 +8,8 @@ import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
 import app.index.api.data.daos.task.TaskDao
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.analytics.AnalyticsEventData
-import app.index.api.data.models.tasks.TaskData
+import app.index.shared.core.data.models.analytics.AnalyticsEventData
+import app.index.shared.core.data.models.tasks.TaskData
 import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow

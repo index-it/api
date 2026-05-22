@@ -1,11 +1,11 @@
 package app.index.api.core.logic.websocket.event
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.lists.CategoryData
-import app.index.api.data.models.lists.ItemData
-import app.index.api.data.models.lists.ListData
-import app.index.api.data.models.tasks.TaskData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.lists.CategoryData
+import app.index.shared.core.data.models.lists.ItemData
+import app.index.shared.core.data.models.lists.ListData
+import app.index.shared.core.data.models.tasks.TaskData
+import app.index.shared.core.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

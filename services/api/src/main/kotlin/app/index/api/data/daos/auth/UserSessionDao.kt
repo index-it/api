@@ -1,11 +1,11 @@
 package app.index.api.data.daos.auth
 
-import app.index.api.core.logic.DatetimeUtils
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.core.logic.typedId.newIxId
-import app.index.api.data.models.auth.UserAuthSessionData
-import app.index.api.data.models.auth.UserSessionCookie
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.logic.DatetimeUtils
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.typedId.newIxId
+import app.index.shared.core.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.auth.UserSessionCookie
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.data.sources.cache.cm.users.UserSessionCM
 import org.koin.core.annotation.Single
 

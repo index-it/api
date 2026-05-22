@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.user
 
-import app.index.api.data.models.user.FCMRegistrationTokenData
+import app.index.shared.core.data.models.user.FCMRegistrationTokenData
 import app.index.api.data.sources.db.schemas.user.FCMRegistrationTokenTable.created_at
 import app.index.api.data.sources.db.schemas.user.FCMRegistrationTokenTable.token
 import app.index.api.data.sources.db.schemas.user.FCMRegistrationTokenTable.user

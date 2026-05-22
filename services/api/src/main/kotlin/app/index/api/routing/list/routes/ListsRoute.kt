@@ -9,9 +9,9 @@ import app.index.api.data.daos.list.CategoryDao
 import app.index.api.data.daos.list.ItemDao
 import app.index.api.data.daos.list.ListDao
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.analytics.AnalyticsEventData
-import app.index.api.data.models.lists.ListData
-import app.index.api.data.models.lists.ListsSyncResponse
+import app.index.shared.core.data.models.analytics.AnalyticsEventData
+import app.index.shared.core.data.models.lists.ListData
+import app.index.shared.core.data.models.lists.ListsSyncResponse
 import app.index.api.plugins.emitAnalyticsEvent
 import app.index.api.plugins.emitWebsocketEventForCurrentSessionUser
 import app.index.api.plugins.userIdFromSessionOrThrow

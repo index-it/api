@@ -5,7 +5,7 @@ import app.index.api.core.logic.AnalyticsEventManager
 import app.index.api.core.logic.usecases.EmailVerificationUseCase
 import app.index.api.data.daos.auth.EmailVerificationDao
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.analytics.AnalyticsEventData
+import app.index.shared.core.data.models.analytics.AnalyticsEventData
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.plugins.UserIdPrincipalForEmailVerificationAuth
 import app.index.api.plugins.emitAnalyticsEvent

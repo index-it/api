@@ -1,13 +1,13 @@
 package app.index.api.plugins
 
-import app.index.api.data.models.auth.PasswordResetRequestBody
-import app.index.api.data.models.auth.RegistrationCredentials
-import app.index.api.data.models.lists.CategoryData
-import app.index.api.data.models.lists.ItemContentData
-import app.index.api.data.models.lists.ItemData
-import app.index.api.data.models.lists.ListData
-import app.index.api.data.models.tasks.TaskData
-import app.index.api.data.validation.Validatable
+import app.index.shared.core.data.models.auth.PasswordResetRequestBody
+import app.index.shared.core.data.models.auth.RegistrationCredentials
+import app.index.shared.core.data.models.lists.CategoryData
+import app.index.shared.core.data.models.lists.ItemContentData
+import app.index.shared.core.data.models.lists.ItemData
+import app.index.shared.core.data.models.lists.ListData
+import app.index.shared.core.data.models.tasks.TaskData
+import app.index.shared.core.data.validation.Validatable
 import io.konform.validation.Valid
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*

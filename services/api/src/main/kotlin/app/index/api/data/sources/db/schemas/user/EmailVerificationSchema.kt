@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.user
 
-import app.index.api.data.models.email.EmailVerificationData
+import app.index.shared.core.data.models.email.EmailVerificationData
 import app.index.api.data.sources.db.schemas.user.EmailVerificationTable.created_at
 import app.index.api.data.sources.db.schemas.user.EmailVerificationTable.expires_at
 import app.index.api.data.sources.db.schemas.user.EmailVerificationTable.token

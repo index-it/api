@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.lists
 
-import app.index.api.data.models.lists.ItemContentData
+import app.index.shared.core.data.models.lists.ItemContentData
 import app.index.api.data.sources.db.schemas.lists.ItemContentTable.content
 import app.index.api.data.sources.db.schemas.lists.ItemContentTable.item
 import app.index.api.data.sources.db.schemas.lists.ItemContentTable.user

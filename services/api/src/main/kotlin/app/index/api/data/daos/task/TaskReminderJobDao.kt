@@ -1,8 +1,8 @@
 package app.index.api.data.daos.task
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.tasks.TaskData
-import app.index.api.data.models.tasks.TaskReminderJobData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.tasks.TaskData
+import app.index.shared.core.data.models.tasks.TaskReminderJobData
 import app.index.api.data.sources.db.dbi.task.TaskReminderJobDBI
 import org.koin.core.annotation.Single
 

@@ -1,8 +1,8 @@
 package app.index.api.data.sources.db.dbi.list.impl
 
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.core.logic.TokenGenerator
-import app.index.api.data.models.lists.ListUserInviteData
+import app.index.shared.core.data.models.lists.ListUserInviteData
 import app.index.api.data.sources.db.dbi.list.ListUserInviteDBI
 import app.index.api.data.sources.db.schemas.lists.ListUserInviteEntity
 import app.index.api.data.sources.db.schemas.lists.ListUserInviteTable

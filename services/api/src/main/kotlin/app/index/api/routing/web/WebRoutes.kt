@@ -1,7 +1,7 @@
 package app.index.api.routing.web
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.tasks.TaskReminderJobData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.tasks.TaskReminderJobData
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.routing.web.routes.revenueCatWebhookRoute
 import app.index.api.routing.web.routes.webhookRoute

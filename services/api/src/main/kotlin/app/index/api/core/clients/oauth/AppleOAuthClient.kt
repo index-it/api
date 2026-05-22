@@ -1,7 +1,7 @@
 package app.index.api.core.clients.oauth
 
 import app.index.api.config.AppleConfig
-import app.index.api.data.models.oauth.apple.AppleIdTokenData
+import app.index.shared.core.data.models.oauth.apple.AppleIdTokenData
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT

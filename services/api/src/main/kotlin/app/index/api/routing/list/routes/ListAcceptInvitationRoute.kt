@@ -1,6 +1,6 @@
  package app.index.api.routing.list.routes
 
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.core.logic.usecases.ListInvitationUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent

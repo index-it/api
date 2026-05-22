@@ -1,8 +1,8 @@
 package app.index.api.core.logic.websocket.event
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.auth.UserAuthSessionData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 

@@ -4,7 +4,7 @@ import app.index.api.data.daos.list.CategoryDao
 import app.index.api.data.daos.list.ItemDao
 import app.index.api.data.daos.list.ListDao
 import app.index.api.data.daos.task.TaskDao
-import app.index.api.data.models.tasks.ConnectedTaskItemsData
+import app.index.shared.core.data.models.tasks.ConnectedTaskItemsData
 import app.index.api.plugins.userIdFromSessionOrThrow
 import app.index.api.routing.task.TasksRoute
 import io.ktor.server.resources.*

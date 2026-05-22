@@ -1,11 +1,11 @@
 package app.index.api.core.logic.usecases
 
 import app.index.api.core.clients.BrevoClient
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.core.logic.TokenGenerator
 import app.index.api.data.daos.auth.EmailVerificationDao
-import app.index.api.data.models.email.EmailVerificationData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.email.EmailVerificationData
+import app.index.shared.core.data.models.user.UserData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.tasks
 
-import app.index.api.data.models.tasks.TaskReminderJobData
+import app.index.shared.core.data.models.tasks.TaskReminderJobData
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderJobTable.scheduledAt
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderJobTable.task
 import app.index.api.data.sources.db.schemas.tasks.TaskReminderJobTable.user

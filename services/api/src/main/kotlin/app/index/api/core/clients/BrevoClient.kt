@@ -1,7 +1,7 @@
 package app.index.api.core.clients
 
 import app.index.api.config.BrevoConfig
-import app.index.api.data.models.email.*
+import app.index.shared.core.data.models.email.*
 import app.index.api.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*

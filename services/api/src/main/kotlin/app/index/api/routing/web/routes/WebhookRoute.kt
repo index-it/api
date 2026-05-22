@@ -2,7 +2,7 @@ package app.index.api.routing.web.routes
 
 import app.index.api.core.clients.FCMClient
 import app.index.api.core.clients.GoogleCloudTasksClient
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.data.daos.auth.EmailVerificationDao
 import app.index.api.data.daos.auth.PasswordResetDao
 import app.index.api.data.daos.list.ListInviteDao

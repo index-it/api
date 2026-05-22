@@ -1,11 +1,11 @@
 package app.index.core.logic.typedId.serialization
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.core.logic.typedId.newIxId
-import app.index.api.core.logic.typedId.newIxIntId
-import app.index.api.core.logic.typedId.serialization.IdKotlinXSerializationModule
-import app.index.api.data.models.email.EmailVerificationData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.typedId.newIxId
+import app.index.shared.core.typedId.newIxIntId
+import app.index.shared.core.typedId.serialization.IdKotlinXSerializationModule
+import app.index.shared.core.data.models.email.EmailVerificationData
+import app.index.shared.core.data.models.user.UserData
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

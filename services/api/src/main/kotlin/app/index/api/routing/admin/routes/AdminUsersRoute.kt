@@ -1,10 +1,10 @@
 package app.index.api.routing.admin.routes
 
-import app.index.api.core.logic.DatetimeUtils
+import app.index.shared.core.logic.DatetimeUtils
 import app.index.api.core.logic.PasswordEncoder
-import app.index.api.core.logic.typedId.newIxId
+import app.index.shared.core.typedId.newIxId
 import app.index.api.data.daos.user.UserDao
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.plugins.custom.internal
 import app.index.api.routing.admin.AdminRoute
 import io.ktor.http.*

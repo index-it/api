@@ -1,14 +1,14 @@
 package app.index.api.core.logic.websocket
 
 import app.index.api.core.logic.ObjectMapper
-import app.index.api.core.logic.typedId.impl.IxId
+import app.index.shared.core.typedId.impl.IxId
 import app.index.api.core.logic.websocket.connection.WebsocketConnectionsManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventData
 import app.index.api.core.logic.websocket.event.WebsocketEventType
 import app.index.api.core.logic.websocket.queue.WebsocketEventsQueueManager
-import app.index.api.data.models.auth.UserAuthSessionData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.user.UserData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.*
 import io.ktor.server.websocket.*

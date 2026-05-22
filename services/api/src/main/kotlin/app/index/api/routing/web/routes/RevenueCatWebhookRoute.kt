@@ -5,8 +5,8 @@ import app.index.api.core.logic.pro.ProManager
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType
-import app.index.api.data.models.pro.RevenueCatWebhookRequestData
-import app.index.api.data.models.pro.RevenueCatWebhookRequestWrapper
+import app.index.shared.core.data.models.pro.RevenueCatWebhookRequestData
+import app.index.shared.core.data.models.pro.RevenueCatWebhookRequestWrapper
 import app.index.api.plugins.custom.internal
 import app.index.api.plugins.emitWebsocketEventForUsers
 import app.index.api.routing.web.WebhookRoute

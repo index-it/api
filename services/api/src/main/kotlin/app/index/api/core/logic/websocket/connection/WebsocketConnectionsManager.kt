@@ -1,8 +1,8 @@
 package app.index.api.core.logic.websocket.connection
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.auth.UserAuthSessionData
-import app.index.api.data.models.user.UserData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.auth.UserAuthSessionData
+import app.index.shared.core.data.models.user.UserData
 import app.index.api.di.IClosableComponent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.websocket.*

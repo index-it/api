@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.lists
 
-import app.index.api.data.models.lists.ListInviteData
+import app.index.shared.core.data.models.lists.ListInviteData
 import app.index.api.data.sources.db.schemas.lists.ListInviteTable.created_at
 import app.index.api.data.sources.db.schemas.lists.ListInviteTable.editor
 import app.index.api.data.sources.db.schemas.lists.ListInviteTable.expires_at

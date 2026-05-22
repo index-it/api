@@ -1,6 +1,6 @@
 package app.index.api.data.sources.db.schemas.tasks
 
-import app.index.api.data.models.tasks.SubTaskData
+import app.index.shared.core.data.models.tasks.SubTaskData
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

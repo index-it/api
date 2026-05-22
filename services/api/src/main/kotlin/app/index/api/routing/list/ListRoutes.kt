@@ -1,10 +1,10 @@
 package app.index.api.routing.list
 
-import app.index.api.core.logic.typedId.impl.IxId
-import app.index.api.data.models.lists.CategoryData
-import app.index.api.data.models.lists.ItemData
-import app.index.api.data.models.lists.ListData
-import app.index.api.data.models.lists.ListInviteData
+import app.index.shared.core.typedId.impl.IxId
+import app.index.shared.core.data.models.lists.CategoryData
+import app.index.shared.core.data.models.lists.ItemData
+import app.index.shared.core.data.models.lists.ListData
+import app.index.shared.core.data.models.lists.ListInviteData
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.routing.list.ListsRoute.ListRoute.AccessRoute.InvitesRoute
 import app.index.api.routing.list.routes.*

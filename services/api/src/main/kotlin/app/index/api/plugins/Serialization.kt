@@ -1,6 +1,6 @@
 package app.index.api.plugins
 
-import app.index.api.core.logic.typedId.serialization.IdKotlinXSerializationModule
+import app.index.shared.core.typedId.serialization.IdKotlinXSerializationModule
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*

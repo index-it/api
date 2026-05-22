@@ -1,6 +1,6 @@
 package app.index.api.routing.documentation
 
-import app.index.api.core.logic.typedId.serialization.IdKotlinXSerializationModule
+import app.index.shared.core.typedId.serialization.IdKotlinXSerializationModule
 import app.index.api.plugins.AuthenticationMethods
 import app.index.api.plugins.custom.IxRouteAttributeKey
 import com.scalar.maven.core.ScalarHtmlRenderer
