@@ -4,6 +4,6 @@ interface Id<T> {
     /**
      * Cast Id<T> to Id<NewType>.
      */
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "unused")
     fun <NewType> cast(): Id<NewType> = this as Id<NewType>
 }

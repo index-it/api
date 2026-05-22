@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * @param data
- * @param type
  * @param receivers
  */
 @Serializable
