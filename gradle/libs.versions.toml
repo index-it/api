@@ -7,8 +7,8 @@ ksp="2.3.3"
 serialization="1.9.0"
 jib="3.5.1"
 
-sentryPlugin="6.1.0"
-sentryBom="8.34.1"
+sentryPlugin="6.8.1"
+sentryBom="8.42.0"
 
 kotlinLogging="7.0.13"
 logback="1.5.21"

@@ -1,0 +1,71 @@
+package app.index.api.data.sources.db.schemas.lists
+
+import app.index.api.data.models.lists.ItemContentData
+import app.index.api.data.sources.db.schemas.lists.ItemContentTable.content
+import app.index.api.data.sources.db.schemas.lists.ItemContentTable.item
+import app.index.api.data.sources.db.schemas.lists.ItemContentTable.user
+import app.index.api.data.sources.db.schemas.user.UserEntity
+import app.index.api.data.sources.db.schemas.user.UsersTable
+import app.index.api.data.sources.db.toEntityId
+import app.index.api.data.sources.db.toIxId
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
+import java.util.*
+
+/**
+ * @property id
+ * @property user
+ * @property item
+ * @property content
+ */
+object ItemContentTable : UUIDTable() {
+    val user = reference(
+        name = "id_user",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
+    val item = reference(
+        name = "id_item",
+        foreign = ItemTable,
+        onDelete = ReferenceOption.CASCADE,
+    ).index()
+    val content = text("ix_content", eagerLoading = true)
+}
+
+/**
+ * @property id
+ * @property item
+ * @property content
+ *
+ * @property userEntity
+ * @property itemEntity
+ */
+class ItemContentEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<ItemContentEntity>(ItemContentTable)
+
+    var user by ItemContentTable.user
+    var item by ItemContentTable.item
+    var content by ItemContentTable.content
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    val userEntity by UserEntity referencedOn ItemContentTable.user
+    @Suppress("MemberVisibilityCanBePrivate")
+    val itemEntity by ItemEntity referencedOn ItemContentTable.item
+}
+
+fun ItemContentEntity.fromData(itemContentData: ItemContentData) {
+    user = itemContentData.user_id.toEntityId(UsersTable)
+    item = itemContentData.item_id.toEntityId(ItemTable)
+    content = itemContentData.content
+}
+
+fun ItemContentEntity.toData() =
+    ItemContentData(
+        id = id.toIxId(),
+        user_id = user.toIxId(),
+        item_id = item.toIxId(),
+        content = content,
+    )

@@ -1,0 +1,102 @@
+package app.index.api.data.models.lists
+
+import app.index.api.core.logic.DatetimeUtils
+import app.index.api.core.logic.typedId.impl.IxId
+import app.index.api.data.models.user.UserData
+import app.index.api.data.validation.RegexPatterns
+import app.index.api.data.validation.Validatable
+import app.index.api.data.validation.Validations
+import io.konform.validation.Validation
+import io.konform.validation.constraints.maxLength
+import io.konform.validation.constraints.minLength
+import io.konform.validation.constraints.pattern
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+
+/**
+ * Represents a single list, which can contain categories to organize list items in it
+ */
+@Serializable
+data class ListData(
+    @Contextual val id: IxId<ListData>,
+    @Contextual var user_id: IxId<UserData>,
+    var name: String,
+    var icon: String, // Single emoji at the moment
+    var color: String, // Represented as #RRGGBB hex color
+    var archived: Boolean,
+    var public: Boolean,
+    val viewers: List<@Contextual IxId<UserData>>,
+    val editors: List<@Contextual IxId<UserData>>,
+    val created_at: Long = DatetimeUtils.currentMillis(),
+    val edited_at: Long? = null,
+) {
+    /**
+     * Returns a list of user ids that have access to this list
+     */
+    fun getUsersWithAccess() = (viewers + editors + user_id).toSet()
+
+    @Serializable
+    data class ListCreateRequestData(
+        var name: String,
+        var icon: String,
+        var color: String,
+        var archived: Boolean = false,
+        var public: Boolean = false,
+    ) : Validatable<ListCreateRequestData> {
+        override fun validate() =
+            Validation {
+                ListCreateRequestData::name {
+                    minLength(Validations.List.MIN_NAME_LENGTH)
+                    maxLength(Validations.List.MAX_NAME_LENGTH)
+                }
+                ListCreateRequestData::color {
+                    pattern(RegexPatterns.colorPattern)
+                }
+            }.invoke(this)
+    }
+
+    @Serializable
+    data class ListUpdateRequestData(
+        var name: String,
+        var icon: String,
+        var color: String,
+        var archived: Boolean = false,
+        var public: Boolean = false,
+    ) : Validatable<ListUpdateRequestData> {
+        override fun validate() =
+            Validation {
+                ListUpdateRequestData::name {
+                    minLength(Validations.List.MIN_NAME_LENGTH)
+                    maxLength(Validations.List.MAX_NAME_LENGTH)
+                }
+                ListUpdateRequestData::color {
+                    pattern(RegexPatterns.colorPattern)
+                }
+            }.invoke(this)
+    }
+
+
+    @Serializable
+    data class ListPermissionAddRequestData(
+        val email: String,
+        val editor: Boolean
+    )
+
+    @Serializable
+    data class ListPermissionRemoveRequestData(
+        @Contextual val user_id: IxId<UserData>,
+    )
+
+    @Serializable
+    data class ListTemplateResponseData(
+        val name: String,
+        val color: String,
+    )
+
+    @Serializable
+    data class ListSingleUserAccessInfoResponseData(
+        @Contextual val user_id: IxId<UserData>,
+        val email: String,
+        val editor: Boolean,
+    )
+}

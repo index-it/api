@@ -1,19 +1,13 @@
 plugins {
-    kotlin("jvm")
-}
 
-kotlin {
-    jvmToolchain(17)
-}
+    id("base-conventions")
 
-repositories {
-    mavenCentral()
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
+    implementation(project(":services:api"))
     implementation(platform(libs.sentry.bom))
     implementation(libs.bundles.postgres)
     implementation(libs.bundles.logging)
-
-    implementation(project(":"))
 }
