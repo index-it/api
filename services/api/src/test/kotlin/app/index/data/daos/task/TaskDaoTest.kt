@@ -2,7 +2,7 @@ package app.index.data.daos.task
 
 import app.index.shared.core.logic.DatetimeUtils
 import app.index.shared.core.typedId.newIxId
-import app.index.api.core.logic.usecases.TaskUseCase
+import app.index.shared.core.logic.usecases.TaskUseCase
 import app.index.shared.core.data.models.tasks.TaskData
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus

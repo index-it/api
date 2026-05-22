@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.google.cloud.bigquery)
     implementation(libs.firebase.admin)
     implementation(libs.bundles.spring.security)
+    implementation(libs.librecur)
 
     // SERIALIZATION
     implementation(libs.serialization)

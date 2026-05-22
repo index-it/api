@@ -1,7 +1,7 @@
 package app.index.api.routing.task.routes
 
 import app.index.shared.core.config.ProConfig
-import app.index.api.core.logic.usecases.TaskUseCase
+import app.index.shared.core.logic.usecases.TaskUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType

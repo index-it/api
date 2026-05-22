@@ -2,7 +2,7 @@ package app.index.api.routing.user.routes
 
 import app.index.shared.core.clients.BrevoClient
 import app.index.shared.core.logic.PasswordEncoder
-import app.index.api.core.logic.usecases.PasswordResetUseCase
+import app.index.shared.core.logic.usecases.PasswordResetUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType

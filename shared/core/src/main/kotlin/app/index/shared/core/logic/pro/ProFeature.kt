@@ -1,4 +1,4 @@
-package app.index.api.core.logic.pro
+package app.index.shared.core.logic.pro
 
 @Suppress("unused")
 enum class ProFeature {

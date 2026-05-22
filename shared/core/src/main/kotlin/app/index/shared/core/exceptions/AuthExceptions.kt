@@ -1,4 +1,4 @@
-package app.index.api.core.exceptions
+package app.index.shared.core.exceptions
 
 /**
  * The entity is not authenticated

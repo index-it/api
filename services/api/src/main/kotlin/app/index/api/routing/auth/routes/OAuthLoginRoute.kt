@@ -2,7 +2,7 @@ package app.index.api.routing.auth.routes
 
 import app.index.shared.core.clients.oauth.AppleOAuthClient
 import app.index.shared.core.clients.oauth.GoogleOAuthClient
-import app.index.api.core.exceptions.AuthenticationException
+import app.index.shared.core.exceptions.AuthenticationException
 import app.index.api.core.logic.AnalyticsEventManager
 import app.index.shared.core.logic.DatetimeUtils
 import app.index.shared.core.typedId.newIxId

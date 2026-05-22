@@ -1,6 +1,6 @@
 package app.index.api.routing.user.routes
 
-import app.index.api.core.exceptions.AuthenticationException
+import app.index.shared.core.exceptions.AuthenticationException
 import app.index.shared.core.logic.PasswordEncoder
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent

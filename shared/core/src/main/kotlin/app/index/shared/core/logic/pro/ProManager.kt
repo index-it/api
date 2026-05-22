@@ -1,4 +1,4 @@
-package app.index.api.core.logic.pro
+package app.index.shared.core.logic.pro
 
 import app.index.shared.core.clients.RevenueCatClient
 import app.index.shared.core.typedId.toIxId

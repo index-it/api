@@ -4,7 +4,7 @@ import app.index.shared.core.config.ApiConfig
 import app.index.shared.core.config.GoogleCloudConfig
 import app.index.shared.core.config.OpenApiConfig
 import app.index.shared.core.config.RevenueCatConfig
-import app.index.api.core.exceptions.AuthenticationException
+import app.index.shared.core.exceptions.AuthenticationException
 import app.index.shared.core.logic.DatetimeUtils
 import app.index.shared.core.logic.PasswordEncoder
 import app.index.shared.core.typedId.impl.IxId

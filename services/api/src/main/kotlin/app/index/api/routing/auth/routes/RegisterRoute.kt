@@ -3,8 +3,8 @@ package app.index.api.routing.auth.routes
 import app.index.shared.core.logic.DatetimeUtils
 import app.index.shared.core.logic.PasswordEncoder
 import app.index.shared.core.typedId.newIxId
-import app.index.api.core.logic.usecases.EmailVerificationUseCase
-import app.index.api.core.logic.usecases.UserAuthUseCase
+import app.index.shared.core.logic.usecases.EmailVerificationUseCase
+import app.index.shared.core.logic.usecases.UserAuthUseCase
 import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.auth.RegistrationCredentials
 import app.index.shared.core.data.models.user.UserData

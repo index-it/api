@@ -1,6 +1,6 @@
 package app.index.api.routing.pro.routes
 
-import app.index.api.core.logic.pro.ProManager
+import app.index.shared.core.logic.pro.ProManager
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType

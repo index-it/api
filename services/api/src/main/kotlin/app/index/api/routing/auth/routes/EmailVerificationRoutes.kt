@@ -2,7 +2,7 @@ package app.index.api.routing.auth.routes
 
 import app.index.shared.core.config.BrevoConfig
 import app.index.api.core.logic.AnalyticsEventManager
-import app.index.api.core.logic.usecases.EmailVerificationUseCase
+import app.index.shared.core.logic.usecases.EmailVerificationUseCase
 import app.index.shared.core.data.daos.auth.EmailVerificationDao
 import app.index.shared.core.data.daos.user.UserDao
 import app.index.shared.core.data.models.analytics.AnalyticsEventData

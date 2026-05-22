@@ -1,6 +1,6 @@
-package app.index.api.core.logic.usecases
+package app.index.shared.core.logic.usecases
 
-import app.index.api.core.exceptions.AuthorizationException
+import app.index.shared.core.exceptions.AuthorizationException
 import app.index.shared.core.typedId.impl.IxId
 import app.index.shared.core.data.daos.list.ListDao
 import app.index.shared.core.data.models.lists.ListAuthorizationLevel

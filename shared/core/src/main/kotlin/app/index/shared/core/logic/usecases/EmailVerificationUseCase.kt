@@ -1,4 +1,4 @@
-package app.index.api.core.logic.usecases
+package app.index.shared.core.logic.usecases
 
 import app.index.shared.core.clients.BrevoClient
 import app.index.shared.core.logic.DatetimeUtils

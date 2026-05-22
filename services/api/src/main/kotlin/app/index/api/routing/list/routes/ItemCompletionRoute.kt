@@ -2,7 +2,7 @@ package app.index.api.routing.list.routes
 
 import app.index.api.core.logic.AnalyticsEventManager
 import app.index.shared.core.typedId.impl.IxId
-import app.index.api.core.logic.usecases.ListAuthorizationUseCase
+import app.index.shared.core.logic.usecases.ListAuthorizationUseCase
 import app.index.api.core.logic.websocket.WebsocketEventManager
 import app.index.api.core.logic.websocket.event.WebsocketEventContent
 import app.index.api.core.logic.websocket.event.WebsocketEventType

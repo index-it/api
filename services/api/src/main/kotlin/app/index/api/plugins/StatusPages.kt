@@ -1,7 +1,7 @@
 package app.index.api.plugins
 
-import app.index.api.core.exceptions.AuthenticationException
-import app.index.api.core.exceptions.AuthorizationException
+import app.index.shared.core.exceptions.AuthenticationException
+import app.index.shared.core.exceptions.AuthorizationException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
