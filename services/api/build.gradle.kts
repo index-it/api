@@ -1,4 +1,4 @@
-version = "0.1.12"
+project.version = "0.1.12"
 
 plugins {
     id("service-conventions")
@@ -88,11 +88,11 @@ jib {
     }
 
     to {
-        image = "ghcr.io/${project.property("ghcr_organization")}/$name"
-        tags = setOf(System.getenv("CIRCLE_SHA1"), version.toString(), "latest")
+        image = "ghcr.io/${System.getenv("GHCR_ORGANIZATION")}/${project.name}"
+        tags = setOf(System.getenv("COMMIT_SHA"), project.version.toString(), "latest")
         auth {
-            username = System.getenv("GITHUB_ACTOR")
-            password = System.getenv("GITHUB_TOKEN")
+            username = System.getenv("GHCR_ACTOR")
+            password = System.getenv("GHCR_TOKEN")
         }
     }
 
