@@ -88,7 +88,7 @@ jib {
     }
 
     to {
-        image = "ghcr.io/${System.getenv("GHCR_ORGANIZATION")}/index_api"
+        image = "ghcr.io/${System.getenv("GHCR_ORGANIZATION")}/${project.name}"
         tags = setOf(System.getenv("COMMIT_SHA"), project.version.toString(), "latest")
         auth {
             username = System.getenv("GHCR_ACTOR")
