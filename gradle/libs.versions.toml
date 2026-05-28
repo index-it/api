@@ -49,6 +49,11 @@ sentry = { id = "io.sentry.jvm.gradle", version.ref = "sentryPlugin" }
 jib = { id = "com.google.cloud.tools.jib", version.ref = "jib" }
 
 [libraries]
+# PLUGINS
+kotlin-jvm-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization-plugin = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
+
+# LIBRARIES
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 reflections = { group = "org.reflections", name = "reflections", version.ref  = "reflections" }

@@ -1,11 +1,8 @@
 version = "0.1.12"
 
 plugins {
-    application
     id("service-conventions")
 
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sentry)

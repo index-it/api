@@ -2,6 +2,11 @@ rootProject.name = "index-backend"
 
 pluginManagement {
     includeBuild("build-logic")
+
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
 }
 
 // automatically downloads JDK if missing

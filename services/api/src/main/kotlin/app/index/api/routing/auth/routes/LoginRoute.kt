@@ -39,7 +39,7 @@ fun Route.loginRoute() {
             throw AuthenticationException()
         }
 
-        if (!passwordEncoder.matches(loginData.password, user.passwordHash)) {
+        if (!passwordEncoder.matches(loginData.password, user.passwordHash!!)) {
             throw AuthenticationException()
         }
 

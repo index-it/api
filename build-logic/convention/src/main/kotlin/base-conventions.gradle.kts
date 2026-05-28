@@ -1,6 +1,7 @@
 plugins {
     base
-    java
+    kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 repositories {
@@ -15,6 +16,10 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 tasks.test {

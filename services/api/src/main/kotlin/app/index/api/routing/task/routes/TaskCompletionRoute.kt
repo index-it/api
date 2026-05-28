@@ -77,7 +77,7 @@ fun Route.taskCompletionRoute() {
 
         // update completion of connected item if user has at least editor permissions in its list
         if (updatedTask.item_id != null) {
-            val item = itemDao.get(updatedTask.item_id)
+            val item = itemDao.get(updatedTask.item_id!!)
 
             if (item !== null) {
                 try {
@@ -87,7 +87,7 @@ fun Route.taskCompletionRoute() {
                         authorizationLevel = ListAuthorizationLevel.EDITOR
                     )
 
-                    itemDao.setCompletion(updatedTask.item_id, it.completed)
+                    itemDao.setCompletion(updatedTask.item_id!!, it.completed)
                         ?.also { updatedConnectedItem ->
                             emitWebsocketEventForCurrentSessionUser(
                                 websocketEventManager = websocketEventManager,

@@ -110,7 +110,7 @@ fun Route.itemsRoute() {
 
         val newList = if (updateData.list_id != null && updateData.list_id != it.parent.parent.list_id) {
             ListAuthorizationUseCase.getListIfAuthorized(
-                listId = updateData.list_id,
+                listId = updateData.list_id!!,
                 userId = userId,
                 authorizationLevel = ListAuthorizationLevel.EDITOR
             ) ?: return@put call.respond(HttpStatusCode.NotFound)

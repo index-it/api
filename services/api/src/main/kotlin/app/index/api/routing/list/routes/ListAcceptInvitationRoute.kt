@@ -71,12 +71,12 @@ import org.koin.ktor.ext.inject
              val listInviteData = listInviteDao.get(request.token)
                  ?: return@get call.respond(HttpStatusCode.NotFound)
 
-             if (listInviteData.maxUsages != null && listInviteData.maxUsages < 1) {
+             if (listInviteData.maxUsages != null && listInviteData.maxUsages!! < 1) {
                  listInviteDao.delete(listInviteData.id)
                  return@get call.respond(HttpStatusCode.MethodNotAllowed, "This invite has already been used")
              }
 
-             if (listInviteData.expiresAt != null && listInviteData.expiresAt < DatetimeUtils.currentLocalDateTime()) {
+             if (listInviteData.expiresAt != null && listInviteData.expiresAt!! < DatetimeUtils.currentLocalDateTime()) {
                  listInviteDao.delete(listInviteData.id)
                  return@get call.respond(HttpStatusCode.MethodNotAllowed, "This invite has expired")
              }
@@ -91,7 +91,7 @@ import org.koin.ktor.ext.inject
 
              if (added) {
                  val updatedInvite = listInviteDao.decreaseUsages(listInviteData.id)
-                 if (updatedInvite?.maxUsages != null && updatedInvite.maxUsages < 1) {
+                 if (updatedInvite?.maxUsages != null && updatedInvite.maxUsages!! < 1) {
                      listInviteDao.delete(listInviteData.id)
                  }
 

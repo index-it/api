@@ -91,7 +91,7 @@ fun Application.configureSecurity() {
                 userDao.getFromEmail(credentials.name)?.let {
                     if (it.passwordHash == null) {
                         null
-                    } else if (passwordEncoder.matches(credentials.password, it.passwordHash)) {
+                    } else if (passwordEncoder.matches(credentials.password, it.passwordHash!!)) {
                         UserIdPrincipalForEmailVerificationAuth(it.id)
                     } else {
                         null
