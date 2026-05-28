@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run api" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="app.index.ApplicationKt" />
-    <module name="index_api.main" />
+    <option name="MAIN_CLASS_NAME" value="app.index.api.ApplicationKt" />
+    <module name="index-backend.services.api.main" />
     <shortenClasspath name="ARGS_FILE" />
     <method v="2">
       <option name="Make" enabled="true" />

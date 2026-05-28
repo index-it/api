@@ -1,0 +1,43 @@
+name: Build and Push api (GHCR)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - services/api/**
+      - shared/**
+      - build-logic/**
+      - gradle/**
+      - build.gradle.kts
+      - settings.gradle.kts
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+
+      - name: Build and push image
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          GHCR_ORGANIZATION: index-it
+          GHCR_ACTOR: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew :services:api:jib --no-daemon
