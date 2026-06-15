@@ -10,7 +10,7 @@ api
 <h4 align="center">REST api for <a href="https://index-it.app" target="_blank">Index</a>.</h4>
 
 <p align="center">
-  <a href="https://dl.circleci.com/status-badge/redirect/gh/index-it/api/tree/main"><img src="https://dl.circleci.com/status-badge/img/gh/index-it/api/tree/main.svg?style=svg&circle-token=b98428ac97372542adab9fe5a0a337cb94aa00e5"></a>
+  <a href="https://github.com/index-it/api/actions/workflows/ghcr-api.yml"><img alt="CI/CD" src="https://github.com/index-it/api/actions/workflows/ghcr-api.yml/badge.svg"></a>
   &nbsp;
   <a href="https://index-it.app/discord"><img alt="Discord" src="https://img.shields.io/discord/1043536767934021713?color=4&logo=Discord"></a>
 </p>
@@ -40,8 +40,6 @@ There is a pre-made `.env` file for development located in `config/env/.env.loca
 
 #### Developer database user
 A developer account for Index can be created by running the `CreateDevUser.kt` in `/scripts/`:  
-email: `giuliopime@gmail.com`  
-password: `Password1!`
 
 ### OpenAPI & Swagger
 OpenAPI documentation is available at:
@@ -51,7 +49,3 @@ OpenAPI documentation is available at:
 ### Git
 Use `[ci skip]` in a commit message to skip circleci process.  
 Also please create a new branch for new features or substantial bug fixes
-
-## App review
-email: `index-review@gmail.com`  
-password: `tr5zFHAEspHSy53A`
